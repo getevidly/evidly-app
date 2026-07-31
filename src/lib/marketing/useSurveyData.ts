@@ -1,195 +1,410 @@
 /**
- * useSurveyData — Supabase reads for the Marketing Survey tab.
+ * useSurveyData — Supabase reads for the Kitchen Safety Study admin tab.
  *
- * Reads:  market_research_responses (with FK join to jurisdictions for county name)
+ * Reads:  market_research_responses + market_research_answers + market_research_contacts
  * Writes: none (read-only dashboard)
  *
- * Computes: KPIs, segment/hardest/wouldPay bar mixes, adjuster/attorney
- * correlation cross-tabs, and recent-responses list.
+ * Every metric respects the reporting threshold (MIN_N = 10).
+ * Base sizes differ per record because the survey branches.
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../supabase';
 
-// ── Row type ────────────────────────────────────────────────────
+// ── Constants ────────────────────────────────────────────────────
 
-export interface SurveyResponseRow {
+export const MIN_N = 10;
+
+// Record question IDs
+const FIRE_IDS = ['hood', 'supp', 'ext', 'sprink'];
+const FOOD_IDS = ['cool', 'hold', 'sanit', 'handler'];
+const VBIZ_IDS = ['vins'];
+const INS_IDS  = ['pse', 'recs'];
+const ALL_RECORD_IDS = [...FIRE_IDS, ...INS_IDS, ...FOOD_IDS, ...VBIZ_IDS];
+
+// Human-readable record names
+export const RECORD_NAMES: Record<string, string> = {
+  hood:    'Hood & duct cleaning',
+  supp:    'Hood suppression',
+  ext:     'Fire extinguishers',
+  sprink:  'Fire sprinklers',
+  pse:     'Protective Safeguards Endorsement',
+  recs:    'Signed service records',
+  cool:    'Cooling records',
+  hold:    'Holding temperatures',
+  sanit:   'Sanitization records',
+  handler: 'Food handler cards',
+  vins:    'Vendor insurance certificates',
+};
+
+// Answer value labels
+export const VALUE_LABELS: Record<string, string> = {
+  tracked:   'Ready to send',
+  untracked: 'Have to find it',
+  gap:       'Not in my hands',
+  no:        'Not on file',
+  na:        'Not my area',
+  yes:       'Yes',
+  unsure:    'Not sure',
+};
+
+// Census 2020 California regions — all 58 counties in exactly one of 10 regions
+export const CA_REGIONS: Record<string, string[]> = {
+  'Bay Area':           ['Alameda', 'Contra Costa', 'Marin', 'Napa', 'San Francisco', 'San Mateo', 'Santa Clara', 'Solano', 'Sonoma'],
+  'Greater Sacramento': ['El Dorado', 'Placer', 'Sacramento', 'Sutter', 'Yolo', 'Yuba'],
+  'San Joaquin Valley': ['Fresno', 'Kern', 'Kings', 'Madera', 'Merced', 'San Joaquin', 'Stanislaus', 'Tulare'],
+  'Southern California':['Los Angeles', 'Orange', 'Ventura'],
+  'Inland Empire':      ['Riverside', 'San Bernardino'],
+  'San Diego / Imperial': ['Imperial', 'San Diego'],
+  'Central Coast':      ['Monterey', 'San Benito', 'San Luis Obispo', 'Santa Barbara', 'Santa Cruz'],
+  'North State':        ['Butte', 'Colusa', 'Glenn', 'Lassen', 'Modoc', 'Plumas', 'Shasta', 'Siskiyou', 'Tehama', 'Trinity'],
+  'North Coast':        ['Del Norte', 'Humboldt', 'Lake', 'Mendocino'],
+  'Sierra / Eastern':   ['Alpine', 'Amador', 'Calaveras', 'Inyo', 'Mariposa', 'Mono', 'Nevada', 'Sierra', 'Tuolumne'],
+};
+
+// Reverse map: county → region
+export const COUNTY_TO_REGION: Record<string, string> = {};
+Object.entries(CA_REGIONS).forEach(([region, counties]) => {
+  counties.forEach(c => { COUNTY_TO_REGION[c] = region; });
+});
+
+// Source labels
+export const SOURCE_LABELS: Record<string, string> = {
+  call: 'Outbound call', show: 'Show floor QR', email: 'EvidLY email',
+  social: 'Social media', page: 'Website', cra: 'CRA email', other: 'Other',
+};
+
+export const PLATFORM_LABELS: Record<string, string> = {
+  LinkedIn: 'LinkedIn', Facebook: 'Facebook', Instagram: 'Instagram', YouTube: 'YouTube',
+};
+
+// ── Row types ────────────────────────────────────────────────────
+
+export interface ResponseRow {
   id: string;
-  org_name: string | null;
-  contact_name: string | null;
-  contact_email: string | null;
-  segment: string | null;
-  kitchen_count: string | null;
-  county_id: string | null;
-  role: string | null;
-  record_locations: string[] | null;
-  due_discovery: string | null;
-  hardest_parts: string[] | null;
-  asked_by: string[] | null;
-  would_pay_for: string | null;
-  open_answer: string | null;
-  started_at: string | null;
-  completed_at: string | null;
   created_at: string;
-  county_name: string | null;
+  updated_at: string | null;
+  status: string;
+  instrument_version: string;
+  source: string | null;
+  source_platform: string | null;
+  source_method: string | null;
+  scope: string | null;
+  county: string | null;
+  kitchen_type: string | null;
+  kitchen_count: string | null;
+  system: string | null;
+  record_owner: string | null;
+  speed: string | null;
+  askers: string[] | null;
+  completed_at: string | null;
+  duration_seconds: number | null;
+  interviewer_id: string | null;
+}
+
+export interface AnswerRow {
+  id: string;
+  response_id: string;
+  question_id: string;
+  value: string;
+  answered_at: string;
+}
+
+export interface ContactRow {
+  id: string;
+  response_id: string;
+  email: string | null;
+  wants_findings: boolean;
+  wants_county_report: boolean;
+  wants_referral_link: boolean;
+  wants_meeting: boolean;
+  created_at: string;
+}
+
+// ── Aggregate types ──────────────────────────────────────────────
+
+export interface RecordBand {
+  question_id: string;
+  name: string;
+  n: number;          // total who answered (excluding N/A)
+  na: number;         // count of N/A
+  tracked: number;
+  untracked: number;
+  gap: number;
+  no: number;
+  gapPct: number;     // (untracked + gap + no) / n
+}
+
+export interface SegmentCount {
+  label: string;
+  count: number;
+  pct: number;
+}
+
+export interface FilterState {
+  region: string | null;
+  county: string | null;
+  kitchenType: string | null;
+  channel: string | null;
+  scope: string | null;
+}
+
+export interface SurveyStats {
+  total: number;
+  completed: number;
+  inProgress: number;
+  abandoned: number;
+  completionRate: number;
+  medianSeconds: number;
+  recordBands: RecordBand[];
+  scopeCounts: SegmentCount[];
+  systemCounts: SegmentCount[];
+  ownerCounts: SegmentCount[];
+  speedCounts: SegmentCount[];
+  askerCounts: SegmentCount[];
+  channelCounts: SegmentCount[];
+  platformCounts: SegmentCount[];
+  kitchenTypeCounts: SegmentCount[];
+  countCounts: SegmentCount[];
+  regionCounts: SegmentCount[];
+  countyCounts: SegmentCount[];
+  meetingQueue: Array<{ response_id: string; email: string; created_at: string }>;
+  crossTabSystemByRecord: Record<string, RecordBand[]>;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
 
-/** Numeric midpoint for kitchen_count text buckets */
-const KC_NUM: Record<string, number> = { '1': 1, '2-5': 3.5, '6-20': 13, '21+': 25 };
-
 function median(arr: number[]): number {
-  if (arr.length === 0) return 0;
-  const sorted = [...arr].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 !== 0 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
-function isAdjusterOrAttorney(askedBy: string[] | null): boolean {
-  if (!askedBy) return false;
-  return askedBy.includes('Insurance adjuster') || askedBy.includes('Attorney');
+function countBy<T>(items: T[], key: (item: T) => string | null): Record<string, number> {
+  const c: Record<string, number> = {};
+  items.forEach(item => {
+    const k = key(item);
+    if (k) c[k] = (c[k] || 0) + 1;
+  });
+  return c;
 }
 
-// ── Correlation group stats ──────────────────────────────────────
-
-export interface GroupStats {
-  n: number;
-  onePlace: number;   // % who picked "Everything in one place, retrievable"
-  multiUnit: number;  // % with kitchen_count != '1'
-  binderOnly: number; // % whose record_locations is exactly ['Binder / folder']
-  avgKitchens: number;
+function toSegmentCounts(counts: Record<string, number>, total: number): SegmentCount[] {
+  return Object.entries(counts)
+    .map(([label, count]) => ({ label, count, pct: total > 0 ? Math.round(count / total * 100) : 0 }))
+    .sort((a, b) => b.count - a.count);
 }
 
-function computeGroupStats(group: SurveyResponseRow[]): GroupStats {
-  const n = group.length;
-  if (n === 0) return { n: 0, onePlace: 0, multiUnit: 0, binderOnly: 0, avgKitchens: 0 };
-
-  const onePlace = group.filter(r => r.would_pay_for === 'Everything in one place, retrievable').length;
-  const multiUnit = group.filter(r => r.kitchen_count && r.kitchen_count !== '1').length;
-  const binderOnly = group.filter(r => {
-    const rl = r.record_locations || [];
-    return rl.length === 1 && rl[0] === 'Binder / folder';
-  }).length;
-  const kitchenNums = group.map(r => KC_NUM[r.kitchen_count || ''] || 1);
-  const avgKitchens = kitchenNums.reduce((a, b) => a + b, 0) / n;
-
+function computeRecordBand(qId: string, answers: AnswerRow[]): RecordBand {
+  const matching = answers.filter(a => a.question_id === qId);
+  const na = matching.filter(a => a.value === 'na').length;
+  const pool = matching.filter(a => a.value !== 'na');
+  const n = pool.length;
+  const tracked = pool.filter(a => a.value === 'tracked' || a.value === 'yes').length;
+  const untracked = pool.filter(a => a.value === 'untracked').length;
+  const gap = pool.filter(a => a.value === 'gap' || a.value === 'unsure').length;
+  const no = pool.filter(a => a.value === 'no').length;
+  const gapPct = n > 0 ? Math.round((untracked + gap + no) / n * 100) : 0;
   return {
-    n,
-    onePlace: Math.round((onePlace / n) * 100),
-    multiUnit: Math.round((multiUnit / n) * 100),
-    binderOnly: Math.round((binderOnly / n) * 100),
-    avgKitchens: Math.round(avgKitchens * 10) / 10,
+    question_id: qId, name: RECORD_NAMES[qId] || qId,
+    n, na, tracked, untracked, gap, no, gapPct,
   };
-}
-
-// ── Aggregate stats ──────────────────────────────────────────────
-
-export interface SurveyStats {
-  startedCount: number;
-  completedCount: number;
-  completionRate: number;
-  medianMinutes: number;
-  adjusterAttorneyCount: number;
-  segmentCounts: Record<string, number>;
-  hardestCounts: Record<string, number>;
-  wouldPayCounts: Record<string, number>;
-  adjGroup: GroupStats;
-  restGroup: GroupStats;
 }
 
 // ── Hook ─────────────────────────────────────────────────────────
 
 export function useSurveyData() {
-  const [responses, setResponses] = useState<SurveyResponseRow[]>([]);
+  const [responses, setResponses] = useState<ResponseRow[]>([]);
+  const [answers, setAnswers] = useState<AnswerRow[]>([]);
+  const [contacts, setContacts] = useState<ContactRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<FilterState>({
+    region: null, county: null, kitchenType: null, channel: null, scope: null,
+  });
 
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: qErr } = await supabase
-        .from('market_research_responses')
-        .select('*, jurisdictions(county)')
-        .order('created_at', { ascending: false });
-      if (qErr) throw qErr;
-
-      // Flatten the FK join into county_name
-      const rows = (data || []).map((r: Record<string, unknown>) => {
-        const jur = r.jurisdictions as { county: string } | null;
-        return {
-          ...r,
-          county_name: jur?.county ?? null,
-          jurisdictions: undefined,
-        };
-      }) as SurveyResponseRow[];
-
-      setResponses(rows);
+      const [rRes, aRes, cRes] = await Promise.all([
+        supabase.from('market_research_responses').select('*').order('created_at', { ascending: false }),
+        supabase.from('market_research_answers').select('*'),
+        supabase.from('market_research_contacts').select('*'),
+      ]);
+      if (rRes.error) throw rRes.error;
+      if (aRes.error) throw aRes.error;
+      if (cRes.error) throw cRes.error;
+      setResponses((rRes.data || []) as ResponseRow[]);
+      setAnswers((aRes.data || []) as AnswerRow[]);
+      setContacts((cRes.data || []) as ContactRow[]);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Failed to load survey responses';
-      setError(msg);
-      setResponses([]);
+      setError(e instanceof Error ? e.message : 'Failed to load');
+      setResponses([]); setAnswers([]); setContacts([]);
     }
     setLoading(false);
   }, []);
 
   useEffect(() => { refresh(); }, [refresh]);
 
+  // Apply filters
+  const filtered = useMemo(() => {
+    let r = responses;
+    if (filters.scope) r = r.filter(x => x.scope === filters.scope);
+    if (filters.county) r = r.filter(x => x.county === filters.county);
+    if (filters.kitchenType) r = r.filter(x => x.kitchen_type === filters.kitchenType);
+    if (filters.channel) r = r.filter(x => x.source === filters.channel);
+    if (filters.region) {
+      const regionCounties = new Set(CA_REGIONS[filters.region] || []);
+      r = r.filter(x => x.county && regionCounties.has(x.county));
+    }
+    return r;
+  }, [responses, filters]);
+
+  const filteredIds = useMemo(() => new Set(filtered.map(r => r.id)), [filtered]);
+  const filteredAnswers = useMemo(() => answers.filter(a => filteredIds.has(a.response_id)), [answers, filteredIds]);
+  const filteredContacts = useMemo(() => contacts.filter(c => filteredIds.has(c.response_id)), [contacts, filteredIds]);
+
+  // Compute stats
   const stats = useMemo((): SurveyStats => {
-    const started = responses.filter(r => r.started_at);
-    const completed = responses.filter(r => r.completed_at);
+    const completed = filtered.filter(r => r.status === 'completed');
+    const inProgress = filtered.filter(r => r.status === 'in_progress');
+    const abandoned = filtered.filter(r => r.status === 'abandoned');
+    const total = filtered.length;
 
-    // Completion rate
-    const completionRate = started.length > 0
-      ? Math.round((completed.length / started.length) * 100)
-      : 0;
+    const completionRate = total > 0 ? Math.round(completed.length / total * 100) : 0;
+    const durations = completed.filter(r => r.duration_seconds).map(r => r.duration_seconds!);
+    const medianSeconds = Math.round(median(durations));
 
-    // Median completion time (minutes)
-    const durations = completed
-      .filter(r => r.started_at && r.completed_at)
-      .map(r => (new Date(r.completed_at!).getTime() - new Date(r.started_at!).getTime()) / 60000);
-    const medianMinutes = Math.round(median(durations));
+    // Record bands — only from completed responses
+    const completedIds = new Set(completed.map(r => r.id));
+    const completedAnswers = filteredAnswers.filter(a => completedIds.has(a.response_id));
+    const recordBands = ALL_RECORD_IDS
+      .map(qId => computeRecordBand(qId, completedAnswers))
+      .sort((a, b) => b.gapPct - a.gapPct);
 
-    // Adjuster / attorney count
-    const adjusterAttorneyCount = completed.filter(r => isAdjusterOrAttorney(r.asked_by)).length;
+    // Scope distribution
+    const scopeCounts = toSegmentCounts(countBy(completed, r => r.scope), completed.length);
 
-    // Q1 segment mix
-    const segmentCounts: Record<string, number> = {};
+    // System
+    const systemCounts = toSegmentCounts(countBy(completed, r => r.system), completed.length);
+
+    // Record owner
+    const ownerCounts = toSegmentCounts(countBy(completed, r => r.record_owner), completed.length);
+
+    // Speed
+    const speedCounts = toSegmentCounts(countBy(completed, r => r.speed), completed.length);
+
+    // Askers (multi-select)
+    const askerMap: Record<string, number> = {};
     completed.forEach(r => {
-      if (r.segment) segmentCounts[r.segment] = (segmentCounts[r.segment] || 0) + 1;
+      (r.askers || []).forEach(a => { askerMap[a] = (askerMap[a] || 0) + 1; });
     });
+    const askerCounts = toSegmentCounts(askerMap, completed.length);
 
-    // Q7 hardest parts mix (multi-select — count each selected value)
-    const hardestCounts: Record<string, number> = {};
-    completed.forEach(r => {
-      (r.hardest_parts || []).forEach(hp => {
-        hardestCounts[hp] = (hardestCounts[hp] || 0) + 1;
-      });
+    // Channel
+    const channelCounts = toSegmentCounts(countBy(completed, r => r.source), completed.length);
+
+    // Platform sub-rows (for social)
+    const platformCounts = toSegmentCounts(
+      countBy(completed.filter(r => r.source === 'social'), r => r.source_platform),
+      completed.filter(r => r.source === 'social').length,
+    );
+
+    // Kitchen type
+    const kitchenTypeCounts = toSegmentCounts(countBy(completed, r => r.kitchen_type), completed.length);
+
+    // Kitchen count
+    const countCounts = toSegmentCounts(countBy(completed, r => r.kitchen_count), completed.length);
+
+    // Region
+    const regionCounts = toSegmentCounts(
+      countBy(completed, r => r.county ? COUNTY_TO_REGION[r.county] || null : null),
+      completed.length,
+    );
+
+    // County
+    const countyCounts = toSegmentCounts(countBy(completed, r => r.county), completed.length);
+
+    // Meeting queue — contacts who want a meeting
+    const meetContacts = filteredContacts.filter(c => c.wants_meeting);
+    const meetingQueue = meetContacts.map(c => ({
+      response_id: c.response_id,
+      email: c.email || '',
+      created_at: c.created_at,
+    }));
+
+    // Cross-tab: system × record bands (the finding the study exists to produce)
+    const crossTabSystemByRecord: Record<string, RecordBand[]> = {};
+    const systemValues = [...new Set(completed.map(r => r.system).filter(Boolean))] as string[];
+    systemValues.forEach(sys => {
+      const sysIds = new Set(completed.filter(r => r.system === sys).map(r => r.id));
+      const sysAnswers = completedAnswers.filter(a => sysIds.has(a.response_id));
+      crossTabSystemByRecord[sys] = ALL_RECORD_IDS
+        .map(qId => computeRecordBand(qId, sysAnswers))
+        .filter(b => b.n > 0);
     });
-
-    // Q9 would-pay-for mix (single choice)
-    const wouldPayCounts: Record<string, number> = {};
-    completed.forEach(r => {
-      if (r.would_pay_for) wouldPayCounts[r.would_pay_for] = (wouldPayCounts[r.would_pay_for] || 0) + 1;
-    });
-
-    // Correlation cross-tabs
-    const adjGroup = computeGroupStats(completed.filter(r => isAdjusterOrAttorney(r.asked_by)));
-    const restGroup = computeGroupStats(completed.filter(r => !isAdjusterOrAttorney(r.asked_by)));
 
     return {
-      startedCount: started.length,
-      completedCount: completed.length,
-      completionRate,
-      medianMinutes,
-      adjusterAttorneyCount,
-      segmentCounts,
-      hardestCounts,
-      wouldPayCounts,
-      adjGroup,
-      restGroup,
+      total, completed: completed.length, inProgress: inProgress.length,
+      abandoned: abandoned.length, completionRate, medianSeconds,
+      recordBands, scopeCounts, systemCounts, ownerCounts, speedCounts,
+      askerCounts, channelCounts, platformCounts, kitchenTypeCounts,
+      countCounts, regionCounts, countyCounts, meetingQueue,
+      crossTabSystemByRecord,
     };
-  }, [responses]);
+  }, [filtered, filteredAnswers, filteredContacts]);
 
-  return { responses, stats, loading, error, refresh };
+  // Contact lookup: response_id → has meeting consent
+  const contactMap = useMemo(() => {
+    const m: Record<string, ContactRow> = {};
+    contacts.forEach(c => { m[c.response_id] = c; });
+    return m;
+  }, [contacts]);
+
+  // CSV export (answers, not people)
+  const exportCSV = useCallback(() => {
+    const completed = filtered.filter(r => r.status === 'completed');
+    if (!completed.length) return;
+
+    const header = [
+      'response_id', 'created_at', 'status', 'source', 'source_platform',
+      'scope', 'county', 'kitchen_type', 'kitchen_count',
+      'system', 'record_owner', 'speed', 'askers', 'duration_seconds',
+      'identity',
+      ...ALL_RECORD_IDS,
+    ];
+
+    const answerMap: Record<string, Record<string, string>> = {};
+    filteredAnswers.forEach(a => {
+      if (!answerMap[a.response_id]) answerMap[a.response_id] = {};
+      answerMap[a.response_id][a.question_id] = a.value;
+    });
+
+    const rows = completed.map(r => {
+      const ra = answerMap[r.id] || {};
+      const hasConsent = contactMap[r.id]?.wants_meeting;
+      return [
+        r.id, r.created_at, r.status, r.source || '', r.source_platform || '',
+        r.scope || '', r.county || '', r.kitchen_type || '', r.kitchen_count || '',
+        r.system || '', r.record_owner || '', r.speed || '',
+        (r.askers || []).join('; '), r.duration_seconds || '',
+        hasConsent ? 'Named — consented' : 'Anonymous',
+        ...ALL_RECORD_IDS.map(qId => ra[qId] || ''),
+      ];
+    });
+
+    const csv = [header.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'kitchen-safety-study-export.csv';
+    a.click(); URL.revokeObjectURL(url);
+  }, [filtered, filteredAnswers, contactMap]);
+
+  return {
+    responses: filtered, answers: filteredAnswers, contacts: filteredContacts,
+    allResponses: responses,
+    stats, loading, error, refresh, filters, setFilters, contactMap, exportCSV,
+  };
 }
