@@ -41,13 +41,13 @@ const UI      = "'Instrument Sans',system-ui,sans-serif";
 const MONO    = "'IBM Plex Mono',monospace";
 
 const FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@800&display=swap';
-const CALENDLY   = 'https://calendly.com/founders-getevidly/founders';
+const CALENDLY   = 'https://calendly.com/founders-getevidly/california-commercial-kitchen-study';
 
 /* ── Edge function helper ─────────────────────────────────────── */
 const SUPA_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPA_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-async function callEdge(payload) {
+async function callEdge(payload, fetchOpts) {
   try {
     const res = await fetch(`${SUPA_URL}/functions/v1/survey-respond`, {
       method: 'POST',
@@ -56,6 +56,7 @@ async function callEdge(payload) {
         Authorization: `Bearer ${SUPA_KEY}`,
       },
       body: JSON.stringify(payload),
+      ...fetchOpts,
     });
     return res.json();
   } catch {
@@ -381,15 +382,20 @@ export default function KitchenSafetyStudy() {
       if (!reconOk) return; // leave row incomplete — do not stamp completed
     }
 
-    // Stamp completed
-    callEdge({
-      response_id: responseId,
-      patch: {
-        status: 'completed',
-        completed_at: new Date().toISOString(),
-        duration_seconds: dur,
-      },
-    });
+    // Stamp completed — keepalive survives tab close; await makes failures visible
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const r = await callEdge({
+          response_id: responseId,
+          patch: {
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            duration_seconds: dur,
+          },
+        }, { keepalive: true });
+        if (r?.ok) break;
+      } catch { /* retry */ }
+    }
   }, [required, answered, responseId, state, askers, hasTag, linkSource, linkPlatform]);
 
   /* ── Send contact ───────────────────────────────────────────── */

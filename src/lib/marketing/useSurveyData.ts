@@ -18,8 +18,11 @@ export const MIN_N = 10;
 const FIRE_IDS = ['hood', 'supp', 'ext', 'sprink'];
 const FOOD_IDS = ['cool', 'hold', 'sanit', 'handler'];
 const VBIZ_IDS = ['vins'];
-const INS_IDS  = ['pse', 'recs'];
-const ALL_RECORD_IDS = [...FIRE_IDS, ...INS_IDS, ...FOOD_IDS, ...VBIZ_IDS];
+const KNOW_IDS = ['pse', 'recs'];
+// Ladder records — four-band readiness (tracked/untracked/gap/no). Used for band table + cross-tab.
+const LADDER_IDS = [...FIRE_IDS, ...FOOD_IDS, ...VBIZ_IDS];
+// All question IDs — ladder + KNOW questions. Used for PSE panel + CSV export.
+const ALL_RECORD_IDS = [...LADDER_IDS, ...KNOW_IDS];
 
 // Human-readable record names
 export const RECORD_NAMES: Record<string, string> = {
@@ -51,7 +54,8 @@ export const VALUE_LABELS: Record<string, string> = {
 export const CA_REGIONS: Record<string, string[]> = {
   'Bay Area':           ['Alameda', 'Contra Costa', 'Marin', 'Napa', 'San Francisco', 'San Mateo', 'Santa Clara', 'Solano', 'Sonoma'],
   'Greater Sacramento': ['El Dorado', 'Placer', 'Sacramento', 'Sutter', 'Yolo', 'Yuba'],
-  'San Joaquin Valley': ['Fresno', 'Kern', 'Kings', 'Madera', 'Merced', 'San Joaquin', 'Stanislaus', 'Tulare'],
+  'Northern San Joaquin Valley': ['Merced', 'San Joaquin', 'Stanislaus'],
+  'Southern San Joaquin Valley': ['Fresno', 'Kern', 'Kings', 'Madera', 'Tulare'],
   'Southern California':['Los Angeles', 'Orange', 'Ventura'],
   'Inland Empire':      ['Riverside', 'San Bernardino'],
   'San Diego / Imperial': ['Imperial', 'San Diego'],
@@ -156,6 +160,7 @@ export interface SurveyStats {
   completionRate: number;
   medianSeconds: number;
   recordBands: RecordBand[];
+  knowBands: RecordBand[];
   scopeCounts: SegmentCount[];
   systemCounts: SegmentCount[];
   ownerCounts: SegmentCount[];
@@ -168,7 +173,7 @@ export interface SurveyStats {
   regionCounts: SegmentCount[];
   countyCounts: SegmentCount[];
   meetingQueue: Array<{ response_id: string; email: string; created_at: string }>;
-  crossTabSystemByRecord: Record<string, RecordBand[]>;
+  crossTabSystemByRecord: Record<string, { respondents: number; bands: RecordBand[] }>;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -276,12 +281,15 @@ export function useSurveyData() {
     const durations = completed.filter(r => r.duration_seconds).map(r => r.duration_seconds!);
     const medianSeconds = Math.round(median(durations));
 
-    // Record bands — only from completed responses
+    // Record bands — only from completed responses, ladder records only (pse/recs go to PSE panel)
     const completedIds = new Set(completed.map(r => r.id));
     const completedAnswers = filteredAnswers.filter(a => completedIds.has(a.response_id));
-    const recordBands = ALL_RECORD_IDS
+    const recordBands = LADDER_IDS
       .map(qId => computeRecordBand(qId, completedAnswers))
       .sort((a, b) => b.gapPct - a.gapPct);
+
+    // KNOW questions — pse and recs for the Protective Safeguards panel
+    const knowBands = KNOW_IDS.map(qId => computeRecordBand(qId, completedAnswers));
 
     // Scope distribution
     const scopeCounts = toSegmentCounts(countBy(completed, r => r.scope), completed.length);
@@ -335,20 +343,23 @@ export function useSurveyData() {
     }));
 
     // Cross-tab: system × record bands (the finding the study exists to produce)
-    const crossTabSystemByRecord: Record<string, RecordBand[]> = {};
+    const crossTabSystemByRecord: Record<string, { respondents: number; bands: RecordBand[] }> = {};
     const systemValues = [...new Set(completed.map(r => r.system).filter(Boolean))] as string[];
     systemValues.forEach(sys => {
       const sysIds = new Set(completed.filter(r => r.system === sys).map(r => r.id));
       const sysAnswers = completedAnswers.filter(a => sysIds.has(a.response_id));
-      crossTabSystemByRecord[sys] = ALL_RECORD_IDS
-        .map(qId => computeRecordBand(qId, sysAnswers))
-        .filter(b => b.n > 0);
+      crossTabSystemByRecord[sys] = {
+        respondents: sysIds.size,
+        bands: LADDER_IDS
+          .map(qId => computeRecordBand(qId, sysAnswers))
+          .filter(b => b.n > 0),
+      };
     });
 
     return {
       total, completed: completed.length, inProgress: inProgress.length,
       abandoned: abandoned.length, completionRate, medianSeconds,
-      recordBands, scopeCounts, systemCounts, ownerCounts, speedCounts,
+      recordBands, knowBands, scopeCounts, systemCounts, ownerCounts, speedCounts,
       askerCounts, channelCounts, platformCounts, kitchenTypeCounts,
       countCounts, regionCounts, countyCounts, meetingQueue,
       crossTabSystemByRecord,

@@ -189,17 +189,17 @@ export default function SurveyTab() {
       {/* ── Facility readiness by system (the cross-tab) ─────── */}
       <Panel title="Facility readiness by what they keep it in" note="The cross-tab the study exists to produce">
         {Object.keys(stats.crossTabSystemByRecord).length > 0 ? (
-          Object.entries(stats.crossTabSystemByRecord).map(([sys, bands]) => {
+          Object.entries(stats.crossTabSystemByRecord).map(([sys, { respondents, bands }]) => {
             const validBands = bands.filter(b => b.n > 0);
             if (!validBands.length) return null;
-            const totalN = validBands.reduce((s, b) => s + b.n, 0);
             const totalGap = validBands.reduce((s, b) => s + b.untracked + b.gap + b.no, 0);
+            const totalPool = validBands.reduce((s, b) => s + b.n, 0);
             return (
               <div key={sys} className="mb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-[13px] font-semibold" style={{ color: EV_NAVY }}>{sys}</span>
                   <span className="text-[11px] font-mono" style={{ color: EV_FAINT }}>
-                    n={totalN} · {totalN >= MIN_N ? `${Math.round(totalGap / totalN * 100)}% gap` : '\u2014'}
+                    n={respondents} · {respondents >= MIN_N ? `${Math.round(totalGap / totalPool * 100)}% gap` : '\u2014'}
                   </span>
                 </div>
                 {validBands.map(b => (
@@ -216,18 +216,20 @@ export default function SurveyTab() {
 
       {/* ── PSE / signed records ──────────────────────────────── */}
       <Panel title="Protective Safeguards" note="PSE awareness and signed records">
-        {stats.recordBands.filter(b => ['pse', 'recs'].includes(b.question_id) && b.n > 0).length > 0 ? (
-          stats.recordBands
-            .filter(b => ['pse', 'recs'].includes(b.question_id) && b.n > 0)
-            .map(b => (
-              <div key={b.question_id} className="mb-3">
-                <div className="text-[13px] font-semibold mb-1" style={{ color: EV_NAVY }}>{b.name}</div>
+        {stats.knowBands.length > 0 ? (
+          stats.knowBands.map(b => (
+            <div key={b.question_id} className="mb-3">
+              <div className="text-[13px] font-semibold mb-1" style={{ color: EV_NAVY }}>{b.name}</div>
+              {b.n > 0 ? (
                 <div className="text-[12px] font-mono" style={{ color: EV_MUTED }}>
                   Yes: {safePct(b.tracked, b.n)} · No: {safePct(b.no, b.n)} · Unsure: {safePct(b.gap, b.n)} · n={b.n}
                   {b.na > 0 && ` · N/A: ${b.na}`}
                 </div>
-              </div>
-            ))
+              ) : (
+                <div className="text-[12px] font-mono" style={{ color: EV_FAINT }}>n=0</div>
+              )}
+            </div>
+          ))
         ) : <EmptyNote />}
       </Panel>
 
@@ -277,7 +279,7 @@ export default function SurveyTab() {
       <SegmentPanel title="By kitchen type" counts={stats.kitchenTypeCounts} total={stats.completed} />
 
       {/* ── By region ─────────────────────────────────────────── */}
-      <Panel title="By region" note="Census 2020 grouping · 58 counties in 10 regions">
+      <Panel title="By region" note="Census 2020 grouping · 58 counties in 11 regions">
         {stats.regionCounts.length > 0 ? (
           stats.regionCounts.map(s => (
             <BarRow key={s.label} label={s.label}
