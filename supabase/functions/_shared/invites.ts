@@ -288,7 +288,7 @@ export async function buildClientInviteEmail(
   <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;">
     <div style="font-family:${fInstrument};font-size:12px;color:#5F6875;margin-top:8px;line-height:1.6;"><span style="white-space:nowrap;">founders@getevidly.com</span> &middot; <span style="white-space:nowrap;">(855) 384-3591</span> &middot; <span style="white-space:nowrap;"><a href="https://getevidly.com" style="color:#1C2A3A;">getevidly.com</a></span></div>
     <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;margin-top:10px;">EvidLY &middot; Commercial Kitchen Risk Management</div>
-    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">${isCpp ? 'Cleaning Pros Plus, LLC' : 'EvidLY'} &middot; {{BUSINESS_ADDRESS}}</div>
+    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">${isCpp ? 'Cleaning Pros Plus, LLC' : 'EvidLY'} &middot; 2324 M Street #2711 &middot; Merced, CA 95344</div>
     <div style="font-family:${fInstrument};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY${isCpp ? ' &middot; a Cleaning Pros Plus, LLC Company' : ''} &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
   </td></tr>
 

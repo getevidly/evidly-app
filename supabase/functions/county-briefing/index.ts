@@ -293,7 +293,7 @@ function buildBriefingEmail(
   <!-- 5. FOOTER -->
   <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;">
     <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;">EvidLY &middot; Commercial Kitchen Risk Management</div>
-    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">Cleaning Pros Plus, LLC &middot; {{BUSINESS_ADDRESS}}</div>
+    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">Cleaning Pros Plus, LLC &middot; 2324 M Street #2711 &middot; Merced, CA 95344</div>
     <div style="font-family:${fInstrument};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
   </td></tr>
 
