@@ -38,13 +38,14 @@ function renderRingPixels(
   strokeWidth: number,
 ): Uint8Array {
   const [fgR, fgG, fgB] = parseHex(fgHex);
-  const [bgR, bgG, bgB] = parseHex('#EEE7D9'); // track colour
+  const [bgR, bgG, bgB] = parseHex('#E6DFCE'); // track colour (matches mock)
 
   const pct = denominator > 0 ? numerator / denominator : 0;
   const arcAngle = pct * 2 * Math.PI;
   const cx = size / 2;
   const cy = size / 2;
-  const outerR = (size - 2) / 2;     // 1px inset for AA
+  // Ring inset to ~74% of half-size (matches mock SVG r=34 in 104×104)
+  const outerR = size * 0.37;
   const innerR = outerR - strokeWidth;
 
   const data = new Uint8Array(size * size * 4);
@@ -187,8 +188,8 @@ async function encodePng(width: number, height: number, rgba: Uint8Array): Promi
 
 /* ── Upload + public URL ─────────────────────────────────────────── */
 
-const RING_SIZE = 120;
-const STROKE_WIDTH = 12;
+const RING_SIZE = 104;
+const STROKE_WIDTH = 9;
 
 export interface RingUrls {
   fireRingUrl: string;

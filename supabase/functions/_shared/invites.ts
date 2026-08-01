@@ -78,7 +78,7 @@ export function buildAgentInviteEmail(
  *
  * Uses its OWN branded HTML template (not buildEmailHtml). Table-based,
  * inline styles, 600px fixed width. Fonts: Instrument Sans (body),
- * IBM Plex Mono (labels/data), Montserrat 800 (wordmark only).
+ * IBM Plex Mono (labels/data), Montserrat 900 (wordmark only).
  *
  * Ring images are rendered server-side as PNGs and hosted on Supabase
  * Storage (email-assets bucket). Content-addressed: same n/d values
@@ -99,7 +99,6 @@ export async function buildClientInviteEmail(
 ): Promise<{ subject: string; html: string }> {
   const { recipientName, businessName, inviteLink, supabase } = params;
   const firstName = recipientName.split(' ')[0];
-  const orgName = params.senderOrg || 'Cleaning Pros Plus';
 
   // ── Day-one numerators: Fire 1 (hood-cleaning certificate), Food 0.
   //    These are day-one values and must be replaced with real proof
@@ -128,24 +127,29 @@ export async function buildClientInviteEmail(
 
   const subject = "Your hood cleaning service certificate is on file.";
 
-  // Preheader: note's first line so the personal sentence shows in inbox.
+  // Preheader: personal note's first line when present, else subject.
   const preheaderText = params.personalMessage
     ? params.personalMessage.split("\n")[0].substring(0, 150)
-    : `${businessName}, your hood cleaning service certificate is on file.`;
+    : "Your hood cleaning service certificate is on file.";
 
   // Note block: renders only when personalMessage is non-empty.
   const noteBlock = params.personalMessage
-    ? `<!-- NOTE --><tr><td class="p40" style="background:#F4EFE3;padding:20px 40px;border-left:3px solid #B24A2E;">
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;line-height:1.55;color:#3A4453;">${params.personalMessage}</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a8270;margin-top:8px;">&mdash; Arthur</div></td></tr>`
+    ? `<tr><td class="p40" style="background:#FBF9F2;padding:18px 40px;border-bottom:1px solid #EEE7D9;border-left:3px solid #A08C5A;">
+    <div style="font-family:'IBM Plex Mono','Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;margin-bottom:6px;">A note from Arthur</div>
+    <div style="font-family:'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-style:italic;line-height:1.55;color:#3A4453;">${params.personalMessage}</div></td></tr>`
     : "";
 
   // Unsubscribe — simple mailto fallback
   const unsubUrl = `mailto:founders@getevidly.com?subject=Unsubscribe&body=Please%20remove%20${encodeURIComponent(recipientName)}`;
 
+  // Font stacks
+  const fInstrument = "'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  const fMono = "'IBM Plex Mono','Courier New',monospace";
+  const fMontserrat = "'Montserrat','Arial Black','Helvetica Neue',Arial,sans-serif";
+
   const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="x-apple-disable-message-reformatting">
-<title>Your hood cleaning service certificate is on file</title>
+<title>Your EvidLY account is ready, ${firstName}</title>
 <style>body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
 @media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}</style>
 </head><body style="margin:0;padding:0;background:#F7F1E6;">
@@ -154,150 +158,133 @@ export async function buildClientInviteEmail(
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;">
 
-  <!-- 1. HEADER — navy, Montserrat wordmark, 3px ember rule -->
-  <tr><td class="p40" style="background:#1C2A3A;padding:28px 32px;">
-    <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:27px;letter-spacing:-0.02em;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#FFFFFF;">vid</span><span style="color:#B24A2E;">LY</span></span>
+  <!-- 1. HEADER — navy, wordmark + company lockup -->
+  <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;">
+    <div style="font-family:${fMontserrat};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#F4EFE4;">vid</span><span style="color:#B24A2E;">LY</span></div>
+    <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">A Cleaning Pros Plus Company</div>
   </td></tr>
-  <tr><td style="background:#B24A2E;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
 
   <!-- 2. NOTE FROM ARTHUR — collapses when personalMessage is empty -->
   ${noteBlock}
 
-  <!-- 3. HEADLINE -->
-  <tr><td class="p40" style="padding:36px 40px 0;">
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;font-size:24px;line-height:1.25;color:#1C2A3A;">${businessName}, your hood cleaning service certificate is on file.</div>
-  </td></tr>
+  <!-- 3. NAVY BLOCK — headline, intro, pillars, triplet -->
+  <tr><td class="p40" style="background:#1C2A3A;padding:32px 40px 28px;">
+    <h1 style="margin:0;font-family:${fInstrument};font-weight:bold;font-size:27px;line-height:1.22;color:#FFFFFF;">${businessName}, your hood cleaning service certificate is on file.</h1>
+    <p style="margin:14px 0 24px;font-family:${fInstrument};font-size:14px;line-height:1.6;color:#A9B2BE;">You trust Cleaning Pros Plus with your kitchen exhaust and hood cleaning &mdash; the service certificate required by NFPA 96 is on file. Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Binder or application, fire and food records both have to be to hand when they ask.</p>
 
-  <!-- 4. GREETING -->
-  <tr><td class="p40" style="padding:20px 40px 0;">
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;line-height:1.65;color:#4A5566;">Hi ${firstName} &mdash; your kitchen exhaust and hood cleaning service certificate from Cleaning Pros Plus is already on file with EvidLY. That&rsquo;s the first record in your compliance account.</div>
-  </td></tr>
-
-  <!-- 5. INTRO -->
-  <tr><td class="p40" style="padding:16px 40px 0;">
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;line-height:1.65;color:#4A5566;">You trust Cleaning Pros Plus with your kitchen exhaust and hood cleaning. Every service, we leave a dated certificate &mdash; what we cleaned, what we found, what we couldn&rsquo;t reach. That certificate is now the first record in your account. But it&rsquo;s one of ${total} compliance records California requires across fire safety and food safety.</div>
-  </td></tr>
-
-  <!-- 6. PILLARS — Fire, Food, Intelligence -->
-  <tr><td class="p40" style="padding:24px 40px 0;">
+    <!-- Pillars -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-      <!-- Fire Safety -->
-      <tr>
-        <td width="14" valign="top" style="padding-top:3px;"><div style="width:10px;height:10px;border-radius:50%;background:#B24A2E;"></div></td>
-        <td style="padding-left:12px;padding-bottom:16px;">
-          <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;font-weight:700;color:#1C2A3A;">Fire Safety</div>
-          <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:14px;line-height:1.55;color:#4A5566;padding-top:2px;">Hood and duct cleaning, suppression systems, extinguishers, alarms, and sprinklers.</div>
-        </td>
-      </tr>
-      <!-- Food Safety -->
-      <tr>
-        <td width="14" valign="top" style="padding-top:3px;"><div style="width:10px;height:10px;border-radius:50%;background:#3E6B8A;"></div></td>
-        <td style="padding-left:12px;padding-bottom:16px;">
-          <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;font-weight:700;color:#1C2A3A;">Food Safety</div>
-          <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:14px;line-height:1.55;color:#4A5566;padding-top:2px;">Cooling records, holding temperatures, sanitization, food handler cards, and vendor insurance.</div>
-        </td>
-      </tr>
-      <!-- Intelligence -->
-      <tr>
-        <td width="14" valign="top" style="padding-top:3px;"><div style="width:10px;height:10px;border-radius:50%;background:#3E5E4B;"></div></td>
-        <td style="padding-left:12px;">
-          <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;font-weight:700;color:#1C2A3A;">Intelligence</div>
-          <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:14px;line-height:1.55;color:#4A5566;padding-top:2px;">Predictive cadence management, lapse prevention, and audit-ready proof.</div>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-
-  <!-- 7. TEASER BLOCK — cream card with rings -->
-  <tr><td class="p40" style="padding:24px 40px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4EFE3;border:1px solid #EEE7D9;border-radius:8px;">
-      <tr><td style="padding:24px;">
-        <!-- Wordmark + org chip -->
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          <td><span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.02em;"><span style="color:#B24A2E;">E</span><span style="color:#1C2A3A;">vid</span><span style="color:#B24A2E;">LY</span></span></td>
-          <td align="right"><span style="display:inline-block;background:#1C2A3A;color:#FFFFFF;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 10px;border-radius:12px;">${orgName}</span></td>
-        </tr></table>
-        <div style="height:16px;font-size:0;line-height:0;">&nbsp;</div>
-        <!-- ON FILE TODAY -->
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8a8270;">ON FILE TODAY</div>
-        <div style="height:8px;font-size:0;line-height:0;">&nbsp;</div>
-        <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:17px;font-weight:700;line-height:1.3;color:#1C2A3A;">Your hood cleaning certificate is on file.</div>
-        <div style="height:6px;font-size:0;line-height:0;">&nbsp;</div>
-        <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:14px;line-height:1.55;color:#4A5566;">${total} compliance records are required across fire safety and food safety. Here&rsquo;s where you stand.</div>
-        <div style="height:20px;font-size:0;line-height:0;">&nbsp;</div>
-        <!-- TWO RINGS side by side -->
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          <!-- Fire ring -->
-          <td width="50%" align="center" valign="top" style="padding-right:8px;">
-            <!--[if mso]>
-            <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:120px;height:120px;">
-            <v:fill type="frame" src="${fireRingUrl}" />
-            <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true;">
-            <![endif]-->
-            <div style="width:120px;height:120px;background:url('${fireRingUrl}') center/120px 120px no-repeat;margin:0 auto;">
-              <table role="presentation" width="120" cellpadding="0" cellspacing="0" style="width:120px;height:120px;"><tr>
-                <td align="center" valign="middle" style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;color:#B24A2E;">${firePct}%</td>
-              </tr></table>
-            </div>
-            <!--[if mso]></v:textbox></v:rect><![endif]-->
-            <div style="height:8px;font-size:0;line-height:0;">&nbsp;</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1C2A3A;"><b>${fireNumerator}</b> of <b>${fireDenom}</b> on file</div>
-            <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:13px;color:#B24A2E;font-weight:700;padding-top:2px;">Fire Safety</div>
-          </td>
-          <!-- Food ring -->
-          <td width="50%" align="center" valign="top" style="padding-left:8px;">
-            <!--[if mso]>
-            <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:120px;height:120px;">
-            <v:fill type="frame" src="${foodRingUrl}" />
-            <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true;">
-            <![endif]-->
-            <div style="width:120px;height:120px;background:url('${foodRingUrl}') center/120px 120px no-repeat;margin:0 auto;">
-              <table role="presentation" width="120" cellpadding="0" cellspacing="0" style="width:120px;height:120px;"><tr>
-                <td align="center" valign="middle" style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;color:#3E6B8A;">${foodPct}%</td>
-              </tr></table>
-            </div>
-            <!--[if mso]></v:textbox></v:rect><![endif]-->
-            <div style="height:8px;font-size:0;line-height:0;">&nbsp;</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1C2A3A;"><b>${foodNumerator}</b> of <b>${foodDenom}</b> on file</div>
-            <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:13px;color:#3E6B8A;font-weight:700;padding-top:2px;">Food Safety</div>
-          </td>
-        </tr></table>
-        <div style="height:16px;font-size:0;line-height:0;">&nbsp;</div>
-        <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;line-height:1.5;color:#8a8270;">Counts reflect records currently on file. Requirements are based on California commercial kitchen regulations.</div>
+    <tr>
+      <td width="46" valign="top" style="padding-bottom:18px;"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="34" height="34" align="center" valign="middle" style="width:34px;height:34px;background:#EAE0C6;border-radius:8px;font-size:18px;line-height:34px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;">&#128293;</td></tr></table></td>
+      <td valign="top" style="padding-bottom:18px;padding-left:6px;">
+        <div style="font-family:${fInstrument};font-weight:bold;font-size:15px;color:#FFFFFF;">Fire Safety</div>
+        <div style="font-family:${fInstrument};font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Exhaust and hood cleaning (NFPA 96), fire suppression (NFPA 17A), fire extinguishers (NFPA 10), fire alarm (NFPA 72), sprinklers (NFPA 25)</div>
+      </td></tr>
+    <tr>
+      <td width="46" valign="top" style="padding-bottom:18px;"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="34" height="34" align="center" valign="middle" style="width:34px;height:34px;background:#EAE0C6;border-radius:8px;font-size:18px;line-height:34px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;">&#127860;</td></tr></table></td>
+      <td valign="top" style="padding-bottom:18px;padding-left:6px;">
+        <div style="font-family:${fInstrument};font-weight:bold;font-size:15px;color:#FFFFFF;">Food Safety</div>
+        <div style="font-family:${fInstrument};font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Daily temperature logs &mdash; receiving, cooling, hot holding, cold holding, reheating &mdash; sanitization records, pest control, grease trap (if applicable), backflow prevention (if applicable), health permit, food handler cards, food protection manager certification</div>
+      </td></tr>
+    <tr>
+      <td width="46" valign="top" style="padding-bottom:18px;"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="34" height="34" align="center" valign="middle" style="width:34px;height:34px;background:#EAE0C6;border-radius:8px;font-size:18px;line-height:34px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;">&#9889;</td></tr></table></td>
+      <td valign="top" style="padding-bottom:18px;padding-left:6px;">
+        <div style="font-family:${fInstrument};font-weight:bold;font-size:15px;color:#FFFFFF;">Intelligence</div>
+        <div style="font-family:${fInstrument};font-size:12.5px;line-height:1.55;color:#A9B2BE;margin-top:2px;">Real-time alerts, predictive reminders, automated escalation, and regulation cross-referencing</div>
       </td></tr>
     </table>
+
+    <!-- Triplet -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.12);"><tr>
+      <td width="33%" valign="top" align="center" style="padding-top:18px;text-align:center;">
+        <div style="font-family:${fInstrument};font-weight:bold;font-size:13px;color:#CBB37D;">Predict</div>
+        <div style="font-family:${fInstrument};font-size:11px;color:#A9B2BE;margin-top:2px;">what&rsquo;s due</div></td>
+      <td width="33%" valign="top" align="center" style="padding-top:18px;text-align:center;">
+        <div style="font-family:${fInstrument};font-weight:bold;font-size:13px;color:#CBB37D;">Reduce</div>
+        <div style="font-family:${fInstrument};font-size:11px;color:#A9B2BE;margin-top:2px;">the lapse</div></td>
+      <td width="33%" valign="top" align="center" style="padding-top:18px;text-align:center;">
+        <div style="font-family:${fInstrument};font-weight:bold;font-size:13px;color:#CBB37D;">Prove</div>
+        <div style="font-family:${fInstrument};font-size:11px;color:#A9B2BE;margin-top:2px;">it&rsquo;s done</div></td>
+    </tr></table>
   </td></tr>
 
-  <!-- 8. TRIPLET -->
-  <tr><td class="p40" style="padding:0 40px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#B24A2E;text-align:center;line-height:1.6;">Predict what&rsquo;s due &middot; Reduce the lapse &middot; Prove it&rsquo;s done</div>
+  <!-- 4. TEASER BLOCK — clickable dashboard snippet -->
+  <tr><td style="background:#F7F1E6;padding:22px 0 4px;">
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Here&rsquo;s where your kitchen stands</div>
+    <a href="${inviteLink}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FAF7F0;border-top:1px solid #EEE7D9;border-bottom:1px solid #EEE7D9;">
+        <tr><td style="padding:24px 32px 26px;">
+
+          <!-- Wordmark + org chip -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td style="font-family:${fMontserrat};font-weight:800;font-size:16px;letter-spacing:-0.01em;color:#1C2A3A;"><span style="color:#B24A2E;">E</span>vid<span style="color:#B24A2E;">LY</span></td>
+            <td align="right"><span style="font-family:${fMono};font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:#5F6875;background:#EFE8DA;padding:5px 10px;border-radius:5px;">${businessName}</span></td>
+          </tr></table>
+
+          <!-- On file today -->
+          <div style="font-family:${fMono};font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#A79E8B;padding:20px 0 0;">On file today</div>
+          <div style="font-family:${fInstrument};font-size:27px;line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:#1C2A3A;padding:8px 0 0;">Your hood cleaning<br />certificate is on file.</div>
+          <div style="font-family:${fInstrument};font-size:14.5px;line-height:1.6;color:#5F6875;padding:12px 0 22px;"><span style="color:#1C2A3A;font-weight:600;">${total} compliance records are required</span> for this kitchen &mdash; ${fireDenom} fire safety, ${foodDenom} food safety. On top of that: your company&rsquo;s own business records, and one set for every vendor who provides services.</div>
+
+          <!-- TWO RINGS -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 0;"><tr>
+            <!-- Fire ring -->
+            <td width="50%" align="center" valign="top" style="padding:0 6px;">
+              <!--[if mso]>
+              <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:104px;height:104px;">
+              <v:fill type="frame" src="${fireRingUrl}" />
+              <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true;">
+              <![endif]-->
+              <div style="width:104px;height:104px;background:url('${fireRingUrl}') center/104px 104px no-repeat;margin:0 auto;">
+                <table role="presentation" width="104" cellpadding="0" cellspacing="0" style="width:104px;height:104px;"><tr>
+                  <td align="center" valign="middle" style="font-family:${fInstrument};font-size:23px;font-weight:700;color:#1C2A3A;">${firePct}%</td>
+                </tr></table>
+              </div>
+              <!--[if mso]></v:textbox></v:rect><![endif]-->
+              <div style="font-family:${fMono};font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#8b95a3;padding:9px 0 0;">Fire safety</div>
+              <div style="font-family:${fInstrument};font-size:13px;color:#5F6875;padding:4px 0 0;">${fireNumerator} of ${fireDenom} on file</div>
+            </td>
+            <!-- Food ring -->
+            <td width="50%" align="center" valign="top" style="padding:0 6px;">
+              <!--[if mso]>
+              <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:104px;height:104px;">
+              <v:fill type="frame" src="${foodRingUrl}" />
+              <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true;">
+              <![endif]-->
+              <div style="width:104px;height:104px;background:url('${foodRingUrl}') center/104px 104px no-repeat;margin:0 auto;">
+                <table role="presentation" width="104" cellpadding="0" cellspacing="0" style="width:104px;height:104px;"><tr>
+                  <td align="center" valign="middle" style="font-family:${fInstrument};font-size:23px;font-weight:700;color:#1C2A3A;">${foodPct}%</td>
+                </tr></table>
+              </div>
+              <!--[if mso]></v:textbox></v:rect><![endif]-->
+              <div style="font-family:${fMono};font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#8b95a3;padding:9px 0 0;">Food safety</div>
+              <div style="font-family:${fInstrument};font-size:13px;color:#5F6875;padding:4px 0 0;">${foodNumerator} of ${foodDenom} on file</div>
+            </td>
+          </tr></table>
+
+          <!-- Disclaimer -->
+          <div style="font-family:${fInstrument};font-size:13px;line-height:1.55;color:#8b95a3;padding:18px 0 0;">This is what EvidLY holds today, out of the ${total} records a California kitchen has to produce on demand. <span style="color:#5F6875;">It is not a compliance score</span> &mdash; the rest may well exist, in a binder, a vendor&rsquo;s inbox, a folder on a phone. Having them and having them the moment someone asks are not the same thing.</div>
+
+        </td></tr>
+      </table>
+    </a>
   </td></tr>
 
-  <!-- 9. CTA — ember button -->
-  <tr><td class="p40" style="padding:24px 40px;">
-    <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;"><tr>
-      <td align="center" style="background:#B24A2E;border-radius:6px;">
-        <a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;font-weight:700;color:#FFFFFF;text-decoration:none;">See What&rsquo;s On File&nbsp;&#8594;</a>
-      </td></tr></table>
-    <div style="height:10px;font-size:0;line-height:0;">&nbsp;</div>
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;color:#8B94A0;text-align:center;">No login needed.</div>
+  <!-- 5. CTA — closing line + navy button -->
+  <tr><td class="p40" align="center" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;text-align:center;">
+    <div style="font-family:${fInstrument};font-weight:bold;font-size:18px;line-height:1.3;color:#1C2A3A;margin-bottom:18px;">${firstName}, when someone asks, a binder is a search. EvidLY is an answer.</div>
+    <table role="presentation" align="center" cellpadding="0" cellspacing="0"><tr>
+      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;">See what&rsquo;s on file &#8594;</a></td>
+    </tr></table>
+    <div style="font-family:${fInstrument};font-size:11.5px;color:#8B94A0;margin-top:11px;">No login, no password needed.</div>
   </td></tr>
 
-  <!-- 10. CLOSING -->
-  <tr><td class="p40" style="padding:8px 40px 28px;">
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:15px;line-height:1.65;color:#4A5566;">${firstName}, when someone asks, a binder is a search.<br>EvidLY is an answer.</div>
-  </td></tr>
-
-  <!-- 11. FOOTER -->
-  <tr><td class="p40" style="padding:22px 40px;border-top:1px solid #EEE7D9;">
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:13px;font-weight:700;color:#1C2A3A;">EvidLY &middot; Commercial Kitchen Risk Management</div>
-    <div style="height:6px;font-size:0;line-height:0;">&nbsp;</div>
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;">Cleaning Pros Plus, LLC</div>
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;">{{BUSINESS_ADDRESS}}</div>
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;color:#6E675A;line-height:1.8;">founders@getevidly.com &middot; (855) 384-3591</div>
-    <div style="height:14px;border-bottom:1px solid #DDD6C8;font-size:0;line-height:0;">&nbsp;</div>
-    <div style="height:12px;font-size:0;line-height:0;">&nbsp;</div>
-    <div style="font-family:'Instrument Sans',system-ui,sans-serif;font-size:11px;color:#9a927f;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &middot; <a href="${unsubUrl}" style="color:#9a927f;text-decoration:underline;">Unsubscribe</a></div>
+  <!-- 6. FOOTER -->
+  <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;">
+    <div style="font-family:${fInstrument};font-size:12px;color:#5F6875;margin-top:8px;line-height:1.6;"><span style="white-space:nowrap;">founders@getevidly.com</span> &middot; <span style="white-space:nowrap;">(855) 384-3591</span> &middot; <span style="white-space:nowrap;"><a href="https://getevidly.com" style="color:#1C2A3A;">getevidly.com</a></span></div>
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;margin-top:10px;">EvidLY &middot; Commercial Kitchen Risk Management</div>
+    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">Cleaning Pros Plus, LLC &middot; {{BUSINESS_ADDRESS}}</div>
+    <div style="font-family:${fInstrument};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
   </td></tr>
 
 </table></td></tr></table></body></html>`;
