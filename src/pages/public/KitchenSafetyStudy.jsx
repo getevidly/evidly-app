@@ -483,11 +483,6 @@ export default function KitchenSafetyStudy() {
       l: 'Send me a link to forward to whoever holds the rest',
       s: 'Their half, answered by the person who owns it, kept separate from yours. We never ask you for their address.',
     });
-    if (gaps > 0) c.push({
-      id: 'c_meet', meet: true,
-      l: `Meet with EvidLY about these ${gaps}`,
-      s: 'Thirty minutes, by phone. Ticking this links your answers to you so we can see them \u2014 otherwise they stay anonymous.',
-    });
     return c;
   }, [county, skipped, gaps]);
 
@@ -497,7 +492,6 @@ export default function KitchenSafetyStudy() {
     if (choices.c_find)   lines.push('The statewide findings, one email when the study closes.');
     if (choices.c_report) lines.push(`Your gap report for ${county} County, within two working days.`);
     if (choices.c_refer)  lines.push('A link you can forward to whoever holds the rest.');
-    if (choices.c_meet)   lines.push('Thirty minutes with EvidLY, at a time you pick below.');
     return lines;
   }, [choices, county]);
 
@@ -538,26 +532,51 @@ export default function KitchenSafetyStudy() {
               </p>
             </div>
 
-            {/* Sticky progress bar */}
+            {/* Screener — scope question on its own screen */}
+            {!decided && phase === 'form' && (
+              <div style={{ padding: '40px 20px 48px', textAlign: 'center' }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 20, fontWeight: 700, color: INK, letterSpacing: '-0.025em', lineHeight: 1.3 }}>
+                  Do you handle food safety, facility safety, or both?
+                </div>
+                <div style={{ display: 'grid', gap: 10, marginTop: 26, maxWidth: 380, marginLeft: 'auto', marginRight: 'auto' }}>
+                  {SCOPE_OPTS.map(o => (
+                    <button key={o.v} type="button" onClick={() => saveAnswer('scope', o.v)}
+                      style={{
+                        fontFamily: UI, fontSize: 16, fontWeight: 600, color: INK,
+                        background: PAPER, border: `1px solid ${LINE}`, borderRadius: 10,
+                        padding: '16px 18px', cursor: 'pointer',
+                        transition: 'background-color .18s, border-color .18s',
+                        WebkitTapHighlightColor: 'transparent',
+                      }}>
+                      {o.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sticky progress bar — shown after scope is chosen */}
+            {decided && (
             <div style={{
               position: 'sticky', top: 0, zIndex: 30, background: PAPER,
               borderBottom: `1px solid ${LINE}`, padding: '11px 20px',
               display: 'flex', alignItems: 'center', gap: 12,
             }}>
               <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: STONE, whiteSpace: 'nowrap' }}>
-                <b style={{ color: INK, fontWeight: 600 }}>{answeredCount}</b> of {decided ? required.length : '\u2014'} answered
+                <b style={{ color: INK, fontWeight: 600 }}>{answeredCount}</b> of {required.length} answered
               </span>
               <span style={{ flex: 1, height: 5, background: TRACK, borderRadius: 99, overflow: 'hidden' }}>
                 <span style={{
                   display: 'block', height: '100%', borderRadius: 99, background: EMBER,
-                  width: decided && required.length ? `${(answeredCount / required.length * 100)}%` : '0%',
+                  width: required.length ? `${(answeredCount / required.length * 100)}%` : '0%',
                   transition: 'width .35s cubic-bezier(.22,1,.36,1)',
                 }} />
               </span>
             </div>
+            )}
 
-            {/* Body */}
-            <div style={{ padding: '0 20px', display: phase === 'form' ? 'block' : 'none' }}>
+            {/* Body — shown after scope is chosen */}
+            <div style={{ padding: '0 20px', display: decided && phase === 'form' ? 'block' : 'none' }}>
               {/* Intro */}
               <div style={{ padding: '26px 0 8px' }}>
                 <p style={{ fontSize: 15, lineHeight: 1.65, color: INK2, margin: '0 0 12px' }}>
@@ -847,23 +866,33 @@ export default function KitchenSafetyStudy() {
                       <p style={{ fontSize: 12.5, color: STONE, lineHeight: 1.6, margin: '13px 0 0' }}>
                         Sending to {email.trim()}.
                       </p>
-                      {choices.c_meet && (
-                        <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${LINE2}` }}>
-                          <div style={{ fontSize: 14.5, fontWeight: 600, color: INK, lineHeight: 1.45 }}>
-                            Pick a time now
-                          </div>
-                          <div style={{ fontSize: 13, color: MUTED, lineHeight: 1.55, marginTop: 6 }}>
-                            Thirty minutes, by phone. Your answers come up on the call, so there is nothing to prepare.
-                          </div>
-                          <a href={CALENDLY} target="_blank" rel="noopener noreferrer"
-                            style={{ display: 'block', textAlign: 'center', marginTop: 13,
-                              background: EMBER, color: '#fff', textDecoration: 'none',
-                              fontWeight: 600, fontSize: 15.5, padding: 15, borderRadius: 9 }}>
-                            Choose a time →
-                          </a>
-                        </div>
-                      )}
                     </div>
+                  </div>
+                )}
+
+                {/* Meeting block — shown when gaps exist */}
+                {gaps > 0 && (
+                  <div style={{ marginTop: 18, background: PAPER, border: `1px solid ${LINE}`,
+                    borderLeft: `3px solid ${EMBER}`, borderRadius: '0 10px 10px 0',
+                    padding: '18px 18px', boxShadow: '0 1px 2px rgba(28,42,58,.03), 0 16px 34px -30px rgba(28,42,58,.55)' }}>
+                    <div style={{ fontFamily: MONO, fontSize: 9.5, letterSpacing: '.14em', textTransform: 'uppercase', color: STONE2 }}>
+                      One more thing
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.5, color: INK, marginTop: 9 }}>
+                      {gaps} of these would mean going to look, or asking someone else.
+                    </div>
+                    <div style={{ fontFamily: MONO, fontSize: 11, color: STONE, marginTop: 7 }}>
+                      {openList.slice(0, 3).map(q => q.sh).join(' \u00b7 ')}
+                    </div>
+                    <div style={{ fontSize: 13.5, lineHeight: 1.6, color: INK2, marginTop: 10 }}>
+                      That is the conversation worth having. Thirty minutes with the Founder, Arthur {'\u2014'} nothing to prepare. Booking links your answers to you so we can see them; otherwise they stay anonymous.
+                    </div>
+                    <a href={CALENDLY} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'block', textAlign: 'center', marginTop: 14,
+                        background: EMBER, color: '#fff', textDecoration: 'none',
+                        fontWeight: 600, fontSize: 15.5, padding: 15, borderRadius: 9 }}>
+                      Book a meeting {'\u2192'}
+                    </a>
                   </div>
                 )}
 

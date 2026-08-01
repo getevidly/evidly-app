@@ -572,7 +572,8 @@ export function ProspectGate() {
 
           {/* TOP CTA */}
           <div style={{ paddingTop: 26, borderTop: `1px solid ${NAVY_LINE}`, marginTop: 26 }}>
-            <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 17, color: '#fff', margin: '0 0 12px' }}>See the gaps. Let&rsquo;s close them.</p>
+            <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 17, color: '#fff', margin: '0 0 6px' }}>See the gaps. Let&rsquo;s close them.</p>
+            <p style={{ margin: '0 0 14px', fontSize: '13.5px', color: '#a9b4cb' }}>Book a meeting with the Founder, Arthur.</p>
             <a href="https://getevidly.com/study?from=client" target="_blank" rel="noopener"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 20px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
               Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
@@ -803,7 +804,7 @@ export function ProspectGate() {
               <div style={{ flex: '1 1 300px' }}>
                 <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 21, color: '#fff', margin: 0 }}>See the gaps. Let&rsquo;s close them.</p>
                 <p style={{ margin: '10px 0 0', fontSize: '13.5px', color: '#a9b4cb' }}>
-                  Book 30 minutes. EvidLY maps every line above to your kitchen and does the work.
+                  Book a meeting with the Founder, Arthur. Thirty minutes to walk through every line above.
                 </p>
               </div>
               <div style={{ flex: '0 0 auto', minWidth: 250 }}>
