@@ -27,6 +27,19 @@ const corsHeaders = getCorsHeaders(null);
  *
  *   list            {}
  *                   → { counties: [...] }
+ *
+ *   list-steps      {}
+ *                   → { steps: [...] }
+ *
+ *   upsert-step     { step_number, label, delay_days?, trigger_type?, variant_scope?,
+ *                     subject_template?, body_template? }
+ *                   → { step }
+ *
+ *   sign-off-step   { step_number }
+ *                   → { step }
+ *
+ *   cron-process    {} (called by pg_cron, no user auth)
+ *                   → { processed, sent, held, skipped_reasons }
  */
 
 // ── Helpers ─────────────────────────────────────────────────────
@@ -61,6 +74,18 @@ async function computeJurisdictionHash(jur: Record<string, any>): Promise<string
     if (typeof v === 'object') return sortedJsonStringify(v);
     return JSON.stringify(v);
   });
+  const canonical = parts.join('|');
+  const buf = new TextEncoder().encode(canonical);
+  return sha256(buf.buffer);
+}
+
+// Step content hash — covers every field that reaches the recipient.
+// Hashed fields: subject_template, body_template, variant_scope.
+const STEP_HASH_FIELDS = ['subject_template', 'body_template', 'variant_scope', 'delay_days', 'trigger_type'] as const;
+
+// deno-lint-ignore no-explicit-any
+async function computeStepContentHash(step: Record<string, any>): Promise<string> {
+  const parts = STEP_HASH_FIELDS.map(f => JSON.stringify(step[f] ?? ''));
   const canonical = parts.join('|');
   const buf = new TextEncoder().encode(canonical);
   return sha256(buf.buffer);
@@ -287,22 +312,27 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // ── Auth: verify user is EvidLY staff ──────────────────────
-    const authHeader = req.headers.get("Authorization");
-    const supabaseAuth = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: authHeader || "" } },
-    });
-    const { data: { user } } = await supabaseAuth.auth.getUser();
-
-    if (!user) {
-      return jsonResponse({ error: "Unauthorized" }, 401);
-    }
-    if (!user.email?.endsWith("@getevidly.com")) {
-      return jsonResponse({ error: "Admin access required" }, 403);
-    }
-
     const body = await req.json();
     const { action } = body;
+
+    // cron-process is called by pg_cron with service_role JWT — no user auth.
+    // All other actions require a verified @getevidly.com user.
+    let user: { id: string; email?: string } | null = null;
+    if (action !== "cron-process") {
+      const authHeader = req.headers.get("Authorization");
+      const supabaseAuth = createClient(supabaseUrl, supabaseKey, {
+        global: { headers: { Authorization: authHeader || "" } },
+      });
+      const { data: { user: authUser } } = await supabaseAuth.auth.getUser();
+
+      if (!authUser) {
+        return jsonResponse({ error: "Unauthorized" }, 401);
+      }
+      if (!authUser.email?.endsWith("@getevidly.com")) {
+        return jsonResponse({ error: "Admin access required" }, 403);
+      }
+      user = authUser;
+    }
 
     // ── PREVIEW ─────────────────────────────────────────────────
     if (action === "preview") {
@@ -367,7 +397,7 @@ Deno.serve(async (req: Request) => {
           county,
           state_code: 'CA',
           jurisdiction_id: jur.id,
-          approved_by: user.id,
+          approved_by: user!.id,
           approved_at: new Date().toISOString(),
           jurisdiction_hash: hash,
           lapsed_at: null,
@@ -615,6 +645,334 @@ Deno.serve(async (req: Request) => {
       });
 
       return jsonResponse({ counties });
+    }
+
+    // ── LIST-STEPS ───────────────────────────────────────────────
+    if (action === "list-steps") {
+      const { data: steps } = await supabase
+        .from('outreach_steps')
+        .select('*')
+        .order('step_number');
+
+      return jsonResponse({ steps: steps || [] });
+    }
+
+    // ── UPSERT-STEP ─────────────────────────────────────────────
+    if (action === "upsert-step") {
+      const { step_number, label, delay_days, trigger_type, variant_scope,
+              subject_template, body_template } = body;
+
+      if (!step_number || !label) {
+        return jsonResponse({ error: "step_number and label required" }, 400);
+      }
+
+      // Compute content hash over every rendered field
+      const hashInput = {
+        subject_template: subject_template || '',
+        body_template: body_template || '',
+        variant_scope: variant_scope || 'both',
+      };
+      const contentHash = await computeStepContentHash(hashInput);
+
+      // Check if step exists
+      const { data: existing } = await supabase
+        .from('outreach_steps')
+        .select('id, content_hash')
+        .eq('step_number', step_number)
+        .single();
+
+      const row = {
+        step_number,
+        label,
+        delay_days: delay_days ?? 0,
+        trigger_type: trigger_type || 'manual',
+        variant_scope: variant_scope || 'both',
+        subject_template: subject_template || '',
+        body_template: body_template || '',
+        content_hash: contentHash,
+        updated_at: new Date().toISOString(),
+        // If content changed, clear sign-off
+        ...(existing && existing.content_hash !== contentHash
+          ? { signed_off_by: null, signed_off_at: null }
+          : {}),
+      };
+
+      const { data: step, error } = existing
+        ? await supabase.from('outreach_steps').update(row).eq('id', existing.id).select().single()
+        : await supabase.from('outreach_steps').insert({ ...row, content_hash: contentHash }).select().single();
+
+      if (error) return jsonResponse({ error: error.message }, 500);
+
+      return jsonResponse({ step });
+    }
+
+    // ── SIGN-OFF-STEP ───────────────────────────────────────────
+    if (action === "sign-off-step") {
+      const { step_number } = body;
+      if (!step_number) return jsonResponse({ error: "step_number required" }, 400);
+
+      const { data: step } = await supabase
+        .from('outreach_steps')
+        .select('*')
+        .eq('step_number', step_number)
+        .single();
+
+      if (!step) return jsonResponse({ error: `Step ${step_number} not found` }, 404);
+
+      // Recompute hash and verify content hasn't drifted
+      const currentHash = await computeStepContentHash(step);
+      if (currentHash !== step.content_hash) {
+        // Content was modified outside upsert — update hash, clear any stale sign-off
+        await supabase.from('outreach_steps').update({
+          content_hash: currentHash,
+          signed_off_by: null,
+          signed_off_at: null,
+          updated_at: new Date().toISOString(),
+        }).eq('id', step.id);
+        return jsonResponse({ error: "Content hash mismatch — step content changed. Re-review before signing off." }, 422);
+      }
+
+      const { data: updated, error } = await supabase
+        .from('outreach_steps')
+        .update({
+          signed_off_by: user!.id,
+          signed_off_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', step.id)
+        .select()
+        .single();
+
+      if (error) return jsonResponse({ error: error.message }, 500);
+
+      return jsonResponse({ step: updated });
+    }
+
+    // ── CRON-PROCESS ────────────────────────────────────────────
+    // Called daily by pg_cron. Processes auto-trigger steps for warm
+    // recipients. Cold never sends from EvidLY — export to HubSpot.
+    // Every skip writes its reason to the recipient row.
+    if (action === "cron-process") {
+      const now = new Date();
+      let sent = 0, held = 0;
+      const skippedReasons: Record<string, number> = {};
+
+      function trackSkip(reason: string) {
+        skippedReasons[reason] = (skippedReasons[reason] || 0) + 1;
+      }
+
+      // Fetch all auto-trigger steps that are active
+      const { data: steps } = await supabase
+        .from('outreach_steps')
+        .select('*')
+        .eq('trigger_type', 'auto')
+        .eq('is_active', true)
+        .order('step_number');
+
+      if (!steps || steps.length === 0) {
+        return jsonResponse({ processed: 0, sent: 0, held: 0, skipped_reasons: { 'No auto-trigger steps defined': 1 } });
+      }
+
+      for (const step of steps) {
+        // Gate: step must be signed off
+        if (!step.signed_off_at) {
+          // Hold all queued recipients for this step
+          const { data: unsignedRecipients } = await supabase
+            .from('county_briefing_recipients')
+            .select('id')
+            .eq('step_number', step.step_number)
+            .eq('status', 'queued');
+
+          if (unsignedRecipients && unsignedRecipients.length > 0) {
+            for (const r of unsignedRecipients) {
+              await supabase.from('county_briefing_recipients')
+                .update({ status: 'held', hold_reason: `Step ${step.step_number} not signed off` })
+                .eq('id', r.id);
+              held++;
+            }
+            trackSkip(`Step ${step.step_number} not signed off`);
+          }
+          continue;
+        }
+
+        // Verify step content hash hasn't drifted
+        const currentStepHash = await computeStepContentHash(step);
+        if (currentStepHash !== step.content_hash) {
+          const { data: driftRecipients } = await supabase
+            .from('county_briefing_recipients')
+            .select('id')
+            .eq('step_number', step.step_number)
+            .eq('status', 'queued');
+
+          if (driftRecipients && driftRecipients.length > 0) {
+            for (const r of driftRecipients) {
+              await supabase.from('county_briefing_recipients')
+                .update({ status: 'held', hold_reason: `Step ${step.step_number} content changed since sign-off` })
+                .eq('id', r.id);
+              held++;
+            }
+            trackSkip(`Step ${step.step_number} content drifted`);
+          }
+          // Lapse the sign-off
+          await supabase.from('outreach_steps').update({
+            signed_off_by: null, signed_off_at: null,
+            content_hash: currentStepHash,
+            updated_at: now.toISOString(),
+          }).eq('id', step.id);
+          continue;
+        }
+
+        // Fetch queued recipients for this step
+        const { data: recipients } = await supabase
+          .from('county_briefing_recipients')
+          .select('*')
+          .eq('step_number', step.step_number)
+          .eq('status', 'queued');
+
+        if (!recipients || recipients.length === 0) continue;
+
+        // Check delay eligibility
+        const delayMs = step.delay_days * 24 * 60 * 60 * 1000;
+
+        for (const r of recipients) {
+          // Delay gate: recipient must have been created delay_days ago
+          const createdAt = new Date(r.created_at);
+          if (now.getTime() - createdAt.getTime() < delayMs) {
+            trackSkip(`Step ${step.step_number} delay not elapsed`);
+            continue; // Don't hold — just not ready yet
+          }
+
+          // Cold recipients never send from EvidLY
+          if (r.variant === 'cold') {
+            trackSkip('Cold variant — export to HubSpot');
+            continue; // Leave as queued — cold exported manually
+          }
+
+          // County approval gate
+          const { data: approval } = await supabase
+            .from('county_briefing_approvals')
+            .select('*')
+            .eq('county', r.county)
+            .eq('state_code', 'CA')
+            .single();
+
+          if (!approval || !approval.approved_at) {
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: 'County not approved' })
+              .eq('id', r.id);
+            held++;
+            trackSkip('County not approved');
+            continue;
+          }
+
+          if (approval.lapsed_at) {
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: `County approval lapsed: ${approval.lapse_reason || 'data changed'}` })
+              .eq('id', r.id);
+            held++;
+            trackSkip('County approval lapsed');
+            continue;
+          }
+
+          // Jurisdiction hash check
+          const { data: jur } = await supabase
+            .from('jurisdictions')
+            .select('*')
+            .eq('county', r.county)
+            .eq('state_code', 'CA')
+            .eq('is_active', true)
+            .limit(1)
+            .single();
+
+          if (!jur) {
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: 'No active jurisdiction' })
+              .eq('id', r.id);
+            held++;
+            trackSkip('No active jurisdiction');
+            continue;
+          }
+
+          const currentJurHash = await computeJurisdictionHash(jur);
+          if (currentJurHash !== approval.jurisdiction_hash) {
+            await supabase.from('county_briefing_approvals').update({
+              lapsed_at: now.toISOString(),
+              lapse_reason: 'Jurisdiction data changed since approval',
+              updated_at: now.toISOString(),
+            }).eq('id', approval.id);
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: 'County approval lapsed: jurisdiction data changed' })
+              .eq('id', r.id);
+            held++;
+            trackSkip('Jurisdiction data changed');
+            continue;
+          }
+
+          // Dedup check
+          const { data: existing } = await supabase
+            .from('county_briefing_recipients')
+            .select('id')
+            .eq('email', r.email)
+            .eq('county', r.county)
+            .eq('step_number', r.step_number)
+            .eq('status', 'sent')
+            .limit(1);
+
+          if (existing && existing.length > 0) {
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: 'Already sent this step to this email' })
+              .eq('id', r.id);
+            held++;
+            trackSkip('Dedup');
+            continue;
+          }
+
+          // Warm invite lookup
+          const { data: invite } = await supabase
+            .from('evidly_client_invites')
+            .select('token')
+            .eq('email', r.email)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+          if (!invite?.token) {
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: 'No invite on file for this email' })
+              .eq('id', r.id);
+            held++;
+            trackSkip('No invite on file');
+            continue;
+          }
+
+          const ctaUrl = `https://app.getevidly.com/join/${invite.token}`;
+          const firstName = r.first_name || 'there';
+          const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl);
+          const emailSubject = step.subject_template
+            ? step.subject_template.replace(/\{\{COUNTY\}\}/g, r.county).replace(/\{\{FIRST_NAME\}\}/g, firstName)
+            : `${r.county} County Briefing — How This County Evaluates Commercial Kitchens`;
+
+          const result = await sendEmail({ to: r.email, subject: emailSubject, html });
+
+          if (result) {
+            await supabase.from('county_briefing_recipients').update({
+              status: 'sent',
+              sent_at: now.toISOString(),
+              resend_id: result.id,
+              approval_id: approval.id,
+            }).eq('id', r.id);
+            sent++;
+          } else {
+            await supabase.from('county_briefing_recipients')
+              .update({ status: 'failed' })
+              .eq('id', r.id);
+            trackSkip('Send failed');
+          }
+        }
+      }
+
+      console.log("[county-briefing] cron-process:", JSON.stringify({ sent, held, skipped_reasons: skippedReasons }));
+      return jsonResponse({ processed: sent + held, sent, held, skipped_reasons: skippedReasons });
     }
 
     return jsonResponse({ error: `Unknown action: ${action}` }, 400);
