@@ -4,6 +4,13 @@
  * Both the public instrument (KitchenSafetyStudy.jsx) and the
  * email senders (survey-respond/index.ts) import from here so
  * citations cannot drift between the two.
+ *
+ * ⚠  CROSS-REPO DEPENDENCY
+ * evidly-landing vendors a copy of these citations as a test fixture:
+ *   evidly-landing/tests/fixtures/canonical-citations.json
+ * If you change a citation here, update that fixture in the same session.
+ * A test in evidly-landing asserts the two match; it will fail on the
+ * landing side until the fixture is updated.
  */
 
 export interface QuestionMeta {
