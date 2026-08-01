@@ -75,30 +75,39 @@ Deno.serve(async (req: Request) => {
           continue;
         }
 
-        // Gate: hood cleaning certificate must be on file before sending.
-        // Checks both vendor_service_records and compliance_documents —
-        // same two sources the /gate page reads via gate-record-state.
-        const { data: hoodSvc } = await supabase
-          .from('vendor_service_records')
-          .select('id')
-          .eq('organization_id', inv.organization_id)
-          .eq('safeguard_type', 'hood_cleaning')
-          .eq('is_sample', false)
-          .limit(1);
-        let hoodOnFile = (hoodSvc?.length ?? 0) > 0;
-        if (!hoodOnFile) {
-          const { data: hoodDoc } = await supabase
-            .from('compliance_documents')
+        // Look up access_via for the org
+        const { data: sendOrgRow } = await supabase
+          .from('organizations')
+          .select('access_via')
+          .eq('id', inv.organization_id)
+          .maybeSingle();
+        const sendIsCpp = sendOrgRow?.access_via === 'cpp_client';
+
+        // Gate: hood cert check — only for CPP clients whose email claims
+        // the certificate is on file. Non-CPP clients skip: no cert claimed.
+        if (sendIsCpp) {
+          const { data: hoodSvc } = await supabase
+            .from('vendor_service_records')
             .select('id')
             .eq('organization_id', inv.organization_id)
-            .in('status', ['current', 'expiring'])
-            .eq('service_type_code', 'KEC')
+            .eq('safeguard_type', 'hood_cleaning')
+            .eq('is_sample', false)
             .limit(1);
-          hoodOnFile = (hoodDoc?.length ?? 0) > 0;
-        }
-        if (!hoodOnFile) {
-          results.push({ id, ok: false, error: 'Hood cleaning certificate must be on file before sending' });
-          continue;
+          let hoodOnFile = (hoodSvc?.length ?? 0) > 0;
+          if (!hoodOnFile) {
+            const { data: hoodDoc } = await supabase
+              .from('compliance_documents')
+              .select('id')
+              .eq('organization_id', inv.organization_id)
+              .in('status', ['current', 'expiring'])
+              .eq('service_type_code', 'KEC')
+              .limit(1);
+            hoodOnFile = (hoodDoc?.length ?? 0) > 0;
+          }
+          if (!hoodOnFile) {
+            results.push({ id, ok: false, error: 'Hood cleaning certificate must be on file before sending' });
+            continue;
+          }
         }
 
         const { subject, html } = await buildClientInviteEmail({
@@ -107,6 +116,7 @@ Deno.serve(async (req: Request) => {
           businessName: inv.organization_name || 'your kitchen',
           inviteLink: `${appBase}/join/${inv.token}`,
           personalMessage: inv.message || undefined,
+          accessVia: sendOrgRow?.access_via || undefined,
           supabase,
         });
 
@@ -135,7 +145,7 @@ Deno.serve(async (req: Request) => {
     if (invite_id) {
       const { data: inv, error: invErr } = await supabase
         .from("evidly_client_invites")
-        .select("id, organization_name, contact_name, email, token, message, status, reminder_count")
+        .select("id, organization_id, organization_name, contact_name, email, token, message, status, reminder_count")
         .eq("id", invite_id)
         .single();
 
@@ -144,12 +154,24 @@ Deno.serve(async (req: Request) => {
         return json({ error: `Cannot remind a ${inv.status} invite` }, 400, headers);
       }
 
+      // Look up access_via for correct email template
+      let remindAccessVia: string | undefined;
+      if (inv.organization_id) {
+        const { data: remindOrg } = await supabase
+          .from('organizations')
+          .select('access_via')
+          .eq('id', inv.organization_id)
+          .maybeSingle();
+        remindAccessVia = remindOrg?.access_via || undefined;
+      }
+
       const { subject, html } = await buildClientInviteEmail({
         recipientName: inv.contact_name,
         senderName: sender_name || undefined,
         businessName: inv.organization_name || 'your kitchen',
         inviteLink: `${appBase}/join/${inv.token}`,
         personalMessage: inv.message || undefined,
+        accessVia: remindAccessVia,
         supabase,
       });
 
@@ -254,35 +276,44 @@ Deno.serve(async (req: Request) => {
       return json({ success: true, invite_id: created.id, sent: false }, 200, headers);
     }
 
-    // ── Gate: hood cleaning certificate must be on file before sending.
-    //    Checks both vendor_service_records and compliance_documents —
-    //    same two sources the /gate page reads via gate-record-state. ──
-    const { data: hoodSvc } = await supabase
-      .from('vendor_service_records')
-      .select('id')
-      .eq('organization_id', organization_id)
-      .eq('safeguard_type', 'hood_cleaning')
-      .eq('is_sample', false)
-      .limit(1);
-    let hoodOnFile = (hoodSvc?.length ?? 0) > 0;
-    if (!hoodOnFile) {
-      const { data: hoodDoc } = await supabase
-        .from('compliance_documents')
+    // Look up access_via for gate and email template
+    const { data: newOrgRow } = await supabase
+      .from('organizations')
+      .select('access_via')
+      .eq('id', organization_id)
+      .maybeSingle();
+    const newIsCpp = newOrgRow?.access_via === 'cpp_client';
+
+    // ── Gate: hood cert check — only for CPP clients whose email claims
+    //    the certificate is on file. Non-CPP clients skip: no cert claimed. ──
+    if (newIsCpp) {
+      const { data: hoodSvc } = await supabase
+        .from('vendor_service_records')
         .select('id')
         .eq('organization_id', organization_id)
-        .in('status', ['current', 'expiring'])
-        .eq('service_type_code', 'KEC')
+        .eq('safeguard_type', 'hood_cleaning')
+        .eq('is_sample', false)
         .limit(1);
-      hoodOnFile = (hoodDoc?.length ?? 0) > 0;
-    }
-    if (!hoodOnFile) {
-      await supabase.from("evidly_client_invites").update({
-        status: "draft", expires_at: null,
-      }).eq("id", created.id);
-      return json({
-        error: "Hood cleaning certificate must be on file before sending",
-        invite_id: created.id, sent: false,
-      }, 422, headers);
+      let hoodOnFile = (hoodSvc?.length ?? 0) > 0;
+      if (!hoodOnFile) {
+        const { data: hoodDoc } = await supabase
+          .from('compliance_documents')
+          .select('id')
+          .eq('organization_id', organization_id)
+          .in('status', ['current', 'expiring'])
+          .eq('service_type_code', 'KEC')
+          .limit(1);
+        hoodOnFile = (hoodDoc?.length ?? 0) > 0;
+      }
+      if (!hoodOnFile) {
+        await supabase.from("evidly_client_invites").update({
+          status: "draft", expires_at: null,
+        }).eq("id", created.id);
+        return json({
+          error: "Hood cleaning certificate must be on file before sending",
+          invite_id: created.id, sent: false,
+        }, 422, headers);
+      }
     }
 
     // Journey stage: invited (shared helper — idempotent, never moves backwards)
@@ -294,6 +325,7 @@ Deno.serve(async (req: Request) => {
       businessName: organization_name || 'your kitchen',
       inviteLink: `${appBase}/join/${token}`,
       personalMessage: message || undefined,
+      accessVia: newOrgRow?.access_via || undefined,
       supabase,
     });
 

@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Building2, MapPin, Users, Mail, Send, ShieldAlert, RefreshCw, CheckCircle2, Clock, Phone, Plus, Trash2 } from 'lucide-react';
+import { Building2, MapPin, Users, Mail, ShieldAlert, RefreshCw, CheckCircle2, Clock, Phone, Plus, Trash2 } from 'lucide-react';
 import { TONE, SURFACE, TEXT, LINE, FONT } from '../design/tokens';
 import { supabase } from '../lib/supabase';
 import { createLocation } from '../lib/locations/createLocation';
 import { JurisdictionSelect } from '../components/jurisdiction/JurisdictionSelect';
 import { US_STATES } from '../types/rfp';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminBreadcrumb from '../components/admin/AdminBreadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { ClientInviteForm } from './ClientInviteForm';
@@ -44,7 +44,7 @@ const STAGES = [
 
 const ADVANCE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/advance-journey-stage`;
 const QUEUE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/onboarding-queue`;
-const CREATE_FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client-invite`;
+
 
 interface QueueAccount {
   org_id: string;
@@ -75,11 +75,18 @@ interface LocationEntry {
   state: string;
   zip: string;
   jurisdictionId: string;
+  // Property manager (per location)
+  pmCompany: string;
+  pmContact: string;
+  pmEmail: string;
+  pmPhone: string;
+  pmLeaseRenewal: string;
 }
 
 const newLocationEntry = (): LocationEntry => ({
   id: crypto.randomUUID(),
   name: '', street: '', suite: '', city: '', state: '', zip: '', jurisdictionId: '',
+  pmCompany: '', pmContact: '', pmEmail: '', pmPhone: '', pmLeaseRenewal: '',
 });
 
 // ─── Onboarding Queue Component ────────────────────────────────────
@@ -420,8 +427,10 @@ function OnboardingQueue() {
 // ─── Main page ─────────────────────────────────────────────────────
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const contactId = searchParams.get('contact_id');
   const { isDemoMode } = useDemo();
-  const [mode, setMode] = useState<'invite' | 'manual' | 'queue'>('invite');
+  const [mode, setMode] = useState<'manual' | 'invite' | 'queue'>('manual');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -434,14 +443,43 @@ export function AdminClientOnboarding() {
   const [ownerEmail, setOwnerEmail] = useState('');
   const [ownerMobile, setOwnerMobile] = useState('');
 
+  // Contact spine fields
+  const [accessVia, setAccessVia] = useState<'cpp_client' | 'signed_on_directly'>('signed_on_directly');
+  const [billing, setBilling] = useState<'not_paying' | 'in_trial' | 'paying'>('not_paying');
+
+  // Insurance (org level)
+  const [insBrokerAgency, setInsBrokerAgency] = useState('');
+  const [insBrokerContact, setInsBrokerContact] = useState('');
+  const [insCarrier, setInsCarrier] = useState('');
+  const [insEmail, setInsEmail] = useState('');
+  const [insPhone, setInsPhone] = useState('');
+  const [insRenewal, setInsRenewal] = useState('');
+
   // Tribal casino fields
   const [selectedTribe, setSelectedTribe] = useState('');
 
   // Per-location entries — at least one required
   const [locations, setLocations] = useState<LocationEntry[]>([newLocationEntry()]);
-  const [sendNow, setSendNow] = useState(true);
 
   const isTribal = industryType === 'tribal_casino';
+
+  // Prefill from contact when ?contact_id= is present
+  useEffect(() => {
+    if (!contactId) return;
+    (async () => {
+      const { data } = await supabase
+        .from('county_briefing_recipients')
+        .select('first_name, last_name, email, phone, org_name')
+        .eq('id', contactId)
+        .maybeSingle();
+      if (data) {
+        if (data.org_name) setOrgName(data.org_name);
+        if (data.first_name) setOwnerName(data.last_name ? `${data.first_name} ${data.last_name}` : data.first_name);
+        if (data.email) setOwnerEmail(data.email);
+        if (data.phone) setOwnerMobile(data.phone);
+      }
+    })();
+  }, [contactId]);
 
   useEffect(() => {
     if (isTribal) setIndustrySubtype('tribal-casino');
@@ -495,7 +533,7 @@ export function AdminClientOnboarding() {
     }
 
     try {
-      // 1. Create organization
+      // 1. Create organization — sends NOTHING
       const { data: orgData, error: orgError } = await supabase
         .from('organizations')
         .insert({
@@ -507,20 +545,28 @@ export function AdminClientOnboarding() {
           primary_contact_email: ownerEmail,
           primary_contact_phone: ownerMobile || null,
           main_phone: businessPhone || null,
-          plan_tier: 'founder',
+          plan_tier: accessVia === 'cpp_client' ? 'cpp_free' : 'founder',
+          access_via: accessVia,
+          billing,
+          ...(insBrokerAgency ? { insurance_broker_agency: insBrokerAgency } : {}),
+          ...(insBrokerContact ? { insurance_broker_contact: insBrokerContact } : {}),
+          ...(insCarrier ? { insurance_carrier: insCarrier } : {}),
+          ...(insEmail ? { insurance_email: insEmail } : {}),
+          ...(insPhone ? { insurance_phone: insPhone } : {}),
+          ...(insRenewal ? { insurance_policy_renewal: insRenewal } : {}),
         })
         .select()
         .single();
 
       if (orgError) throw orgError;
 
-      // 2. Create one location row per entry — each with its own address + jurisdiction
+      // 2. Create one location row per entry — each with its own address + jurisdiction + PM
       for (let i = 0; i < locations.length; i++) {
         const loc = locations[i];
         const address = loc.suite.trim()
           ? `${loc.street.trim()}, ${loc.suite.trim()}`
           : loc.street.trim();
-        await createLocation({
+        const locData = await createLocation({
           organization_id: orgData.id,
           name: loc.name.trim() || `Location ${i + 1}`,
           address,
@@ -530,38 +576,33 @@ export function AdminClientOnboarding() {
           jurisdiction_id: loc.jurisdictionId,
           status: 'active',
         });
+        // Save property manager fields if any were entered
+        const pmUpdate: Record<string, string> = {};
+        if (loc.pmCompany.trim()) pmUpdate.pm_company = loc.pmCompany.trim();
+        if (loc.pmContact.trim()) pmUpdate.pm_contact = loc.pmContact.trim();
+        if (loc.pmEmail.trim()) pmUpdate.pm_email = loc.pmEmail.trim();
+        if (loc.pmPhone.trim()) pmUpdate.pm_phone = loc.pmPhone.trim();
+        if (loc.pmLeaseRenewal) pmUpdate.pm_lease_renewal = loc.pmLeaseRenewal;
+        if (Object.keys(pmUpdate).length > 0 && locData?.id) {
+          await supabase.from('locations').update(pmUpdate).eq('id', locData.id);
+        }
       }
 
-      // 3. Send invite — builds location_snapshot for /join gate, sends claim email
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(CREATE_FN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({
-          organization_id: orgData.id,
-          organization_name: orgName,
-          contact_name: ownerName,
-          email: ownerEmail,
-          phone: ownerMobile || null,
-          client_role: 'owner_operator',
-          sender_name: 'Arthur',
-          skip_send: !sendNow,
-        }),
-      });
-      const inviteOut = await res.json();
-      if (!res.ok) throw new Error(inviteOut.error || 'Failed to send invite');
+      // 3. Link back to contact if prefilled via ?contact_id=
+      if (contactId) {
+        await supabase
+          .from('county_briefing_recipients')
+          .update({ organization_id: orgData.id })
+          .eq('id', contactId);
+      }
 
-      setSuccess(sendNow
-        ? `Client organization created! An invite has been sent to ${ownerEmail}.`
-        : `Client organization created! Account provisioned for ${ownerEmail}. Invite not sent yet.`
-      );
+      setSuccess('Client organisation created. Go to the Invite tab to grant access.');
       setTimeout(() => {
         setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
         setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
+        setAccessVia('signed_on_directly'); setBilling('not_paying');
+        setInsBrokerAgency(''); setInsBrokerContact(''); setInsCarrier('');
+        setInsEmail(''); setInsPhone(''); setInsRenewal('');
       }, 5000);
     } catch (err: any) {
       setError(err.message || 'Failed to create client organization');
@@ -575,8 +616,8 @@ export function AdminClientOnboarding() {
       <AdminBreadcrumb crumbs={[{ label: 'Client Onboarding' }]} />
       <div className="max-w-5xl mx-auto">
         <div className="flex gap-2 mb-6">
-          <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite a client</button>
-          <button onClick={() => setMode('manual')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'manual' ? '#1E2D4D' : 'transparent', color: mode === 'manual' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Provision manually</button>
+          <button onClick={() => setMode('manual')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'manual' ? '#1E2D4D' : 'transparent', color: mode === 'manual' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Set up a client</button>
+          <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite</button>
           <button onClick={() => setMode('queue')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'queue' ? '#1E2D4D' : 'transparent', color: mode === 'queue' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Onboarding queue</button>
         </div>
         {mode === 'queue' && <OnboardingQueue />}
@@ -584,9 +625,9 @@ export function AdminClientOnboarding() {
         {mode === 'manual' && (
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Create Client Organization</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Set up a client</h2>
             <p className="text-[#1E2D4D]/70">
-              Set up a new client organization with pre-populated data. The client will receive an email to claim their account.
+              Create the organisation and locations. No email is sent — use the Invite tab to grant access.
             </p>
           </div>
 
@@ -702,6 +743,87 @@ export function AdminClientOnboarding() {
                   placeholder="(555) 123-4567"
                 />
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="accessVia" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                    Access Via
+                  </label>
+                  <select
+                    id="accessVia"
+                    value={accessVia}
+                    onChange={(e) => setAccessVia(e.target.value as 'cpp_client' | 'signed_on_directly')}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  >
+                    <option value="signed_on_directly">Signed on directly</option>
+                    <option value="cpp_client">CPP client</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="billing" className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">
+                    Billing
+                  </label>
+                  <select
+                    id="billing"
+                    value={billing}
+                    onChange={(e) => setBilling(e.target.value as 'not_paying' | 'in_trial' | 'paying')}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  >
+                    <option value="not_paying">Not paying</option>
+                    <option value="in_trial">In trial</option>
+                    <option value="paying">Paying</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Insurance (org level) ── */}
+            <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
+              <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-[#A08C5A]" />
+                Insurance <span className="text-xs font-normal text-[#1E2D4D]/50 ml-1">Optional</span>
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Broker / Agency</label>
+                  <input type="text" value={insBrokerAgency} onChange={(e) => setInsBrokerAgency(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="ABC Insurance Agency" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Broker Contact</label>
+                  <input type="text" value={insBrokerContact} onChange={(e) => setInsBrokerContact(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="Jane Doe" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Carrier</label>
+                  <input type="text" value={insCarrier} onChange={(e) => setInsCarrier(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="State Farm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Policy Renewal</label>
+                  <input type="date" value={insRenewal} onChange={(e) => setInsRenewal(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Insurance Email</label>
+                  <input type="email" value={insEmail} onChange={(e) => setInsEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="broker@example.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Insurance Phone</label>
+                  <input type="tel" value={insPhone} onChange={(e) => setInsPhone(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    placeholder="(555) 123-4567" />
+                </div>
+              </div>
             </div>
 
             {/* ── Locations (repeatable, at least 1 required) ── */}
@@ -791,6 +913,47 @@ export function AdminClientOnboarding() {
                       Requirements resolve against this location's county. Locations may be in different counties.
                     </p>
                   </div>
+
+                  {/* Property manager (per location) */}
+                  <div className="pt-3 mt-3" style={{ borderTop: '1px dashed rgba(30,45,77,0.1)' }}>
+                    <p className="text-xs font-semibold text-[#1E2D4D]/50 uppercase tracking-wide mb-2">Property Manager</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Company</label>
+                        <input type="text" value={loc.pmCompany}
+                          onChange={(e) => updateLocation(loc.id, 'pmCompany', e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          placeholder="Acme Property Mgmt" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Contact</label>
+                        <input type="text" value={loc.pmContact}
+                          onChange={(e) => updateLocation(loc.id, 'pmContact', e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          placeholder="John Smith" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Email</label>
+                        <input type="email" value={loc.pmEmail}
+                          onChange={(e) => updateLocation(loc.id, 'pmEmail', e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          placeholder="pm@example.com" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Phone</label>
+                        <input type="tel" value={loc.pmPhone}
+                          onChange={(e) => updateLocation(loc.id, 'pmPhone', e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          placeholder="(555) 123-4567" />
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Lease Renewal</label>
+                      <input type="date" value={loc.pmLeaseRenewal}
+                        onChange={(e) => updateLocation(loc.id, 'pmLeaseRenewal', e.target.value)}
+                        className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    </div>
+                  </div>
                 </div>
               ))}
 
@@ -875,20 +1038,6 @@ export function AdminClientOnboarding() {
               </div>
             </div>
 
-            <label className="flex items-center gap-2 mb-4 text-sm text-[#1E2D4D] cursor-pointer select-none">
-              <input type="checkbox" checked={sendNow} onChange={e => setSendNow(e.target.checked)} className="rounded border-[#1E2D4D]/30 text-[#1E2D4D] focus:ring-[#1E2D4D]" />
-              Send invite email now
-            </label>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <p className="text-sm text-blue-800">
-                <strong>Note:</strong> {sendNow
-                  ? 'The client will receive an invite email to claim their account via a secure link.'
-                  : 'The account will be provisioned but no email will be sent. You can send the invite later from the Invites tab.'}
-                {' '}The organization will be pre-configured with industry-specific templates.
-              </p>
-            </div>
-
             <div className="flex gap-3">
               <button
                 type="button"
@@ -902,14 +1051,8 @@ export function AdminClientOnboarding() {
                 disabled={loading || locations.some(l => !l.jurisdictionId)}
                 className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {loading ? (
-                  'Creating...'
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    {sendNow ? 'Create Client & Send Invitation' : 'Create Client & Provision Account'}
-                  </>
-                )}
+                <Building2 className="w-5 h-5" />
+                {loading ? 'Creating...' : 'Create Organisation'}
               </button>
             </div>
           </form>

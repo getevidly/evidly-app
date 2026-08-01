@@ -130,12 +130,31 @@ Deno.serve(async (req) => {
 
     if (reqErr) console.error('gate-record-state: pillar_requirements query failed:', reqErr);
 
+    // ── 5b. Reduce vendor denominator for unresponsive vendors ──
+    // A vendor marked not-responding after 3 attempts over 14+ days
+    // comes OUT of the required count. Otherwise the count never
+    // completes and the billing clock never starts.
+    let vendorReduction = 0;
+    const { data: nrVendors } = await db
+      .from('vendors')
+      .select('id')
+      .eq('organization_id', orgId)
+      .eq('outreach_not_responding', true);
+    if (nrVendors && nrVendors.length > 0) {
+      // Each unresponsive vendor removes one vendor_business instance
+      // from the denominator (one set of vendor docs per vendor).
+      const vendReqCount = reqs
+        ? reqs.filter((r: { pillar: string }) => r.pillar === 'vendor_business').length
+        : 5;
+      vendorReduction = nrVendors.length * vendReqCount;
+    }
+
     const denominators = reqs && reqs.length > 0
       ? {
           fire: reqs.filter((r: { pillar: string }) => r.pillar === 'fire_safety').length,
           food: reqs.filter((r: { pillar: string }) => r.pillar === 'food_safety').length,
           biz: reqs.filter((r: { pillar: string }) => r.pillar === 'business_records').length,
-          vend: reqs.filter((r: { pillar: string }) => r.pillar === 'vendor_business').length,
+          vend: Math.max(0, reqs.filter((r: { pillar: string }) => r.pillar === 'vendor_business').length - vendorReduction),
         }
       : null;
 

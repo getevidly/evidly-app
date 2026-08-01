@@ -91,19 +91,20 @@ interface ClientInviteParams {
   businessName: string;
   inviteLink: string;
   personalMessage?: string;
+  accessVia?: string;  // 'cpp_client' | 'signed_on_directly'
   supabase: SupabaseClient;
 }
 
 export async function buildClientInviteEmail(
   params: ClientInviteParams,
 ): Promise<{ subject: string; html: string }> {
-  const { recipientName, businessName, inviteLink, supabase } = params;
+  const { recipientName, businessName, inviteLink, supabase, accessVia } = params;
   const firstName = recipientName.split(' ')[0];
+  const isCpp = accessVia === 'cpp_client';
 
-  // ── Day-one numerators: Fire 1 (hood-cleaning certificate), Food 0.
-  //    These are day-one values and must be replaced with real proof
-  //    counts if this email is ever re-sent to an established client. ──
-  const fireNumerator = 1;
+  // ── Day-one numerators: CPP clients start with 1 fire (hood cert on file).
+  //    Non-CPP clients start at 0/0 — no certificate is claimed. ──
+  const fireNumerator = isCpp ? 1 : 0;
   const foodNumerator = 0;
 
   // Derive denominators from the pillar_requirements catalog so adding
@@ -125,12 +126,14 @@ export async function buildClientInviteEmail(
     supabase, fireNumerator, fireDenom, foodNumerator, foodDenom,
   );
 
-  const subject = "Your hood cleaning service certificate is on file.";
+  const subject = isCpp
+    ? "Your hood cleaning service certificate is on file."
+    : "Your EvidLY account is ready.";
 
   // Preheader: personal note's first line when present, else subject.
   const preheaderText = params.personalMessage
     ? params.personalMessage.split("\n")[0].substring(0, 150)
-    : "Your hood cleaning service certificate is on file.";
+    : subject;
 
   // Note block: renders only when personalMessage is non-empty.
   const noteBlock = params.personalMessage
@@ -161,7 +164,7 @@ export async function buildClientInviteEmail(
   <!-- 1. HEADER — navy, wordmark + company lockup -->
   <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;">
     <div style="font-family:${fMontserrat};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#F4EFE4;">vid</span><span style="color:#B24A2E;">LY</span></div>
-    <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">A Cleaning Pros Plus Company</div>
+    <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">${isCpp ? 'A Cleaning Pros Plus Company' : 'Commercial Kitchen Risk Management'}</div>
   </td></tr>
 
   <!-- 2. NOTE FROM ARTHUR — collapses when personalMessage is empty -->
@@ -169,8 +172,10 @@ export async function buildClientInviteEmail(
 
   <!-- 3. NAVY BLOCK — headline, intro, pillars, triplet -->
   <tr><td class="p40" style="background:#1C2A3A;padding:32px 40px 28px;">
-    <h1 style="margin:0;font-family:${fInstrument};font-weight:bold;font-size:27px;line-height:1.22;color:#FFFFFF;">${businessName}, your hood cleaning service certificate is on file.</h1>
-    <p style="margin:14px 0 24px;font-family:${fInstrument};font-size:14px;line-height:1.6;color:#A9B2BE;">You trust Cleaning Pros Plus with your kitchen exhaust and hood cleaning &mdash; the service certificate required by NFPA 96 is on file. Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Binder or application, fire and food records both have to be to hand when they ask.</p>
+    <h1 style="margin:0;font-family:${fInstrument};font-weight:bold;font-size:27px;line-height:1.22;color:#FFFFFF;">${isCpp ? `${businessName}, your hood cleaning service certificate is on file.` : `${businessName}, your account is ready.`}</h1>
+    <p style="margin:14px 0 24px;font-family:${fInstrument};font-size:14px;line-height:1.6;color:#A9B2BE;">${isCpp
+      ? `You trust Cleaning Pros Plus with your kitchen exhaust and hood cleaning &mdash; the service certificate required by NFPA 96 is on file. Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Binder or application, fire and food records both have to be to hand when they ask.`
+      : `Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Binder or application, fire and food records both have to be to hand when they ask. EvidLY keeps every record in one place so the answer is ready the moment someone asks.`}</p>
 
     <!-- Pillars -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -223,7 +228,7 @@ export async function buildClientInviteEmail(
 
           <!-- On file today -->
           <div style="font-family:${fMono};font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#A79E8B;padding:20px 0 0;">On file today</div>
-          <div style="font-family:${fInstrument};font-size:27px;line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:#1C2A3A;padding:8px 0 0;">Your hood cleaning<br />certificate is on file.</div>
+          <div style="font-family:${fInstrument};font-size:27px;line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:#1C2A3A;padding:8px 0 0;">${isCpp ? 'Your hood cleaning<br />certificate is on file.' : 'Your account is ready.<br />Records start here.'}</div>
           <div style="font-family:${fInstrument};font-size:14.5px;line-height:1.6;color:#5F6875;padding:12px 0 22px;"><span style="color:#1C2A3A;font-weight:600;">${total} compliance records are required</span> for this kitchen &mdash; ${fireDenom} fire safety, ${foodDenom} food safety. On top of that: your company&rsquo;s own business records, and one set for every vendor who provides services.</div>
 
           <!-- TWO RINGS -->
@@ -272,7 +277,7 @@ export async function buildClientInviteEmail(
 
   <!-- 5. CTA — closing line + navy button -->
   <tr><td class="p40" align="center" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;text-align:center;">
-    <div style="font-family:${fInstrument};font-weight:bold;font-size:18px;line-height:1.3;color:#1C2A3A;margin-bottom:18px;">${firstName}, when someone asks, a binder is a search. EvidLY is an answer.</div>
+    <div style="font-family:${fInstrument};font-weight:bold;font-size:18px;line-height:1.3;color:#1C2A3A;margin-bottom:18px;">${firstName}, the first step is telling us who services your kitchen.</div>
     <table role="presentation" align="center" cellpadding="0" cellspacing="0"><tr>
       <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;">See the dashboard &#8594;</a></td>
     </tr></table>
@@ -283,8 +288,8 @@ export async function buildClientInviteEmail(
   <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;">
     <div style="font-family:${fInstrument};font-size:12px;color:#5F6875;margin-top:8px;line-height:1.6;"><span style="white-space:nowrap;">founders@getevidly.com</span> &middot; <span style="white-space:nowrap;">(855) 384-3591</span> &middot; <span style="white-space:nowrap;"><a href="https://getevidly.com" style="color:#1C2A3A;">getevidly.com</a></span></div>
     <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;margin-top:10px;">EvidLY &middot; Commercial Kitchen Risk Management</div>
-    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">Cleaning Pros Plus, LLC &middot; {{BUSINESS_ADDRESS}}</div>
-    <div style="font-family:${fInstrument};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
+    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">${isCpp ? 'Cleaning Pros Plus, LLC' : 'EvidLY'} &middot; {{BUSINESS_ADDRESS}}</div>
+    <div style="font-family:${fInstrument};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY${isCpp ? ' &middot; a Cleaning Pros Plus, LLC Company' : ''} &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
   </td></tr>
 
 </table></td></tr></table></body></html>`;

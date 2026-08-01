@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Send, RefreshCw } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { getInviteStatus, fmtDate } from '../lib/inviteStatus';
 
@@ -15,7 +16,7 @@ const ROLES = [
   { v: 'kitchen_manager', l: 'Kitchen manager' },
 ];
 
-interface Org { id: string; name: string; state: string | null; city: string | null; primary_contact_name: string | null; primary_contact_email: string | null; }
+interface Org { id: string; name: string; state: string | null; city: string | null; primary_contact_name: string | null; primary_contact_email: string | null; access_via: string | null; }
 interface Invite {
   id: string; organization_id: string | null; organization_name: string | null; contact_name: string; email: string;
   status: string; client_role: string; reminder_count: number; created_at: string; accepted_at: string | null; viewed_at: string | null;
@@ -23,6 +24,8 @@ interface Invite {
 }
 
 export function ClientInviteForm() {
+  const [searchParams] = useSearchParams();
+  const contactId = searchParams.get('contact_id');
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [orgId, setOrgId] = useState('');
   const [contactName, setContactName] = useState('');
@@ -31,7 +34,6 @@ export function ClientInviteForm() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
-  const [sendNow, setSendNow] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [batchSending, setBatchSending] = useState(false);
 
@@ -42,7 +44,7 @@ export function ClientInviteForm() {
     (async () => {
       const { data } = await supabase
         .from('organizations')
-        .select('id, name, state, is_system, primary_contact_name, primary_contact_email')
+        .select('id, name, state, is_system, primary_contact_name, primary_contact_email, access_via')
         .order('created_at', { ascending: false });
       if (data) {
         setOrgs((data as (Org & { is_system?: boolean })[])
@@ -50,6 +52,22 @@ export function ClientInviteForm() {
       }
     })();
   }, []);
+
+  // Prefill from contact when ?contact_id= is present
+  useEffect(() => {
+    if (!contactId) return;
+    (async () => {
+      const { data } = await supabase
+        .from('county_briefing_recipients')
+        .select('first_name, last_name, email, phone, org_name, organization_id')
+        .eq('id', contactId)
+        .maybeSingle();
+      if (!data) return;
+      if (data.first_name) setContactName(data.last_name ? `${data.first_name} ${data.last_name}` : data.first_name);
+      if (data.email) setEmail(data.email);
+      if (data.organization_id) setOrgId(data.organization_id);
+    })();
+  }, [contactId]);
 
   const loadInvites = useCallback(async () => {
     const { data } = await supabase
@@ -138,12 +156,11 @@ export function ClientInviteForm() {
           client_role: role,
           message: message || null,
           sender_name: 'Arthur',
-          skip_send: !sendNow,
         }),
       });
       const out = await res.json();
       if (!res.ok) { setFeedback({ ok: false, text: out.error || 'Could not send invite.' }); setSending(false); return; }
-      setFeedback({ ok: true, text: sendNow ? `Invite sent to ${email}.` : `Account provisioned for ${email}. Invite not sent yet.` });
+      setFeedback({ ok: true, text: `Invite sent to ${email}.` });
       setContactName(''); setEmail(''); setRole('owner_operator'); setMessage(''); setOrgId('');
       loadInvites();
     } catch {
@@ -264,13 +281,20 @@ export function ClientInviteForm() {
         <textarea value={message} onChange={e => setMessage(e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded px-3 py-2" rows={2} placeholder="A short note from you" />
       </div>
 
-      <label className="flex items-center gap-2 mb-4 text-sm text-[#1E2D4D] cursor-pointer select-none">
-        <input type="checkbox" checked={sendNow} onChange={e => setSendNow(e.target.checked)} className="rounded border-[#1E2D4D]/30 text-[#1E2D4D] focus:ring-[#1E2D4D]" />
-        Send invite email now
-      </label>
+      {orgId && (() => {
+        const selectedOrg = orgs.find(o => o.id === orgId);
+        const isCpp = selectedOrg?.access_via === 'cpp_client';
+        return (
+          <div className="mb-4 px-3 py-2 rounded text-xs" style={{ background: isCpp ? '#FFF8E7' : '#E8F4FD', color: isCpp ? '#92700C' : '#1E5C8A' }}>
+            {isCpp
+              ? 'This invite will reference the hood cleaning certificate on file.'
+              : 'This invite will use the standard account-ready copy.'}
+          </div>
+        );
+      })()}
 
       <button onClick={handleSend} disabled={sending} className="w-full text-white font-medium rounded py-3 flex items-center justify-center gap-2" style={{ background: NAVY, opacity: sending ? 0.5 : 1 }}>
-        <Send size={16} />{sending ? 'Sending…' : sendNow ? 'Send invite' : 'Provision account'}
+        <Send size={16} />{sending ? 'Sending…' : 'Send invite'}
       </button>
 
       {invites.length > 0 && (
