@@ -31,7 +31,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'founder',   label: 'Founder Window',      Icon: Flame,           route: 'founder-window' },
   { id: 'funnel',    label: 'Funnel',              Icon: GitBranch,       route: 'funnel' },
   { id: 'segments',  label: 'Segments',            Icon: Users,           route: 'segments' },
-  { id: 'sequence',  label: 'Email Sequence',      Icon: Mail,            route: 'email-sequence' },
+  { id: 'sequence',  label: 'Outreach',             Icon: Mail,            route: 'email-sequence' },
   { id: 'prp',       label: 'PRP Attribution',     Icon: Target,          route: 'prp-attribution' },
   { id: 'seo',       label: 'SEO',                 Icon: Search,          route: 'seo' },
   { id: 'serp',      label: 'SERP',                Icon: TrendingUp,      route: 'serp' },

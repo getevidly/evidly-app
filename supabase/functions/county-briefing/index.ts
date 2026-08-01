@@ -660,9 +660,9 @@ Deno.serve(async (req: Request) => {
     // ── UPSERT-STEP ─────────────────────────────────────────────
     if (action === "upsert-step") {
       const { step_number, label, delay_days, trigger_type, variant_scope,
-              subject_template, body_template } = body;
+              subject_template, body_template, is_active } = body;
 
-      if (!step_number || !label) {
+      if (step_number === undefined || step_number === null || !label) {
         return jsonResponse({ error: "step_number and label required" }, 400);
       }
 
@@ -681,7 +681,7 @@ Deno.serve(async (req: Request) => {
         .eq('step_number', step_number)
         .single();
 
-      const row = {
+      const row: Record<string, any> = {
         step_number,
         label,
         delay_days: delay_days ?? 0,
@@ -696,6 +696,7 @@ Deno.serve(async (req: Request) => {
           ? { signed_off_by: null, signed_off_at: null }
           : {}),
       };
+      if (is_active !== undefined) row.is_active = is_active;
 
       const { data: step, error } = existing
         ? await supabase.from('outreach_steps').update(row).eq('id', existing.id).select().single()
@@ -753,6 +754,18 @@ Deno.serve(async (req: Request) => {
     // recipients. Cold never sends from EvidLY — export to HubSpot.
     // Every skip writes its reason to the recipient row.
     if (action === "cron-process") {
+      // Master pause check — step_number 0 with is_active=false halts all sending
+      const { data: masterRow } = await supabase
+        .from('outreach_steps')
+        .select('is_active')
+        .eq('step_number', 0)
+        .maybeSingle();
+
+      if (masterRow && !masterRow.is_active) {
+        console.log("[county-briefing] cron-process: sending paused");
+        return jsonResponse({ processed: 0, sent: 0, held: 0, skipped_reasons: { 'Sending paused': 1 } });
+      }
+
       const now = new Date();
       let sent = 0, held = 0;
       const skippedReasons: Record<string, number> = {};

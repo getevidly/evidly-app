@@ -15,6 +15,7 @@ import { PlaceholderTab } from './marketingPrimitives';
 import ChannelsTab from './ChannelsTab';
 import SurveyTab from './SurveyTab';
 import ContentScheduleTab from './ContentScheduleTab';
+import OutreachTab from './OutreachTab';
 import {
   LayoutDashboard, Radio, MapPin, Layers, ClipboardList,
   Calendar, Flame, GitBranch, Users, Mail, Target,
@@ -246,7 +247,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'founder'   && <PlaceholderTab title="Founder Window" note="Seat counter hero (X of 250), weekly seat momentum, tier mix, and source attribution." Icon={Flame} />}
       {tab === 'funnel'    && <PlaceholderTab title="Funnel" note="Stage-by-stage from first touch to claimed seat, with PRP attribution per transition." Icon={GitBranch} />}
       {tab === 'segments'  && <PlaceholderTab title="Segments" note="Every metric re-cut by kitchen segment and by buyer type — owner/operator vs institutional." Icon={Users} />}
-      {tab === 'sequence'  && <PlaceholderTab title="Email Sequence" note="52-week PRP drip heatmap by open rate, two tracks, with the Predict / Reduce / Prove band strip." Icon={Mail} />}
+      {tab === 'sequence'  && <OutreachTab />}
       {tab === 'prp'       && <PlaceholderTab title="PRP Attribution" note="Predict / Reduce / Prove touch mix and seat conversion by layer." Icon={Target} />}
       {tab === 'seo'       && <PlaceholderTab title="SEO" note="Organic impressions, clicks, average position, and queries — connect Search Console to fill." Icon={Search} />}
       {tab === 'serp'      && <PlaceholderTab title="SERP" note="Rankings, share of voice and content gaps across the 169-county programmatic footprint." Icon={TrendingUp} />}
