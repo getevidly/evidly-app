@@ -31,8 +31,7 @@ const NAVY  = '#1C2A3A';
 const CREAM = '#F7F1E6';
 const LINE  = '#EEE7D9';
 const MUTED = '#5F6875';
-const GOLD  = '#A08C5A';
-const GOLD_TEXT = '#8A6412';
+const GOLD  = '#B24A2E';
 
 interface Invite {
   organization_id: string;

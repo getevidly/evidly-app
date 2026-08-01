@@ -75,15 +75,28 @@ Deno.serve(async (req: Request) => {
           continue;
         }
 
-        // Gate: hood cleaning certificate must be on file before sending
-        const { data: hoodCerts } = await supabase
+        // Gate: hood cleaning certificate must be on file before sending.
+        // Checks both vendor_service_records and compliance_documents —
+        // same two sources the /gate page reads via gate-record-state.
+        const { data: hoodSvc } = await supabase
           .from('vendor_service_records')
           .select('id')
           .eq('organization_id', inv.organization_id)
           .eq('safeguard_type', 'hood_cleaning')
           .eq('is_sample', false)
           .limit(1);
-        if (!hoodCerts?.length) {
+        let hoodOnFile = (hoodSvc?.length ?? 0) > 0;
+        if (!hoodOnFile) {
+          const { data: hoodDoc } = await supabase
+            .from('compliance_documents')
+            .select('id')
+            .eq('organization_id', inv.organization_id)
+            .in('status', ['current', 'expiring'])
+            .eq('service_type_code', 'KEC')
+            .limit(1);
+          hoodOnFile = (hoodDoc?.length ?? 0) > 0;
+        }
+        if (!hoodOnFile) {
           results.push({ id, ok: false, error: 'Hood cleaning certificate must be on file before sending' });
           continue;
         }
@@ -241,15 +254,28 @@ Deno.serve(async (req: Request) => {
       return json({ success: true, invite_id: created.id, sent: false }, 200, headers);
     }
 
-    // ── Gate: hood cleaning certificate must be on file before sending ──
-    const { data: hoodCerts } = await supabase
+    // ── Gate: hood cleaning certificate must be on file before sending.
+    //    Checks both vendor_service_records and compliance_documents —
+    //    same two sources the /gate page reads via gate-record-state. ──
+    const { data: hoodSvc } = await supabase
       .from('vendor_service_records')
       .select('id')
       .eq('organization_id', organization_id)
       .eq('safeguard_type', 'hood_cleaning')
       .eq('is_sample', false)
       .limit(1);
-    if (!hoodCerts?.length) {
+    let hoodOnFile = (hoodSvc?.length ?? 0) > 0;
+    if (!hoodOnFile) {
+      const { data: hoodDoc } = await supabase
+        .from('compliance_documents')
+        .select('id')
+        .eq('organization_id', organization_id)
+        .in('status', ['current', 'expiring'])
+        .eq('service_type_code', 'KEC')
+        .limit(1);
+      hoodOnFile = (hoodDoc?.length ?? 0) > 0;
+    }
+    if (!hoodOnFile) {
       await supabase.from("evidly_client_invites").update({
         status: "draft", expires_at: null,
       }).eq("id", created.id);

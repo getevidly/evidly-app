@@ -82,16 +82,16 @@ const CSS = `
 .ev-ltab{position:relative;font-family:'Instrument Sans',system-ui,sans-serif;font-size:13.5px;font-weight:500;
   color:#646D7A;padding:16px;white-space:nowrap;display:flex;align-items:center;gap:8px;cursor:pointer;
   border:none;background:none;transition:color .22s cubic-bezier(.4,0,.2,1),background-color .22s cubic-bezier(.4,0,.2,1)}
-.ev-ltab::after{content:'';position:absolute;left:50%;right:50%;bottom:0;height:2px;background:#D8A93A;
+.ev-ltab::after{content:'';position:absolute;left:50%;right:50%;bottom:0;height:2px;background:#B24A2E;
   border-radius:2px 2px 0 0;transition:left .28s cubic-bezier(.4,0,.2,1),right .28s cubic-bezier(.4,0,.2,1)}
 .ev-ltab:hover{color:#1C2A3A;background:#FBF8F1}
 .ev-ltab:hover::after{left:14px;right:14px;background:#E4DBC8}
 .ev-ltab.on{color:#1C2A3A;font-weight:600}
-.ev-ltab.on::after{left:0;right:0;background:#D8A93A}
+.ev-ltab.on::after{left:0;right:0;background:#B24A2E}
 
 .ev-hero{display:flex;align-items:center;justify-content:space-between;gap:48px;padding:38px 0 34px}
 .ev-hero-l{min-width:0;flex:1}
-.ev-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#8A6412}
+.ev-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#B24A2E}
 .ev-h1{font-family:'Instrument Sans',system-ui,sans-serif;font-size:34px;font-weight:700;line-height:1.2;
   color:#1C2A3A;margin:13px 0 0;letter-spacing:-.028em}
 .ev-h1 .ev-sep{color:#A79E8B;font-weight:300;padding:0 3px}
@@ -146,7 +146,7 @@ const CSS = `
 .ev-sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:36px 0 14px}
 .ev-sh h2{font-family:'Instrument Sans',system-ui,sans-serif;font-size:19px;font-weight:700;color:#1C2A3A;margin:0;letter-spacing:-.02em}
 .ev-sh .ev-pill{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
-  background:#F1ECE0;color:#8A6412;padding:5px 10px;border-radius:5px}
+  background:#F1ECE0;color:#B24A2E;padding:5px 10px;border-radius:5px}
 .ev-sh .ev-r{margin-left:auto;display:flex;align-items:center;gap:16px}
 .ev-sh .ev-cnt{font-size:12.5px}
 .ev-sh .ev-auto{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#A79E8B}
@@ -176,7 +176,7 @@ const CSS = `
 .ev-pc-c{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#A79E8B;margin-top:8px}
 .ev-pc-pill{font-size:11px;font-weight:600;padding:6px 12px;border-radius:99px;white-space:nowrap;flex:none;display:flex;align-items:center;gap:7px;transition:background-color .3s,color .3s}
 .ev-pc-pill.ok{background:#E3ECE1;color:#3E5E4B}
-.ev-pc-pill.act{background:#F7EDD3;color:#8A6412}
+.ev-pc-pill.act{background:#F7EDD3;color:#B24A2E}
 .ev-pc-pill .ev-d{width:6px;height:6px;border-radius:50%;background:currentColor}
 .ev-coderow{padding:12px 26px;border-bottom:1px solid #EEE7D9;background:#FDFBF7}
 .ev-codes{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -198,7 +198,7 @@ const CSS = `
 .ev-pcol:nth-child(2) .ev-pcol-k:hover .ev-pcol-tip{transform:translateX(-50%) translateY(0)}
 .ev-pcol:nth-child(2) .ev-pcol-tip::before{left:50%;margin-left:-5px}
 .ev-pcol-k:hover .ev-pcol-tip{opacity:1;transform:translateY(0)}
-.ev-pcol.hot .ev-pcol-k{color:#8A6412}
+.ev-pcol.hot .ev-pcol-k{color:#B24A2E}
 .ev-pcol-body{flex:1}
 .ev-pcol-v{font-size:14px;color:#4A5566;line-height:1.55}
 .ev-pcol-n{font-family:'Instrument Sans',system-ui,sans-serif;font-size:29px;font-weight:700;color:#1C2A3A;line-height:1;letter-spacing:-.02em}
@@ -246,7 +246,7 @@ const CSS = `
 .ev-sens{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .ev-sens-c{background:#fff;border:1px solid #E4DBC8;border-radius:10px;padding:16px 18px;
   box-shadow:0 1px 2px rgba(28,42,58,.03),0 16px 34px -30px rgba(28,42,58,.55)}
-.ev-sens-cat{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#8A6412}
+.ev-sens-cat{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#B24A2E}
 .ev-sens-row{display:flex;justify-content:space-between;align-items:flex-start;margin-top:9px}
 .ev-sens-nm{font-size:14px;font-weight:600;color:#1C2A3A}
 .ev-sens-loc{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#646D7A;margin-top:3px}
@@ -287,7 +287,7 @@ const CSS = `
 .ev-ex-body.open{max-height:1600px}
 .ev-ex-p{font-size:12.5px;color:#1C2A3A;margin:8px 0 12px;line-height:1.5}
 .ev-ex-grid{display:block}
-.ev-ex-h{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A6412;
+.ev-ex-h{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#B24A2E;
   margin:16px 0 4px;padding-top:12px;border-top:1px solid #EEE7D9}
 .ev-ex-h:first-child{margin-top:4px;padding-top:0;border-top:none}
 .ev-ex-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6E675A;
@@ -335,7 +335,7 @@ const CSS = `
   .ev-modal-bd{padding:16px 18px 24px}
 }
 .ev-askers{display:grid;grid-template-columns:1fr;gap:12px}
-.ev-ask{background:#fff;border:1px solid #E4DBC8;border-left:3px solid #D8A93A;
+.ev-ask{background:#fff;border:1px solid #E4DBC8;border-left:3px solid #B24A2E;
   border-radius:0 10px 10px 0;padding:17px 18px;
   box-shadow:0 1px 2px rgba(28,42,58,.03),0 16px 34px -30px rgba(28,42,58,.55)}
 .ev-ask-adj{border-left-color:#8F3A22}
@@ -903,7 +903,7 @@ function EvidLYDashboard({ loc: locProp, onLocChange, embedded = false, gateToke
                 <span className="ev-sens-src" style={t.src !== 'Sensor' ? { color: '#3E6B8A' } : undefined}>
                   <span className="ev-d" />{t.src}
                 </span>
-                <span className="ev-sens-st" style={warm ? { background: '#F7EDD3', color: '#8A6412' } : undefined}>{t.st}</span>
+                <span className="ev-sens-st" style={warm ? { background: '#F7EDD3', color: '#B24A2E' } : undefined}>{t.st}</span>
               </div>
             </div>
           );
