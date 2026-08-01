@@ -171,12 +171,15 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
       )}
 
       <h1 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 17, lineHeight: 1.35, color: 'white', margin: '0 0 12px', letterSpacing: '-0.02em' }}>
-        Your hood cleaning is documented.
+        Your hood cleaning certificate is on file.
       </h1>
-      <p style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(255,255,255,0.65)', margin: '0 0 28px' }}>
+      <p style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(255,255,255,0.65)', margin: '0 0 14px' }}>
         You already trust Cleaning Pros Plus with your hood cleaning. Every visit, we leave a dated certificate
         {'\u2009'}&mdash;{'\u2009'}what we cleaned, what we found, what we couldn{'\u2019'}t reach.
         That{'\u2019'}s now the first record in your account.
+      </p>
+      <p style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(255,255,255,0.55)', margin: '0 0 28px', fontStyle: 'italic' }}>
+        Having them and having them the moment someone asks are not the same thing.
       </p>
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.10)', paddingTop: 20, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 28 }}>
