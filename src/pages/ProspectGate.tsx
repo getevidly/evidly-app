@@ -743,7 +743,7 @@ export function ProspectGate() {
               You don&rsquo;t manage any of this. We do.
             </h2>
             <p style={{ margin: '13px 0 0', fontSize: '14.5px', color: MUTED, maxWidth: '72ch' }}>
-              Everything above is a lot to carry for one kitchen &mdash; and it never stops renewing. You&rsquo;ve been holding it in a binder or a spreadsheet. Neither one seals a record or chases a vendor for a certificate. <b style={{ color: INK, fontWeight: 600 }}>We do the work to build the evidence, and keep it built.</b>
+              Everything above is a lot to carry for one kitchen &mdash; and it never stops renewing. You&rsquo;ve been holding it in a binder or a spreadsheet. Neither one time-stamps a record or chases a vendor for a certificate. <b style={{ color: INK, fontWeight: 600 }}>We do the work to build the evidence, and keep it built.</b>
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, margin: '24px 0 0' }} className="gate-ho-grid">
               {[
