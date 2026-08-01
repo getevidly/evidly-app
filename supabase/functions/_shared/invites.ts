@@ -274,7 +274,7 @@ export async function buildClientInviteEmail(
   <tr><td class="p40" align="center" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;text-align:center;">
     <div style="font-family:${fInstrument};font-weight:bold;font-size:18px;line-height:1.3;color:#1C2A3A;margin-bottom:18px;">${firstName}, when someone asks, a binder is a search. EvidLY is an answer.</div>
     <table role="presentation" align="center" cellpadding="0" cellspacing="0"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;">See what&rsquo;s on file &#8594;</a></td>
+      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;">See the dashboard &#8594;</a></td>
     </tr></table>
     <div style="font-family:${fInstrument};font-size:11.5px;color:#8B94A0;margin-top:11px;">No login, no password needed.</div>
   </td></tr>

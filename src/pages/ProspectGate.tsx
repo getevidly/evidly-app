@@ -386,8 +386,6 @@ const ChaseIcon = () => (
   </svg>
 );
 
-const CALENDLY = 'https://calendly.com/founders-getevidly/founders';
-
 /* ── Apply filed records to a defaults template ────────────────
    Clones the template. For each item with fileKeys, if ANY key
    exists in the filed map, status → 'on_file' + attach vendor/date.
@@ -564,7 +562,7 @@ export function ProspectGate() {
           </p>
 
           <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', gap: 0, borderTop: `1px solid ${NAVY_LINE}` }}>
-            {[['Predict', "what's due"], ['Reduce', 'the lapse'], ['Prove', 'the work']].map(([k, v]) => (
+            {[['Predict', "what's due"], ['Reduce', 'the lapse'], ['Prove', "it\u2019s done"]].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 0', borderBottom: `1px solid ${NAVY_LINE}` }}>
                 <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.08em', textTransform: 'uppercase' as const, color: EMBER_BRIGHT, width: 66, flex: 'none' }}>{k}</span>
                 <span style={{ fontSize: '13.5px', color: '#cfd7e6' }}>{v}</span>
@@ -575,13 +573,10 @@ export function ProspectGate() {
           {/* TOP CTA */}
           <div style={{ paddingTop: 26, borderTop: `1px solid ${NAVY_LINE}`, marginTop: 26 }}>
             <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 17, color: '#fff', margin: '0 0 12px' }}>See the gaps. Let&rsquo;s close them.</p>
-            <a href={CALENDLY} target="_blank" rel="noopener"
+            <a href="https://getevidly.com/study?from=client" target="_blank" rel="noopener"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 20px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
-              Meet with EvidLY <span style={{ fontWeight: 700 }}>&rarr;</span>
+              Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
             </a>
-            <p style={{ margin: '12px 0 0', fontSize: '12.5px', color: '#a9b4cb' }}>
-              <b style={{ color: '#dfe4f0', fontWeight: 600 }}>Arthur Haggerty</b> &middot; IKECA-certified &middot; NFPA 96 expert witness.
-            </p>
           </div>
         </aside>
 
@@ -604,7 +599,7 @@ export function ProspectGate() {
                   </div>
                   <div style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '15.5px', color: NAVY }}>Hood Cleaning Certificate</div>
                   <div style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
-                    {hoodVendor} &middot; filed &amp; time-stamped (write-once) &mdash; your {totalOnFile === 1 ? 'one sealed record so far' : 'sealed record'}.
+                    {hoodVendor} &middot; filed &amp; time-stamped (write-once) &mdash; your {totalOnFile === 1 ? 'first record on file' : 'record on file'}.
                   </div>
                 </div>
                 <span style={{ fontSize: '12.5px', fontWeight: 600, color: SLATE, display: 'inline-flex', alignItems: 'center', gap: 5, flex: 'none' }}>
@@ -638,7 +633,7 @@ export function ProspectGate() {
               {totalOnFile === 1 ? 'One certificate is on file.' : `${totalOnFile} certificates on file.`} {totalGap === 1 ? 'One requirement isn\u2019t.' : `${totalGap > 0 ? totalGap : 'No'} requirements aren\u2019t.`}
             </h2>
             <p style={{ margin: '14px 0 0', fontSize: '14.5px', color: MUTED, maxWidth: '64ch', lineHeight: 1.6 }}>
-              When a kitchen fire reaches a courtroom, these are the records that get read. Arthur reads them for a living &mdash; as an <b style={{ color: INK, fontWeight: 600 }}>NFPA 96 expert witness</b>. Here&rsquo;s what your kitchen is carrying right now.
+              Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Here&rsquo;s what your kitchen is carrying right now.
             </p>
 
             <div style={{ margin: '24px 0 0', display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -689,12 +684,12 @@ export function ProspectGate() {
             </div>
 
             <p style={{ margin: '22px 0 0', fontSize: '13.5px', color: INK, paddingTop: 17, borderTop: `1px solid ${HAIR2}`, lineHeight: 1.55 }}>
-              <b style={{ color: NAVY, fontWeight: 600 }}>Every line here is a document that has to be filed, sealed, and kept current.</b> And depending on your county and carrier, there may be more &mdash; EvidLY manages those too.
+              <b style={{ color: NAVY, fontWeight: 600 }}>Every line here is a record that has to be current and to hand when someone asks.</b> And depending on your county and carrier, there may be more &mdash; EvidLY manages those too.
             </p>
           </section>
 
           {/* ===== FIRE SAFETY ===== */}
-          <RecordGroup title="Fire Safety" meta="NFPA 96 fire line — the liability spine" items={fireItems} groupClass="fire" icon={<FireIcon />}
+          <RecordGroup title="Fire Safety" meta="NFPA 96 &middot; the liability spine" items={fireItems} groupClass="fire" icon={<FireIcon />}
             countLabel={`<b>${fireOnFile}</b> / ${fireTotal} on file`} defaultOpen={true} />
 
           {/* ===== FOOD SAFETY ===== */}
@@ -753,7 +748,7 @@ export function ProspectGate() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, margin: '24px 0 0' }} className="gate-ho-grid">
               {[
                 { icon: <CollectIcon />, title: 'We collect it', desc: 'We gather every document and file it for you. You stop hunting for paper.' },
-                { icon: <ShieldIcon />, title: 'We seal it', desc: "Each record is sealed and time-stamped \u2014 proof it can\u2019t be changed after the fact." },
+                { icon: <ShieldIcon />, title: 'Time-stamped, write-once', desc: "Each record is time-stamped the moment it\u2019s filed \u2014 proof it can\u2019t be changed after the fact." },
                 { icon: <FlagIcon />, title: 'We flag every renewal', desc: 'Every certificate is flagged before it lapses, so nothing expires quietly.' },
                 { icon: <ChaseIcon />, title: 'We chase your vendors', desc: "We request the COIs and licenses from your vendors. You\u2019re not the one emailing them." },
               ].map((c, i) => (
@@ -808,7 +803,7 @@ export function ProspectGate() {
               <div style={{ flex: '1 1 300px' }}>
                 <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 21, color: '#fff', margin: 0 }}>See the gaps. Let&rsquo;s close them.</p>
                 <p style={{ margin: '10px 0 0', fontSize: '13.5px', color: '#a9b4cb' }}>
-                  Book 30 minutes. EvidLY maps every line above to your kitchen and does the work &mdash; <b style={{ color: '#dfe4f0', fontWeight: 600 }}>Arthur Haggerty &middot; IKECA-certified &middot; NFPA 96 expert witness.</b>
+                  Book 30 minutes. EvidLY maps every line above to your kitchen and does the work.
                 </p>
               </div>
               <div style={{ flex: '0 0 auto', minWidth: 250 }}>
@@ -816,9 +811,9 @@ export function ProspectGate() {
                   <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founder</span>
                   <span style={{ fontSize: 13, color: '#c7d0e2' }}><b style={{ color: '#fff', fontWeight: 600 }}>Arthur Haggerty</b></span>
                 </div>
-                <a href={CALENDLY} target="_blank" rel="noopener"
+                <a href="https://getevidly.com/study?from=client" target="_blank" rel="noopener"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: '15.5px', textDecoration: 'none', padding: '15px 22px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
-                  Meet with EvidLY <span style={{ fontWeight: 700 }}>&rarr;</span>
+                  Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
                 </a>
               </div>
             </div>
@@ -827,7 +822,7 @@ export function ProspectGate() {
           {/* ===== FOOTER ===== */}
           <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: MUTED }}>
             <LockIcon />
-            View-only preview &middot; no account, no sign-in. Your certificate stays sealed and unchanged.
+            View-only preview &middot; no account, no sign-in. Your certificate is on file and unchanged.
           </div>
         </main>
       </div>
