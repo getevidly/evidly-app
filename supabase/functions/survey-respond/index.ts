@@ -19,7 +19,7 @@ import { QUESTION_META } from '../_shared/study-questions.ts';
 
 const cors = PUBLIC_CORS_HEADERS;
 
-const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'other']);
+const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'client', 'other']);
 
 /* Study kitchen_type → gtmReference SEGMENTS key (so ICP scoring works).
  * 'Hospital or senior living' maps to 'Senior Living' (fit 16). The survey

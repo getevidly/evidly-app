@@ -134,8 +134,8 @@ export async function buildClientInviteEmail(
 
   // Note block: renders only when personalMessage is non-empty.
   const noteBlock = params.personalMessage
-    ? `<tr><td class="p40" style="background:#FBF9F2;padding:18px 40px;border-bottom:1px solid #EEE7D9;border-left:3px solid #A08C5A;">
-    <div style="font-family:'IBM Plex Mono','Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;margin-bottom:6px;">A note from Arthur</div>
+    ? `<tr><td class="p40" style="background:#FBF9F2;padding:18px 40px;border-bottom:1px solid #EEE7D9;border-left:3px solid #B24A2E;">
+    <div style="font-family:'IBM Plex Mono','Courier New',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin-bottom:6px;">A note from Arthur</div>
     <div style="font-family:'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-style:italic;line-height:1.55;color:#3A4453;">${params.personalMessage}</div></td></tr>`
     : "";
 
@@ -210,7 +210,7 @@ export async function buildClientInviteEmail(
 
   <!-- 4. TEASER BLOCK — clickable dashboard snippet -->
   <tr><td style="background:#F7F1E6;padding:22px 0 4px;">
-    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A6412;text-align:center;padding:0 40px 12px;">Here&rsquo;s where your kitchen stands</div>
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;text-align:center;padding:0 40px 12px;">Here&rsquo;s where your kitchen stands</div>
     <a href="${inviteLink}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FAF7F0;border-top:1px solid #EEE7D9;border-bottom:1px solid #EEE7D9;">
         <tr><td style="padding:24px 32px 26px;">

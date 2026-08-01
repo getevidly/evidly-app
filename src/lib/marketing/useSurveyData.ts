@@ -75,7 +75,7 @@ Object.entries(CA_REGIONS).forEach(([region, counties]) => {
 export const SOURCE_LABELS: Record<string, string> = {
   call: 'Outbound call', show: 'Show floor QR', email: 'EvidLY email',
   social: 'Social media', page: 'Website', cra: 'CRA email',
-  referral: 'Referral', other: 'Other',
+  referral: 'Referral', client: 'Client invite', other: 'Other',
 };
 
 export const PLATFORM_LABELS: Record<string, string> = {

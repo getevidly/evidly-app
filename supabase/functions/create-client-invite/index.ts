@@ -75,6 +75,19 @@ Deno.serve(async (req: Request) => {
           continue;
         }
 
+        // Gate: hood cleaning certificate must be on file before sending
+        const { data: hoodCerts } = await supabase
+          .from('vendor_service_records')
+          .select('id')
+          .eq('organization_id', inv.organization_id)
+          .eq('safeguard_type', 'hood_cleaning')
+          .eq('is_sample', false)
+          .limit(1);
+        if (!hoodCerts?.length) {
+          results.push({ id, ok: false, error: 'Hood cleaning certificate must be on file before sending' });
+          continue;
+        }
+
         const { subject, html } = await buildClientInviteEmail({
           recipientName: inv.contact_name,
           senderName: sender_name || undefined,
@@ -226,6 +239,24 @@ Deno.serve(async (req: Request) => {
     // ── skip_send: provision only, no email, no journey stamp ──
     if (skip_send) {
       return json({ success: true, invite_id: created.id, sent: false }, 200, headers);
+    }
+
+    // ── Gate: hood cleaning certificate must be on file before sending ──
+    const { data: hoodCerts } = await supabase
+      .from('vendor_service_records')
+      .select('id')
+      .eq('organization_id', organization_id)
+      .eq('safeguard_type', 'hood_cleaning')
+      .eq('is_sample', false)
+      .limit(1);
+    if (!hoodCerts?.length) {
+      await supabase.from("evidly_client_invites").update({
+        status: "draft", expires_at: null,
+      }).eq("id", created.id);
+      return json({
+        error: "Hood cleaning certificate must be on file before sending",
+        invite_id: created.id, sent: false,
+      }, 422, headers);
     }
 
     // Journey stage: invited (shared helper — idempotent, never moves backwards)
