@@ -334,6 +334,22 @@ const CSS = `
   .ev-modal-hd{padding:20px 18px 16px}
   .ev-modal-bd{padding:16px 18px 24px}
 }
+.ev-askers{display:grid;grid-template-columns:1fr;gap:12px}
+.ev-ask{background:#fff;border:1px solid #E4DBC8;border-left:3px solid #D8A93A;
+  border-radius:0 10px 10px 0;padding:17px 18px;
+  box-shadow:0 1px 2px rgba(28,42,58,.03),0 16px 34px -30px rgba(28,42,58,.55)}
+.ev-ask-adj{border-left-color:#8F3A22}
+.ev-ask-fire{border-left-color:#B24A2E}
+.ev-ask-food{border-left-color:#3E6B8A}
+.ev-ask-w{font-family:'Instrument Sans',system-ui,sans-serif;font-size:15.5px;font-weight:700;color:#1C2A3A;letter-spacing:-.015em}
+.ev-ask-when{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#A79E8B;margin-top:5px}
+.ev-ask-p{font-size:13.5px;line-height:1.6;color:#4A5566;margin:10px 0 0}
+.ev-ask-p b{font-weight:600;color:#1C2A3A}
+.ev-ask-tail{margin-top:11px;padding-top:11px;border-top:1px solid #EEE7D9;font-size:13px;line-height:1.6;color:#5F6875}
+.ev-ask-tail b{font-weight:600;color:#1C2A3A}
+@media(min-width:900px){.ev-askers{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1180px){.ev-askers{grid-template-columns:repeat(4,1fr)}}
+
 @media(prefers-reduced-motion:reduce){
   .ev-arc{transition:none!important}
   .ev-ring{transition:none!important}
@@ -656,8 +672,38 @@ function EvidLYDashboard({ loc: locProp, onLocChange, embedded = false, gateToke
         <span className="ev-chip na"><span className="ev-d" />None yet</span>
       </div>
 
-      {/* WHAT'S MONITORED */}
-      <div className="ev-sh"><h2>What{'\u2019'}s Monitored</h2></div>
+      {/* FOUR PEOPLE WHO CAN ASK */}
+      <div className="ev-sh">
+        <h2>Four People Who Can Ask</h2>
+        <span className="ev-pill">Each asks for a different part, on a different schedule</span>
+      </div>
+      <div className="ev-askers">
+        <article className="ev-ask ev-ask-adj">
+          <div className="ev-ask-w">The Insurance Broker</div>
+          <div className="ev-ask-when">At renewal {'\u00b7'} and whenever underwriting asks</div>
+          <p className="ev-ask-p">Proof that the fire systems named in your policy are being maintained {'\u2014'} often a <b>Protective Safeguards Endorsement</b>. Underwriting asks at renewal, and a broker who cannot produce it is quoting you blind.</p>
+          <div className="ev-ask-tail">And the <b>adjuster only if it goes wrong</b> {'\u2014'} after a loss the same records decide whether the claim is paid, and whatever is missing becomes the argument.</div>
+        </article>
+        <article className="ev-ask">
+          <div className="ev-ask-w">The Property Manager</div>
+          <div className="ev-ask-when">Day to day {'\u00b7'} and every renewal</div>
+          <p className="ev-ask-p">A certificate naming them as additional insured, and proof of the maintenance the lease covenants {'\u2014'} <b>your hood cleaning is a standard one</b>. Grease trap service if the building has an interceptor.</p>
+          <div className="ev-ask-tail">The one who asks most often, and the lease is usually <b>where the insurance and fire clauses come from in the first place</b>.</div>
+        </article>
+        <article className="ev-ask ev-ask-fire">
+          <div className="ev-ask-w">The Fire Marshal</div>
+          <div className="ev-ask-when">On inspection {'\u00b7'} by schedule</div>
+          <p className="ev-ask-p">Hood cleaning record, suppression and sprinkler inspections, alarm test, extinguisher tags {'\u2014'} <b>five systems, five separate service records</b>, whether one company services them or five do.</p>
+        </article>
+        <article className="ev-ask ev-ask-food">
+          <div className="ev-ask-w">The Health Inspector</div>
+          <div className="ev-ask-when">Unannounced {'\u00b7'} during service</div>
+          <p className="ev-ask-p">Permit, handler cards, manager certificate, pest reports, and the temperature logs <b>for the days they choose</b>. Acts on what{'\u2019'}s shown that day.</p>
+        </article>
+      </div>
+
+      {/* WHAT SOMEONE CAN ASK FOR */}
+      <div className="ev-sh"><h2>What Someone Can Ask For</h2></div>
       <div className="ev-pillars">
         {/* Fire */}
         <div className="ev-pcard">
@@ -792,76 +838,6 @@ function EvidLYDashboard({ loc: locProp, onLocChange, embedded = false, gateToke
         <button className="ev-breakdown" onClick={() => setRiskOpen(true)}>See the breakdown {'\u2192'}</button>
       </div>
 
-      {/* WHAT'S MEASURED */}
-      <div className="ev-sh">
-        <h2>What{'\u2019'}s Measured</h2>
-        <span className="ev-r"><span className="ev-auto">{sensLabel}</span></span>
-      </div>
-      <div className="ev-sens">
-        {temps.map((t, i) => {
-          const warm = t.st !== 'In range';
-          return (
-            <div key={i} className="ev-sens-c">
-              <div className="ev-sens-cat">{t.cat}</div>
-              <div className="ev-sens-row">
-                <div><div className="ev-sens-nm">{t.nm}</div><div className="ev-sens-loc">{t.kitchen}</div></div>
-                <div className="ev-sens-v">{t.v}</div>
-              </div>
-              <div className="ev-sens-b">
-                <span className="ev-sens-src" style={t.src !== 'Sensor' ? { color: '#3E6B8A' } : undefined}>
-                  <span className="ev-d" />{t.src}
-                </span>
-                <span className="ev-sens-st" style={warm ? { background: '#F7EDD3', color: '#8A6412' } : undefined}>{t.st}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* BUSINESS & VENDOR RECORDS */}
-      <div className="ev-sh"><h2>Business &amp; Vendor Records</h2></div>
-      <div className="ev-recs">
-        <div className="ev-rcard">
-          <div className="ev-rc-head">
-            <span className="ev-pc-ic" style={{ background: '#F1ECE0' }}><BldgIcon /></span>
-            <span className="ev-rc-id">
-              <span className="ev-rc-n">Business Records</span>
-              <span className="ev-rc-c">Per organization {'\u00b7'} not per kitchen</span>
-            </span>
-            <span className="ev-rc-count">0 <em>of {bizCounting}</em></span>
-          </div>
-          <div className="ev-rlist">
-            {bizRecords.map((r) => (
-              <div key={r.c} className="ev-rrow">
-                <span className={`ev-rdot ${r.counts ? 'no' : 'na'}`} />
-                <span className="ev-rname">{r.n}</span>
-                {!r.counts && <span className="ev-rtag">Not applicable</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="ev-rcard">
-          <div className="ev-rc-head">
-            <span className="ev-pc-ic" style={{ background: '#F1ECE0' }}><TruckIcon /></span>
-            <span className="ev-rc-id">
-              <span className="ev-rc-n">Vendor Records</span>
-              <span className="ev-rc-c">{vendorCounting} required per vendor {'\u00b7'} {vendorNotCounting} not applicable</span>
-            </span>
-            <span className="ev-rc-count">0 <em>of {vendorCounting}</em></span>
-          </div>
-          <div className="ev-rlist">
-            <div className="ev-vnote">No vendors identified yet. Each vendor who works in your kitchen carries its own set {'\u2014'} an uninsured or unlicensed vendor is your liability, not theirs.</div>
-            {vendorRecords.map((r) => (
-              <div key={r.c} className="ev-rrow">
-                <span className="ev-rdot na" />
-                <span className="ev-rname">{r.n}</span>
-                {!r.counts && <span className="ev-rtag">Not applicable</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* EXPLORE */}
       <div className="ev-explore">
         <div className={`ev-ex-head ${exploreOpen ? 'open' : ''}`} onClick={() => setExploreOpen(!exploreOpen)}>
@@ -904,6 +880,76 @@ function EvidLYDashboard({ loc: locProp, onLocChange, embedded = false, gateToke
                 );
               });
             })()}
+          </div>
+        </div>
+      </div>
+
+      {/* WHAT'S MEASURED */}
+      <div className="ev-sh">
+        <h2>What{'\u2019'}s Measured</h2>
+        <span className="ev-r"><span className="ev-auto">{sensLabel}</span></span>
+      </div>
+      <div className="ev-sens">
+        {temps.map((t, i) => {
+          const warm = t.st !== 'In range';
+          return (
+            <div key={i} className="ev-sens-c">
+              <div className="ev-sens-cat">{t.cat}</div>
+              <div className="ev-sens-row">
+                <div><div className="ev-sens-nm">{t.nm}</div><div className="ev-sens-loc">{t.kitchen}</div></div>
+                <div className="ev-sens-v">{t.v}</div>
+              </div>
+              <div className="ev-sens-b">
+                <span className="ev-sens-src" style={t.src !== 'Sensor' ? { color: '#3E6B8A' } : undefined}>
+                  <span className="ev-d" />{t.src}
+                </span>
+                <span className="ev-sens-st" style={warm ? { background: '#F7EDD3', color: '#8A6412' } : undefined}>{t.st}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* BUSINESS RECORDS — KITCHEN AND VENDOR */}
+      <div className="ev-sh"><h2>Business Records {'\u2014'} Kitchen and Vendor</h2></div>
+      <div className="ev-recs">
+        <div className="ev-rcard">
+          <div className="ev-rc-head">
+            <span className="ev-pc-ic" style={{ background: '#F1ECE0' }}><BldgIcon /></span>
+            <span className="ev-rc-id">
+              <span className="ev-rc-n">Kitchen Business Records</span>
+              <span className="ev-rc-c">Per organization {'\u00b7'} not per kitchen</span>
+            </span>
+            <span className="ev-rc-count">0 <em>of {bizCounting}</em></span>
+          </div>
+          <div className="ev-rlist">
+            {bizRecords.map((r) => (
+              <div key={r.c} className="ev-rrow">
+                <span className={`ev-rdot ${r.counts ? 'no' : 'na'}`} />
+                <span className="ev-rname">{r.n}</span>
+                {!r.counts && <span className="ev-rtag">Not applicable</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="ev-rcard">
+          <div className="ev-rc-head">
+            <span className="ev-pc-ic" style={{ background: '#F1ECE0' }}><TruckIcon /></span>
+            <span className="ev-rc-id">
+              <span className="ev-rc-n">Vendor Business Records</span>
+              <span className="ev-rc-c">{vendorCounting} required per vendor {'\u00b7'} {vendorNotCounting} not applicable</span>
+            </span>
+            <span className="ev-rc-count">0 <em>of {vendorCounting}</em></span>
+          </div>
+          <div className="ev-rlist">
+            <div className="ev-vnote">No vendors identified yet. Each vendor who works in your kitchen carries its own set {'\u2014'} an uninsured or unlicensed vendor is your liability, not theirs.</div>
+            {vendorRecords.map((r) => (
+              <div key={r.c} className="ev-rrow">
+                <span className="ev-rdot na" />
+                <span className="ev-rname">{r.n}</span>
+                {!r.counts && <span className="ev-rtag">Not applicable</span>}
+              </div>
+            ))}
           </div>
         </div>
       </div>
