@@ -67,6 +67,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Marketing',           path: '/admin/marketing',           salesOnly: true },
       { label: 'Campaigns',           path: '/admin/campaigns',           salesOnly: true },
+      { label: 'County Briefings',   path: '/admin/county-briefings',    salesOnly: true },
     ],
   },
   {

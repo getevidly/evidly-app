@@ -185,6 +185,7 @@ const MaintenanceMode = lazy(() => import('./pages/admin/MaintenanceMode'));
 const EvidlyVault = lazy(() => import('./pages/admin/EvidlyVault'));
 const EventLog = lazy(() => import('./pages/admin/EventLog'));
 const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns'));
+const CountyBriefings = lazy(() => import('./pages/admin/CountyBriefings'));
 const MarketingAccounts = lazy(() => import('./pages/admin/marketing/MarketingAccounts'));
 const MarketingNetwork = lazy(() => import('./pages/admin/marketing/MarketingNetwork'));
 const MarketingMethods = lazy(() => import('./pages/admin/marketing/MarketingMethods'));
@@ -859,6 +860,7 @@ function AppRoutes() {
           <Route path="/admin/marketing/forecast" element={<SalesGuard><MarketingForecastVsActual /></SalesGuard>} />
           <Route path="/admin/marketing/methods" element={<SalesGuard><MarketingMethods /></SalesGuard>} />
           <Route path="/admin/campaigns" element={<SalesGuard><MarketingCampaigns /></SalesGuard>} />
+          <Route path="/admin/county-briefings" element={<SalesGuard><CountyBriefings /></SalesGuard>} />
           <Route path="/admin/sales" element={<SalesGuard><SalesPipeline /></SalesGuard>} />
           <Route path="/admin/pipeline" element={<Navigate to="/admin/sales" replace />} />
           <Route path="/admin/users" element={<AdminUsers />} />

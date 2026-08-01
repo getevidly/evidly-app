@@ -76,6 +76,7 @@ const SECTION_MAP: Record<string, string> = {
   '/admin/marketing/google-ads': 'Marketing',
   '/admin/marketing/forecast': 'Marketing',
   '/admin/marketing/methods': 'Marketing',
+  '/admin/county-briefings': 'Marketing',
 };
 
 const SEP_COLOR = '#D1D5DB';
