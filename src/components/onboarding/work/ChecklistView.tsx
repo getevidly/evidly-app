@@ -45,7 +45,7 @@ const GROUPS: DocGroup[] = [
   {
     key: 'vendor',
     label: 'VENDOR DOCUMENTS',
-    color: BRAND.gold,
+    color: PILLAR.vendor.bar,
     note: 'Certificates of insurance and service agreements from your vendors.',
     codes: [],  // dynamically filled with any remaining codes
   },

@@ -41,14 +41,13 @@ export const TONE = {
    and must never be blended, aggregated, or rendered in the same hue.
    ΔE 64 apart, so they can never be confused on a chart. */
 export const PILLAR = {
-  fire: { bar: '#B26A43', tint: '#F4E5DA', text: '#8A4A28' },
-  food: { bar: '#3E6B8A', tint: '#E2ECF2', text: '#2C5570' },
+  fire:   { bar: '#B26A43', tint: '#F4E5DA', text: '#8A4A28' },
+  food:   { bar: '#3E6B8A', tint: '#E2ECF2', text: '#2C5570' },
+  vendor: { bar: '#A08C5A' },
 } as const;
 
-/* BRAND — accents only. GOLD is NEVER a chart fill, bar, or data color. */
 export const BRAND = {
-  gold:     '#A08C5A',   // brand-mark accents only
-  wordmark: '#A17C3B',   // the LY in the wordmark. Nothing else.
+  wordmark: '#B24A2E',   // the E and LY in the wordmark. Nothing else.
 } as const;
 
 export const TYPE = {
