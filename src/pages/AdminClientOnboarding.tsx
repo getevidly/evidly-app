@@ -523,7 +523,7 @@ export function AdminClientOnboarding() {
 
     // Demo mode: simulate success without writing to database
     if (isDemoMode) {
-      setSuccess(`Client organization created! An invite will be sent to ${ownerEmail}.`);
+      setSuccess('Client account created. Use Invite people to grant access.');
       setTimeout(() => {
         setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
         setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
@@ -596,7 +596,7 @@ export function AdminClientOnboarding() {
           .eq('id', contactId);
       }
 
-      setSuccess('Client organisation created. Go to the Invite tab to grant access.');
+      setSuccess('Client account created. Use Invite people to grant access.');
       setTimeout(() => {
         setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
         setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
@@ -617,7 +617,7 @@ export function AdminClientOnboarding() {
       <div className="max-w-5xl mx-auto">
         <div className="flex gap-2 mb-6">
           <button onClick={() => setMode('manual')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'manual' ? '#1E2D4D' : 'transparent', color: mode === 'manual' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Set up a client</button>
-          <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite</button>
+          <button onClick={() => setMode('invite')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'invite' ? '#1E2D4D' : 'transparent', color: mode === 'invite' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Invite people</button>
           <button onClick={() => setMode('queue')} className="px-4 py-2 rounded font-medium text-sm" style={{ background: mode === 'queue' ? '#1E2D4D' : 'transparent', color: mode === 'queue' ? '#fff' : '#1E2D4D', border: '1px solid #1E2D4D' }}>Onboarding queue</button>
         </div>
         {mode === 'queue' && <OnboardingQueue />}
@@ -627,7 +627,7 @@ export function AdminClientOnboarding() {
           <div className="mb-6">
             <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Set up a client</h2>
             <p className="text-[#1E2D4D]/70">
-              Create the organisation and locations. No email is sent — use the Invite tab to grant access.
+              Creates the account, its locations and its jurisdictions. Nothing is sent — inviting someone is a separate step.
             </p>
           </div>
 
@@ -1052,7 +1052,7 @@ export function AdminClientOnboarding() {
                 className="flex-1 px-4 py-3 bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <Building2 className="w-5 h-5" />
-                {loading ? 'Creating...' : 'Create Organisation'}
+                {loading ? 'Creating...' : 'Create the account'}
               </button>
             </div>
           </form>

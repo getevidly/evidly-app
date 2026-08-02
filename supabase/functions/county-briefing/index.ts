@@ -100,7 +100,13 @@ function checkRequirements(jur: Record<string, any>): { ok: boolean; block_reaso
   // deno-lint-ignore no-explicit-any
   const fc = jur?.fire_jurisdiction_config as Record<string, any> | null;
   const fireAhj = fc?.fire_ahj_name || jur?.fire_ahj_name;
+  // deno-lint-ignore no-explicit-any
+  const gc = jur?.grading_config as Record<string, any> | null;
 
+  if (gc?.verification_blocked)
+    return { ok: false, block_reason: gc.verification_blocked_reason || 'Jurisdiction config unverified — source unreliable' };
+  if (jur?.jie_audit_status === 'needs_review')
+    return { ok: false, block_reason: 'Jurisdiction audit status is needs_review — verify against source documents before approval' };
   if (!jur?.agency_name)
     return { ok: false, block_reason: 'No food-safety agency on file' };
   if (!fireAhj)
@@ -146,8 +152,19 @@ function buildBriefingBody(county: string, jur: Record<string, any>): string {
   /* ── How this county evaluates ──────────────────────────────── */
   if (jur?.grading_type || jur?.grading_config) {
     const labels: Record<string, string> = {
-      letter_grade: 'letter grades', pass_fail: 'pass / fail scoring',
-      color_placard: 'color-coded placards', numeric: 'numeric scoring',
+      letter_grade: 'letter grades', letter_grade_abc: 'letter grades (A / B / C)',
+      letter_grade_strict: 'letter grades with strict thresholds',
+      pass_fail: 'pass / fail scoring', pass_fail_placard: 'pass / fail placards',
+      pass_reinspect: 'pass / re-inspect scoring',
+      pass_conditional_closed: 'pass / conditional pass / closed scoring',
+      color_placard: 'color-coded placards',
+      green_yellow_red: 'green / yellow / red placards',
+      green_yellow_red_numeric: 'green / yellow / red placards with numeric scores',
+      numeric: 'numeric scoring', numeric_score: 'numeric scoring',
+      numeric_score_no_letter: 'numeric scoring (no letter grade)',
+      point_accumulation_tiered: 'a point-accumulation system with tiered ratings',
+      inspection_report: 'inspection reports (no letter grade or numeric score)',
+      violation_report_only: 'violation reports (no letter grade or numeric score)',
     };
     let s = h3('How This County Evaluates');
     s += `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:8px 0;">This county uses <strong>${labels[jur.grading_type] || 'standard inspection reports'}</strong> to evaluate food safety inspections.</p>`;
@@ -239,20 +256,21 @@ function buildBriefingEmail(
   jur: Record<string, any>,
   variant: string,
   ctaUrl: string,
+  accessVia?: string,
 ): string {
   const body = buildBriefingBody(county, jur);
 
   const coldClose = `
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:24px 0 8px;">This is what the county expects. If you want to see how your kitchen lines up, submit the California Commercial Kitchen Safety Study. It takes three minutes, and the report is free.</p>
-    <table role="presentation" align="center" cellpadding="0" cellspacing="0" style="margin:18px auto;"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Take the Study &#8594;</a></td>
+    <p style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:24px 0 6px;">Separately</p>
+    <p style="font-family:${fInstrument};font-weight:bold;font-size:15px;line-height:1.3;color:#1C2A3A;margin:0 0 10px;">The California Commercial Kitchen Safety Study</p>
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 18px;">We\u2019re asking kitchens across the state which of these records they could actually produce on demand. It\u2019s independent research, and it will be published county by county. Take part and you get your own readiness back at the end, read against this briefing \u2014 and you\u2019ll see how your county compares.</p>
+    <table role="presentation" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
+      <td align="center" style="background:#1C2A3A;"><a href="${ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Take part &#8594;</a></td>
     </tr></table>`;
 
-  const warmClose = `
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:24px 0 8px;">Cleaning Pros Plus already services your kitchen. EvidLY keeps the hood cleaning certificate and every other compliance record where you can reach it the moment someone asks. Your account is ready.</p>
-    <table role="presentation" align="center" cellpadding="0" cellspacing="0" style="margin:18px auto;"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">See Your Dashboard &#8594;</a></td>
-    </tr></table>`;
+  const warmClose = accessVia === 'cpp_client'
+    ? `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:24px 0 8px;">Cleaning Pros Plus has been cleaning your kitchen exhaust and hood all along. Your most recent service certificate goes on file for you in EvidLY, and every cleaning from here on joins it \u2014 and the invitation shows what sits alongside it, and what a fire marshal, a health inspector, a property manager or your broker can ask you to produce.</p>`
+    : `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:24px 0 8px;">Your EvidLY invitation is on its way. It shows what a fire marshal, a health inspector, a property manager or your broker can ask you to produce \u2014 and where each of those records will live.</p>`;
 
   const close = variant === 'warm' ? warmClose : coldClose;
 
@@ -264,7 +282,7 @@ function buildBriefingEmail(
 <style>body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
 @media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}</style>
 </head><body style="margin:0;padding:0;background:#F7F1E6;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${firstName}, here is how ${county} County evaluates commercial kitchens.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Hi ${firstName}, here is how ${county} County evaluates commercial kitchens.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;">
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;">
@@ -277,7 +295,7 @@ function buildBriefingEmail(
 
   <!-- 2. GREETING + INTRO -->
   <tr><td class="p40" style="padding:28px 40px 0;">
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 8px;">${firstName}, here is how <strong>${county} County</strong> evaluates commercial kitchens.</p>
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 8px;">Hi ${firstName}, here is how <strong>${county} County</strong> evaluates commercial kitchens.</p>
   </td></tr>
 
   <!-- 3. BODY SECTIONS -->
@@ -355,7 +373,8 @@ Deno.serve(async (req: Request) => {
 
       const gate = checkRequirements(jur);
       const hash = await computeJurisdictionHash(jur);
-      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, '#');
+      const previewAccessVia = (body.access_via as string) || undefined;
+      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, '#', previewAccessVia);
 
       return jsonResponse({
         preview_html: previewHtml,
@@ -499,12 +518,13 @@ Deno.serve(async (req: Request) => {
         }
 
         let ctaUrl: string;
+        let sendAccessVia: string | undefined;
 
         if (r.variant === 'warm') {
-          // Look up invite token
+          // Look up invite token + org for access_via branching
           const { data: invite } = await supabase
             .from('evidly_client_invites')
-            .select('token')
+            .select('token, organization_id')
             .eq('email', r.email)
             .order('created_at', { ascending: false })
             .limit(1)
@@ -519,12 +539,21 @@ Deno.serve(async (req: Request) => {
             continue;
           }
           ctaUrl = `https://app.getevidly.com/join/${invite.token}`;
+
+          if (invite.organization_id) {
+            const { data: org } = await supabase
+              .from('organizations')
+              .select('access_via')
+              .eq('id', invite.organization_id)
+              .maybeSingle();
+            sendAccessVia = org?.access_via || undefined;
+          }
         } else {
           ctaUrl = 'https://getevidly.com/study?from=email';
         }
 
         const firstName = r.first_name || 'there';
-        const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl);
+        const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia);
         const subject = `${county} County Briefing — How This County Evaluates Commercial Kitchens`;
 
         const result = await sendEmail({ to: r.email, subject, html });
@@ -589,7 +618,7 @@ Deno.serve(async (req: Request) => {
       // All active CA jurisdictions, left-joined to approvals + recipient counts
       const { data: jurisdictions } = await supabase
         .from('jurisdictions')
-        .select('id, county, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config')
+        .select('id, county, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status')
         .eq('state_code', 'CA')
         .eq('is_active', true)
         .order('county');
@@ -940,10 +969,10 @@ Deno.serve(async (req: Request) => {
             continue;
           }
 
-          // Warm invite lookup
+          // Warm invite lookup + org access_via for close branching
           const { data: invite } = await supabase
             .from('evidly_client_invites')
-            .select('token')
+            .select('token, organization_id')
             .eq('email', r.email)
             .order('created_at', { ascending: false })
             .limit(1)
@@ -958,9 +987,19 @@ Deno.serve(async (req: Request) => {
             continue;
           }
 
+          let cronAccessVia: string | undefined;
+          if (invite.organization_id) {
+            const { data: org } = await supabase
+              .from('organizations')
+              .select('access_via')
+              .eq('id', invite.organization_id)
+              .maybeSingle();
+            cronAccessVia = org?.access_via || undefined;
+          }
+
           const ctaUrl = `https://app.getevidly.com/join/${invite.token}`;
           const firstName = r.first_name || 'there';
-          const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl);
+          const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia);
           const emailSubject = step.subject_template
             ? step.subject_template.replace(/\{\{COUNTY\}\}/g, r.county).replace(/\{\{FIRST_NAME\}\}/g, firstName)
             : `${r.county} County Briefing — How This County Evaluates Commercial Kitchens`;

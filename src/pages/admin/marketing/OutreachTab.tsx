@@ -295,10 +295,10 @@ export default function OutreachTab() {
 
   // ── County actions ───────────────────────────────────────────
 
-  const handlePreview = async (county: string) => {
+  const handlePreview = async (county: string, variant?: string, accessVia?: string) => {
     setActionLoading(`preview-${county}`);
     const { data, error } = await supabase.functions.invoke('county-briefing', {
-      body: { action: 'preview', county },
+      body: { action: 'preview', county, variant: variant || 'cold', access_via: accessVia },
     });
     setActionLoading(null);
     if (error || !data?.preview_html) {
