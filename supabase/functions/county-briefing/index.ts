@@ -119,6 +119,176 @@ function checkRequirements(jur: Record<string, any>): { ok: boolean; block_reaso
   return { ok: true, block_reason: null };
 }
 
+// ── Structured evaluation builder ────────────────────────────────
+// Renders tiers, direction, and point values from grading_config.
+// Point values that exist only in scoring_methodology prose are not rendered.
+
+// deno-lint-ignore no-explicit-any
+function shouldRenderPointValuesEmail(gc: Record<string, any>, prose: string | null): boolean {
+  const pv = gc.point_values || gc.violation_points;
+  if (!pv || typeof pv !== 'object' || !prose) return false;
+  const values = Object.values(pv) as number[];
+  if (!values.every(pts => new RegExp(`=\\s*${pts}\\s*(?:pts?|points?|\\b)`, 'i').test(prose))) {
+    return false;
+  }
+  const evidence = gc.violation_weight_evidence;
+  if (evidence?.evidence_samples && Array.isArray(evidence.evidence_samples)) {
+    const configSet = new Set(values);
+    // deno-lint-ignore no-explicit-any
+    const hasConflict = evidence.evidence_samples.some(
+      (s: any) => typeof s.point_value === 'number' && !configSet.has(s.point_value)
+    );
+    if (hasConflict) return false;
+  }
+  return true;
+}
+
+// deno-lint-ignore no-explicit-any
+function extractTiers(gc: Record<string, any>): Array<{ name: string; range: string; color?: string }> | null {
+  // Format 1: gc.tiers as { name: [min, max] } (e.g. Merced)
+  if (gc.tiers && typeof gc.tiers === 'object' && !Array.isArray(gc.tiers)) {
+    const result: Array<{ name: string; range: string; color?: string }> = [];
+    for (const [name, range] of Object.entries(gc.tiers)) {
+      const r = range as number[] | null;
+      const rangeStr = Array.isArray(r)
+        ? r[1] != null ? `${r[0]} \u2013 ${r[1]}` : `${r[0]}+`
+        : String(range);
+      result.push({ name, range: rangeStr });
+    }
+    if (result.length === 0) return null;
+    // Colors from grading_thresholds.color_note (e.g. "Green/Yellow/Red ...")
+    const colorNote = gc.grading_thresholds?.color_note;
+    if (typeof colorNote === 'string') {
+      const cm = colorNote.match(/^([A-Za-z]+(?:\/[A-Za-z]+)+)/);
+      if (cm) {
+        const colors = cm[1].split('/');
+        if (colors.length === result.length) {
+          result.forEach((r, i) => { r.color = colors[i]; });
+        }
+      }
+    }
+    return result;
+  }
+  // Format 2: gc.grading_thresholds.tiers as array of { label, score_min, score_max, color? }
+  const gt = gc.grading_thresholds;
+  if (gt?.tiers && Array.isArray(gt.tiers)) {
+    // deno-lint-ignore no-explicit-any
+    return gt.tiers.map((t: any) => ({
+      name: t.label || t.name,
+      range: t.score_max != null ? `${t.score_min} \u2013 ${t.score_max}` : `${t.score_min}+`,
+      ...(t.color ? { color: t.color as string } : {}),
+    }));
+  }
+  // Format 3: top-level letter keys A, B, C with [min, max] arrays (e.g. LA, Riverside)
+  const letterKeys = ['A', 'B', 'C', 'D', 'F'];
+  const found: Array<{ name: string; range: string; color?: string }> = [];
+  let lowestStart = Infinity;
+  for (const key of letterKeys) {
+    if (Array.isArray(gc[key]) && gc[key].length === 2 && typeof gc[key][0] === 'number') {
+      const [low, high] = gc[key];
+      const entry: { name: string; range: string; color?: string } = {
+        name: `Grade ${key}`, range: `${low} \u2013 ${high}`,
+      };
+      const display = gc[`grade_${key.toLowerCase()}_display`];
+      if (typeof display === 'string' && display.endsWith('_card')) {
+        entry.color = display.replace('_card', '').replace(/^\w/, (c: string) => c.toUpperCase());
+      }
+      found.push(entry);
+      if (low < lowestStart) lowestStart = low;
+    }
+  }
+  // If lowest letter grade doesn't reach 0, add below-fail tier
+  if (found.length >= 2 && lowestStart > 0 && typeof gc.fail_below === 'number') {
+    const belowLabel = gc.below_70_display === 'numerical_score_card' ? 'Score Card'
+      : `Below ${gc.fail_below}`;
+    found.push({ name: belowLabel, range: `0 \u2013 ${gc.fail_below - 1}` });
+  }
+  return found.length >= 2 ? found : null;
+}
+
+// deno-lint-ignore no-explicit-any
+function buildStructuredEvaluation(gc: Record<string, any>, font: string, prose: string | null): string {
+  let html = '';
+
+  const direction = gc.direction || gc.score_direction
+      || (gc.evaluation_method && /deduction/i.test(gc.evaluation_method) ? 'downward_deduction' : null);
+  if (direction) {
+    const dirLabel = direction === 'accumulate_up' ? 'Points accumulate upward (lower is better)'
+      : direction === 'downward_deduction' ? 'Points deducted from base (higher is better)'
+      : direction.replace(/_/g, ' ');
+    html += `<p style="font-family:${font};font-size:13px;color:#5F6875;margin:6px 0;"><strong>Scoring direction:</strong> ${dirLabel}</p>`;
+  }
+
+  const tierRows = extractTiers(gc);
+  if (tierRows && tierRows.length > 0) {
+    const hasColors = tierRows.some(t => t.color);
+    html += `<table style="width:100%;border-collapse:collapse;font-family:${font};font-size:13px;margin:8px 0;">`;
+    html += `<tr style="background:#F7F1E6;"><th style="padding:6px 8px;text-align:left;">Rating</th>`;
+    if (hasColors) html += `<th style="padding:6px 8px;text-align:left;">Card</th>`;
+    html += `<th style="padding:6px 8px;text-align:right;">Point Range</th></tr>`;
+    for (const t of tierRows) {
+      html += `<tr><td style="padding:6px 8px;border-bottom:1px solid #EEE7D9;">${t.name}</td>`;
+      if (hasColors) html += `<td style="padding:6px 8px;border-bottom:1px solid #EEE7D9;">${t.color || '\u2014'}</td>`;
+      html += `<td style="padding:6px 8px;border-bottom:1px solid #EEE7D9;text-align:right;">${t.range}</td></tr>`;
+    }
+    html += '</table>';
+  }
+
+  if (shouldRenderPointValuesEmail(gc, prose)) {
+    const pv = gc.point_values || gc.violation_points;
+    html += `<table style="width:100%;border-collapse:collapse;font-family:${font};font-size:13px;margin:8px 0;">`;
+    html += `<tr style="background:#F7F1E6;"><th style="padding:6px 8px;text-align:left;">Violation Category</th><th style="padding:6px 8px;text-align:right;">Points</th></tr>`;
+    for (const [cat, pts] of Object.entries(pv)) {
+      const label = cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+      html += `<tr><td style="padding:6px 8px;border-bottom:1px solid #EEE7D9;">${label}</td>` +
+        `<td style="padding:6px 8px;border-bottom:1px solid #EEE7D9;text-align:right;font-weight:600;">${pts}</td></tr>`;
+    }
+    html += '</table>';
+  }
+
+  return html;
+}
+
+function isPointValueSentenceEmail(sent: string): boolean {
+  if (/\bpoint\s+weights?\s*:/i.test(sent)) return true;
+  if (/\d+[-\s]point\s*(?:penalty|surcharge|deduction)/i.test(sent)) return true;
+  // Multiple "= N pts/points" (require unit word to avoid "= 3/year" false positives)
+  const eqWithUnit = sent.match(/=\s*-?\d+\s*(?:pts?|points?|point)\b/gi);
+  if (eqWithUnit && eqWithUnit.length >= 2) return true;
+  // Multiple violation-category = bare-number assignments (repeat Major = 14, Minor = 6)
+  const catAssign = sent.match(/\b(?:major|minor|critical|grp|non-?critical|repeat|imminent|hazard)\s*[=:]\s*-?\d+/gi);
+  if (catAssign && catAssign.length >= 2) return true;
+  // Multiple parenthetical point values (handles negative) with violation keywords
+  const parenPts = sent.match(/\(\s*-?\d+(?:\s*[-\u2013]\s*\d+)?\+?\s*(?:pts?|points?|point)\b/gi);
+  if (parenPts && parenPts.length >= 2 &&
+      /\b(?:major|minor|critical|hazard|violation|deduct)/i.test(sent)) return true;
+  // Violation categories with parenthetical point values: "Major (5 points, ...)"
+  const catParenPts = sent.match(/\b(?:major|minor|critical|imminent|non-?critical|grp|crf)\b[^)]*?\(\s*-?\d+[^)]*?(?:pts?|points?|point)\b/gi);
+  if (catParenPts && catParenPts.length >= 2) return true;
+  // "violations are -N pt(s)"
+  if (/\b(?:violations?|infractions?)\s+(?:are|is)\s+-?\d+\s*(?:pts?|points?|point)\b/i.test(sent)) return true;
+  // "additional -N pts"
+  if (/\badditional\s+-?\d+\s*(?:pts?|points?|point)\b/i.test(sent)) return true;
+  return false;
+}
+
+function isTierRangeSentenceEmail(sent: string): boolean {
+  // 3+ tier labels each paired with a numeric range = tier enumeration sentence
+  const tierLabels = sent.match(/\b(?:Grade\s+[A-F]|[A-C](?=\s*[\(=:])|Good|Satisfactory|Unsatisfactory|Score\s*Card|Notice\s+of\s+Closure)\b/gi);
+  const numericRanges = sent.match(/\d+\s*[-\u2013<>=]+\s*\d+/g);
+  return !!(tierLabels && tierLabels.length >= 3 && numericRanges && numericRanges.length >= 2);
+}
+
+function scrubPointValuesEmail(text: string): string | null {
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const clean = sentences.filter((sent: string) => {
+    const letters = sent.replace(/[^a-zA-Z]/g, '');
+    return letters.length > 2 && !isPointValueSentenceEmail(sent) && !isTierRangeSentenceEmail(sent);
+  });
+  const result = clean.join(' ').trim();
+  return result || null;
+}
+
 // ── Email template ──────────────────────────────────────────────
 
 const fInstrument = "'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -168,8 +338,14 @@ function buildBriefingBody(county: string, jur: Record<string, any>): string {
     };
     let s = h3('How This County Evaluates');
     s += `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:8px 0;">This county uses <strong>${labels[jur.grading_type] || 'standard inspection reports'}</strong> to evaluate food safety inspections.</p>`;
+    if (jur?.grading_config) {
+      s += buildStructuredEvaluation(jur.grading_config as Record<string, any>, fInstrument, jur.scoring_methodology || null);
+    }
     if (jur.scoring_methodology) {
-      s += `<p style="font-family:${fInstrument};font-size:13px;color:#5F6875;">${jur.scoring_methodology}</p>`;
+      const prose = scrubPointValuesEmail(jur.scoring_methodology);
+      if (prose) {
+        s += `<p style="font-family:${fInstrument};font-size:13px;color:#5F6875;">${prose}</p>`;
+      }
     }
     p.push(s);
   }
