@@ -79,6 +79,7 @@ Deno.serve(async (req: Request) => {
       ctaText: "Get Started with EvidLY",
       ctaUrl: referralUrl,
       footerNote: `Referred by ${senderName} · Kitchen to Community Program`,
+      campaign: true,
     });
 
     const emailResult = await sendEmail({

@@ -178,7 +178,7 @@ const SOURCE_OPTS = [
 
 /* Record questions — each carries a short name for the gap list */
 const FIRE_QS = [
-  { id: 'hood',   sh: 'Hood & duct cleaning',   t: 'Hood and duct cleaning \u2014 your most recent record.',            c: QUESTION_META.hood.citation, a: VENDOR },
+  { id: 'hood',   sh: 'Exhaust & hood cleaning', t: 'Exhaust and hood cleaning \u2014 your most recent record.',            c: QUESTION_META.hood.citation, a: VENDOR },
   { id: 'supp',   sh: 'Hood suppression',        t: 'Hood suppression service \u2014 dated inside the last six months.', c: QUESTION_META.supp.citation, a: VENDOR },
   { id: 'ext',    sh: 'Fire extinguishers',      t: 'Fire extinguisher service \u2014 your most recent record.',         c: QUESTION_META.ext.citation,  a: VENDOR },
   { id: 'sprink', sh: 'Fire sprinklers',         t: 'Fire sprinkler inspection \u2014 your most recent record.',         c: QUESTION_META.sprink.citation, a: VENDOR },

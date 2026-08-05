@@ -21,7 +21,7 @@ export interface QuestionMeta {
 }
 
 export const QUESTION_META: Record<string, QuestionMeta> = {
-  hood:    { label: 'Hood & duct cleaning',          citation: 'NFPA 96 Table 12.4' },
+  hood:    { label: 'Exhaust & hood cleaning',        citation: 'NFPA 96 Table 12.4' },
   supp:    { label: 'Hood suppression',              citation: 'NFPA 17A' },
   ext:     { label: 'Fire extinguishers',            citation: 'NFPA 10' },
   sprink:  { label: 'Fire sprinklers',               citation: 'NFPA 25' },

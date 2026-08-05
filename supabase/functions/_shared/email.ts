@@ -82,6 +82,8 @@ export interface EmailTemplateParams {
   urgencyBanner?: { text: string; color: string };
   footerNote?: string;
   unsubscribeToken?: string;
+  /** Campaign emails show an Unsubscribe link. Transactional (default) do not. */
+  campaign?: boolean;
 }
 
 /**
@@ -101,9 +103,13 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
       </div>`
     : "";
 
-  const footerNote = params.footerNote
-    ? `<p style="color: #94a3b8; font-size: 12px; margin-top: 16px;">${params.footerNote}</p>`
-    : "";
+  const unsubUrl = params.unsubscribeToken
+    ? `https://app.getevidly.com/unsubscribe?token=${params.unsubscribeToken}`
+    : 'https://app.getevidly.com/settings/notifications';
+
+  const reasonLine = params.footerNote
+    ? `<p style="margin: 0 0 10px 0; font-size: 11px; color: #999;">${params.footerNote}</p>`
+    : '';
 
   return `
 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
@@ -117,21 +123,12 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
     <p>Hi ${params.recipientName},</p>
     ${params.bodyHtml}
     ${ctaBlock}
-    ${footerNote}
   </div>
   <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
-    <p style="margin: 0 0 8px 0;">&copy; 2026 EvidLY &mdash; Predict &middot; Reduce &middot; Prove</p>
-    <p style="margin: 0 0 4px 0; font-size: 11px; color: #999;">
-      You're receiving this because you have an EvidLY account or submitted an operations check.
-    </p>
-    <p style="margin: 0; font-size: 11px; color: #999;">
-      <a href="https://app.getevidly.com/settings/notifications" style="color: #999; text-decoration: underline;">Manage email preferences</a>
-      &nbsp;&bull;&nbsp;
-      <a href="${params.unsubscribeToken ? `https://app.getevidly.com/unsubscribe?token=${params.unsubscribeToken}` : 'https://app.getevidly.com/settings/notifications'}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
-    </p>
-    <p style="margin: 4px 0 0 0; font-size: 10px; color: #b0b8c4;">
-      EvidLY LLC
-    </p>
+    ${reasonLine}
+    <p style="margin: 0 0 4px 0;">EvidLY &middot; Commercial Kitchen Risk Management</p>
+    <p style="margin: 0 0 4px 0; font-size: 11px; color: #999;">Cleaning Pros Plus, LLC &middot; 2324 M Street #2711 &middot; Merced, CA 95344</p>
+    <p style="margin: 0; font-size: 11px; color: #999;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company${params.campaign ? ` &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color: #999; text-decoration: underline;">Unsubscribe</a>` : ''}</p>
   </div>
 </div>`;
 }

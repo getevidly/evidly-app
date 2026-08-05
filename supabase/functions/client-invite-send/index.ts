@@ -58,6 +58,7 @@ Deno.serve(async (req: Request) => {
       ctaLabel: "Sign Up Free",
       ctaUrl: inviteLink,
       footer: `This invitation was sent by ${vendorName} through EvidLY. If you did not expect this email, you can safely ignore it.`,
+      campaign: true,
     });
 
     await sendEmail({

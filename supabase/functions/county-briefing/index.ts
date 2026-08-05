@@ -1,7 +1,8 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from '../_shared/cors.ts';
-import { sendEmail } from '../_shared/email.ts';
+import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
+import { QUESTION_META } from '../_shared/study-questions.ts';
 import { sortedJsonStringify, sha256 } from '../_shared/seal-canonicalization.ts';
 
 const corsHeaders = getCorsHeaders(null);
@@ -287,6 +288,50 @@ function scrubPointValuesEmail(text: string): string | null {
   });
   const result = clean.join(' ').trim();
   return result || null;
+}
+
+// ── Study five-day follow-up ─────────────────────────────────────
+const STUDY_FOLLOWUP_STEP = 50;
+const CALENDLY_URL = 'https://calendly.com/founders-getevidly/california-commercial-kitchen-study';
+const GAP_RANK: Record<string, number> = { no: 0, gap: 1, untracked: 2 };
+const GAP_LABEL: Record<string, string> = {
+  no: 'Not on file', gap: 'Not in my hands', untracked: 'Have to find it',
+};
+
+function buildFollowUpEmail(
+  gaps: Array<{ label: string; status: string }>,
+  totalGaps: number,
+): string {
+  const shown = gaps.slice(0, 3);
+  const remaining = totalGaps - shown.length;
+  const plural = shown.length !== 1;
+
+  let listHtml = '';
+  for (const g of shown) {
+    listHtml += `<li style="margin-bottom:6px;"><strong>${g.label}</strong> \u2014 ${g.status}</li>`;
+  }
+  if (remaining > 0) {
+    listHtml += `<li style="margin-bottom:6px;color:#64748b;">\u2026and ${remaining} more</li>`;
+  }
+
+  const bodyHtml =
+    `<p>You finished the California Commercial Kitchen Safety Study five days ago. ` +
+    `You told us you couldn\u2019t put your hands on ${plural ? 'these records' : 'this record'} right now:</p>` +
+    `<ul style="margin:16px 0;padding-left:20px;font-size:14px;line-height:1.7;">${listHtml}</ul>` +
+    `<p>If an inspector or a broker asked for ${plural ? 'those' : 'that'} tomorrow, ` +
+    `you\u2019d have to go looking.</p>` +
+    `<p>That is the conversation worth having. Thirty minutes with the ` +
+    `Founder, Arthur \u2014 nothing to prepare. We work out how those get on ` +
+    `file and stay there.</p>`;
+
+  return buildEmailHtml({
+    recipientName: 'there',
+    bodyHtml,
+    ctaText: 'Pick a time',
+    ctaUrl: CALENDLY_URL,
+    footerNote: 'You received this because you completed the California Commercial Kitchen Safety Study and have not yet scheduled a meeting.',
+    campaign: true,
+  });
 }
 
 // ── Email template ──────────────────────────────────────────────
@@ -1199,8 +1244,126 @@ Deno.serve(async (req: Request) => {
         }
       }
 
-      console.log("[county-briefing] cron-process:", JSON.stringify({ sent, held, skipped_reasons: skippedReasons }));
-      return jsonResponse({ processed: sent + held, sent, held, skipped_reasons: skippedReasons });
+      // ── Study five-day follow-up ─────────────────────────────────
+      let followupSent = 0, followupSkipped = 0;
+
+      const { data: followUpStep } = await supabase
+        .from('outreach_steps')
+        .select('*')
+        .eq('step_number', STUDY_FOLLOWUP_STEP)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (!followUpStep) {
+        trackSkip('Study follow-up step not defined (step 50)');
+      } else if (!followUpStep.signed_off_at) {
+        trackSkip('Study follow-up step not signed off');
+      } else {
+        const fHash = await computeStepContentHash(followUpStep);
+        if (fHash !== followUpStep.content_hash) {
+          trackSkip('Study follow-up content drifted');
+          await supabase.from('outreach_steps').update({
+            signed_off_by: null, signed_off_at: null,
+            content_hash: fHash, updated_at: now.toISOString(),
+          }).eq('id', followUpStep.id);
+        } else {
+          const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString();
+          const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+          // Bulk-fetch already-processed response IDs to avoid N+1 queries
+          const { data: alreadyProcessed } = await supabase
+            .from('study_email_log')
+            .select('response_id')
+            .eq('email_type', 'five_day_followup');
+          const processedIds = new Set(
+            (alreadyProcessed || []).map((r: { response_id: string }) => r.response_id),
+          );
+
+          const { data: responses } = await supabase
+            .from('market_research_responses')
+            .select('id')
+            .eq('status', 'completed')
+            .lte('completed_at', fiveDaysAgo)
+            .gte('completed_at', thirtyDaysAgo);
+
+          for (const resp of (responses || [])) {
+            if (processedIds.has(resp.id)) continue;
+
+            const { data: contact } = await supabase
+              .from('market_research_contacts')
+              .select('email, wants_meeting')
+              .eq('response_id', resp.id)
+              .maybeSingle();
+
+            if (!contact?.email) continue;
+            if (contact.wants_meeting === true) continue;
+
+            // Pipeline check — someone who booked through any channel
+            const { data: pipeline } = await supabase
+              .from('sales_pipeline')
+              .select('id')
+              .ilike('contact_email', contact.email)
+              .limit(1);
+
+            if (pipeline && pipeline.length > 0) continue;
+
+            // Gap records — same logic as KitchenSafetyStudy.jsx
+            const { data: answers } = await supabase
+              .from('market_research_answers')
+              .select('question_id, value')
+              .eq('response_id', resp.id);
+
+            const gaps = (answers || [])
+              .filter((a: { question_id: string; value: string }) =>
+                QUESTION_META[a.question_id] && GAP_RANK[a.value] !== undefined)
+              .sort((a: { value: string }, b: { value: string }) =>
+                GAP_RANK[a.value] - GAP_RANK[b.value])
+              .map((a: { question_id: string; value: string }) => ({
+                label: QUESTION_META[a.question_id].label,
+                status: GAP_LABEL[a.value],
+              }));
+
+            if (gaps.length === 0) {
+              // No gaps → no send, log the skip with reason
+              try {
+                await supabase.from('study_email_log').insert({
+                  response_id: resp.id, email_type: 'five_day_followup',
+                  recipient_email: contact.email, resend_id: null,
+                  status: 'skipped',
+                  error_message: 'No gap records — nothing to meet about',
+                });
+              } catch { /* best-effort */ }
+              followupSkipped++;
+              continue;
+            }
+
+            const subject = 'The records you\u2019d have to go looking for';
+            const html = buildFollowUpEmail(gaps, gaps.length);
+
+            const result = await sendEmail({ to: contact.email, subject, html });
+            try {
+              await supabase.from('study_email_log').insert({
+                response_id: resp.id, email_type: 'five_day_followup',
+                recipient_email: contact.email, resend_id: result?.id ?? null,
+                status: result ? 'sent' : 'failed',
+                error_message: result ? null : 'Resend send failed',
+              });
+            } catch { /* best-effort */ }
+
+            if (result) followupSent++;
+            else followupSkipped++;
+          }
+        }
+      }
+
+      console.log("[county-briefing] cron-process:", JSON.stringify({
+        sent, held, skipped_reasons: skippedReasons,
+        followup_sent: followupSent, followup_skipped: followupSkipped,
+      }));
+      return jsonResponse({
+        processed: sent + held, sent, held, skipped_reasons: skippedReasons,
+        followup_sent: followupSent, followup_skipped: followupSkipped,
+      });
     }
 
     return jsonResponse({ error: `Unknown action: ${action}` }, 400);

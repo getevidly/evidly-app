@@ -191,6 +191,7 @@ Deno.serve(async (req: Request) => {
         bodyHtml: emailContent.bodyHtml,
         ctaText: "Book a 15-Minute Call →",
         ctaUrl: "https://calendly.com/founders-getevidly/60min",
+        campaign: true,
       });
 
       const result = await sendEmail({

@@ -26,7 +26,7 @@ const ALL_RECORD_IDS = [...LADDER_IDS, ...KNOW_IDS];
 
 // Human-readable record names
 export const RECORD_NAMES: Record<string, string> = {
-  hood:    'Hood & duct cleaning',
+  hood:    'Exhaust & hood cleaning',
   supp:    'Hood suppression',
   ext:     'Fire extinguishers',
   sprink:  'Fire sprinklers',
