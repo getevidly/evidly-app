@@ -23,8 +23,9 @@ export interface QuestionMeta {
 export const QUESTION_META: Record<string, QuestionMeta> = {
   hood:    { label: 'Exhaust & hood cleaning',        citation: 'NFPA 96 Table 12.4' },
   supp:    { label: 'Hood suppression',              citation: 'NFPA 17A' },
-  ext:     { label: 'Fire extinguishers',            citation: 'NFPA 10' },
   sprink:  { label: 'Fire sprinklers',               citation: 'NFPA 25' },
+  alarm:   { label: 'Fire alarm inspection',         citation: 'NFPA 72' },
+  ext:     { label: 'Fire extinguishers',            citation: 'NFPA 10' },
   cool:    { label: 'Cooling records',               citation: '\u00A7114002' },
   hold:    { label: 'Holding temperatures',          citation: '\u00A7113996 \u00B7 \u2265135\u00B0F and \u226441\u00B0F' },
   sanit:   { label: 'Sanitization records',          citation: '\u00A7114099, \u00A7114125' },
