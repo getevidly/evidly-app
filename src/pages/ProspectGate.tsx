@@ -574,7 +574,7 @@ export function ProspectGate() {
           <div style={{ paddingTop: 26, borderTop: `1px solid ${NAVY_LINE}`, marginTop: 26 }}>
             <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 17, color: '#fff', margin: '0 0 6px' }}>See the gaps. Let&rsquo;s close them.</p>
             <p style={{ margin: '0 0 14px', fontSize: '13.5px', color: '#a9b4cb' }}>Book a meeting with the Founder, Arthur.</p>
-            <a href="https://getevidly.com/study?from=client" target="_blank" rel="noopener"
+            <a href="https://getstovio.com/study/?from=client" target="_blank" rel="noopener"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 20px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
               Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
             </a>
@@ -812,7 +812,7 @@ export function ProspectGate() {
                   <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founder</span>
                   <span style={{ fontSize: 13, color: '#c7d0e2' }}><b style={{ color: '#fff', fontWeight: 600 }}>Arthur Haggerty</b></span>
                 </div>
-                <a href="https://getevidly.com/study?from=client" target="_blank" rel="noopener"
+                <a href="https://getstovio.com/study/?from=client" target="_blank" rel="noopener"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: '15.5px', textDecoration: 'none', padding: '15px 22px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
                   Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
                 </a>
