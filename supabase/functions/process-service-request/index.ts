@@ -295,7 +295,7 @@ Deno.serve(async (req) => {
     };
 
     const emailHtml = buildEmailHtml({
-      recipientName: vendor.contact_name || vendor.company_name,
+      recipientName: vendor.contact_name || vendor.company_name || 'there',
       bodyHtml: `
         <p><strong>${orgName}</strong> has requested <strong>${service_type}</strong> service${locationName ? ` at <strong>${locationName}</strong>` : ""}${urgencyLabel[urgency] || ""}.</p>
         <p>They have proposed the following dates:</p>
@@ -316,7 +316,7 @@ Deno.serve(async (req) => {
     if (urgencyBanner) {
       // Rebuild with urgency banner
       const urgentEmailHtml = buildEmailHtml({
-        recipientName: vendor.contact_name || vendor.company_name,
+        recipientName: vendor.contact_name || vendor.company_name || 'there',
         bodyHtml: `
           <p><strong>${orgName}</strong> has requested <strong>${service_type}</strong> service${locationName ? ` at <strong>${locationName}</strong>` : ""}${urgencyLabel[urgency] || ""}.</p>
           <p>They have proposed the following dates:</p>

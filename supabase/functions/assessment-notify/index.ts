@@ -82,9 +82,9 @@ function buildHtml(payload: AssessmentPayload): string {
   return `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
       <div style="background:#0B1628;padding:20px;border-radius:8px 8px 0 0">
-        <span style="color:#A08C5A;font-size:20px;font-weight:bold">E</span>
+        <span style="color:#B24A2E;font-size:20px;font-weight:bold">E</span>
         <span style="color:#fff;font-size:20px;font-weight:bold">vid</span>
-        <span style="color:#A08C5A;font-size:20px;font-weight:bold">LY</span>
+        <span style="color:#B24A2E;font-size:20px;font-weight:bold">LY</span>
         <span style="color:#ccc;font-size:12px;margin-left:10px">Compliance Assessment Alert</span>
       </div>
 

@@ -68,9 +68,9 @@ Deno.serve(async (req: Request) => {
 
     const bodyHtml = `
       <p>${senderName} thinks you'd love EvidLY — the food safety compliance platform that helps kitchens stay inspection-ready.</p>
-      ${message ? `<div style="background: #f8fafc; border-left: 3px solid #A08C5A; padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0;"><p style="margin: 0; font-size: 13px; color: #374151; font-style: italic;">"${message.substring(0, 500)}"</p></div>` : ""}
-      <p>Here's the best part: for every kitchen that joins, EvidLY donates <strong style="color: #A08C5A;">12 meals to No Kid Hungry</strong>. It's compliance that feeds the community.</p>
-      <p>Your referral code is: <strong style="font-family: monospace; color: #A08C5A; letter-spacing: 1px;">${referralCode}</strong></p>
+      ${message ? `<div style="background: #f8fafc; border-left: 3px solid #B24A2E; padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0;"><p style="margin: 0; font-size: 13px; color: #374151; font-style: italic;">"${message.substring(0, 500)}"</p></div>` : ""}
+      <p>Here's the best part: for every kitchen that joins, EvidLY donates <strong style="color: #B24A2E;">12 meals to No Kid Hungry</strong>. It's compliance that feeds the community.</p>
+      <p>Your referral code is: <strong style="font-family: monospace; color: #B24A2E; letter-spacing: 1px;">${referralCode}</strong></p>
     `;
 
     const html = buildEmailHtml({

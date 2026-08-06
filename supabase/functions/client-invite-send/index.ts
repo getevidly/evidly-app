@@ -47,17 +47,15 @@ Deno.serve(async (req: Request) => {
     const subject = `${vendorName} has invited you to EvidLY`;
 
     const htmlBody = buildEmailHtml({
-      preheader: `${vendorName} wants to connect with ${businessName} on EvidLY`,
-      heading: `You've been invited to EvidLY`,
-      body: `
-        <p>Hi ${contactName || "there"},</p>
-        <p><strong>${vendorName}</strong> has invited <strong>${businessName}</strong> to join EvidLY — the compliance platform for commercial kitchens.</p>
-        ${message ? `<div style="background:#f9fafb;border-left:3px solid #d4af37;padding:12px 16px;margin:16px 0;border-radius:4px;font-size:14px;color:#374151;white-space:pre-line">${message}</div>` : ""}
+      recipientName: contactName || 'there',
+      bodyHtml: `
+        <p><strong>${vendorName}</strong> has invited${businessName ? ` <strong>${businessName}</strong> to` : ' you to'} join EvidLY — the compliance platform for commercial kitchens.</p>
+        ${message ? `<div style="background:#f9fafb;border-left:3px solid #B24A2E;padding:12px 16px;margin:16px 0;border-radius:4px;font-size:14px;color:#374151;white-space:pre-line">${message}</div>` : ""}
         <p>When you sign up, ${vendorName} will be automatically linked as your vendor with their COI and certifications shared to your account.</p>
       `,
-      ctaLabel: "Sign Up Free",
+      ctaText: "Sign Up Free",
       ctaUrl: inviteLink,
-      footer: `This invitation was sent by ${vendorName} through EvidLY. If you did not expect this email, you can safely ignore it.`,
+      footerNote: `This invitation was sent by ${vendorName} through EvidLY. If you did not expect this email, you can safely ignore it.`,
       campaign: true,
     });
 

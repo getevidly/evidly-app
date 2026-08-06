@@ -129,7 +129,7 @@ Deno.serve(async (req: Request) => {
     </p>`;
 
   const html = buildEmailHtml({
-    recipientName: record.recipient_name,
+    recipientName: record.recipient_name || 'there',
     bodyHtml,
     ctaText: 'View Documents',
     ctaUrl: portalUrl,

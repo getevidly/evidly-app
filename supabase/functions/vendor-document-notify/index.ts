@@ -74,11 +74,12 @@ const OUTER   = "#F5F0E8";
 
 function getSubject(p: Payload): string {
   const w = p.doc_count === 1 ? "document" : "documents";
+  const org = p.org_name || 'your organization';
   if (p.uploaded_by?.type === "mixed") {
-    return `${p.doc_count} ${w} pending review \u00b7 ${p.org_name}`;
+    return `${p.doc_count} ${w} pending review \u00b7 ${org}`;
   }
-  const actor = p.uploaded_by?.name || p.vendor_name;
-  return `${actor} uploaded ${p.doc_count} ${w} \u00b7 ${p.org_name} \u2014 pending review`;
+  const actor = p.uploaded_by?.name || p.vendor_name || 'A vendor';
+  return `${actor} uploaded ${p.doc_count} ${w} \u00b7 ${org} \u2014 pending review`;
 }
 
 /* ── Record row (table-based, email-safe) ──────────────────────── */
@@ -144,7 +145,7 @@ function buildHtml(p: Payload): string {
   const w    = p.doc_count === 1 ? "document" : "documents";
   const isMixed = p.uploaded_by?.type === "mixed";
   const vn   = isMixed ? "" : esc(p.uploaded_by?.name || p.vendor_name);
-  const on   = esc(p.org_name);
+  const on   = esc(p.org_name || 'your organization');
   const rows = p.records.map((r) => recordRow(r, p.vendor_name)).join("");
   const svc  = p.records.find((r) => r.category === "service")?.display_name || w;
   const stand = p.standing ? standingHtml(p.standing, svc) : "";

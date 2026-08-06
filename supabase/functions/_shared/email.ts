@@ -40,6 +40,7 @@ export interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
+  from?: string;
   replyTo?: string;
 }
 
@@ -64,7 +65,7 @@ export async function sendEmail(params: SendEmailParams): Promise<{ id: string }
   }
 
   const body: Record<string, unknown> = {
-    from: FROM_ADDRESS,
+    from: params.from || FROM_ADDRESS,
     to: [params.to],
     subject: params.subject,
     html: params.html,
@@ -155,7 +156,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
   <div style="background: #1E2D4D; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
-      <span style="color: #A08C5A;">E</span><span style="color: #ffffff;">vid</span><span style="color: #A08C5A;">LY</span>
+      <span style="color: #B24A2E;">E</span><span style="color: #ffffff;">vid</span><span style="color: #B24A2E;">LY</span>
     </h1>
   </div>
   ${urgencyBlock}

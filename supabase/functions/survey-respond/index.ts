@@ -120,7 +120,7 @@ function freqLabel(f: string): string {
 }
 
 function h3(text: string): string {
-  return `<h3 style="color:#1E2D4D;border-bottom:2px solid #A08C5A;padding-bottom:4px;margin-top:28px;">${text}</h3>`;
+  return `<h3 style="color:#1E2D4D;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin-top:28px;">${text}</h3>`;
 }
 
 function buildGapReportBody(

@@ -115,9 +115,9 @@ export function generateDigestHtml(
 <tr><td style="background:#1E2D4D;padding:28px 32px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
   <tr>
-    <td><span style="color:#d4af37;font-size:28px;font-weight:800;">&#9989;</span></td>
+    <td><span style="color:#B24A2E;font-size:28px;font-weight:800;">&#9989;</span></td>
     <td style="padding-left:12px;">
-      <div style="font-size:22px;font-weight:800;color:#ffffff;">Evid<span style="color:#d4af37;">LY</span></div>
+      <div style="font-size:22px;font-weight:800;"><span style="color:#B24A2E;">E</span><span style="color:#ffffff;">vid</span><span style="color:#B24A2E;">LY</span></div>
       <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:1px;">LEAD WITH CONFIDENCE</div>
     </td>
     <td align="right" style="color:rgba(255,255,255,0.7);font-size:12px;">Weekly Digest</td>
@@ -207,7 +207,7 @@ ${upcomingBlock}
 <tr><td style="background:#f8fafc;padding:24px 32px;border-top:1px solid #e5e7eb;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
   <tr><td align="center">
-    <div style="font-size:16px;font-weight:800;color:#1E2D4D;">Evid<span style="color:#d4af37;">LY</span></div>
+    <div style="font-size:16px;font-weight:800;"><span style="color:#B24A2E;">E</span><span style="color:#1E2D4D;">vid</span><span style="color:#B24A2E;">LY</span></div>
     <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Lead with Confidence</div>
     <div style="margin-top:12px;font-size:12px;color:#94a3b8;">
       <a href="https://app.getevidly.com/settings/notifications" style="color:#1E2D4D;text-decoration:underline;">Manage Preferences</a>

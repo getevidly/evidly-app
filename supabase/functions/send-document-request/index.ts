@@ -23,11 +23,14 @@ Deno.serve(async (req: Request) => {
 
     const escapedMessage = coverMessage.replace(/\n/g, '<br>');
 
+    const safeName = vendorName || 'there';
+    const safeOrg = orgName || 'A customer';
+
     const html = buildEmailHtml({
-      recipientName: vendorName,
+      recipientName: safeName,
       bodyHtml: `
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <p style="font-weight: 600; margin: 0 0 8px 0;">${orgName} is requesting your ${documentType}</p>
+          <p style="font-weight: 600; margin: 0 0 8px 0;">${safeOrg} is requesting your ${documentType || 'document'}</p>
           <p style="color: #475569; font-size: 14px; margin: 0;">${escapedMessage}</p>
         </div>
         <p style="color: #64748b; font-size: 14px;">Click the button below to securely upload your document. No account needed — the link expires ${expiryDescription || 'in 5 days'}.</p>
@@ -39,7 +42,7 @@ Deno.serve(async (req: Request) => {
 
     const result = await sendEmail({
       to: vendorEmail,
-      subject: `${orgName} has requested your ${documentType}`,
+      subject: `${safeOrg} has requested your ${documentType || 'document'}`,
       html,
     });
 

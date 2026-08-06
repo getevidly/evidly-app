@@ -113,7 +113,7 @@ export function renderDigestEmail(input: DigestRenderInput): DigestRenderOutput 
 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
   <div style="background: #1E2D4D; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
-      <span style="color: #ffffff;">Evid</span><span style="color: #A08C5A;">LY</span>
+      <span style="color: #B24A2E;">E</span><span style="color: #ffffff;">vid</span><span style="color: #B24A2E;">LY</span>
     </h1>
   </div>
   <div style="padding: 24px 32px;">
