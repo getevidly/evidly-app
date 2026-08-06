@@ -19,7 +19,7 @@ import { QUESTION_META } from '../_shared/study-questions.ts';
 
 const cors = PUBLIC_CORS_HEADERS;
 
-const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'client', 'other']);
+const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'client', 'other', 'research', 'stovio-home', 'stovio-food', 'stovio-fire', 'stovio-article']);
 
 /* Study kitchen_type → gtmReference SEGMENTS key (so ICP scoring works).
  * 'Hospital or senior living' maps to 'Senior Living' (fit 16). The survey
@@ -528,7 +528,12 @@ Deno.serve(async (req: Request) => {
 
       if (key === 'source') {
         // Validate source against enum
-        responsePatch.source = VALID_SOURCES.has(value as string) ? value : 'other';
+        if (VALID_SOURCES.has(value as string)) {
+          responsePatch.source = value;
+        } else {
+          console.warn(`[survey-respond] Unrecognised source tag: "${value}" — remapped to "other"`);
+          responsePatch.source = 'other';
+        }
       } else {
         responsePatch[key] = value;
       }
