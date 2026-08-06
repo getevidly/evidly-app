@@ -2,8 +2,8 @@
   "buildCommand": "vite build",
   "outputDirectory": "dist",
   "redirects": [
-    { "source": "/study", "destination": "https://getevidly.com/study", "statusCode": 301 },
-    { "source": "/survey", "destination": "https://getevidly.com/study", "statusCode": 301 }
+    { "source": "/study", "destination": "https://getstovio.com/study/", "statusCode": 301 },
+    { "source": "/survey", "destination": "https://getstovio.com/study/", "statusCode": 301 }
   ],
   "rewrites": [{ "source": "/((?!.*\\.).*)", "destination": "/index.html" }],
   "headers": [
