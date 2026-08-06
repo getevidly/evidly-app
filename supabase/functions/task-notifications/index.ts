@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
     for (const task of toRemind ?? []) {
       await createNotification({
         supabase,
-        organizationId: task.org_id,
+        organizationId: task.organization_id,
         userId: task.assigned_to,
         type: "task_reminder",
         category: "team",
@@ -81,7 +81,7 @@ Deno.serve(async (req: Request) => {
     for (const task of soonTasks ?? []) {
       await createNotification({
         supabase,
-        organizationId: task.org_id,
+        organizationId: task.organization_id,
         userId: task.assigned_to,
         type: "task_due_soon",
         category: "team",
@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
       if (task.assigned_to) {
         await createNotification({
           supabase,
-          organizationId: task.org_id,
+          organizationId: task.organization_id,
           userId: task.assigned_to,
           type: "task_overdue",
           category: "team",
@@ -166,13 +166,13 @@ Deno.serve(async (req: Request) => {
       const { data: escalationUsers } = await supabase
         .from("user_profiles")
         .select("id")
-        .eq("organization_id", task.org_id)
+        .eq("organization_id", task.organization_id)
         .eq("role", nextLevel.notify_role);
 
       for (const user of escalationUsers ?? []) {
         await createNotification({
           supabase,
-          organizationId: task.org_id,
+          organizationId: task.organization_id,
           userId: user.id,
           type: "task_escalation",
           category: "team",
