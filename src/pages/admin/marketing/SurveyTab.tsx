@@ -31,16 +31,16 @@ import { toast } from 'sonner';
 // ── Tagged links for copy ────────────────────────────────────────
 
 const TAGGED_LINKS = [
-  { label: 'Outbound call',  url: 'https://getevidly.com/study?from=call' },
-  { label: 'Show floor QR',  url: 'https://getevidly.com/study?from=show' },
-  { label: 'EvidLY email',   url: 'https://getevidly.com/study?from=email' },
-  { label: 'LinkedIn',       url: 'https://getevidly.com/study?from=linkedin' },
-  { label: 'Facebook',       url: 'https://getevidly.com/study?from=facebook' },
-  { label: 'Instagram',      url: 'https://getevidly.com/study?from=instagram' },
-  { label: 'YouTube',        url: 'https://getevidly.com/study?from=youtube' },
-  { label: 'Website',        url: 'https://getevidly.com/study?from=page' },
-  { label: 'CRA email',      url: 'https://getevidly.com/study?from=cra' },
-  { label: 'Referral',       url: 'https://getevidly.com/study?from=referral' },
+  { label: 'Outbound call',  url: 'https://getstovio.com/study/?from=call' },
+  { label: 'Show floor QR',  url: 'https://getstovio.com/study/?from=show' },
+  { label: 'EvidLY email',   url: 'https://getstovio.com/study/?from=email' },
+  { label: 'LinkedIn',       url: 'https://getstovio.com/study/?from=linkedin' },
+  { label: 'Facebook',       url: 'https://getstovio.com/study/?from=facebook' },
+  { label: 'Instagram',      url: 'https://getstovio.com/study/?from=instagram' },
+  { label: 'YouTube',        url: 'https://getstovio.com/study/?from=youtube' },
+  { label: 'Website',        url: 'https://getstovio.com/study/?from=page' },
+  { label: 'CRA email',      url: 'https://getstovio.com/study/?from=cra' },
+  { label: 'Referral',       url: 'https://getstovio.com/study/?from=referral' },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────

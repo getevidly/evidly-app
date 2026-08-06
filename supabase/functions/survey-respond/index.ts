@@ -343,7 +343,7 @@ async function sendReferralEmail(
 ) {
   if (await alreadySent(sb, responseId, 'referral_link')) return;
 
-  const url = 'https://getevidly.com/study?from=referral';
+  const url = 'https://getstovio.com/study/?from=referral';
   const html = buildEmailHtml({
     recipientName: 'there',
     bodyHtml:

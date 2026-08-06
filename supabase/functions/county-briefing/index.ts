@@ -776,7 +776,7 @@ Deno.serve(async (req: Request) => {
             sendAccessVia = org?.access_via || undefined;
           }
         } else {
-          ctaUrl = 'https://getevidly.com/study?from=email';
+          ctaUrl = 'https://getstovio.com/study/?from=email';
         }
 
         const firstName = r.first_name || 'there';
