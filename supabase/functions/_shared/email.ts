@@ -1,10 +1,40 @@
 // Shared Resend email utility for EvidLY edge functions
 // Uses Resend API: https://resend.com/docs/api-reference/emails/send-email
 
+import { createClient } from "npm:@supabase/supabase-js@2";
 import { logger } from "./logger.ts";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM_ADDRESS = "EvidLY <noreply@getevidly.com>";
+
+// ── Email suppression check ─────────────────────────────────────
+// Lazy-init Supabase client for suppression lookups.
+// deno-lint-ignore no-explicit-any
+let _sb: any = null;
+function getSb() {
+  if (!_sb) {
+    const url = Deno.env.get("SUPABASE_URL");
+    const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (url && key) _sb = createClient(url, key);
+  }
+  return _sb;
+}
+
+async function checkSuppression(email: string): Promise<string | null> {
+  const sb = getSb();
+  if (!sb) return null;
+  try {
+    const { data } = await sb
+      .from("email_suppressions")
+      .select("reason")
+      .eq("email", email.toLowerCase())
+      .maybeSingle();
+    return data?.reason ?? null;
+  } catch {
+    // Suppression check must never block sends if the table is unreachable
+    return null;
+  }
+}
 
 export interface SendEmailParams {
   to: string;
@@ -18,6 +48,15 @@ export interface SendEmailParams {
  * Returns the Resend response data or null on failure.
  */
 export async function sendEmail(params: SendEmailParams): Promise<{ id: string } | null> {
+  // ── Suppression check — runs before every send ──
+  const suppressionReason = await checkSuppression(params.to);
+  if (suppressionReason) {
+    logger.warn(
+      `[EMAIL] SUPPRESSED — ${params.to} (${suppressionReason}) — blocked: "${params.subject}"`,
+    );
+    return null;
+  }
+
   const apiKey = Deno.env.get("RESEND_API_KEY");
   if (!apiKey) {
     logger.warn("[EMAIL] RESEND_API_KEY not set — skipping send to", params.to);
@@ -103,8 +142,9 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
       </div>`
     : "";
 
+  const unsubBase = `${Deno.env.get("SUPABASE_URL") || "https://irxgmhxhmxtzfwuieblc.supabase.co"}/functions/v1/email-unsubscribe`;
   const unsubUrl = params.unsubscribeToken
-    ? `https://app.getevidly.com/unsubscribe?token=${params.unsubscribeToken}`
+    ? `${unsubBase}?token=${params.unsubscribeToken}`
     : 'https://app.getevidly.com/settings/notifications';
 
   const reasonLine = params.footerNote

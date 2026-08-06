@@ -301,6 +301,7 @@ const GAP_LABEL: Record<string, string> = {
 function buildFollowUpEmail(
   gaps: Array<{ label: string; status: string }>,
   totalGaps: number,
+  unsubToken?: string,
 ): string {
   const shown = gaps.slice(0, 3);
   const remaining = totalGaps - shown.length;
@@ -331,6 +332,7 @@ function buildFollowUpEmail(
     ctaUrl: CALENDLY_URL,
     footerNote: 'You received this because you completed the California Commercial Kitchen Safety Study and have not yet scheduled a meeting.',
     campaign: true,
+    unsubscribeToken: unsubToken,
   });
 }
 
@@ -478,6 +480,7 @@ function buildBriefingEmail(
   variant: string,
   ctaUrl: string,
   accessVia?: string,
+  unsubToken?: string,
 ): string {
   const body = buildBriefingBody(county, jur);
 
@@ -495,7 +498,10 @@ function buildBriefingEmail(
 
   const close = variant === 'warm' ? warmClose : coldClose;
 
-  const unsubUrl = `mailto:founders@getevidly.com?subject=Unsubscribe&body=Please%20remove%20${encodeURIComponent(firstName)}`;
+  const unsubBase = `${Deno.env.get("SUPABASE_URL") || "https://irxgmhxhmxtzfwuieblc.supabase.co"}/functions/v1/email-unsubscribe`;
+  const unsubUrl = unsubToken
+    ? `${unsubBase}?token=${encodeURIComponent(unsubToken)}`
+    : 'https://app.getevidly.com/settings/notifications';
 
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="x-apple-disable-message-reformatting">
@@ -595,7 +601,7 @@ Deno.serve(async (req: Request) => {
       const gate = checkRequirements(jur);
       const hash = await computeJurisdictionHash(jur);
       const previewAccessVia = (body.access_via as string) || undefined;
-      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, '#', previewAccessVia);
+      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, '#', previewAccessVia, 'preview');
 
       return jsonResponse({
         preview_html: previewHtml,
@@ -774,7 +780,7 @@ Deno.serve(async (req: Request) => {
         }
 
         const firstName = r.first_name || 'there';
-        const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia);
+        const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
         const subject = `${county} County Briefing — How This County Evaluates Commercial Kitchens`;
 
         const result = await sendEmail({ to: r.email, subject, html });
@@ -821,6 +827,7 @@ Deno.serve(async (req: Request) => {
         state_code: 'CA',
         variant: r.variant || 'cold',
         status: 'queued',
+        unsub_token: crypto.randomUUID(),
       }));
 
       const { error } = await supabase
@@ -1220,7 +1227,7 @@ Deno.serve(async (req: Request) => {
 
           const ctaUrl = `https://app.getevidly.com/join/${invite.token}`;
           const firstName = r.first_name || 'there';
-          const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia);
+          const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
           const emailSubject = step.subject_template
             ? step.subject_template.replace(/\{\{COUNTY\}\}/g, r.county).replace(/\{\{FIRST_NAME\}\}/g, firstName)
             : `${r.county} County Briefing — How This County Evaluates Commercial Kitchens`;
@@ -1337,8 +1344,9 @@ Deno.serve(async (req: Request) => {
               continue;
             }
 
+            const followUpUnsubToken = crypto.randomUUID();
             const subject = 'The records you\u2019d have to go looking for';
-            const html = buildFollowUpEmail(gaps, gaps.length);
+            const html = buildFollowUpEmail(gaps, gaps.length, followUpUnsubToken);
 
             const result = await sendEmail({ to: contact.email, subject, html });
             try {
@@ -1347,6 +1355,7 @@ Deno.serve(async (req: Request) => {
                 recipient_email: contact.email, resend_id: result?.id ?? null,
                 status: result ? 'sent' : 'failed',
                 error_message: result ? null : 'Resend send failed',
+                unsub_token: followUpUnsubToken,
               });
             } catch { /* best-effort */ }
 
