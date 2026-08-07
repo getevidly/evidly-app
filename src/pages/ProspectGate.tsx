@@ -774,7 +774,7 @@ export function ProspectGate() {
           {/* ===== FOUNDING COHORT PRICING CARD ===== */}
           <section style={{ marginTop: 26, background: NAVY, borderRadius: 16, padding: '28px 32px' }}>
             <div style={{ marginBottom: 18 }}>
-              <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founding cohort</span>
+              <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founder pricing</span>
             </div>
 
             {/* RESTAURANT tier */}
@@ -809,9 +809,9 @@ export function ProspectGate() {
                 <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 16&ndash;60</span>
                 <span style={{ fontSize: 13, color: '#c7d0e2' }}>Use it &mdash; 45 days</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: EMBER, border: `1px solid ${EMBER_DEEP}`, borderRadius: 10, padding: '12px 16px' }}>
-                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Day 61</span>
-                <span style={{ fontSize: 13, color: 'rgba(255,255,255,.85)' }}>First payment</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#E3ECE1', border: '1px solid #C4DBCB', borderRadius: 10, padding: '12px 16px' }}>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#3E5E4B' }}>Day 61</span>
+                <span style={{ fontSize: 13, color: '#3E5E4B' }}>First payment</span>
               </div>
             </div>
             <p style={{ margin: '15px 0 0', fontSize: 13, color: '#a9b4cb' }}>
