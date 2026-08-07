@@ -49,9 +49,9 @@ function getReplyTemplate(formType: FormType): ReplyTemplate {
       };
     case "alerts":
       return {
-        subject: "You\u2019re subscribed \u2014 EvidLY compliance alerts",
+        subject: "You\u2019re on the list \u2014 EvidLY alerts",
         bodyHtml:
-          "<p>You\u2019re on the list. We\u2019ll send you what your county and state authorities change \u2014 new requirements, code updates, the things that catch kitchens off guard \u2014 so nothing lands on you by surprise.</p><p>No noise, only what matters. An unsubscribe link sits at the bottom of every alert. Reply anytime to tell us what you\u2019d find most useful.</p>",
+          "<p>Thanks \u2014 you\u2019re on the list. County and state alerts aren\u2019t open yet; we\u2019ll email you once they are, and you can leave the list at any time by replying to this message.</p>",
       };
     case "feedback":
       return {
