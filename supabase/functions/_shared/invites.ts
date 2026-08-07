@@ -257,93 +257,16 @@ export async function buildClientInviteEmail(
     </a>
   </td></tr>
 
-  <!-- 5. STUDY BLOCK — single CTA -->
-  <tr><td class="p40" align="center" style="background:#FFFFFF;padding:26px 40px 30px;border-top:1px solid #EEE7D9;text-align:center;">
-    <div style="font-family:${fInstrument};font-weight:bold;font-size:18px;line-height:1.3;color:#1C2A3A;margin-bottom:18px;">See the gaps. Let&rsquo;s close them.</div>
+  <!-- 5. CTA — closing line + navy button -->
+  <tr><td class="p40" align="center" style="background:#FFFFFF;padding:26px 40px 34px;border-top:1px solid #EEE7D9;text-align:center;">
+    <div style="font-family:${fInstrument};font-weight:bold;font-size:18px;line-height:1.3;color:#1C2A3A;margin-bottom:18px;">${firstName}, the first step is telling us who services your kitchen.</div>
     <table role="presentation" align="center" cellpadding="0" cellspacing="0"><tr>
-      <td align="center" style="background:#B24A2E;border-radius:8px;"><a href="https://getstovio.com/study/?from=client" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;">Take the study &#8594;</a></td>
+      <td align="center" style="background:#1C2A3A;"><a href="${inviteLink}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;">See the dashboard &#8594;</a></td>
     </tr></table>
+    <div style="font-family:${fInstrument};font-size:11.5px;color:#8B94A0;margin-top:11px;">No login, no password needed.</div>
   </td></tr>
 
-  <!-- 6. PRICING CARD — two tiers, stacked timeline, single CTA -->
-  <tr><td style="padding:0;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#1C2A3A;">
-      <tr><td class="p40" style="padding:28px 40px;">
-        <div style="margin-bottom:18px;">
-          <span style="font-family:${fMontserrat};font-weight:700;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#1C2A3A;background:#FAF7F0;padding:5px 11px;border-radius:999px;display:inline-block;">Founding cohort</span>
-        </div>
-
-        <!-- RESTAURANT tier -->
-        <div style="border-top:1px solid rgba(255,255,255,0.10);padding-top:16px;">
-          <div style="font-family:${fMono};font-weight:700;font-size:11px;letter-spacing:0.10em;text-transform:uppercase;color:#CB5E38;">RESTAURANT</div>
-          <div style="margin-top:10px;font-family:${fInstrument};font-size:14.5px;color:#c7d0e2;">
-            <span style="color:#FFFFFF;font-weight:700;font-family:${fMontserrat};font-size:17px;">$99/mo</span> first kitchen &middot;
-            <span style="color:#FFFFFF;font-weight:700;font-family:${fMontserrat};font-size:17px;">$49/mo</span> each after
-          </div>
-          <div style="font-family:${fInstrument};font-size:13px;color:#a9b4cb;margin-top:6px;">250 seats &middot; price locked 24 months</div>
-        </div>
-
-        <!-- INSTITUTION tier -->
-        <div style="border-top:1px solid rgba(255,255,255,0.10);margin-top:16px;padding-top:16px;">
-          <div style="font-family:${fMono};font-weight:700;font-size:11px;letter-spacing:0.10em;text-transform:uppercase;color:#CB5E38;">INSTITUTION</div>
-          <div style="margin-top:10px;font-family:${fInstrument};font-size:14.5px;color:#c7d0e2;">
-            <span style="color:#FFFFFF;font-weight:700;font-family:${fMontserrat};font-size:17px;">$199/mo</span> first kitchen &middot;
-            <span style="color:#FFFFFF;font-weight:700;font-family:${fMontserrat};font-size:17px;">$99/mo</span> each after
-          </div>
-          <div style="font-family:${fInstrument};font-size:13px;color:#a9b4cb;margin-top:6px;">Price locked 24 months</div>
-        </div>
-
-        <!-- Timeline — stacked full-width rows -->
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;">
-          <tr><td style="padding-bottom:8px;">
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);border-radius:10px;padding:12px 16px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-                <td style="font-family:${fMontserrat};font-weight:700;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#FFFFFF;">Days 1&ndash;15</td>
-                <td align="right" style="font-family:${fInstrument};font-size:13px;color:#c7d0e2;">Set up your account</td>
-              </tr></table>
-            </div>
-          </td></tr>
-          <tr><td style="padding-bottom:8px;">
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);border-radius:10px;padding:12px 16px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-                <td style="font-family:${fMontserrat};font-weight:700;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#FFFFFF;">Days 16&ndash;60</td>
-                <td align="right" style="font-family:${fInstrument};font-size:13px;color:#c7d0e2;">Use it &mdash; 45 days</td>
-              </tr></table>
-            </div>
-          </td></tr>
-          <tr><td>
-            <div style="background:#B24A2E;border:1px solid #8F3A22;border-radius:10px;padding:12px 16px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-                <td style="font-family:${fMontserrat};font-weight:700;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#FFFFFF;">Day 61</td>
-                <td align="right" style="font-family:${fInstrument};font-size:13px;color:rgba(255,255,255,0.85);">First payment</td>
-              </tr></table>
-            </div>
-          </td></tr>
-        </table>
-
-        <div style="font-family:${fInstrument};font-size:13px;color:#a9b4cb;margin-top:15px;">A full 60 days to set up and run EvidLY before your first payment.</div>
-
-        <!-- Single CTA — account action -->
-        <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.10);text-align:center;">
-          <table role="presentation" align="center" cellpadding="0" cellspacing="0" width="100%"><tr>
-            <td align="center" style="background:#B24A2E;border:1px solid #8F3A22;border-radius:10px;"><a href="${inviteLink}" style="display:block;padding:15px 22px;font-family:${fInstrument};font-size:15.5px;font-weight:600;color:#FFFFFF;text-align:center;">Get started &#8594;</a></td>
-          </tr></table>
-        </div>
-      </td></tr>
-    </table>
-  </td></tr>
-
-  <!-- 7. FOUNDER CARD -->
-  <tr><td class="p40" align="center" style="background:#FFFFFF;padding:28px 40px;border-top:1px solid #EEE7D9;text-align:center;">
-    <div style="font-family:${fMontserrat};font-weight:700;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#B24A2E;">Meet the Founder</div>
-    <div style="font-family:${fMontserrat};font-weight:700;font-size:19px;color:#1C2A3A;margin-top:8px;">Arthur Haggerty</div>
-    <div style="font-family:${fInstrument};font-size:14px;color:#5F6875;margin-top:4px;margin-bottom:18px;">Founder, EvidLY</div>
-    <table role="presentation" align="center" cellpadding="0" cellspacing="0"><tr>
-      <td align="center" style="background:#1C2A3A;border:1px solid #17233c;border-radius:10px;"><a href="https://calendly.com/founders-getevidly/founders" style="display:inline-block;padding:14px 22px;font-family:${fInstrument};font-size:15px;font-weight:600;color:#FFFFFF;">Book a meeting &#8594;</a></td>
-    </tr></table>
-  </td></tr>
-
-  <!-- 8. FOOTER -->
+  <!-- 6. FOOTER -->
   <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;">
     <div style="font-family:${fInstrument};font-size:12px;color:#5F6875;margin-top:8px;line-height:1.6;"><span style="white-space:nowrap;">founders@getevidly.com</span> &middot; <span style="white-space:nowrap;">(855) 384-3591</span> &middot; <span style="white-space:nowrap;"><a href="https://getevidly.com" style="color:#1C2A3A;">getevidly.com</a></span></div>
     <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;margin-top:10px;">EvidLY &middot; Commercial Kitchen Risk Management</div>
