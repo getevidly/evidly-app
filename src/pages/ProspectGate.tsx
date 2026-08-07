@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
@@ -40,6 +40,7 @@ const AMBER_BG = '#F6EEDD';
 
 const FONT_INTER = "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 const FONT_MONT = "'Montserrat', sans-serif";
+const FONT_MONO = "'IBM Plex Mono', 'Courier New', monospace";
 
 /* ── SVG icon helpers ────────────────────────────────────────── */
 const EyeIcon = () => (
@@ -572,8 +573,8 @@ export function ProspectGate() {
 
           {/* TOP CTA */}
           <div style={{ paddingTop: 26, borderTop: `1px solid ${NAVY_LINE}`, marginTop: 26 }}>
-            <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 17, color: '#fff', margin: '0 0 6px' }}>See the gaps. Let&rsquo;s close them.</p>
-            <p style={{ margin: '0 0 14px', fontSize: '13.5px', color: '#a9b4cb' }}>Book a meeting with the Founder, Arthur.</p>
+            {/* TODO: one-line study description — Arthur to supply wording */}
+            <p style={{ margin: '0 0 14px', fontSize: '13.5px', color: '#a9b4cb' }}>[TODO — study description]</p>
             <a href="https://getstovio.com/study/?from=client" target="_blank" rel="noopener"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 20px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
               Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
@@ -767,57 +768,71 @@ export function ProspectGate() {
             </p>
           </section>
 
-          {/* ===== CLOSING: FOUNDER OFFER + CTA ===== */}
+          {/* ===== FOUNDING COHORT PRICING CARD ===== */}
           <section style={{ marginTop: 26, background: NAVY, borderRadius: 16, padding: '28px 32px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' as const }}>
-                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founding cohort</span>
-                <span style={{ fontSize: 13, color: '#c7d0e2', fontWeight: 600 }}>250 Restaurant seats &middot; price locked 24 months</span>
-              </div>
-              <div style={{ margin: '15px 0 0', display: 'flex', alignItems: 'center', gap: 11, flexWrap: 'wrap' as const, fontSize: '14.5px', color: '#c7d0e2' }}>
-                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$99/mo</b> for your first kitchen</span>
-                <span style={{ color: '#5b6b8a' }}>&middot;</span>
-                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$49/mo</b> for each additional kitchen</span>
-              </div>
-              <div style={{ margin: '18px 0 0', display: 'flex', alignItems: 'center', gap: 11, flexWrap: 'wrap' as const }} className="gate-offer-tl">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '9px 14px' }}>
-                  <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 11, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 1&ndash;15</span>
-                  <span style={{ fontSize: 13, color: '#c7d0e2' }}>Set up your account</span>
-                </div>
-                <span style={{ color: '#5b6b8a', fontWeight: 700, fontSize: 15 }} className="gate-tl-arw">&rarr;</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '9px 14px' }}>
-                  <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 11, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 16&ndash;60</span>
-                  <span style={{ fontSize: 13, color: '#c7d0e2' }}>Use it &mdash; 45 days</span>
-                </div>
-                <span style={{ color: '#5b6b8a', fontWeight: 700, fontSize: 15 }} className="gate-tl-arw">&rarr;</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, background: CREAM, border: `1px solid ${CREAM}`, borderRadius: 10, padding: '9px 14px' }}>
-                  <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 11, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: NAVY }}>Day 61</span>
-                  <span style={{ fontSize: 13, color: '#3a4763' }}>First payment</span>
-                </div>
-              </div>
-              <p style={{ margin: '15px 0 0', fontSize: 13, color: '#a9b4cb' }}>
-                A full 60 days to set up and run EvidLY before your first payment.
-              </p>
+            <div style={{ marginBottom: 18 }}>
+              <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founding cohort</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' as const, marginTop: 24, paddingTop: 24, borderTop: `1px solid ${NAVY_LINE}` }}>
-              <div style={{ flex: '1 1 300px' }}>
-                <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 21, color: '#fff', margin: 0 }}>See the gaps. Let&rsquo;s close them.</p>
-                <p style={{ margin: '10px 0 0', fontSize: '13.5px', color: '#a9b4cb' }}>
-                  Book a meeting with the Founder, Arthur. Thirty minutes to walk through every line above.
-                </p>
+            {/* RESTAURANT tier */}
+            <div style={{ borderTop: `1px solid ${NAVY_LINE}`, paddingTop: 16 }}>
+              <span style={{ fontFamily: FONT_MONO, fontWeight: 700, fontSize: 11, letterSpacing: '.10em', textTransform: 'uppercase' as const, color: EMBER_BRIGHT }}>RESTAURANT</span>
+              <div style={{ margin: '10px 0 0', fontSize: '14.5px', color: '#c7d0e2' }}>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$99/mo</b> first kitchen</span>
+                <span style={{ color: '#5b6b8a' }}> &middot; </span>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$49/mo</b> each after</span>
               </div>
-              <div style={{ flex: '0 0 auto', minWidth: 250 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '0 0 15px', flexWrap: 'wrap' as const }}>
-                  <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founder</span>
-                  <span style={{ fontSize: 13, color: '#c7d0e2' }}><b style={{ color: '#fff', fontWeight: 600 }}>Arthur Haggerty</b></span>
-                </div>
-                <a href="https://getstovio.com/study/?from=client" target="_blank" rel="noopener"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: '15.5px', textDecoration: 'none', padding: '15px 22px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
-                  Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
-                </a>
+              <p style={{ margin: '6px 0 0', fontSize: 13, color: '#a9b4cb' }}>250 seats &middot; price locked 24 months</p>
+            </div>
+
+            {/* INSTITUTION tier */}
+            <div style={{ borderTop: `1px solid ${NAVY_LINE}`, marginTop: 16, paddingTop: 16 }}>
+              <span style={{ fontFamily: FONT_MONO, fontWeight: 700, fontSize: 11, letterSpacing: '.10em', textTransform: 'uppercase' as const, color: EMBER_BRIGHT }}>INSTITUTION</span>
+              <div style={{ margin: '10px 0 0', fontSize: '14.5px', color: '#c7d0e2' }}>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$199/mo</b> first kitchen</span>
+                <span style={{ color: '#5b6b8a' }}> &middot; </span>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$99/mo</b> each after</span>
+              </div>
+              <p style={{ margin: '6px 0 0', fontSize: 13, color: '#a9b4cb' }}>Price locked 24 months</p>
+            </div>
+
+            {/* Day timeline — stacked full-width rows */}
+            <div style={{ margin: '18px 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '12px 16px' }}>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 1&ndash;15</span>
+                <span style={{ fontSize: 13, color: '#c7d0e2' }}>Set up your account</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '12px 16px' }}>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 16&ndash;60</span>
+                <span style={{ fontSize: 13, color: '#c7d0e2' }}>Use it &mdash; 45 days</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: EMBER, border: `1px solid ${EMBER_DEEP}`, borderRadius: 10, padding: '12px 16px' }}>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Day 61</span>
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,.85)' }}>First payment</span>
               </div>
             </div>
+            <p style={{ margin: '15px 0 0', fontSize: 13, color: '#a9b4cb' }}>
+              A full 60 days to set up and run EvidLY before your first payment.
+            </p>
+
+            {/* Single CTA — account action */}
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid ${NAVY_LINE}` }}>
+              <Link to={`/join/${token}`}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: '15.5px', textDecoration: 'none', padding: '15px 22px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
+                Get started <span style={{ fontWeight: 700 }}>&rarr;</span>
+              </Link>
+            </div>
+          </section>
+
+          {/* ===== FOUNDER CARD ===== */}
+          <section style={{ marginTop: 16, background: '#fff', border: `1px solid ${HAIR}`, borderRadius: 16, padding: '28px 32px', textAlign: 'center' as const }}>
+            <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: EMBER, margin: 0 }}>Meet the Founder</p>
+            <p style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 19, color: NAVY, margin: '8px 0 0' }}>Arthur Haggerty</p>
+            <p style={{ fontSize: 14, color: MUTED, margin: '4px 0 18px' }}>Founder, EvidLY</p>
+            <a href="https://calendly.com/founders-getevidly/founders" target="_blank" rel="noopener"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: NAVY, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 22px', borderRadius: 10, border: `1px solid ${NAVY2}` }}>
+              Book a meeting <span style={{ fontWeight: 700 }}>&rarr;</span>
+            </a>
           </section>
 
           {/* ===== FOOTER ===== */}
@@ -835,8 +850,6 @@ export function ProspectGate() {
           .gate-rail { position: static !important; min-height: 0 !important; padding: 28px 24px 32px !important; }
           .gate-main { padding: 30px 22px 44px !important; }
           .gate-ho-grid { grid-template-columns: 1fr !important; }
-          .gate-offer-tl { flex-direction: column !important; align-items: stretch !important; }
-          .gate-tl-arw { display: none !important; }
         }
         @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
