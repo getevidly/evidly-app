@@ -542,6 +542,10 @@ export function ProspectGate() {
         {/* ============ LEFT NAVY RAIL ============ */}
         <aside style={{ background: NAVY, color: '#fff', padding: '34px 34px 40px', position: 'sticky', top: 0, alignSelf: 'start', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
           className="gate-rail">
+          <Link to={`/join/${token}`} style={{ fontSize: 13, color: '#8b95aa', textDecoration: 'none', marginBottom: 16, display: 'inline-block' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#fff')} onMouseLeave={e => (e.currentTarget.style.color = '#8b95aa')}>
+            &larr; Back to your dashboard
+          </Link>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, letterSpacing: '.02em', color: '#c9d2e4', background: 'rgba(255,255,255,.06)', border: `1px solid ${NAVY_LINE}`, padding: '5px 10px', borderRadius: 999, width: 'max-content' }}>
             <EyeIcon /> View-only preview &middot; no sign-in
           </span>

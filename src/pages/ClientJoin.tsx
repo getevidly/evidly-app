@@ -155,6 +155,10 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
   /* ── Rail content (shared between desktop sticky + mobile top) */
   const railInner = (
     <>
+      <a href="https://getevidly.com" style={{ fontSize: 13, color: '#8b95aa', textDecoration: 'none', marginBottom: 16, display: 'inline-block' }}
+        onMouseEnter={e => (e.currentTarget.style.color = '#fff')} onMouseLeave={e => (e.currentTarget.style.color = '#8b95aa')}>
+        &larr; Back
+      </a>
       <div style={{ marginBottom: 24 }}>
         <span style={{ fontFamily: BRAND, fontWeight: 800, fontSize: 22, letterSpacing: '-0.01em' }}>
           <span style={{ color: GOLD }}>E</span>
