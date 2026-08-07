@@ -573,8 +573,7 @@ export function ProspectGate() {
 
           {/* TOP CTA */}
           <div style={{ paddingTop: 26, borderTop: `1px solid ${NAVY_LINE}`, marginTop: 26 }}>
-            {/* TODO: one-line study description — Arthur to supply wording */}
-            <p style={{ margin: '0 0 14px', fontSize: '13.5px', color: '#a9b4cb' }}>[TODO — study description]</p>
+            <p style={{ margin: '0 0 14px', fontSize: '13.5px', color: '#a9b4cb' }}>The California Commercial Kitchen Safety Study &mdash; which records California kitchens can put their hands on today, published county by county. Three minutes, no contact details.</p>
             <a href="https://getstovio.com/study/?from=client" target="_blank" rel="noopener"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: 15, textDecoration: 'none', padding: '14px 20px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
               Take the study <span style={{ fontWeight: 700 }}>&rarr;</span>
