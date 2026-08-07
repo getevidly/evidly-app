@@ -28,6 +28,53 @@ const ACTION_LABEL = {
 /* ── Pillar column → short key ─────────────────────────────────── */
 const P_KEY = { fire_safety: 'fire', food_safety: 'food', business_records: 'business', vendor_business: 'vendor' };
 
+/* ── Fallback catalog — CA rows from migration c26c10e5 ────────── */
+/* Used when the pillar_requirements query returns nothing (e.g.
+   unauthenticated visitor — RLS blocks anon reads).  Sorted by
+   pillar (alpha) then sort_order, matching .order('pillar').order('sort_order'). */
+const FALLBACK_CATALOG = [
+  // ── business_records (8) ──
+  { requirement_code: 'general_liability_insurance', label: 'General Liability Insurance', pillar: 'business_records', is_conditional: false, counts_toward_total: true, sort_order: 1, action_type: 'upload', citation: 'Business practice' },
+  { requirement_code: 'food_contamination_insurance', label: 'Food Contamination / Spoilage Insurance', pillar: 'business_records', is_conditional: false, counts_toward_total: true, sort_order: 2, action_type: 'upload', citation: 'Business practice' },
+  { requirement_code: 'lease_agreement', label: 'Lease Agreement', pillar: 'business_records', is_conditional: true, counts_toward_total: false, sort_order: 3, action_type: 'upload', citation: 'Business practice' },
+  { requirement_code: 'business_license', label: 'Business License', pillar: 'business_records', is_conditional: false, counts_toward_total: true, sort_order: 4, action_type: 'upload', citation: 'CA Bus. & Prof. Code' },
+  { requirement_code: 'sellers_permit', label: "Seller's Permit", pillar: 'business_records', is_conditional: false, counts_toward_total: true, sort_order: 5, action_type: 'upload', citation: 'CDTFA' },
+  { requirement_code: 'operator_w9', label: 'W-9', pillar: 'business_records', is_conditional: false, counts_toward_total: true, sort_order: 6, action_type: 'upload', citation: 'IRS 26 USC 3406' },
+  { requirement_code: 'certificate_of_occupancy', label: 'Certificate of Occupancy', pillar: 'business_records', is_conditional: false, counts_toward_total: true, sort_order: 7, action_type: 'upload', citation: 'CA Building Code' },
+  { requirement_code: 'liquor_license', label: 'Liquor License', pillar: 'business_records', is_conditional: true, counts_toward_total: false, sort_order: 8, action_type: 'upload', citation: 'ABC Act' },
+  // ── fire_safety (6) ──
+  { requirement_code: 'hood_cleaning', label: 'Hood Cleaning Schedule', pillar: 'fire_safety', is_conditional: false, counts_toward_total: true, sort_order: 1, action_type: 'identify_vendor', citation: 'NFPA 96' },
+  { requirement_code: 'fire_suppression', label: 'Fire Suppression Inspection', pillar: 'fire_safety', is_conditional: false, counts_toward_total: true, sort_order: 2, action_type: 'identify_vendor', citation: 'NFPA 17A' },
+  { requirement_code: 'fire_extinguishers', label: 'Fire Extinguisher Service', pillar: 'fire_safety', is_conditional: false, counts_toward_total: true, sort_order: 3, action_type: 'identify_vendor', citation: 'NFPA 10' },
+  { requirement_code: 'fire_alarm', label: 'Fire Alarm Monitoring', pillar: 'fire_safety', is_conditional: false, counts_toward_total: true, sort_order: 4, action_type: 'identify_vendor', citation: 'NFPA 72' },
+  { requirement_code: 'sprinkler_system', label: 'Sprinkler Inspection', pillar: 'fire_safety', is_conditional: false, counts_toward_total: true, sort_order: 5, action_type: 'identify_vendor', citation: 'NFPA 25' },
+  { requirement_code: 'ahj_inspection', label: 'AHJ Fire Inspection', pillar: 'fire_safety', is_conditional: false, counts_toward_total: false, sort_order: 6, action_type: 'confirm', citation: 'CFC Chapter 1' },
+  // ── food_safety (16) ──
+  { requirement_code: 'health_permit', label: 'Health Permit', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 1, action_type: 'upload', citation: 'CalCode 114381' },
+  { requirement_code: 'food_manager_cert', label: 'Food Manager Certification', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 2, action_type: 'upload', citation: 'CalCode 113947.1' },
+  { requirement_code: 'food_handler_cards', label: 'Food Handler Cards', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 3, action_type: 'confirm', citation: 'CalCode 113948' },
+  { requirement_code: 'haccp_plan', label: 'HACCP Plan', pillar: 'food_safety', is_conditional: true, counts_toward_total: false, sort_order: 4, action_type: 'route_out', citation: 'CalCode 114419' },
+  { requirement_code: 'temp_receiving', label: 'Receiving Logs', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 5, action_type: 'route_out', citation: 'CalCode 113996' },
+  { requirement_code: 'temp_hot_holding', label: 'Hot Holding', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 6, action_type: 'route_out', citation: 'CalCode 113996' },
+  { requirement_code: 'temp_cold_holding', label: 'Cold Holding', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 7, action_type: 'route_out', citation: 'CalCode 113996' },
+  { requirement_code: 'temp_cooldown', label: 'Cooldown', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 8, action_type: 'route_out', citation: 'CalCode 114002' },
+  { requirement_code: 'temp_reheating', label: 'Re-Heating', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 9, action_type: 'route_out', citation: 'CalCode 114014' },
+  { requirement_code: 'pest_control', label: 'Pest Control Contract', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 10, action_type: 'identify_vendor', citation: 'CalCode 114259.1' },
+  { requirement_code: 'person_in_charge', label: 'Person-in-Charge Documentation', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 11, action_type: 'confirm', citation: 'CalCode 113945' },
+  { requirement_code: 'employee_health_policy', label: 'Employee Health Policy', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 12, action_type: 'upload', citation: 'CalCode 113949' },
+  { requirement_code: 'allergen_management', label: 'Allergen Management', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 13, action_type: 'upload', citation: 'CalCode \u00a7113947, \u00a7113948' },
+  { requirement_code: 'warewash_sanitizer', label: 'Warewash & Sanitizer', pillar: 'food_safety', is_conditional: false, counts_toward_total: true, sort_order: 14, action_type: 'route_out', citation: 'CalCode \u00a7114099, \u00a7114125' },
+  { requirement_code: 'grease_trap', label: 'Grease Trap Service', pillar: 'food_safety', is_conditional: true, counts_toward_total: false, sort_order: 15, action_type: 'identify_vendor', citation: 'Local FOG ordinance' },
+  { requirement_code: 'backflow_prevention', label: 'Backflow Prevention Test', pillar: 'food_safety', is_conditional: true, counts_toward_total: false, sort_order: 16, action_type: 'identify_vendor', citation: 'California Plumbing Code' },
+  // ── vendor_business (6) ──
+  { requirement_code: 'vendor_gl_coi', label: 'Vendor General Liability COI', pillar: 'vendor_business', is_conditional: false, counts_toward_total: true, sort_order: 1, action_type: 'upload', citation: 'Business practice' },
+  { requirement_code: 'vendor_wc_coi', label: "Vendor Workers' Comp COI", pillar: 'vendor_business', is_conditional: false, counts_toward_total: true, sort_order: 2, action_type: 'upload', citation: 'CA Labor Code 3700' },
+  { requirement_code: 'vendor_professional_license', label: 'Vendor Professional License', pillar: 'vendor_business', is_conditional: false, counts_toward_total: true, sort_order: 3, action_type: 'upload', citation: 'CA Bus. & Prof. Code' },
+  { requirement_code: 'vendor_business_license', label: 'Vendor Business License', pillar: 'vendor_business', is_conditional: false, counts_toward_total: true, sort_order: 4, action_type: 'upload', citation: 'CA Bus. & Prof. Code' },
+  { requirement_code: 'vendor_w9', label: 'Vendor W-9', pillar: 'vendor_business', is_conditional: false, counts_toward_total: true, sort_order: 5, action_type: 'upload', citation: 'IRS 26 USC 3406' },
+  { requirement_code: 'vendor_auto_coi', label: 'Vendor Commercial Auto COI', pillar: 'vendor_business', is_conditional: true, counts_toward_total: false, sort_order: 6, action_type: 'upload', citation: 'Business practice' },
+];
+
 /* ── Per-kitchen data ────────────────────────────────────────────── */
 const KITCHENS = [
   { key: 'vista',  name: 'Vista Grill',     onfile: ['hood_cleaning'],
@@ -395,14 +442,19 @@ function EvidLYDashboard({ loc: locProp, onLocChange, embedded = false, gateToke
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('pillar_requirements')
         .select('requirement_code, label, pillar, is_conditional, counts_toward_total, sort_order, action_type, citation')
         .eq('state_code', 'CA')
         .order('pillar')
         .order('sort_order');
       if (cancelled) return;
-      setRawCatalog(data || []);
+      if (error || !data || data.length === 0) {
+        if (error) console.error('pillar_requirements fetch failed, using fallback catalog:', error);
+        setRawCatalog(FALLBACK_CATALOG);
+      } else {
+        setRawCatalog(data);
+      }
       setCatalogReady(true);
     })();
     return () => { cancelled = true; };
