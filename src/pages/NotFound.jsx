@@ -49,7 +49,7 @@ export default function NotFound() {
 
         {/* Brand footer */}
         <p className="mt-12 text-xs text-[#1E2D4D]/30">
-          EvidLY &mdash; Operations Intelligence for Commercial Kitchens
+          EvidLY &mdash; Commercial Kitchen Risk Management
         </p>
       </div>
     </div>

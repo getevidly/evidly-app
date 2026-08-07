@@ -91,8 +91,8 @@ Deno.serve(async (req: Request) => {
               subject: payload.subject || `Message from ${(profile as any).organizations?.name || "Your Client"}`,
               html: `
                 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                  <div style="background: #1e4d6b; padding: 16px 24px; text-align: center;">
-                    <span style="color: #ffffff; font-size: 20px; font-weight: bold;">Evid</span><span style="color: #d4af37; font-size: 20px; font-weight: bold;">LY</span>
+                  <div style="background: #1E2D4D; padding: 16px 24px; text-align: center;">
+                    <span style="color: #B24A2E; font-size: 20px; font-weight: bold;">E</span><span style="color: #ffffff; font-size: 20px; font-weight: bold;">vid</span><span style="color: #B24A2E; font-size: 20px; font-weight: bold;">LY</span>
                   </div>
                   <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none;">
                     <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">

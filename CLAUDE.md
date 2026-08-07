@@ -125,6 +125,48 @@ Arthur validates in live production. No preview step needed.
 
 ---
 
+## SUPABASE DB PUSH CONFLICTS — NEVER FAKE AN APPLIED MIGRATION
+
+When `supabase db push` fails with a version conflict, the resolution
+depends on the cause. Inserting a row into `schema_migrations` to mark
+a migration applied without running it is **never an option**. Doing so
+creates ghost migrations — the ledger says applied, the DDL never ran,
+and columns/tables the code expects silently do not exist. This has
+caused production outages in this project.
+
+### Safe resolution steps
+
+1. **Remote is ahead of local** (migration exists on remote but not locally):
+   Run `supabase db pull` to sync remote state into the local migrations folder.
+
+2. **Local migration conflicts with remote state** (table/column already exists):
+   Make the migration idempotent: `CREATE TABLE IF NOT EXISTS`,
+   `ADD COLUMN IF NOT EXISTS`, `DROP ... IF EXISTS`. Then run `db push`
+   so the SQL executes (idempotent statements succeed even if the object exists).
+
+3. **Migration is truly obsolete** (feature was abandoned, DDL is not needed):
+   Delete the migration file from the repo. Do NOT mark it applied.
+   Run `supabase migration repair --status reverted <version>` if it was
+   previously marked applied.
+
+4. **Last resort — manual repair** (schema was applied via raw SQL, not via migration):
+   Before marking applied, **verify every DDL statement** in the migration:
+   - For each `CREATE TABLE`: confirm the table exists in `information_schema.tables`
+   - For each `ADD COLUMN`: confirm the column exists in `information_schema.columns`
+   - For each `CREATE INDEX`: confirm the index exists
+   Only after every object is verified present, run:
+   `supabase migration repair --status applied <version>`
+   Document which migration was repaired and why in the commit message.
+
+### Anti-patterns — refuse these
+
+- `INSERT INTO supabase_migrations.schema_migrations` — never do this directly
+- `supabase migration repair --status applied` without verifying DDL — never
+- Deleting a migration file and re-creating it with a new timestamp to dodge conflicts — never
+- Running `db push --include-all` to skip conflict checks — never
+
+---
+
 ## BEFORE STARTING ANY TASK
 
 1. Read this file

@@ -245,9 +245,9 @@ function buildReminderHtml(params: ReminderEmailParams): string {
 
   return `
 <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-  <div style="background: #1e4d6b; padding: 24px; text-align: center;">
+  <div style="background: #1E2D4D; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
-      <span style="color: #ffffff;">Evid</span><span style="color: #d4af37;">LY</span>
+      <span style="color: #B24A2E;">E</span><span style="color: #ffffff;">vid</span><span style="color: #B24A2E;">LY</span>
     </h1>
   </div>
 

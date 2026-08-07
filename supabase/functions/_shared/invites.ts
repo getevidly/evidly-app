@@ -165,7 +165,7 @@ export async function buildClientInviteEmail(
 
   <!-- 1. HEADER — navy, wordmark + company lockup -->
   <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;">
-    <div style="font-family:${fMontserrat};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#F4EFE4;">vid</span><span style="color:#B24A2E;">LY</span></div>
+    <div style="font-family:${fMontserrat};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#FFFFFF;">vid</span><span style="color:#B24A2E;">LY</span></div>
     <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">${isCpp ? 'A Cleaning Pros Plus Company' : 'Commercial Kitchen Risk Management'}</div>
   </td></tr>
 
@@ -235,35 +235,15 @@ export async function buildClientInviteEmail(
 
           <!-- TWO RINGS -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 0;"><tr>
-            <!-- Fire ring -->
+            <!-- Fire ring (text baked into 2x PNG — scales as one unit on mobile) -->
             <td width="50%" align="center" valign="top" style="padding:0 6px;">
-              <!--[if mso]>
-              <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:104px;height:104px;">
-              <v:fill type="frame" src="${fireRingUrl}" />
-              <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true;">
-              <![endif]-->
-              <div style="width:104px;height:104px;background:url('${fireRingUrl}') center/104px 104px no-repeat;margin:0 auto;">
-                <table role="presentation" width="104" cellpadding="0" cellspacing="0" style="width:104px;height:104px;"><tr>
-                  <td align="center" valign="middle" style="font-family:${fInstrument};font-size:23px;font-weight:700;color:#1C2A3A;">${firePct}%</td>
-                </tr></table>
-              </div>
-              <!--[if mso]></v:textbox></v:rect><![endif]-->
+              <img src="${fireRingUrl}" alt="${firePct}% fire safety" width="104" height="104" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
               <div style="font-family:${fMono};font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#8b95a3;padding:9px 0 0;">Fire safety</div>
               <div style="font-family:${fInstrument};font-size:13px;color:#5F6875;padding:4px 0 0;">${fireNumerator} of ${fireDenom} on file</div>
             </td>
-            <!-- Food ring -->
+            <!-- Food ring (text baked into 2x PNG — scales as one unit on mobile) -->
             <td width="50%" align="center" valign="top" style="padding:0 6px;">
-              <!--[if mso]>
-              <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:104px;height:104px;">
-              <v:fill type="frame" src="${foodRingUrl}" />
-              <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true;">
-              <![endif]-->
-              <div style="width:104px;height:104px;background:url('${foodRingUrl}') center/104px 104px no-repeat;margin:0 auto;">
-                <table role="presentation" width="104" cellpadding="0" cellspacing="0" style="width:104px;height:104px;"><tr>
-                  <td align="center" valign="middle" style="font-family:${fInstrument};font-size:23px;font-weight:700;color:#1C2A3A;">${foodPct}%</td>
-                </tr></table>
-              </div>
-              <!--[if mso]></v:textbox></v:rect><![endif]-->
+              <img src="${foodRingUrl}" alt="${foodPct}% food safety" width="104" height="104" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
               <div style="font-family:${fMono};font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#8b95a3;padding:9px 0 0;">Food safety</div>
               <div style="font-family:${fInstrument};font-size:13px;color:#5F6875;padding:4px 0 0;">${foodNumerator} of ${foodDenom} on file</div>
             </td>

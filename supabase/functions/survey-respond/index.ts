@@ -1,8 +1,9 @@
 /**
  * survey-respond — public edge function for the Kitchen Safety Study.
  *
- * POST { response_id, patch }   → upsert response + answers
- * POST { response_id, contact } → write contact row (opt-in only)
+ * POST { response_id, patch }                → upsert response + answers
+ * POST { response_id, delete_answers: [...] } → remove stale answer rows
+ * POST { response_id, contact }               → write contact row (opt-in only)
  *
  * Called after EVERY answer, not on submit. A session that dies at
  * question seven must leave a usable partial.
@@ -456,6 +457,28 @@ Deno.serve(async (req: Request) => {
 
     if (!response_id) {
       return json({ error: 'Missing response_id' }, 400);
+    }
+
+    // ── Delete answers action ───────────────────────────────────
+    if (body.delete_answers !== undefined) {
+      const ids = body.delete_answers;
+      if (!Array.isArray(ids) || ids.length === 0 || !ids.every((v: unknown) => typeof v === 'string' && v.length > 0)) {
+        return json({ error: 'delete_answers must be a non-empty array of question_id strings' }, 400);
+      }
+
+      const { error: delErr, count } = await sb
+        .from('market_research_answers')
+        .delete({ count: 'exact' })
+        .eq('response_id', response_id)
+        .in('question_id', ids);
+
+      if (delErr) {
+        console.error('[survey-respond] delete_answers error:', delErr.message);
+        return json({ error: delErr.message }, 500);
+      }
+
+      console.log(`[survey-respond] delete_answers: response_id=${response_id} ids=${JSON.stringify(ids)} removed=${count}`);
+      return json({ ok: true, response_id, deleted: count });
     }
 
     // ── Contact payload ─────────────────────────────────────────

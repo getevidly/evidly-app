@@ -210,6 +210,128 @@ function renderGradingConfig(config: Record<string, any>, gradingType: string) {
   return <p className="text-sm text-[#1E2D4D]/50 mt-2">No grading configuration available.</p>;
 }
 
+/** Point values render only when structured config and prose agree AND no
+ *  conflicting evidence samples exist. */
+function shouldRenderPointValues(config: Record<string, any>, prose: string | null): boolean {
+  const pv = config.point_values || config.violation_points;
+  if (!pv || typeof pv !== 'object' || !prose) return false;
+  const values = Object.values(pv) as number[];
+  // Every config value must appear in prose as "=N[pts]"
+  if (!values.every(pts => new RegExp(`=\\s*${pts}\\s*(?:pts?|points?|\\b)`, 'i').test(prose))) {
+    return false;
+  }
+  // If violation_weight_evidence exists with values that disagree, suppress
+  const evidence = config.violation_weight_evidence;
+  if (evidence?.evidence_samples && Array.isArray(evidence.evidence_samples)) {
+    const configSet = new Set(values);
+    const hasConflict = evidence.evidence_samples.some(
+      (s: any) => typeof s.point_value === 'number' && !configSet.has(s.point_value)
+    );
+    if (hasConflict) return false;
+  }
+  return true;
+}
+
+function renderEvaluationDetails(config: Record<string, any>, scoringMethodology: string | null) {
+  const parts: JSX.Element[] = [];
+
+  const direction = config.direction || config.score_direction;
+  if (direction) {
+    const dirLabel = direction === 'accumulate_up' ? 'Points accumulate upward (lower is better)'
+      : direction === 'downward_deduction' ? 'Points deducted from base (higher is better)'
+      : direction.replace(/_/g, ' ');
+    parts.push(
+      <div key="direction">
+        <p className="text-[#1E2D4D]/50">Direction</p>
+        <p className="font-medium text-[#1E2D4D]">{dirLabel}</p>
+      </div>
+    );
+  }
+
+  const tiers = config.tiers;
+  if (tiers && typeof tiers === 'object' && !Array.isArray(tiers)) {
+    parts.push(
+      <div key="tiers" className="sm:col-span-2">
+        <p className="text-[#1E2D4D]/50 mb-1">Tiers</p>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-[#1E2D4D]/50 border-b">
+              <th className="pb-1 font-medium">Rating</th>
+              <th className="pb-1 font-medium">Point Range</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(tiers).map(([name, range]: [string, any]) => (
+              <tr key={name} className="border-b border-[#1E2D4D]/5">
+                <td className="py-1 font-semibold">{name}</td>
+                <td className="py-1">
+                  {Array.isArray(range)
+                    ? range[1] != null ? `${range[0]} \u2013 ${range[1]}` : `${range[0]}+`
+                    : String(range)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (shouldRenderPointValues(config, scoringMethodology)) {
+    const pointValues = config.point_values || config.violation_points;
+    parts.push(
+      <div key="points" className="sm:col-span-2">
+        <p className="text-[#1E2D4D]/50 mb-1">Violation Point Values</p>
+        <div className="space-y-0.5">
+          {Object.entries(pointValues).map(([category, pts]: [string, any]) => (
+            <p key={category} className="text-[#1E2D4D]/80">
+              <span className="font-medium capitalize">{category.replace(/_/g, ' ')}</span>: {pts} {pts === 1 ? 'point' : 'points'}
+            </p>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (parts.length === 0) return null;
+
+  return (
+    <div className="grid sm:grid-cols-2 gap-4 text-sm mt-3 pt-3 border-t border-[#1E2D4D]/5">
+      {parts}
+    </div>
+  );
+}
+
+/** True when a sentence's primary purpose is assigning numeric point values
+ *  to violation categories. Grade-range sentences, citations, ordinance
+ *  references and procedural text return false. */
+function isPointValueSentence(sent: string): boolean {
+  // Multiple "= N [pts/points]" assignments → point value listing
+  const eqAssignments = sent.match(/=\s*\d+\s*(?:pts?|points?|point)?\b/gi);
+  if (eqAssignments && eqAssignments.length >= 2) return true;
+  // "Point weights:" prefix
+  if (/\bpoint\s+weights?\s*:/i.test(sent)) return true;
+  // Multiple "(N points" with violation/hazard context
+  const parenPts = sent.match(/\(\s*\d+(?:\s*[-\u2013]\s*\d+)?\+?\s*(?:pts?|points?|point)\b/gi);
+  if (parenPts && parenPts.length >= 2 &&
+      /\b(?:major|minor|critical|hazard|violation|deduct)/i.test(sent)) return true;
+  // "N-point penalty/deduction"
+  if (/\d+[-\s]point\s*(?:penalty|surcharge|deduction)/i.test(sent)) return true;
+  return false;
+}
+
+/** Drop sentences that assign point values to violations. Keep citations,
+ *  grade ranges, ordinance references, procedural text. */
+function scrubPointValues(text: string): string | null {
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const clean = sentences.filter(sent => {
+    const letters = sent.replace(/[^a-zA-Z]/g, '');
+    return letters.length > 2 && !isPointValueSentence(sent);
+  });
+  const result = clean.join(' ').trim();
+  return result || null;
+}
+
 export function CountyCompliance() {
   const { countySlug } = useParams<{ countySlug: string }>();
   const [jurisdiction, setJurisdiction] = useState<JurisdictionDetail | null>(null);
@@ -381,9 +503,11 @@ export function CountyCompliance() {
                   </div>
                 )}
               </div>
-              {j.scoring_methodology && (
-                <p className="text-sm text-[#1E2D4D]/70 mt-4 leading-relaxed">{j.scoring_methodology}</p>
-              )}
+              {renderEvaluationDetails(j.grading_config || {}, j.scoring_methodology)}
+              {(() => {
+                const prose = j.scoring_methodology ? scrubPointValues(j.scoring_methodology) : null;
+                return prose ? <p className="text-sm text-[#1E2D4D]/70 mt-4 leading-relaxed">{prose}</p> : null;
+              })()}
             </section>
 
             {/* Fire Safety AHJ */}
