@@ -516,6 +516,66 @@ function buildBriefingEmail(
     row('Food handler cards', 'CalCode \u00a7113948', 'All food staff') +
     '</table>';
 
+  // ── Build evaluation block from jurisdiction data ─────────────────
+  // Reads grading_config.tiers + grading_config.point_values — the same
+  // fields ScoreTable renders per county.
+  // deno-lint-ignore no-explicit-any
+  const gc = jur?.grading_config as Record<string, any> | null;
+  let evalBlock = '';
+
+  if (jur?.grading_type === 'calcode_default') {
+    evalBlock = `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0;">This county posts no grade or placard. Inspection reports are kept on file and produced on request.</p>`;
+  } else if (gc) {
+    const tiers = extractTiers(gc);
+    if (tiers && tiers.length > 0) {
+      evalBlock += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 12px;">`;
+      for (const t of tiers) {
+        evalBlock += `<tr><td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fInstrument};font-size:14px;">${t.name}</td>` +
+          `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fInstrument};font-size:13px;text-align:right;">${t.range}</td></tr>`;
+      }
+      evalBlock += '</table>';
+    }
+
+    // deno-lint-ignore no-explicit-any
+    const pv = gc.point_values as Record<string, any> | undefined;
+    if (pv && typeof pv === 'object' && Object.keys(pv).length > 0) {
+      const order = ['critical', 'major', 'minor', 'grp', 'repeat', 'repeat_multiplier'];
+      const labels: Record<string, string> = {
+        critical: 'Critical', major: 'Major', minor: 'Minor',
+        grp: 'GRP', repeat: 'Repeat', repeat_multiplier: 'Repeat multiplier',
+      };
+      const rendered = new Set<string>();
+      let weightHtml = '';
+      for (const key of order) {
+        if (pv[key] !== undefined && pv[key] !== null) {
+          const label = labels[key] || key;
+          weightHtml += `<tr><td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fInstrument};font-size:14px;">${label}</td>` +
+            `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fMono};font-size:13px;text-align:right;font-weight:600;">${pv[key]} pts</td></tr>`;
+          rendered.add(key);
+        }
+      }
+      for (const [key, val] of Object.entries(pv)) {
+        if (!rendered.has(key) && val !== undefined && val !== null) {
+          const label = key.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+          weightHtml += `<tr><td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fInstrument};font-size:14px;">${label}</td>` +
+            `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fMono};font-size:13px;text-align:right;font-weight:600;">${val} pts</td></tr>`;
+        }
+      }
+      if (weightHtml) {
+        evalBlock += `<p style="font-family:${fInstrument};font-size:13px;color:#5F6875;margin:12px 0 6px;font-weight:600;">Violation point weights</p>`;
+        evalBlock += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${weightHtml}</table>`;
+      }
+    }
+  }
+
+  if (!evalBlock) {
+    evalBlock = `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#8B95AA;margin:0;font-style:italic;">County-specific evaluation details will appear here once verified.</p>`;
+  }
+
+  if (jur?.agency_name) {
+    evalBlock += `<p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: ${jur.agency_name}.</p>`;
+  }
+
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="x-apple-disable-message-reformatting">
@@ -568,10 +628,10 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
     <p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: California Retail Food Code.</p>
   </td></tr>
 
-  <!-- 7. HOW THIS COUNTY EVALUATES — placeholder -->
+  <!-- 7. HOW THIS COUNTY EVALUATES -->
   <tr><td class="p40" style="padding:0 40px 20px;border-top:1px solid #EEE7D9;" bgcolor="#FFFFFF">
     <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How This County Evaluates</h3>
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#8B95AA;margin:0;font-style:italic;">County-specific evaluation details will appear here once verified.</p>
+    ${evalBlock}
   </td></tr>
 
   <!-- 8. CTA -->
