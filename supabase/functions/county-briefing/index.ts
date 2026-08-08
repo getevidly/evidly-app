@@ -884,7 +884,8 @@ Deno.serve(async (req: Request) => {
             sendAccessVia = org?.access_via || undefined;
           }
         } else {
-          ctaUrl = 'https://getstovio.com/study/?from=email';
+          const slug = county.toLowerCase().replace(/\s+/g, '-');
+          ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
         }
 
         const firstName = r.first_name || 'there';
