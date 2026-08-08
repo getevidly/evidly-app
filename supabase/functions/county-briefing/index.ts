@@ -893,7 +893,7 @@ Deno.serve(async (req: Request) => {
 
         const firstName = r.first_name || 'there';
         const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
-        const subject = `${county} County Briefing — How This County Evaluates Commercial Kitchens`;
+        const subject = `${county} County Briefing — How ${county} County Evaluates Commercial Kitchens`;
 
         const result = await sendEmail({ to: r.email, subject, html });
 
