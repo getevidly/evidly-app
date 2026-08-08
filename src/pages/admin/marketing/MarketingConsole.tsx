@@ -17,8 +17,9 @@ import SurveyTab from './SurveyTab';
 import ContentScheduleTab from './ContentScheduleTab';
 import OutreachTab from './OutreachTab';
 import OverviewTab from './OverviewTab';
+import OutboundCallsTab from './OutboundCallsTab';
 import {
-  Radio, MapPin, Layers, ClipboardList,
+  MapPin, Layers, ClipboardList,
   Calendar, Flame, GitBranch, Users, Mail,
   Search, TrendingUp, Megaphone, FileBarChart,
 } from 'lucide-react';
@@ -240,7 +241,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
 
       {/* Placeholder tabs — shell only, data wiring in later phases */}
       {tab === 'overview'  && <OverviewTab accounts={accounts} sends={sends} loading={loading} error={error} />}
-      {tab === 'calls'     && <PlaceholderTab title="Outbound Calls" note="Daily calling surface — call queue sorted by ICP, outcome tracking, and cost per demo." Icon={Radio} />}
+      {tab === 'calls'     && <OutboundCallsTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}
       {tab === 'field'     && <PlaceholderTab title="In Person" note="Field prospecting routes — today's stops, visit logging, and county coverage." Icon={MapPin} />}
       {tab === 'channels'  && <ChannelsTab />}
       {tab === 'survey'    && <SurveyTab />}
