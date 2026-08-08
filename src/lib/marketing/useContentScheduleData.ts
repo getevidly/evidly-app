@@ -1,8 +1,8 @@
 /**
  * useContentScheduleData — Supabase reads/writes for the Content Schedule tab.
  *
- * Reads:  content_schedule (filtered by month), marketing_channels (for dropdown)
- * Writes: content_schedule (insert, update, delete)
+ * Reads:  content_schedule (all rows, newest first)
+ * Writes: content_schedule (insert, delete)
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabase';
@@ -17,67 +17,37 @@ export interface ContentPostRow {
   scheduled_date: string;
   status: string;
   prp_band: string | null;
+  owner: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface ChannelOption {
-  id: string;
-  label: string;
-  category: string;
-  prp_band: string;
-}
-
 export interface AddPostInput {
   title: string;
-  channel_id: string | null;
   channel_label: string;
   scheduled_date: string;
   status: string;
-  prp_band: string | null;
+  owner: string;
   notes: string;
 }
 
 // ── Hook ─────────────────────────────────────────────────────────
 
-export function useContentScheduleData(year: number, month: number) {
+export function useContentScheduleData() {
   const [posts, setPosts] = useState<ContentPostRow[]>([]);
-  const [channels, setChannels] = useState<ChannelOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Date range for the viewed month
-  const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-  const lastDay = month === 11
-    ? `${year + 1}-01-01`
-    : `${year}-${String(month + 2).padStart(2, '0')}-01`;
 
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
 
-    // Channels (for dropdown)
-    try {
-      const { data, error: chErr } = await supabase
-        .from('marketing_channels')
-        .select('id, label, category, prp_band')
-        .eq('is_active', true)
-        .order('sort_order');
-      if (chErr) throw chErr;
-      setChannels((data || []) as ChannelOption[]);
-    } catch {
-      setChannels([]);
-    }
-
-    // Posts for the viewed month
     try {
       const { data, error: pErr } = await supabase
         .from('content_schedule')
         .select('*')
-        .gte('scheduled_date', firstDay)
-        .lt('scheduled_date', lastDay)
-        .order('scheduled_date');
+        .order('scheduled_date', { ascending: false });
       if (pErr) throw pErr;
       setPosts((data || []) as ContentPostRow[]);
     } catch (e: unknown) {
@@ -87,7 +57,7 @@ export function useContentScheduleData(year: number, month: number) {
     }
 
     setLoading(false);
-  }, [firstDay, lastDay]);
+  }, []);
 
   useEffect(() => { refresh(); }, [refresh]);
 
@@ -98,29 +68,14 @@ export function useContentScheduleData(year: number, month: number) {
       .from('content_schedule')
       .insert({
         title: input.title,
-        channel_id: input.channel_id || null,
+        channel_id: null,
         channel_label: input.channel_label,
         scheduled_date: input.scheduled_date,
         status: input.status,
-        prp_band: input.prp_band || null,
+        owner: input.owner || null,
         notes: input.notes || null,
       });
     if (insertErr) return { error: insertErr.message };
-    await refresh();
-    return { error: null };
-  };
-
-  // ── Update post ──────────────────────────────────────────────
-
-  const updatePost = async (
-    id: string,
-    fields: Partial<Omit<ContentPostRow, 'id' | 'created_at'>>,
-  ): Promise<{ error: string | null }> => {
-    const { error: upErr } = await supabase
-      .from('content_schedule')
-      .update({ ...fields, updated_at: new Date().toISOString() })
-      .eq('id', id);
-    if (upErr) return { error: upErr.message };
     await refresh();
     return { error: null };
   };
@@ -137,5 +92,5 @@ export function useContentScheduleData(year: number, month: number) {
     return { error: null };
   };
 
-  return { posts, channels, loading, error, refresh, addPost, updatePost, deletePost };
+  return { posts, loading, error, refresh, addPost, deletePost };
 }

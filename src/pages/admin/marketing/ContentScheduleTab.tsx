@@ -1,38 +1,30 @@
 /**
- * ContentScheduleTab — Month calendar with add-post form for the Marketing console.
+ * ContentScheduleTab — INPUT tab for the Marketing console.
  *
- * Posts render on their scheduled_date as chips colored by channel category.
- * Channel dropdown pulls LIVE from marketing_channels (is_active=true).
- * REAL DATA ONLY — shows only rows from content_schedule.
+ * Entry form: title, channel (Email / LinkedIn / Instagram / Facebook / Other),
+ * date, owner.
+ * Scheduled-items list with column sort and filters (channel, owner, date range, status).
+ * Writes to: content_schedule table.
+ * REAL DATA ONLY — no hardcoded posts.
  */
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import {
   useContentScheduleData,
   type ContentPostRow,
   type AddPostInput,
 } from '../../../lib/marketing/useContentScheduleData';
-import { BandPill } from './marketingPrimitives';
 import {
-  EV_NAVY, EV_EMBER, EV_MUTED, EV_FAINT,
+  EV_NAVY, EV_MUTED, EV_FAINT,
   EV_LINE, EV_LIGHT, EV_PAPER,
   DISPLAY, BODY,
 } from './marketingTokens';
 import { toast } from 'sonner';
 
-// ── Category colors (same as ChannelsTab) ────────────────────────
+// ── Constants ────────────────────────────────────────────────────
 
-const CAT_COLORS: Record<string, string> = {
-  'Inbound / SEO':      '#5B8C6F',
-  'Owned / Nurture':    '#4A7B94',
-  'Social':             '#7B6BA4',
-  'Paid':               EV_EMBER,
-  'Outbound':           '#8A6412',
-  'Partner / Referral': '#2C5570',
-  'PR / Earned':        '#6B7280',
-};
-
-// ── Status dot colors ────────────────────────────────────────────
+const CHANNELS = ['Email', 'LinkedIn', 'Instagram', 'Facebook', 'Other'] as const;
+const STATUS_OPTIONS = ['planned', 'drafted', 'scheduled', 'published'] as const;
 
 const STATUS_DOT: Record<string, string> = {
   planned:   '#94A3B8',
@@ -41,107 +33,89 @@ const STATUS_DOT: Record<string, string> = {
   published: '#22C55E',
 };
 
-const STATUS_OPTIONS = ['planned', 'drafted', 'scheduled', 'published'] as const;
-const PRP_OPTIONS = ['PREDICT', 'REDUCE', 'PROVE'] as const;
-
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-const DAY_HEADERS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-// ── Helpers ──────────────────────────────────────────────────────
-
-function calendarDays(year: number, month: number): (number | null)[] {
-  const firstDow = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: (number | null)[] = [];
-  for (let i = 0; i < firstDow; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-  while (cells.length % 7 !== 0) cells.push(null);
-  return cells;
-}
-
-function dateKey(year: number, month: number, day: number): string {
-  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-// ── Empty form ───────────────────────────────────────────────────
+type SortKey = 'title' | 'channel_label' | 'scheduled_date' | 'owner' | 'status';
+type SortDir = 'asc' | 'desc';
 
 const EMPTY_FORM: AddPostInput = {
   title: '',
-  channel_id: null,
   channel_label: '',
   scheduled_date: '',
   status: 'planned',
-  prp_band: null,
+  owner: '',
   notes: '',
 };
 
 // ── Component ────────────────────────────────────────────────────
 
 export default function ContentScheduleTab() {
-  const now = new Date();
-  const [viewYear, setViewYear] = useState(now.getFullYear());
-  const [viewMonth, setViewMonth] = useState(now.getMonth());
+  const { posts, loading, error, addPost, deletePost } = useContentScheduleData();
 
-  const { posts, channels, loading, error, addPost, deletePost } =
-    useContentScheduleData(viewYear, viewMonth);
-
+  // Form state
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<AddPostInput>({ ...EMPTY_FORM });
   const [saving, setSaving] = useState(false);
 
-  // Channel lookup for category color
-  const channelMap = useMemo(() => {
-    const m = new Map<string, { label: string; category: string; prp_band: string }>();
-    for (const ch of channels) m.set(ch.id, ch);
-    return m;
-  }, [channels]);
+  // Sort state
+  const [sortKey, setSortKey] = useState<SortKey>('scheduled_date');
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
 
-  // Group posts by date string
-  const postsByDate = useMemo(() => {
-    const m = new Map<string, ContentPostRow[]>();
-    for (const p of posts) {
-      const d = p.scheduled_date;
-      if (!m.has(d)) m.set(d, []);
-      m.get(d)!.push(p);
-    }
-    return m;
+  // Filter state
+  const [fChannel, setFChannel] = useState('');
+  const [fOwner, setFOwner] = useState('');
+  const [fStatus, setFStatus] = useState('');
+  const [fDateFrom, setFDateFrom] = useState('');
+  const [fDateTo, setFDateTo] = useState('');
+
+  // ── Unique owners for filter dropdown ─────────────────────────
+
+  const ownerOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of posts) if (p.owner) set.add(p.owner);
+    return Array.from(set).sort();
   }, [posts]);
 
-  const cells = calendarDays(viewYear, viewMonth);
-  const todayKey = dateKey(now.getFullYear(), now.getMonth(), now.getDate());
+  // ── Unique channels for filter dropdown ───────────────────────
 
-  // ── Navigation ─────────────────────────────────────────────────
+  const channelOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of posts) if (p.channel_label) set.add(p.channel_label);
+    return Array.from(set).sort();
+  }, [posts]);
 
-  const prevMonth = () => {
-    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
-    else setViewMonth(m => m - 1);
+  // ── Filtered + sorted list ────────────────────────────────────
+
+  const displayed = useMemo(() => {
+    let list = [...posts];
+
+    if (fChannel) list = list.filter(p => p.channel_label === fChannel);
+    if (fOwner)   list = list.filter(p => p.owner === fOwner);
+    if (fStatus)  list = list.filter(p => p.status === fStatus);
+    if (fDateFrom) list = list.filter(p => p.scheduled_date >= fDateFrom);
+    if (fDateTo)   list = list.filter(p => p.scheduled_date <= fDateTo);
+
+    list.sort((a, b) => {
+      const av = (a[sortKey] || '') as string;
+      const bv = (b[sortKey] || '') as string;
+      const cmp = av.localeCompare(bv);
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+
+    return list;
+  }, [posts, fChannel, fOwner, fStatus, fDateFrom, fDateTo, sortKey, sortDir]);
+
+  // ── Sort toggle ───────────────────────────────────────────────
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
+    else { setSortKey(key); setSortDir('asc'); }
   };
-  const nextMonth = () => {
-    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
-    else setViewMonth(m => m + 1);
-  };
 
-  // ── Channel select handler ─────────────────────────────────────
-
-  const onChannelChange = (channelId: string) => {
-    const ch = channelMap.get(channelId);
-    setForm(prev => ({
-      ...prev,
-      channel_id: channelId || null,
-      channel_label: ch?.label || '',
-      prp_band: ch?.prp_band || prev.prp_band,
-    }));
-  };
-
-  // ── Submit ─────────────────────────────────────────────────────
+  // ── Submit ────────────────────────────────────────────────────
 
   const handleSubmit = async () => {
-    if (!form.title.trim()) { toast.error('Title is required'); return; }
-    if (!form.scheduled_date) { toast.error('Date is required'); return; }
-    if (!form.channel_label) { toast.error('Channel is required'); return; }
+    if (!form.title.trim())      { toast.error('Title is required');   return; }
+    if (!form.channel_label)     { toast.error('Channel is required'); return; }
+    if (!form.scheduled_date)    { toast.error('Date is required');    return; }
     setSaving(true);
     const { error: err } = await addPost(form);
     setSaving(false);
@@ -151,14 +125,33 @@ export default function ContentScheduleTab() {
     setShowForm(false);
   };
 
-  // ── Delete ─────────────────────────────────────────────────────
+  // ── Delete ────────────────────────────────────────────────────
 
   const handleDelete = async (id: string) => {
     const { error: err } = await deletePost(id);
     if (err) toast.error(`Delete failed: ${err}`);
   };
 
-  // ── Render ─────────────────────────────────────────────────────
+  // ── Sort header helper ────────────────────────────────────────
+
+  const SortHeader = ({ label, col }: { label: string; col: SortKey }) => (
+    <th
+      onClick={() => toggleSort(col)}
+      className="py-2 px-3 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+      style={{ color: EV_MUTED }}
+    >
+      <span className="inline-flex items-center gap-1">
+        {label}
+        {sortKey === col ? (
+          sortDir === 'asc' ? <ChevronUp size={10} /> : <ChevronDown size={10} />
+        ) : (
+          <ChevronDown size={10} style={{ opacity: 0.3 }} />
+        )}
+      </span>
+    </th>
+  );
+
+  // ── Render ────────────────────────────────────────────────────
 
   if (loading) {
     return (
@@ -178,35 +171,13 @@ export default function ContentScheduleTab() {
 
   return (
     <div style={{ fontFamily: BODY }}>
-      {/* ── Month header + nav ─────────────────────────────────── */}
+      {/* ── Header + Add button ──────────────────────────────────── */}
       <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={prevMonth}
-            className="w-8 h-8 flex items-center justify-center rounded cursor-pointer border bg-transparent"
-            style={{ borderColor: EV_LINE, color: EV_MUTED }}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <h3 className="text-lg font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
-            {MONTH_NAMES[viewMonth]} {viewYear}
-          </h3>
-          <button
-            onClick={nextMonth}
-            className="w-8 h-8 flex items-center justify-center rounded cursor-pointer border bg-transparent"
-            style={{ borderColor: EV_LINE, color: EV_MUTED }}
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
+        <p className="text-[11px] font-medium" style={{ color: EV_MUTED }}>
+          {posts.length} post{posts.length !== 1 ? 's' : ''} scheduled
+        </p>
         <button
-          onClick={() => {
-            setForm({
-              ...EMPTY_FORM,
-              scheduled_date: dateKey(viewYear, viewMonth, Math.min(now.getDate(), new Date(viewYear, viewMonth + 1, 0).getDate())),
-            });
-            setShowForm(true);
-          }}
+          onClick={() => setShowForm(!showForm)}
           className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border-none"
           style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
         >
@@ -214,118 +185,345 @@ export default function ContentScheduleTab() {
         </button>
       </div>
 
-      {/* ── Calendar grid ──────────────────────────────────────── */}
-      <div className="border rounded-lg overflow-hidden" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
-        {/* Day-of-week header */}
-        <div className="grid grid-cols-7">
-          {DAY_HEADERS.map(d => (
-            <div
-              key={d}
-              className="text-center py-2 text-[10px] font-bold uppercase tracking-wider"
-              style={{ color: EV_MUTED, borderBottom: `1px solid ${EV_LINE}` }}
-            >
-              {d}
-            </div>
-          ))}
-        </div>
-
-        {/* Day cells */}
-        <div className="grid grid-cols-7">
-          {cells.map((day, i) => {
-            const dk = day ? dateKey(viewYear, viewMonth, day) : '';
-            const dayPosts = dk ? (postsByDate.get(dk) || []) : [];
-            const isToday = dk === todayKey;
-
-            return (
-              <div
-                key={i}
-                className="min-h-[100px] p-1.5 border-r border-b"
-                style={{
-                  borderColor: EV_LINE,
-                  backgroundColor: day ? (isToday ? '#FEF9EF' : EV_PAPER) : EV_LIGHT,
-                  borderRight: (i + 1) % 7 === 0 ? 'none' : undefined,
-                }}
-              >
-                {day && (
-                  <>
-                    <div
-                      className="text-[11px] font-semibold mb-1"
-                      style={{
-                        color: isToday ? EV_EMBER : EV_MUTED,
-                        fontWeight: isToday ? 800 : 600,
-                      }}
-                    >
-                      {day}
-                    </div>
-                    {dayPosts.map(p => {
-                      const ch = p.channel_id ? channelMap.get(p.channel_id) : null;
-                      const catColor = ch ? (CAT_COLORS[ch.category] || EV_MUTED) : EV_MUTED;
-                      const dotColor = STATUS_DOT[p.status] || STATUS_DOT.planned;
-
-                      return (
-                        <div
-                          key={p.id}
-                          className="group flex items-start gap-1 mb-1 px-1.5 py-1 rounded text-[10px] leading-tight"
-                          style={{ backgroundColor: `${catColor}18`, color: catColor }}
-                        >
-                          {/* Status dot */}
-                          <span
-                            className="inline-block w-[6px] h-[6px] rounded-full flex-shrink-0 mt-[3px]"
-                            style={{ backgroundColor: dotColor }}
-                          />
-                          <span className="flex-1 font-semibold truncate" title={p.title}>
-                            {p.title}
-                          </span>
-                          <button
-                            onClick={() => handleDelete(p.id)}
-                            className="hidden group-hover:block flex-shrink-0 cursor-pointer bg-transparent border-none p-0"
-                            title="Delete post"
-                          >
-                            <Trash2 size={10} style={{ color: EV_FAINT }} />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── Empty state ────────────────────────────────────────── */}
-      {posts.length === 0 && (
+      {/* ── Add-post form (collapsible) ──────────────────────────── */}
+      {showForm && (
         <div
-          className="text-center py-10 mt-4 border rounded-lg"
+          className="border rounded-lg p-5 mb-5"
           style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}
         >
-          <p className="text-[13px] font-medium mb-3" style={{ color: EV_MUTED }}>
-            No posts scheduled for {MONTH_NAMES[viewMonth]} — add one.
-          </p>
-          <button
-            onClick={() => {
-              setForm({
-                ...EMPTY_FORM,
-                scheduled_date: dateKey(viewYear, viewMonth, 1),
-              });
-              setShowForm(true);
-            }}
-            className="inline-flex items-center gap-1.5 py-2 px-4 text-[12px] font-semibold rounded-md cursor-pointer border-none"
-            style={{ backgroundColor: EV_NAVY, color: '#fff' }}
-          >
-            <Plus size={14} /> Add Post
-          </button>
+          <h3 className="text-sm font-bold mb-4" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
+            Add Post
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            {/* Title */}
+            <div className="sm:col-span-2">
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Title *
+              </label>
+              <input
+                value={form.title}
+                onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                placeholder="e.g. Blog: Kitchen Compliance 101"
+              />
+            </div>
+
+            {/* Channel */}
+            <div>
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Channel *
+              </label>
+              <select
+                value={form.channel_label}
+                onChange={e => setForm(prev => ({ ...prev, channel_label: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+              >
+                <option value="">Select channel</option>
+                {CHANNELS.map(ch => (
+                  <option key={ch} value={ch}>{ch}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Date *
+              </label>
+              <input
+                type="date"
+                value={form.scheduled_date}
+                onChange={e => setForm(prev => ({ ...prev, scheduled_date: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+              />
+            </div>
+
+            {/* Owner */}
+            <div>
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Owner
+              </label>
+              <input
+                value={form.owner}
+                onChange={e => setForm(prev => ({ ...prev, owner: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                placeholder="e.g. Arthur"
+              />
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Status
+              </label>
+              <select
+                value={form.status}
+                onChange={e => setForm(prev => ({ ...prev, status: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+              >
+                {STATUS_OPTIONS.map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Notes */}
+            <div className="sm:col-span-2 lg:col-span-2">
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Notes
+              </label>
+              <input
+                value={form.notes}
+                onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                placeholder="Content brief or link…"
+              />
+            </div>
+          </div>
+
+          {/* Form actions */}
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => { setShowForm(false); setForm({ ...EMPTY_FORM }); }}
+              className="py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border-none"
+              style={{ backgroundColor: EV_LIGHT, color: EV_MUTED }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={saving}
+              className="py-[7px] px-5 text-[12px] font-semibold rounded-md cursor-pointer border-none"
+              style={{
+                backgroundColor: saving ? EV_LIGHT : EV_NAVY,
+                color: saving ? EV_MUTED : '#fff',
+              }}
+            >
+              {saving ? 'Adding…' : 'Add Post'}
+            </button>
+          </div>
         </div>
       )}
 
-      {/* ── Legend ──────────────────────────────────────────────── */}
+      {/* ── Filters ──────────────────────────────────────────────── */}
+      <div className="flex items-end gap-3 flex-wrap mb-4">
+        {/* Channel filter */}
+        <div>
+          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+            Channel
+          </label>
+          <select
+            value={fChannel}
+            onChange={e => setFChannel(e.target.value)}
+            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 120 }}
+          >
+            <option value="">All</option>
+            {channelOptions.map(ch => (
+              <option key={ch} value={ch}>{ch}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Owner filter */}
+        <div>
+          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+            Owner
+          </label>
+          <select
+            value={fOwner}
+            onChange={e => setFOwner(e.target.value)}
+            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 120 }}
+          >
+            <option value="">All</option>
+            {ownerOptions.map(o => (
+              <option key={o} value={o}>{o}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Status filter */}
+        <div>
+          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+            Status
+          </label>
+          <select
+            value={fStatus}
+            onChange={e => setFStatus(e.target.value)}
+            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 120 }}
+          >
+            <option value="">All</option>
+            {STATUS_OPTIONS.map(s => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Date from */}
+        <div>
+          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+            From
+          </label>
+          <input
+            type="date"
+            value={fDateFrom}
+            onChange={e => setFDateFrom(e.target.value)}
+            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+          />
+        </div>
+
+        {/* Date to */}
+        <div>
+          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+            To
+          </label>
+          <input
+            type="date"
+            value={fDateTo}
+            onChange={e => setFDateTo(e.target.value)}
+            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+          />
+        </div>
+
+        {/* Clear filters */}
+        {(fChannel || fOwner || fStatus || fDateFrom || fDateTo) && (
+          <button
+            onClick={() => { setFChannel(''); setFOwner(''); setFStatus(''); setFDateFrom(''); setFDateTo(''); }}
+            className="py-[6px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+            style={{ backgroundColor: EV_LIGHT, color: EV_MUTED }}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* ── Scheduled-items list ─────────────────────────────────── */}
+      {displayed.length === 0 ? (
+        <div
+          className="text-center py-10 border rounded-lg"
+          style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}
+        >
+          <p className="text-[13px] font-medium mb-3" style={{ color: EV_MUTED }}>
+            {posts.length === 0
+              ? 'No posts scheduled yet — add one.'
+              : 'No posts match the current filters.'}
+          </p>
+          {posts.length === 0 && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-1.5 py-2 px-4 text-[12px] font-semibold rounded-md cursor-pointer border-none"
+              style={{ backgroundColor: EV_NAVY, color: '#fff' }}
+            >
+              <Plus size={14} /> Add Post
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${EV_LINE}` }}>
+                <SortHeader label="Title" col="title" />
+                <SortHeader label="Channel" col="channel_label" />
+                <SortHeader label="Date" col="scheduled_date" />
+                <SortHeader label="Owner" col="owner" />
+                <SortHeader label="Status" col="status" />
+                <th
+                  className="py-2 px-3 text-[10px] font-bold uppercase tracking-wider"
+                  style={{ color: EV_MUTED }}
+                >
+                  Notes
+                </th>
+                <th className="py-2 px-3 w-10" />
+              </tr>
+            </thead>
+            <tbody>
+              {displayed.map(p => {
+                const dotColor = STATUS_DOT[p.status] || STATUS_DOT.planned;
+                return (
+                  <tr
+                    key={p.id}
+                    className="group"
+                    style={{ borderBottom: `1px solid ${EV_LINE}` }}
+                  >
+                    <td
+                      className="py-2.5 px-3 text-[13px] font-semibold"
+                      style={{ color: EV_NAVY }}
+                    >
+                      {p.title}
+                    </td>
+                    <td className="py-2.5 px-3 text-[12px]" style={{ color: EV_MUTED }}>
+                      {p.channel_label || '—'}
+                    </td>
+                    <td
+                      className="py-2.5 px-3 text-[12px]"
+                      style={{ color: EV_MUTED, fontFamily: 'ui-monospace, monospace' }}
+                    >
+                      {p.scheduled_date}
+                    </td>
+                    <td className="py-2.5 px-3 text-[12px]" style={{ color: EV_MUTED }}>
+                      {p.owner || '—'}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <span
+                        className="inline-flex items-center gap-1.5 text-[11px] font-semibold capitalize"
+                        style={{ color: EV_MUTED }}
+                      >
+                        <span
+                          className="inline-block w-[7px] h-[7px] rounded-full flex-shrink-0"
+                          style={{ backgroundColor: dotColor }}
+                        />
+                        {p.status}
+                      </span>
+                    </td>
+                    <td
+                      className="py-2.5 px-3 text-[11px] max-w-[200px] truncate"
+                      style={{ color: EV_FAINT }}
+                      title={p.notes || ''}
+                    >
+                      {p.notes || '—'}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="hidden group-hover:block cursor-pointer bg-transparent border-none p-0"
+                        title="Delete post"
+                      >
+                        <Trash2 size={13} style={{ color: EV_FAINT }} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* ── Status legend ────────────────────────────────────────── */}
       <div className="flex items-center gap-4 flex-wrap mt-4">
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: EV_MUTED }}>
+        <span
+          className="text-[10px] font-bold uppercase tracking-wider"
+          style={{ color: EV_MUTED }}
+        >
           Status:
         </span>
         {STATUS_OPTIONS.map(s => (
-          <span key={s} className="inline-flex items-center gap-1 text-[11px]" style={{ color: EV_MUTED }}>
+          <span
+            key={s}
+            className="inline-flex items-center gap-1 text-[11px]"
+            style={{ color: EV_MUTED }}
+          >
             <span
               className="inline-block w-[7px] h-[7px] rounded-full"
               style={{ backgroundColor: STATUS_DOT[s] }}
@@ -334,164 +532,6 @@ export default function ContentScheduleTab() {
           </span>
         ))}
       </div>
-
-      {/* ── Add-post slide-over ─────────────────────────────────── */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex justify-end" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
-          <div
-            className="w-full max-w-md h-full overflow-y-auto shadow-xl"
-            style={{ backgroundColor: EV_PAPER }}
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
-                  Add Post
-                </h3>
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded cursor-pointer border bg-transparent"
-                  style={{ borderColor: EV_LINE, color: EV_MUTED }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {/* Title */}
-                <div>
-                  <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                    Title *
-                  </label>
-                  <input
-                    value={form.title}
-                    onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-                    style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
-                    placeholder="e.g. Blog: Kitchen Compliance 101"
-                  />
-                </div>
-
-                {/* Channel (live dropdown) */}
-                <div>
-                  <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                    Channel *
-                  </label>
-                  <select
-                    value={form.channel_id || ''}
-                    onChange={e => onChannelChange(e.target.value)}
-                    className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-                    style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
-                  >
-                    <option value="">Select channel</option>
-                    {channels.map(ch => (
-                      <option key={ch.id} value={ch.id}>{ch.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Date */}
-                <div>
-                  <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                    Scheduled Date *
-                  </label>
-                  <input
-                    type="date"
-                    value={form.scheduled_date}
-                    onChange={e => setForm(prev => ({ ...prev, scheduled_date: e.target.value }))}
-                    className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-                    style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
-                  />
-                </div>
-
-                {/* Status */}
-                <div>
-                  <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                    Status
-                  </label>
-                  <div className="flex gap-2">
-                    {STATUS_OPTIONS.map(s => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => setForm(prev => ({ ...prev, status: s }))}
-                        className="flex-1 py-[7px] text-[11px] font-semibold rounded-md border cursor-pointer transition-colors capitalize"
-                        style={{
-                          backgroundColor: form.status === s ? EV_NAVY : '#fff',
-                          color: form.status === s ? '#fff' : EV_MUTED,
-                          borderColor: form.status === s ? EV_NAVY : EV_LINE,
-                        }}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* PRP Band */}
-                <div>
-                  <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                    PRP Band
-                  </label>
-                  <div className="flex gap-2">
-                    {PRP_OPTIONS.map(b => (
-                      <button
-                        key={b}
-                        type="button"
-                        onClick={() => setForm(prev => ({ ...prev, prp_band: prev.prp_band === b ? null : b }))}
-                        className="flex-1 py-[7px] text-[10px] font-bold uppercase tracking-wider rounded-md border cursor-pointer transition-colors"
-                        style={{
-                          backgroundColor: form.prp_band === b ? EV_NAVY : '#fff',
-                          color: form.prp_band === b ? '#fff' : EV_MUTED,
-                          borderColor: form.prp_band === b ? EV_NAVY : EV_LINE,
-                        }}
-                      >
-                        {b}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Notes */}
-                <div>
-                  <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                    Notes
-                  </label>
-                  <textarea
-                    value={form.notes}
-                    onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
-                    rows={3}
-                    className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none resize-y"
-                    style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
-                    placeholder="Content brief, link, or context…"
-                  />
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-2 justify-end mt-6">
-                <button
-                  onClick={() => { setShowForm(false); setForm({ ...EMPTY_FORM }); }}
-                  className="py-2 px-4 text-[13px] font-semibold rounded-md cursor-pointer border-none"
-                  style={{ backgroundColor: EV_LIGHT, color: EV_MUTED }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  disabled={saving}
-                  className="py-2 px-5 text-[13px] font-semibold rounded-md cursor-pointer border-none"
-                  style={{
-                    backgroundColor: saving ? EV_LIGHT : EV_NAVY,
-                    color: saving ? EV_MUTED : '#fff',
-                  }}
-                >
-                  {saving ? 'Adding…' : 'Add Post'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
