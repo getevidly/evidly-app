@@ -16,8 +16,9 @@ import ChannelsTab from './ChannelsTab';
 import SurveyTab from './SurveyTab';
 import ContentScheduleTab from './ContentScheduleTab';
 import OutreachTab from './OutreachTab';
+import OverviewTab from './OverviewTab';
 import {
-  LayoutDashboard, Radio, MapPin, Layers, ClipboardList,
+  Radio, MapPin, Layers, ClipboardList,
   Calendar, Flame, GitBranch, Users, Mail,
   Search, TrendingUp, Megaphone, FileBarChart,
 } from 'lucide-react';
@@ -90,7 +91,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
   const navigate = useNavigate();
   const [tab, setTab] = useState<MarketingTabId>(defaultTab);
   const data = useMarketingData();
-  const { accounts, influencers, types, loading, error } = data;
+  const { accounts, influencers, types, sends, loading, error } = data;
 
   // Add-account modal
   const [showAddAccount, setShowAddAccount] = useState(false);
@@ -238,7 +239,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       ) : null}
 
       {/* Placeholder tabs — shell only, data wiring in later phases */}
-      {tab === 'overview'  && <PlaceholderTab title="Overview" note="KPI strip, funnel with PRP mix, forecast vs actual, segment performance, and active alerts." Icon={LayoutDashboard} />}
+      {tab === 'overview'  && <OverviewTab accounts={accounts} sends={sends} loading={loading} error={error} />}
       {tab === 'calls'     && <PlaceholderTab title="Outbound Calls" note="Daily calling surface — call queue sorted by ICP, outcome tracking, and cost per demo." Icon={Radio} />}
       {tab === 'field'     && <PlaceholderTab title="In Person" note="Field prospecting routes — today's stops, visit logging, and county coverage." Icon={MapPin} />}
       {tab === 'channels'  && <ChannelsTab />}
