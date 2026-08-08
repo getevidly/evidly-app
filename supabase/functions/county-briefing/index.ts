@@ -482,63 +482,111 @@ function buildBriefingEmail(
   accessVia?: string,
   unsubToken?: string,
 ): string {
-  const body = buildBriefingBody(county, jur);
-
-  const coldClose = `
-    <p style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:24px 0 6px;">Separately</p>
-    <p style="font-family:${fInstrument};font-weight:bold;font-size:15px;line-height:1.3;color:#1C2A3A;margin:0 0 10px;">The California Commercial Kitchen Safety Study</p>
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 18px;">We\u2019re asking kitchens across the state which of these records they could actually produce on demand. It\u2019s independent research, and it will be published county by county. Take part and you get your own readiness back at the end, read against this briefing \u2014 and you\u2019ll see how your county compares.</p>
-    <table role="presentation" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
-      <td align="center" style="background:#1C2A3A;"><a href="${ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Take part &#8594;</a></td>
-    </tr></table>`;
-
-  const warmClose = accessVia === 'cpp_client'
-    ? `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:24px 0 8px;">Cleaning Pros Plus has been cleaning your kitchen exhaust and hood all along. Your most recent service certificate goes on file for you in EvidLY, and every cleaning from here on joins it \u2014 and the invitation shows what sits alongside it, and what a fire marshal, a health inspector, a property manager or your broker can ask you to produce.</p>`
-    : `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:24px 0 8px;">Your EvidLY invitation is on its way. It shows what a fire marshal, a health inspector, a property manager or your broker can ask you to produce \u2014 and where each of those records will live.</p>`;
-
-  const close = variant === 'warm' ? warmClose : coldClose;
-
   const unsubBase = `${Deno.env.get("SUPABASE_URL") || "https://irxgmhxhmxtzfwuieblc.supabase.co"}/functions/v1/email-unsubscribe`;
   const unsubUrl = unsubToken
     ? `${unsubBase}?token=${encodeURIComponent(unsubToken)}`
     : 'https://app.getevidly.com/settings/notifications';
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="x-apple-disable-message-reformatting">
-<title>${county} County Briefing</title>
-<style>body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
-@media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}</style>
-</head><body style="margin:0;padding:0;background:#F7F1E6;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Hi ${firstName}, here is how ${county} County evaluates commercial kitchens.</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;">
-<tr><td align="center" style="padding:28px 16px;">
-<table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;">
+  // ── Row builder for fire / food tables ──────────────────────────
+  const row = (name: string, cite: string, value: string) =>
+    `<tr><td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fInstrument};font-size:14px;">${name}</td>` +
+    `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#8B95AA;font-family:${fMono};font-size:11px;white-space:nowrap;">${cite}</td>` +
+    `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fInstrument};font-size:13px;text-align:right;">${value}</td></tr>`;
 
-  <!-- 1. HEADER — navy, wordmark + County Briefing label -->
-  <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;">
+  const tblOpen = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">`;
+
+  const fireTable = tblOpen +
+    row('Exhaust &amp; hood cleaning', 'NFPA 96', 'By cooking volume and equipment type') +
+    row('Fire suppression', 'NFPA 17A', 'Every 6 months') +
+    row('Fire sprinklers', 'NFPA 25', 'Annually') +
+    row('Fire alarm', 'NFPA 72', 'Annually') +
+    row('Fire extinguishers', 'NFPA 10', 'Annually') +
+    '</table>';
+
+  const foodTable = tblOpen +
+    row('Pest control', 'CalCode \u00a7114259', 'Monthly service') +
+    row('Receiving temperatures', 'CalCode \u00a7113996', 'At delivery') +
+    row('Hot holding', 'CalCode \u00a7113996', '\u2265135\u00b0F') +
+    row('Cold holding', 'CalCode \u00a7113996', '\u226441\u00b0F') +
+    row('Cooling', 'CalCode \u00a7114002', '135\u219270\u00b0F in 2 hrs') +
+    row('Reheating', 'CalCode \u00a7114014', '\u2265165\u00b0F within 2 hrs') +
+    row('Warewash &amp; sanitizer', 'CalCode \u00a7114099, \u00a7114125', 'Test kit on hand') +
+    row('Health permit', 'CalCode \u00a7114381', 'Current') +
+    row('Manager certification', 'CalCode \u00a7113947', 'One per facility') +
+    row('Food handler cards', 'CalCode \u00a7113948', 'All food staff') +
+    '</table>';
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>${county} County Briefing</title>
+<style>
+:root { color-scheme: light only; supported-color-schemes: light only; }
+body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
+@media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}
+</style>
+</head><body style="margin:0;padding:0;background:#F7F1E6;" bgcolor="#F7F1E6">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Hi ${firstName} \u2014 what ${county} County can ask your kitchen to produce.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;" bgcolor="#F7F1E6">
+<tr><td align="center" style="padding:28px 16px;">
+<table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;" bgcolor="#FFFFFF">
+
+  <!-- 1. HEADER -->
+  <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;" bgcolor="#1C2A3A">
     <div style="font-family:${fMontserrat};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#F4EFE4;">vid</span><span style="color:#B24A2E;">LY</span></div>
     <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">County Briefing</div>
   </td></tr>
 
-  <!-- 2. GREETING + INTRO -->
-  <tr><td class="p40" style="padding:28px 40px 0;">
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 8px;">Hi ${firstName}, here is how <strong>${county} County</strong> evaluates commercial kitchens.</p>
+  <!-- 2. COUNTY KICKER -->
+  <tr><td class="p40" style="padding:28px 40px 0;" bgcolor="#FFFFFF">
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:0 0 12px;">${county} County</div>
   </td></tr>
 
-  <!-- 3. BODY SECTIONS -->
-  <tr><td class="p40" style="padding:0 40px 20px;">
-    ${body}
+  <!-- 3. SALUTATION -->
+  <tr><td class="p40" style="padding:0 40px 0;" bgcolor="#FFFFFF">
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 20px;">Hi ${firstName} \u2014 you manage a kitchen in ${county} County; here is what your property management, insurance company, the fire marshal and health department can ask you to produce anytime.</p>
   </td></tr>
 
-  <!-- 4. CLOSE — variant-specific -->
-  <tr><td class="p40" style="padding:0 40px 28px;border-top:1px solid #EEE7D9;">
-    ${close}
+  <!-- 4. HEADLINE -->
+  <tr><td class="p40" style="padding:0 40px 20px;" bgcolor="#FFFFFF">
+    <h2 style="font-family:${fInstrument};font-size:20px;font-weight:700;color:#1C2A3A;margin:0;">What a kitchen here has to produce.</h2>
   </td></tr>
 
-  <!-- 5. FOOTER -->
-  <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;">
-    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;">EvidLY &middot; Commercial Kitchen Risk Management</div>
-    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">Cleaning Pros Plus, LLC &middot; 2324 M Street #2711 &middot; Merced, CA 95344</div>
+  <!-- 5. FIRE SAFETY -->
+  <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Fire Safety</h3>
+    ${fireTable}
+    <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Five systems, five separate service records \u2014 whether one company services them or five.</p>
+  </td></tr>
+
+  <!-- 6. FOOD SAFETY -->
+  <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Food Safety</h3>
+    ${foodTable}
+    <p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: California Retail Food Code.</p>
+  </td></tr>
+
+  <!-- 7. HOW THIS COUNTY EVALUATES — placeholder -->
+  <tr><td class="p40" style="padding:0 40px 20px;border-top:1px solid #EEE7D9;" bgcolor="#FFFFFF">
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How This County Evaluates</h3>
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#8B95AA;margin:0;font-style:italic;">County-specific evaluation details will appear here once verified.</p>
+  </td></tr>
+
+  <!-- 8. CTA -->
+  <tr><td class="p40" style="padding:0 40px 28px;" bgcolor="#FFFFFF">
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 6px;">CalCode is the same in every county.</p>
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 18px;">How your inspection gets reported is not. Tiers, placards and point weights are set locally. All 58 counties are published, free to read.</p>
+    <table role="presentation" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
+      <td align="center" style="background:#1C2A3A;" bgcolor="#1C2A3A"><a href="${ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">See how each county reports &#8594;</a></td>
+    </tr></table>
+  </td></tr>
+
+  <!-- 9. FOOTER -->
+  <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;" bgcolor="#FBF9F2">
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;">EvidLY &middot; Cleaning Pros Plus, LLC &middot; (855) 384-3591</div>
+    <div style="font-family:${fInstrument};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">2324 M Street #2711 &middot; Merced, CA 95344</div>
     <div style="font-family:${fInstrument};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &nbsp;&middot;&nbsp; <a href="${unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
   </td></tr>
 
