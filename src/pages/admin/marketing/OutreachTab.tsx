@@ -57,9 +57,11 @@ const NUM_BADGE: React.CSSProperties = {
 // ── Status helpers ───────────────────────────────────────────────
 
 const STATUS_COLORS: Record<string, { bg: string; fg: string; label?: string }> = {
+  sent:     { bg: '#E3ECE1', fg: EV_SUCCESS, label: 'Sent' },
   approved: { bg: '#E3ECE1', fg: EV_SUCCESS, label: 'Approved' },
   lapsed:   { bg: '#F7EDD3', fg: EV_WARN, label: 'Lapsed' },
   blocked:  { bg: '#F6E3DF', fg: EV_DANGER },
+  draft:    { bg: EV_LIGHT, fg: EV_MUTED, label: 'Draft' },
   pending:  { bg: EV_LIGHT, fg: EV_MUTED, label: 'Not reviewed' },
 };
 
@@ -76,11 +78,17 @@ function Badge({ status, reason }: { status: string; reason?: string }) {
   );
 }
 
-function getCountyStatus(c: any) {
+function getCountyStatus(c: any, recs?: any[]) {
   if (!c.sendable && c.block_reason) return 'blocked';
   if (c.lapsed) return 'lapsed';
-  if (c.approved) return 'approved';
-  return 'pending';
+  if (c.approved) {
+    // If all recipients for this county are sent, status = sent
+    const countyRecs = recs?.filter((r: any) => r.county === c.county) || [];
+    if (countyRecs.length > 0 && countyRecs.every((r: any) => r.status === 'sent')) return 'sent';
+    return 'approved';
+  }
+  // Has recipients but no approval
+  return 'draft';
 }
 
 const REC_STATUS: Record<string, { bg: string; fg: string }> = {
@@ -115,9 +123,12 @@ export default function OutreachTab() {
   const [editingStep, setEditingStep] = useState<number | null>(null);
   const [stepForm, setStepForm] = useState<any>({});
 
-  // County preview
+  // County review — expanded row
+  const [expandedCounty, setExpandedCounty] = useState<string | null>(null);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [previewCounty, setPreviewCounty] = useState<string | null>(null);
+  const [editingJur, setEditingJur] = useState<string | null>(null);
+  const [jurForm, setJurForm] = useState<any>({});
 
   // Queue filter
   const [queueFilter, setQueueFilter] = useState('all');
@@ -295,10 +306,10 @@ export default function OutreachTab() {
 
   // ── County actions ───────────────────────────────────────────
 
-  const handlePreview = async (county: string, variant?: string, accessVia?: string) => {
+  const handlePreview = async (county: string, variant?: string) => {
     setActionLoading(`preview-${county}`);
     const { data, error } = await supabase.functions.invoke('county-briefing', {
-      body: { action: 'preview', county, variant: variant || 'cold', access_via: accessVia },
+      body: { action: 'preview', county, variant: variant || 'cold' },
     });
     setActionLoading(null);
     if (error || !data?.preview_html) {
@@ -325,7 +336,7 @@ export default function OutreachTab() {
 
   const handleSend = async (county: string, queuedCount: number) => {
     if (paused) { flash('Sending is paused'); return; }
-    if (!confirm(`Send ${queuedCount} queued briefing(s) for ${county} County?`)) return;
+    if (!confirm(`Send the ${county} briefing to ${queuedCount} recipient${queuedCount !== 1 ? 's' : ''} now?`)) return;
     setActionLoading(`send-${county}`);
     const { data, error } = await supabase.functions.invoke('county-briefing', {
       body: { action: 'send', county },
@@ -372,6 +383,10 @@ export default function OutreachTab() {
   const filteredRecipients = queueFilter === 'all'
     ? recipients
     : recipients.filter((r: any) => r.status === queueFilter);
+
+  // Counties that have at least one recipient — the focused review list
+  const countiesWithRecipientNames = new Set(recipients.map((r: any) => r.county));
+  const countiesWithRecipients = counties.filter((c: any) => countiesWithRecipientNames.has(c.county));
 
   if (loading) {
     return (
@@ -665,60 +680,210 @@ export default function OutreachTab() {
             County review
           </h3>
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: `2px solid ${EV_LINE}` }}>
-                {['County', 'Status', 'Queued', 'Sent', 'Held', 'Actions'].map(h => (
-                  <th key={h} style={TH}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {counties.map((c: any) => {
-                const status = getCountyStatus(c);
-                return (
-                  <tr key={c.county} style={{ borderBottom: `1px solid ${EV_LINE}` }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: EV_NAVY }}>{c.county}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <Badge status={status} reason={status === 'blocked' ? c.block_reason : c.lapse_reason} />
-                    </td>
-                    <td style={{ padding: '10px 12px', color: EV_MUTED }}>{c.queued}</td>
-                    <td style={{ padding: '10px 12px', color: EV_SUCCESS }}>{c.sent}</td>
-                    <td style={{ padding: '10px 12px', color: EV_WARN }}>{c.held}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <div style={{ display: 'flex', gap: 6 }}>
-                        <button style={BTN(EV_LIGHT, EV_NAVY)} disabled={!!actionLoading}
-                          onClick={() => handlePreview(c.county)}>
-                          {actionLoading === `preview-${c.county}` ? '...' : 'Preview'}
-                        </button>
-                        {status !== 'blocked' && status !== 'approved' && (
-                          <button style={BTN('#E3ECE1', EV_SUCCESS)} disabled={!!actionLoading}
-                            onClick={() => handleApprove(c.county)}>
+
+        {countiesWithRecipients.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 24, color: EV_MUTED, fontSize: 13 }}>
+            No counties with recipients. Add recipients above to get started.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 10 }}>
+            {countiesWithRecipients.map((c: any) => {
+              const status = getCountyStatus(c, recipients);
+              const isExpanded = expandedCounty === c.county;
+              const countyRecs = recipients.filter((r: any) => r.county === c.county);
+              const variants = [...new Set(countyRecs.map((r: any) => r.variant))].join(', ');
+              const gc = c.grading_config as Record<string, any> | null;
+
+              return (
+                <div key={c.county} style={{
+                  border: `1px solid ${EV_LINE}`, borderRadius: 8,
+                  background: isExpanded ? EV_CREAM : '#FFF', overflow: 'hidden',
+                }}>
+                  {/* Row header */}
+                  <div
+                    onClick={() => setExpandedCounty(isExpanded ? null : c.county)}
+                    style={{
+                      display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
+                      alignItems: 'center', padding: '12px 16px', cursor: 'pointer', gap: 12,
+                    }}
+                  >
+                    <span style={{ fontSize: 14, fontWeight: 700, color: EV_NAVY }}>{c.county} County</span>
+                    <span style={{ fontSize: 12, color: EV_MUTED }}>{countyRecs.length} recipient{countyRecs.length !== 1 ? 's' : ''}</span>
+                    <span style={{ fontSize: 11, color: EV_MUTED }}>{variants || '\u2014'}</span>
+                    <Badge status={status} reason={status === 'blocked' ? c.block_reason : c.lapse_reason} />
+                    <span style={{ fontSize: 12, color: EV_MUTED, textAlign: 'right' as const }}>{isExpanded ? '\u25B2' : '\u25BC'}</span>
+                  </div>
+
+                  {/* Expanded detail */}
+                  {isExpanded && (
+                    <div style={{ padding: '0 16px 16px', borderTop: `1px solid ${EV_LINE}` }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
+
+                        {/* LEFT: Email preview */}
+                        <div>
+                          <div style={{ ...LABEL, marginBottom: 8 }}>Email preview</div>
+                          {previewCounty === c.county && previewHtml ? (
+                            <div style={{
+                              border: `1px solid ${EV_LINE}`, borderRadius: 6, overflow: 'auto',
+                              maxHeight: 500, background: '#FFF',
+                            }}>
+                              <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
+                            </div>
+                          ) : (
+                            <div style={{ textAlign: 'center', padding: 40, background: '#FFF', borderRadius: 6, border: `1px solid ${EV_LINE}` }}>
+                              <button
+                                onClick={() => handlePreview(c.county)}
+                                disabled={!!actionLoading}
+                                style={BTN(EV_NAVY, '#FFF')}
+                              >
+                                {actionLoading === `preview-${c.county}` ? 'Loading...' : 'Load preview'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* RIGHT: Evaluate data panel */}
+                        <div>
+                          <div style={{ ...LABEL, marginBottom: 8 }}>Evaluate data (jurisdiction row)</div>
+                          <div style={{
+                            background: '#FFF', border: `1px solid ${EV_LINE}`, borderRadius: 6,
+                            padding: 16, fontSize: 13,
+                          }}>
+                            <EvalDataRow label="Method" value={c.grading_type || 'none'} />
+                            <EvalDataRow label="Agency" value={c.agency_name || '\u2014'} />
+                            <EvalDataRow label="Verified" value={
+                              c.jie_audit_status === 'verified'
+                                ? '\u2705 verified'
+                                : `\u26A0 ${c.jie_audit_status || 'unknown'}`
+                            } />
+                            {gc?.tiers && typeof gc.tiers === 'object' && !Array.isArray(gc.tiers) && (
+                              <div style={{ marginTop: 8 }}>
+                                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Tiers</div>
+                                {Object.entries(gc.tiers).map(([name, range]: [string, any]) => (
+                                  <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
+                                    <span>{name}</span>
+                                    <span style={{ color: EV_MUTED }}>
+                                      {Array.isArray(range) ? (range[1] != null ? `${range[0]}\u2013${range[1]}` : `${range[0]}+`) : String(range)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {gc?.point_values && typeof gc.point_values === 'object' && (
+                              <div style={{ marginTop: 8 }}>
+                                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Point weights</div>
+                                {Object.entries(gc.point_values).map(([cat, pts]: [string, any]) => (
+                                  <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
+                                    <span>{cat.replace(/_/g, ' ')}</span>
+                                    <span style={{ fontWeight: 600 }}>{pts} pts</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${EV_LINE}` }}>
+                              <button
+                                disabled
+                                title="Jurisdiction write not wired yet"
+                                style={{ ...BTN(EV_LIGHT, EV_MUTED), cursor: 'not-allowed', opacity: 0.6 }}
+                              >
+                                Edit jurisdiction
+                              </button>
+                              <span style={{ fontSize: 10, color: EV_MUTED, marginLeft: 8 }}>Not wired yet</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* RECIPIENTS sub-table */}
+                      <div style={{ marginTop: 16 }}>
+                        <div style={{ ...LABEL, marginBottom: 8 }}>Recipients</div>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                          <thead>
+                            <tr style={{ borderBottom: `2px solid ${EV_LINE}` }}>
+                              {['Email', 'Name', 'Variant', 'Status', 'Reason'].map(h => (
+                                <th key={h} style={TH}>{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {countyRecs.map((r: any) => {
+                              const rs = REC_STATUS[r.status] || REC_STATUS.queued;
+                              return (
+                                <tr key={r.id} style={{ borderBottom: `1px solid ${EV_LINE}` }}>
+                                  <td style={{ padding: '6px 10px', fontWeight: 600, color: EV_NAVY }}>{r.email}</td>
+                                  <td style={{ padding: '6px 10px', color: EV_MUTED }}>{r.first_name || '\u2014'}</td>
+                                  <td style={{ padding: '6px 10px' }}>
+                                    <span style={{
+                                      fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4,
+                                      background: r.variant === 'warm' ? '#F6E9E3' : EV_LIGHT,
+                                      color: r.variant === 'warm' ? EV_EMBER : EV_MUTED,
+                                    }}>{r.variant}</span>
+                                  </td>
+                                  <td style={{ padding: '6px 10px' }}>
+                                    <span style={{
+                                      fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                                      background: rs.bg, color: rs.fg,
+                                    }}>{r.status}</span>
+                                  </td>
+                                  <td style={{ padding: '6px 10px', fontSize: 11, color: r.hold_reason ? EV_WARN : EV_FAINT }}>
+                                    {r.hold_reason || '\u2014'}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* ACTION BAR */}
+                      <div style={{ display: 'flex', gap: 8, marginTop: 16, alignItems: 'center' }}>
+                        {status !== 'approved' && status !== 'sent' && status !== 'blocked' && (
+                          <button
+                            onClick={() => handleApprove(c.county)}
+                            disabled={!!actionLoading}
+                            style={BTN('#E3ECE1', EV_SUCCESS)}
+                          >
                             {actionLoading === `approve-${c.county}` ? '...' : 'Approve'}
                           </button>
                         )}
-                        {status === 'approved' && c.queued > 0 && (
-                          <button
-                            style={{ ...BTN(paused ? EV_MUTED : EV_NAVY, '#FFF'), cursor: paused ? 'not-allowed' : 'pointer' }}
-                            disabled={!!actionLoading || paused}
-                            onClick={() => handleSend(c.county, c.queued)}>
-                            {actionLoading === `send-${c.county}` ? '...' : `Send (${c.queued})`}
-                          </button>
+                        <button
+                          disabled={status !== 'approved' || !!actionLoading || paused}
+                          title={status !== 'approved' ? 'Approve first' : paused ? 'Sending is paused' : `Send to ${countyRecs.filter((r: any) => r.status === 'queued').length} recipient(s)`}
+                          onClick={() => {
+                            const queued = countyRecs.filter((r: any) => r.status === 'queued').length;
+                            if (queued === 0) { flash(`No queued recipients for ${c.county}`); return; }
+                            handleSend(c.county, queued);
+                          }}
+                          style={{
+                            ...BTN(EV_NAVY, '#FFF'),
+                            cursor: status === 'approved' && !paused ? 'pointer' : 'not-allowed',
+                            opacity: status === 'approved' ? 1 : 0.3,
+                          }}
+                        >
+                          {actionLoading === `send-${c.county}` ? 'Sending...' : 'Send now'}
+                        </button>
+                        <button
+                          disabled
+                          title="Schedule not wired yet"
+                          style={{ ...BTN(EV_LIGHT, EV_NAVY), cursor: 'not-allowed', opacity: status === 'approved' ? 0.6 : 0.3 }}
+                        >
+                          Schedule
+                        </button>
+                        {status !== 'approved' && status !== 'sent' && (
+                          <span style={{ fontSize: 10, color: EV_MUTED, marginLeft: 4 }}>Approve first to enable send</span>
+                        )}
+                        {status === 'approved' && paused && (
+                          <span style={{ fontSize: 10, color: EV_WARN, marginLeft: 4 }}>Sending is paused</span>
                         )}
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-              {counties.length === 0 && (
-                <tr><td colSpan={6} style={{ padding: 24, textAlign: 'center', color: EV_MUTED }}>
-                  No counties found.
-                </td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ── Panel 5: Cold handoff ─────────────────────────────── */}
@@ -821,32 +986,18 @@ export default function OutreachTab() {
         )}
       </div>
 
-      {/* ── Preview modal ─────────────────────────────────────── */}
-      {previewHtml && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999,
-        }} onClick={() => { setPreviewHtml(null); setPreviewCounty(null); }}>
-          <div style={{
-            background: '#FFF', borderRadius: 12, maxWidth: 660, width: '95vw',
-            maxHeight: '90vh', overflow: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '16px 24px', borderBottom: `1px solid ${EV_LINE}`,
-            }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: EV_NAVY, fontFamily: DISPLAY }}>
-                {previewCounty} County — Preview
-              </span>
-              <button onClick={() => { setPreviewHtml(null); setPreviewCounty(null); }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: EV_MUTED }}>
-                &times;
-              </button>
-            </div>
-            <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
-          </div>
-        </div>
-      )}
+      {/* Preview modal removed — preview is now inline per county row */}
+    </div>
+  );
+}
+
+// ── Eval data row helper ─────────────────────────────────────────
+
+function EvalDataRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 13 }}>
+      <span style={{ color: EV_MUTED, fontWeight: 600 }}>{label}</span>
+      <span style={{ color: EV_NAVY, textAlign: 'right' as const, maxWidth: '60%', wordBreak: 'break-word' as const }}>{value}</span>
     </div>
   );
 }
