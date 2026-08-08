@@ -1,5 +1,5 @@
 /**
- * MarketingConsole — 17-tab marketing dashboard shell.
+ * MarketingConsole — 15-tab marketing dashboard shell.
  *
  * Route wrappers (one per tab) live alongside this file and pass
  * defaultTab to deep-link each route to its tab.
@@ -18,7 +18,7 @@ import ContentScheduleTab from './ContentScheduleTab';
 import OutreachTab from './OutreachTab';
 import {
   LayoutDashboard, Radio, MapPin, Layers, ClipboardList,
-  Calendar, Flame, GitBranch, Users, Mail, Target,
+  Calendar, Flame, GitBranch, Users, Mail,
   Search, TrendingUp, Megaphone, FileBarChart,
 } from 'lucide-react';
 import { KpiTile } from '../../../components/admin/KpiTile';
@@ -248,7 +248,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'funnel'    && <PlaceholderTab title="Funnel" note="Stage-by-stage from first touch to claimed seat, with PRP attribution per transition." Icon={GitBranch} />}
       {tab === 'segments'  && <PlaceholderTab title="Segments" note="Every metric re-cut by kitchen segment and by buyer type — owner/operator vs institutional." Icon={Users} />}
       {tab === 'sequence'  && <OutreachTab />}
-      {tab === 'prp'       && <PlaceholderTab title="PRP Attribution" note="Predict / Reduce / Prove touch mix and seat conversion by layer." Icon={Target} />}
+
       {tab === 'seo'       && <PlaceholderTab title="SEO" note="Organic impressions, clicks, average position, and queries — connect Search Console to fill." Icon={Search} />}
       {tab === 'serp'      && <PlaceholderTab title="SERP" note="Rankings, share of voice and content gaps across the 169-county programmatic footprint." Icon={TrendingUp} />}
       {tab === 'ads'       && <PlaceholderTab title="Google Ads" note="Spend, clicks, CPC and cost per demo by campaign — connect Google Ads to fill." Icon={Megaphone} />}

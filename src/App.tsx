@@ -199,7 +199,7 @@ const MarketingFounderWindow = lazy(() => import('./pages/admin/marketing/Market
 const MarketingFunnel = lazy(() => import('./pages/admin/marketing/MarketingFunnel'));
 const MarketingSegments = lazy(() => import('./pages/admin/marketing/MarketingSegments'));
 const MarketingEmailSequence = lazy(() => import('./pages/admin/marketing/MarketingEmailSequence'));
-const MarketingPRPAttribution = lazy(() => import('./pages/admin/marketing/MarketingPRPAttribution'));
+
 const MarketingSEO = lazy(() => import('./pages/admin/marketing/MarketingSEO'));
 const MarketingSERP = lazy(() => import('./pages/admin/marketing/MarketingSERP'));
 const MarketingGoogleAds = lazy(() => import('./pages/admin/marketing/MarketingGoogleAds'));
@@ -853,7 +853,7 @@ function AppRoutes() {
           <Route path="/admin/marketing/funnel" element={<SalesGuard><MarketingFunnel /></SalesGuard>} />
           <Route path="/admin/marketing/segments" element={<SalesGuard><MarketingSegments /></SalesGuard>} />
           <Route path="/admin/marketing/email-sequence" element={<SalesGuard><MarketingEmailSequence /></SalesGuard>} />
-          <Route path="/admin/marketing/prp-attribution" element={<SalesGuard><MarketingPRPAttribution /></SalesGuard>} />
+          <Route path="/admin/marketing/prp-attribution" element={<Navigate to="/admin/marketing/overview" replace />} />
           <Route path="/admin/marketing/seo" element={<SalesGuard><MarketingSEO /></SalesGuard>} />
           <Route path="/admin/marketing/serp" element={<SalesGuard><MarketingSERP /></SalesGuard>} />
           <Route path="/admin/marketing/google-ads" element={<SalesGuard><MarketingGoogleAds /></SalesGuard>} />
