@@ -18,8 +18,9 @@ import ContentScheduleTab from './ContentScheduleTab';
 import OutreachTab from './OutreachTab';
 import OverviewTab from './OverviewTab';
 import OutboundCallsTab from './OutboundCallsTab';
+import InPersonTab from './InPersonTab';
 import {
-  MapPin, Layers, ClipboardList,
+  Layers, ClipboardList,
   Calendar, Flame, GitBranch, Users, Mail,
   Search, TrendingUp, Megaphone, FileBarChart,
 } from 'lucide-react';
@@ -242,7 +243,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {/* Placeholder tabs — shell only, data wiring in later phases */}
       {tab === 'overview'  && <OverviewTab accounts={accounts} sends={sends} loading={loading} error={error} />}
       {tab === 'calls'     && <OutboundCallsTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}
-      {tab === 'field'     && <PlaceholderTab title="In Person" note="Field prospecting routes — today's stops, visit logging, and county coverage." Icon={MapPin} />}
+      {tab === 'field'     && <InPersonTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}
       {tab === 'channels'  && <ChannelsTab />}
       {tab === 'survey'    && <SurveyTab />}
       {tab === 'schedule'  && <ContentScheduleTab />}

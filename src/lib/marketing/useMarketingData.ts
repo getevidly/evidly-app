@@ -27,6 +27,7 @@ export interface AccountRow {
   broker_id: string | null;
   insurer: string | null;
   source: string | null;
+  assigned_to: string | null;
   next_action: string | null;
   notes: string | null;
   created_at: string;
