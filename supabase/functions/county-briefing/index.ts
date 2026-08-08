@@ -616,21 +616,21 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   <!-- 5. FIRE SAFETY -->
   <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Fire Safety</h3>
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Fire Safety Compliance Records</h3>
     ${fireTable}
     <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Five systems, five separate service records \u2014 whether one company services them or five.</p>
   </td></tr>
 
   <!-- 6. FOOD SAFETY -->
   <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Food Safety</h3>
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Food Safety Compliance Records</h3>
     ${foodTable}
     <p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: California Retail Food Code.</p>
   </td></tr>
 
   <!-- 7. HOW THIS COUNTY EVALUATES -->
   <tr><td class="p40" style="padding:0 40px 20px;border-top:1px solid #EEE7D9;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How This County Evaluates</h3>
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How ${county} County Evaluates</h3>
     ${evalBlock}
   </td></tr>
 
