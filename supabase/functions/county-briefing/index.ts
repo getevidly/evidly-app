@@ -41,6 +41,13 @@ const corsHeaders = getCorsHeaders(null);
  *
  *   cron-process    {} (called by pg_cron, no user auth)
  *                   → { processed, sent, held, skipped_reasons }
+ *
+ *   update-jurisdiction  { county, edits: { grading_type?, agency_name?,
+ *                          jie_audit_status?, grading_config? },
+ *                          source_confirmed?: boolean }
+ *                        → { updated, batch_id, changes }
+ *                        History row written BEFORE jurisdiction update.
+ *                        If history insert fails, abort — no write.
  */
 
 // ── Helpers ─────────────────────────────────────────────────────
@@ -1489,6 +1496,107 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({
         processed: sent + held, sent, held, skipped_reasons: skippedReasons,
         followup_sent: followupSent, followup_skipped: followupSkipped,
+      });
+    }
+
+    // ── UPDATE-JURISDICTION ─────────────────────────────────────
+    // History-first write: snapshot → then update.  If the snapshot
+    // insert fails the jurisdiction row is never touched.
+    if (action === "update-jurisdiction") {
+      const { county, edits, source_confirmed } = body;
+      if (!county) return jsonResponse({ error: "county required" }, 400);
+      if (!edits || typeof edits !== 'object') return jsonResponse({ error: "edits object required" }, 400);
+
+      const { data: jur, error: jurError } = await supabase
+        .from('jurisdictions')
+        .select('*')
+        .eq('county', county)
+        .eq('state', 'CA')
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+
+      if (jurError || !jur) {
+        return jsonResponse({ error: `Jurisdiction not found for ${county}` }, 404);
+      }
+
+      // Build diff — only allowed fields
+      const allowedFields = ['grading_type', 'agency_name', 'jie_audit_status', 'grading_config'];
+      const changes: { field_name: string; old_value: unknown; new_value: unknown }[] = [];
+      const updatePayload: Record<string, unknown> = {};
+
+      for (const field of allowedFields) {
+        if (edits[field] !== undefined) {
+          const oldVal = jur[field];
+          const newVal = edits[field];
+          if (JSON.stringify(oldVal) === JSON.stringify(newVal)) continue;
+          changes.push({ field_name: field, old_value: oldVal, new_value: newVal });
+          updatePayload[field] = newVal;
+        }
+      }
+
+      if (changes.length === 0) {
+        return jsonResponse({ error: "No changes detected" }, 400);
+      }
+
+      // Verified-flag rule: if grading_type or grading_config changed and
+      // source_confirmed is not true, force jie_audit_status to needs_review.
+      const gradingFields = ['grading_type', 'grading_config'];
+      const hasGradingChange = changes.some(c => gradingFields.includes(c.field_name));
+      if (hasGradingChange && !source_confirmed) {
+        const existing = changes.find(c => c.field_name === 'jie_audit_status');
+        if (existing) {
+          existing.new_value = 'needs_review';
+        } else {
+          changes.push({ field_name: 'jie_audit_status', old_value: jur.jie_audit_status, new_value: 'needs_review' });
+        }
+        updatePayload.jie_audit_status = 'needs_review';
+      }
+
+      // STEP 1: Snapshot current values into jurisdiction_edits FIRST.
+      const batchId = crypto.randomUUID();
+      const historyRows = changes.map(c => ({
+        jurisdiction_id: jur.id,
+        county: jur.county,
+        batch_id: batchId,
+        field_name: c.field_name,
+        old_value: c.old_value ?? null,
+        new_value: c.new_value ?? null,
+        edited_by: user?.email || user?.id || 'platform_admin',
+      }));
+
+      const { error: historyError } = await supabase
+        .from('jurisdiction_edits')
+        .insert(historyRows);
+
+      if (historyError) {
+        // History failed — abort.  Jurisdiction row is UNTOUCHED.
+        return jsonResponse({
+          error: `History insert failed — jurisdiction NOT updated. ${historyError.message}`,
+          abort: true,
+        }, 500);
+      }
+
+      // STEP 2: Update the jurisdiction row.
+      const { data: updated, error: updateError } = await supabase
+        .from('jurisdictions')
+        .update(updatePayload)
+        .eq('id', jur.id)
+        .select('id, county, grading_type, grading_config, agency_name, jie_audit_status')
+        .single();
+
+      if (updateError) {
+        return jsonResponse({
+          error: `Jurisdiction update failed after history was recorded. batch_id=${batchId}. ${updateError.message}`,
+          batch_id: batchId,
+        }, 500);
+      }
+
+      return jsonResponse({
+        updated: true,
+        batch_id: batchId,
+        changes: changes.length,
+        jurisdiction: updated,
       });
     }
 

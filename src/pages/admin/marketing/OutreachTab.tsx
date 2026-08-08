@@ -129,6 +129,8 @@ export default function OutreachTab() {
   const [previewCounty, setPreviewCounty] = useState<string | null>(null);
   const [editingJur, setEditingJur] = useState<string | null>(null);
   const [jurForm, setJurForm] = useState<any>({});
+  const [jurConfirm, setJurConfirm] = useState<{ county: string; changes: { field: string; before: string; after: string }[] } | null>(null);
+  const [sourceConfirmed, setSourceConfirmed] = useState(false);
 
   // Queue filter
   const [queueFilter, setQueueFilter] = useState('all');
@@ -348,6 +350,120 @@ export default function OutreachTab() {
     }
     flash(`${county}: ${data.sent} sent, ${data.failed} failed, ${data.held} held`);
     loadAll();
+  };
+
+  // ── Jurisdiction edit helpers ────────────────────────────
+
+  const startEditJur = (c: any) => {
+    const gc = c.grading_config || {};
+    setEditingJur(c.county);
+    setJurForm({
+      grading_type: c.grading_type || 'letter_grade',
+      agency_name: c.agency_name || '',
+      jie_audit_status: c.jie_audit_status || 'unknown',
+      tiers_json: gc.tiers ? JSON.stringify(gc.tiers, null, 2) : '{}',
+      point_values_json: gc.point_values ? JSON.stringify(gc.point_values, null, 2) : '{}',
+    });
+  };
+
+  const buildJurConfirm = (c: any) => {
+    const gc = c.grading_config || {};
+    const changes: { field: string; before: string; after: string }[] = [];
+
+    if (jurForm.grading_type !== (c.grading_type || 'letter_grade')) {
+      changes.push({ field: 'Grading type', before: c.grading_type || 'letter_grade', after: jurForm.grading_type });
+    }
+    if (jurForm.agency_name !== (c.agency_name || '')) {
+      changes.push({ field: 'Agency name', before: c.agency_name || '\u2014', after: jurForm.agency_name });
+    }
+    if (jurForm.jie_audit_status !== (c.jie_audit_status || 'unknown')) {
+      changes.push({ field: 'Verified status', before: c.jie_audit_status || 'unknown', after: jurForm.jie_audit_status });
+    }
+
+    const oldTiers = JSON.stringify(gc.tiers || {}, null, 2);
+    const newTiers = jurForm.tiers_json?.trim() || '{}';
+    if (oldTiers !== newTiers) {
+      changes.push({ field: 'Tiers', before: oldTiers, after: newTiers });
+    }
+
+    const oldPts = JSON.stringify(gc.point_values || {}, null, 2);
+    const newPts = jurForm.point_values_json?.trim() || '{}';
+    if (oldPts !== newPts) {
+      changes.push({ field: 'Point weights', before: oldPts, after: newPts });
+    }
+
+    if (changes.length === 0) {
+      flash('No changes detected');
+      return;
+    }
+    setJurConfirm({ county: c.county, changes });
+  };
+
+  const handleJurWrite = async () => {
+    if (!jurConfirm) return;
+    const county = jurConfirm.county;
+    const c = counties.find((x: any) => x.county === county);
+    if (!c) { flash(`County ${county} not found`); return; }
+
+    const edits: Record<string, any> = {};
+
+    if (jurForm.grading_type !== (c.grading_type || 'letter_grade')) {
+      edits.grading_type = jurForm.grading_type;
+    }
+    if (jurForm.agency_name !== (c.agency_name || '')) {
+      edits.agency_name = jurForm.agency_name;
+    }
+    if (jurForm.jie_audit_status !== (c.jie_audit_status || 'unknown')) {
+      edits.jie_audit_status = jurForm.jie_audit_status;
+    }
+
+    // Merge tiers / point_values back into grading_config
+    const gc = { ...(c.grading_config || {}) };
+    let gcChanged = false;
+
+    try {
+      const newTiers = JSON.parse(jurForm.tiers_json || '{}');
+      if (JSON.stringify(gc.tiers || {}) !== JSON.stringify(newTiers)) {
+        gc.tiers = newTiers;
+        gcChanged = true;
+      }
+    } catch { flash('Invalid tiers JSON'); return; }
+
+    try {
+      const newPts = JSON.parse(jurForm.point_values_json || '{}');
+      if (JSON.stringify(gc.point_values || {}) !== JSON.stringify(newPts)) {
+        gc.point_values = newPts;
+        gcChanged = true;
+      }
+    } catch { flash('Invalid point weights JSON'); return; }
+
+    if (gcChanged) edits.grading_config = gc;
+
+    if (Object.keys(edits).length === 0) {
+      flash('No changes to write');
+      return;
+    }
+
+    setActionLoading('jur-write');
+    const { data, error } = await supabase.functions.invoke('county-briefing', {
+      body: { action: 'update-jurisdiction', county, edits, source_confirmed: sourceConfirmed },
+    });
+    setActionLoading(null);
+
+    if (error || data?.error) {
+      flash(`Write failed: ${error?.message || data?.error}`);
+      return;
+    }
+
+    flash(`${county} jurisdiction updated (${data.changes} field${data.changes !== 1 ? 's' : ''})`);
+    setJurConfirm(null);
+    setEditingJur(null);
+    setJurForm({});
+    setSourceConfirmed(false);
+
+    // Re-render from freshly-written row
+    await loadAll();
+    handlePreview(county);
   };
 
   // ── Cold export ──────────────────────────────────────────────
@@ -749,48 +865,97 @@ export default function OutreachTab() {
                             background: '#FFF', border: `1px solid ${EV_LINE}`, borderRadius: 6,
                             padding: 16, fontSize: 13,
                           }}>
-                            <EvalDataRow label="Method" value={c.grading_type || 'none'} />
-                            <EvalDataRow label="Agency" value={c.agency_name || '\u2014'} />
-                            <EvalDataRow label="Verified" value={
-                              c.jie_audit_status === 'verified'
-                                ? '\u2705 verified'
-                                : `\u26A0 ${c.jie_audit_status || 'unknown'}`
-                            } />
-                            {gc?.tiers && typeof gc.tiers === 'object' && !Array.isArray(gc.tiers) && (
-                              <div style={{ marginTop: 8 }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Tiers</div>
-                                {Object.entries(gc.tiers).map(([name, range]: [string, any]) => (
-                                  <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
-                                    <span>{name}</span>
-                                    <span style={{ color: EV_MUTED }}>
-                                      {Array.isArray(range) ? (range[1] != null ? `${range[0]}\u2013${range[1]}` : `${range[0]}+`) : String(range)}
-                                    </span>
+                            {editingJur === c.county ? (
+                              <>
+                                <div style={{ marginBottom: 10 }}>
+                                  <div style={LABEL}>Grading type</div>
+                                  <select value={jurForm.grading_type || ''}
+                                    onChange={e => setJurForm({ ...jurForm, grading_type: e.target.value })}
+                                    style={{ ...INPUT, background: '#FFF' }}>
+                                    <option value="letter_grade">Letter grade</option>
+                                    <option value="score_100">Score (0-100)</option>
+                                    <option value="color_placard">Color placard</option>
+                                    <option value="report_only">Report only</option>
+                                    <option value="score_negative">Negative scale</option>
+                                    <option value="letter_grade_strict">Letter grade (strict)</option>
+                                  </select>
+                                </div>
+                                <div style={{ marginBottom: 10 }}>
+                                  <div style={LABEL}>Agency name</div>
+                                  <input value={jurForm.agency_name || ''}
+                                    onChange={e => setJurForm({ ...jurForm, agency_name: e.target.value })}
+                                    style={INPUT} />
+                                </div>
+                                <div style={{ marginBottom: 10 }}>
+                                  <div style={LABEL}>Verified status</div>
+                                  <select value={jurForm.jie_audit_status || 'unknown'}
+                                    onChange={e => setJurForm({ ...jurForm, jie_audit_status: e.target.value })}
+                                    style={{ ...INPUT, background: '#FFF' }}>
+                                    <option value="verified">Verified</option>
+                                    <option value="needs_review">Needs review</option>
+                                    <option value="unknown">Unknown</option>
+                                  </select>
+                                </div>
+                                <div style={{ marginBottom: 10 }}>
+                                  <div style={LABEL}>Tiers (JSON)</div>
+                                  <textarea value={jurForm.tiers_json || '{}'}
+                                    onChange={e => setJurForm({ ...jurForm, tiers_json: e.target.value })}
+                                    rows={5} style={{ ...INPUT, fontFamily: 'monospace', fontSize: 11, resize: 'vertical' as const }} />
+                                </div>
+                                <div style={{ marginBottom: 10 }}>
+                                  <div style={LABEL}>Point weights (JSON)</div>
+                                  <textarea value={jurForm.point_values_json || '{}'}
+                                    onChange={e => setJurForm({ ...jurForm, point_values_json: e.target.value })}
+                                    rows={5} style={{ ...INPUT, fontFamily: 'monospace', fontSize: 11, resize: 'vertical' as const }} />
+                                </div>
+                                <div style={{ display: 'flex', gap: 8, marginTop: 12, paddingTop: 12, borderTop: `1px solid ${EV_LINE}` }}>
+                                  <button onClick={() => { setEditingJur(null); setJurForm({}); }}
+                                    style={BTN(EV_LIGHT, EV_NAVY)}>Cancel</button>
+                                  <button onClick={() => buildJurConfirm(c)}
+                                    style={BTN(EV_NAVY, '#FFF')}>Review changes</button>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <EvalDataRow label="Method" value={c.grading_type || 'none'} />
+                                <EvalDataRow label="Agency" value={c.agency_name || '\u2014'} />
+                                <EvalDataRow label="Verified" value={
+                                  c.jie_audit_status === 'verified'
+                                    ? '\u2705 verified'
+                                    : `\u26A0 ${c.jie_audit_status || 'unknown'}`
+                                } />
+                                {gc?.tiers && typeof gc.tiers === 'object' && !Array.isArray(gc.tiers) && (
+                                  <div style={{ marginTop: 8 }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Tiers</div>
+                                    {Object.entries(gc.tiers).map(([name, range]: [string, any]) => (
+                                      <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
+                                        <span>{name}</span>
+                                        <span style={{ color: EV_MUTED }}>
+                                          {Array.isArray(range) ? (range[1] != null ? `${range[0]}\u2013${range[1]}` : `${range[0]}+`) : String(range)}
+                                        </span>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            )}
-                            {gc?.point_values && typeof gc.point_values === 'object' && (
-                              <div style={{ marginTop: 8 }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Point weights</div>
-                                {Object.entries(gc.point_values).map(([cat, pts]: [string, any]) => (
-                                  <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
-                                    <span>{cat.replace(/_/g, ' ')}</span>
-                                    <span style={{ fontWeight: 600 }}>{pts} pts</span>
+                                )}
+                                {gc?.point_values && typeof gc.point_values === 'object' && (
+                                  <div style={{ marginTop: 8 }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Point weights</div>
+                                    {Object.entries(gc.point_values).map(([cat, pts]: [string, any]) => (
+                                      <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
+                                        <span>{cat.replace(/_/g, ' ')}</span>
+                                        <span style={{ fontWeight: 600 }}>{pts} pts</span>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
+                                )}
+                                <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${EV_LINE}` }}>
+                                  <button onClick={() => startEditJur(c)}
+                                    style={BTN(EV_EMBER, '#FFF')}>
+                                    Edit jurisdiction
+                                  </button>
+                                </div>
+                              </>
                             )}
-
-                            <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${EV_LINE}` }}>
-                              <button
-                                disabled
-                                title="Jurisdiction write not wired yet"
-                                style={{ ...BTN(EV_LIGHT, EV_MUTED), cursor: 'not-allowed', opacity: 0.6 }}
-                              >
-                                Edit jurisdiction
-                              </button>
-                              <span style={{ fontSize: 10, color: EV_MUTED, marginLeft: 8 }}>Not wired yet</span>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -985,6 +1150,73 @@ export default function OutreachTab() {
           </div>
         )}
       </div>
+
+      {/* ── Jurisdiction edit confirm dialog ──────────────── */}
+      {jurConfirm && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            background: '#FFF', borderRadius: 12, padding: 28, maxWidth: 600, width: '90%',
+            maxHeight: '80vh', overflow: 'auto', boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+          }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: EV_NAVY, fontFamily: DISPLAY, margin: '0 0 16px' }}>
+              Confirm edit &mdash; {jurConfirm.county} County
+            </h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, marginBottom: 16 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${EV_LINE}` }}>
+                  <th style={{ ...TH, width: '25%' }}>Field</th>
+                  <th style={TH}>Before</th>
+                  <th style={TH}>After</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jurConfirm.changes.map(ch => (
+                  <tr key={ch.field} style={{ borderBottom: `1px solid ${EV_LINE}` }}>
+                    <td style={{ padding: '8px 10px', fontWeight: 600, color: EV_NAVY }}>{ch.field}</td>
+                    <td style={{ padding: '8px 10px', color: EV_MUTED, fontFamily: 'monospace', fontSize: 11, whiteSpace: 'pre-wrap' as const }}>{ch.before}</td>
+                    <td style={{ padding: '8px 10px', color: EV_NAVY, fontFamily: 'monospace', fontSize: 11, whiteSpace: 'pre-wrap' as const }}>{ch.after}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div style={{
+              padding: '10px 14px', borderRadius: 6, marginBottom: 16,
+              background: '#FDF8EE', border: `1px solid #E8C4BA`, fontSize: 12, color: EV_WARN, lineHeight: 1.6,
+            }}>
+              This writes to the shared <strong>jurisdictions</strong> row for {jurConfirm.county} County.
+              It will change the county briefing email content for all recipients.
+              The edit will be logged to <strong>jurisdiction_edits</strong> for audit.
+            </div>
+            {jurConfirm.changes.some(ch => ch.field === 'Grading type' || ch.field === 'Tiers' || ch.field === 'Point weights') && (
+              <label style={{
+                display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 16,
+                padding: '10px 14px', borderRadius: 6, background: EV_LIGHT, border: `1px solid ${EV_LINE}`,
+                fontSize: 12, color: EV_NAVY, cursor: 'pointer',
+              }}>
+                <input type="checkbox" checked={sourceConfirmed}
+                  onChange={e => setSourceConfirmed(e.target.checked)}
+                  style={{ marginTop: 2 }} />
+                <span>
+                  <strong>I confirmed this against a primary source.</strong>{' '}
+                  If unchecked, the verified flag will be set to <em>needs_review</em> on save.
+                </span>
+              </label>
+            )}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={() => { setJurConfirm(null); setSourceConfirmed(false); }}
+                style={BTN(EV_LIGHT, EV_NAVY)}>Cancel</button>
+              <button onClick={handleJurWrite} disabled={actionLoading === 'jur-write'}
+                style={BTN(EV_EMBER, '#FFF')}>
+                {actionLoading === 'jur-write' ? 'Writing...' : 'Confirm + write'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Preview modal removed — preview is now inline per county row */}
     </div>
