@@ -709,7 +709,9 @@ Deno.serve(async (req: Request) => {
       const gate = checkRequirements(jur);
       const hash = await computeJurisdictionHash(jur);
       const previewAccessVia = (body.access_via as string) || undefined;
-      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, '#', previewAccessVia, 'preview');
+      const previewSlug = county.toLowerCase().replace(/\s+/g, '-');
+      const previewCtaUrl = `https://www.getevidly.com/scoretable/california/${previewSlug}?from=email`;
+      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, previewCtaUrl, previewAccessVia, 'preview');
 
       return jsonResponse({
         preview_html: previewHtml,
@@ -1007,6 +1009,10 @@ Deno.serve(async (req: Request) => {
           lapsed: appr?.lapsed_at ? true : false,
           lapse_reason: appr?.lapse_reason || null,
           approved_at: appr?.approved_at || null,
+          grading_type: j.grading_type || null,
+          grading_config: j.grading_config || null,
+          agency_name: j.agency_name || null,
+          jie_audit_status: j.jie_audit_status || null,
           ...rc,
         };
       });
