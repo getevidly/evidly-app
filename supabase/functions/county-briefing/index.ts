@@ -443,7 +443,15 @@ function buildBriefingBody(county: string, jur: Record<string, any>): string {
   /* ── Hood cleaning frequency ────────────────────────────────── */
   if (jur?.hood_cleaning_default || fc?.nfpa_96_table_12_4) {
     let s = h3('Hood Cleaning Frequency');
-    if (jur?.hood_cleaning_default) {
+    // deno-lint-ignore no-explicit-any
+    const hcOverride = jur?.hood_cleaning_local_override as Record<string, any> | null;
+    if (hcOverride && hcOverride.verification_status === 'verified' && hcOverride.minimum_frequency) {
+      s += `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:8px 0;">This county sets a local minimum of <strong>${freqLabel(hcOverride.minimum_frequency)}</strong> for hood cleaning.`;
+      if (hcOverride.ordinance_citation) {
+        s += ` Source: ${hcOverride.ordinance_citation}.`;
+      }
+      s += `</p>`;
+    } else if (jur?.hood_cleaning_default) {
       s += `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:8px 0;">This county enforces <strong>${freqLabel(jur.hood_cleaning_default)}</strong> hood cleaning as the default schedule.</p>`;
     }
     // deno-lint-ignore no-explicit-any
