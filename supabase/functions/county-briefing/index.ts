@@ -873,7 +873,8 @@ Deno.serve(async (req: Request) => {
             held++;
             continue;
           }
-          ctaUrl = `https://app.getevidly.com/join/${invite.token}`;
+          const slug = county.toLowerCase().replace(/\s+/g, '-');
+          ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
 
           if (invite.organization_id) {
             const { data: org } = await supabase
@@ -1334,7 +1335,8 @@ Deno.serve(async (req: Request) => {
             cronAccessVia = org?.access_via || undefined;
           }
 
-          const ctaUrl = `https://app.getevidly.com/join/${invite.token}`;
+          const slug = r.county.toLowerCase().replace(/\s+/g, '-');
+          const ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
           const firstName = r.first_name || 'there';
           const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
           const emailSubject = step.subject_template
