@@ -697,7 +697,7 @@ Deno.serve(async (req: Request) => {
         .from('jurisdictions')
         .select('*')
         .eq('county', county)
-        .eq('state_code', 'CA')
+        .eq('state', 'CA')
         .eq('is_active', true)
         .limit(1)
         .single();
@@ -729,7 +729,7 @@ Deno.serve(async (req: Request) => {
         .from('jurisdictions')
         .select('*')
         .eq('county', county)
-        .eq('state_code', 'CA')
+        .eq('state', 'CA')
         .eq('is_active', true)
         .limit(1)
         .single();
@@ -793,7 +793,7 @@ Deno.serve(async (req: Request) => {
         .from('jurisdictions')
         .select('*')
         .eq('county', county)
-        .eq('state_code', 'CA')
+        .eq('state', 'CA')
         .eq('is_active', true)
         .limit(1)
         .single();
@@ -955,7 +955,7 @@ Deno.serve(async (req: Request) => {
       const { data: jurisdictions } = await supabase
         .from('jurisdictions')
         .select('id, county, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status')
-        .eq('state_code', 'CA')
+        .eq('state', 'CA')
         .eq('is_active', true)
         .order('county');
 
@@ -1257,7 +1257,7 @@ Deno.serve(async (req: Request) => {
             .from('jurisdictions')
             .select('*')
             .eq('county', r.county)
-            .eq('state_code', 'CA')
+            .eq('state', 'CA')
             .eq('is_active', true)
             .limit(1)
             .single();
