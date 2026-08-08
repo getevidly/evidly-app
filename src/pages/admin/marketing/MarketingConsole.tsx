@@ -20,9 +20,10 @@ import OverviewTab from './OverviewTab';
 import OutboundCallsTab from './OutboundCallsTab';
 import InPersonTab from './InPersonTab';
 import FunnelTab from './FunnelTab';
+import SegmentsTab from './SegmentsTab';
 import {
   Layers, ClipboardList,
-  Calendar, Flame, Users, Mail,
+  Calendar, Flame, Mail,
   Search, TrendingUp, Megaphone, FileBarChart,
 } from 'lucide-react';
 import { KpiTile } from '../../../components/admin/KpiTile';
@@ -250,7 +251,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'schedule'  && <ContentScheduleTab />}
       {tab === 'founder'   && <PlaceholderTab title="Founder Window" note="Seat counter hero (X of 250), weekly seat momentum, tier mix, and source attribution." Icon={Flame} />}
       {tab === 'funnel'    && <FunnelTab accounts={accounts} loading={loading} error={error} />}
-      {tab === 'segments'  && <PlaceholderTab title="Segments" note="Every metric re-cut by kitchen segment and by buyer type — owner/operator vs institutional." Icon={Users} />}
+      {tab === 'segments'  && <SegmentsTab accounts={accounts} loading={loading} error={error} />}
       {tab === 'sequence'  && <OutreachTab />}
 
       {tab === 'seo'       && <PlaceholderTab title="SEO" note="Organic impressions, clicks, average position, and queries — connect Search Console to fill." Icon={Search} />}
