@@ -492,6 +492,9 @@ export default function FireProtection() {
         <h2 style={{ fontSize: typography.size.h2, fontWeight: typography.weight.bold, color: colors.textPrimary, margin: '2px 0 0' }}>
           Fire Protection
         </h2>
+        <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 4, lineHeight: 1.4 }}>
+          Every system your carrier&rsquo;s endorsement requires, tracked to its NFPA standard and service interval.
+        </p>
         {locations.length > 1 && (
           <select
             value={locationId || ''}
@@ -538,6 +541,21 @@ export default function FireProtection() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ── PSE Insurance Band (all locations) ────────────── */}
+          <div className="rounded-lg" style={{ background: colors.navy, padding: '14px 16px', boxShadow: shadows.sm }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.bold, color: colors.white, margin: 0 }}>
+                Protective Safeguards Endorsement
+              </p>
+              <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.bold, padding: '1px 7px', background: colors.cream, color: colors.navy }}>
+                PSE
+              </span>
+            </div>
+            <p style={{ fontSize: typography.size.sm, color: colors.cream, lineHeight: 1.5, margin: 0 }}>
+              Your property policy is written on the condition that these fire systems stay serviced. Let one lapse and a related claim can be reduced or denied &mdash; the endorsement is the fine print that decides whether a fire is covered. EvidLY tracks each system to the standard and interval the policy relies on.
+            </p>
           </div>
 
           {allLocSchedulesLoading ? (
@@ -732,6 +750,21 @@ export default function FireProtection() {
           )}
         </div>
       )}
+
+      {/* ── PSE Insurance Band (single location) ─────────── */}
+      <div className="rounded-lg" style={{ background: colors.navy, padding: '14px 16px', boxShadow: shadows.sm }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+          <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.bold, color: colors.white, margin: 0 }}>
+            Protective Safeguards Endorsement
+          </p>
+          <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.bold, padding: '1px 7px', background: colors.cream, color: colors.navy }}>
+            PSE
+          </span>
+        </div>
+        <p style={{ fontSize: typography.size.sm, color: colors.cream, lineHeight: 1.5, margin: 0 }}>
+          Your property policy is written on the condition that these systems stay serviced. Let one lapse and a related claim can be reduced or denied. The systems below are the ones the endorsement names.
+        </p>
+      </div>
 
       {/* ── 4. PSE Systems ─────────────────────────────────── */}
       <div className="space-y-2">
