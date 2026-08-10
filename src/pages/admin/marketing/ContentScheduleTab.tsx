@@ -8,7 +8,7 @@
  * Writes to: content_schedule table.
  * REAL DATA ONLY — no hardcoded posts.
  */
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Plus, Trash2, ChevronUp, ChevronDown,
   ChevronLeft, ChevronRight, CalendarDays, List,
@@ -67,6 +67,8 @@ function fmtDate(y: number, m: number, d: number) { return `${y}-${pad2(m + 1)}-
 export default function ContentScheduleTab() {
   const { posts, loading, error, addPost, updatePost, deletePost } = useContentScheduleData();
 
+  const formRef = useRef<HTMLDivElement>(null);
+
   // View mode
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
 
@@ -90,6 +92,14 @@ export default function ContentScheduleTab() {
   const [fStatus, setFStatus] = useState('');
   const [fDateFrom, setFDateFrom] = useState('');
   const [fDateTo, setFDateTo] = useState('');
+
+  // ── Scroll form into view when it opens ────────────────────────
+
+  useEffect(() => {
+    if (showForm && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [showForm]);
 
   // ── Unique owners for filter dropdown ─────────────────────────
 
@@ -326,6 +336,7 @@ export default function ContentScheduleTab() {
       {/* ── Add/Edit form (collapsible) ────────────────────────────── */}
       {showForm && (
         <div
+          ref={formRef}
           className="border rounded-lg p-5 mb-5"
           style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}
         >
