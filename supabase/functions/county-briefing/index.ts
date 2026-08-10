@@ -1529,7 +1529,7 @@ Deno.serve(async (req: Request) => {
       }
 
       // Build diff — only allowed fields
-      const allowedFields = ['grading_type', 'agency_name', 'jie_audit_status', 'grading_config'];
+      const allowedFields = ['grading_type', 'agency_name', 'fire_ahj_name', 'jie_audit_status', 'grading_config'];
       const changes: { field_name: string; old_value: unknown; new_value: unknown }[] = [];
       const updatePayload: Record<string, unknown> = {};
 
