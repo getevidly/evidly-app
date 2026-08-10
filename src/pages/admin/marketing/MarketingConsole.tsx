@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
 import { MARKETING_TABS, tabRoute, type MarketingTabId } from './marketingTabConfig';
 import { EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, DISPLAY, BODY, MARKETING_FONTS_HREF } from './marketingTokens';
-import { PlaceholderTab } from './marketingPrimitives';
 import ChannelsTab from './ChannelsTab';
 import SurveyTab from './SurveyTab';
 import ContentScheduleTab from './ContentScheduleTab';
@@ -25,10 +24,10 @@ import FounderWindowTab from './FounderWindowTab';
 import SEOTab from './SEOTab';
 import SERPTab from './SERPTab';
 import GoogleAdsTab from './GoogleAdsTab';
+import ForecastTab from './ForecastTab';
 import {
   Layers, ClipboardList,
   Calendar, Mail,
-  FileBarChart,
 } from 'lucide-react';
 import { KpiTile } from '../../../components/admin/KpiTile';
 import { Modal } from '../../../components/ui/Modal';
@@ -261,7 +260,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'seo'       && <SEOTab />}
       {tab === 'serp'      && <SERPTab />}
       {tab === 'ads'       && <GoogleAdsTab />}
-      {tab === 'forecast'  && <PlaceholderTab title="Forecast vs Actual" note="Per-week actuals against the seeded campaign forecast." Icon={FileBarChart} />}
+      {tab === 'forecast'  && <ForecastTab />}
 
       {/* ── Add-account modal ──────────────────────────────────────── */}
       <Modal isOpen={showAddAccount} onClose={() => setShowAddAccount(false)} size="lg">
