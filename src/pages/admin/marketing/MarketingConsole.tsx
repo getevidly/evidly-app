@@ -21,10 +21,14 @@ import OutboundCallsTab from './OutboundCallsTab';
 import InPersonTab from './InPersonTab';
 import FunnelTab from './FunnelTab';
 import SegmentsTab from './SegmentsTab';
+import FounderWindowTab from './FounderWindowTab';
+import SEOTab from './SEOTab';
+import SERPTab from './SERPTab';
+import GoogleAdsTab from './GoogleAdsTab';
 import {
   Layers, ClipboardList,
-  Calendar, Flame, Mail,
-  Search, TrendingUp, Megaphone, FileBarChart,
+  Calendar, Mail,
+  FileBarChart,
 } from 'lucide-react';
 import { KpiTile } from '../../../components/admin/KpiTile';
 import { Modal } from '../../../components/ui/Modal';
@@ -249,14 +253,14 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'channels'  && <ChannelsTab />}
       {tab === 'survey'    && <SurveyTab />}
       {tab === 'schedule'  && <ContentScheduleTab />}
-      {tab === 'founder'   && <PlaceholderTab title="Founder Window" note="Seat counter hero (X of 250), weekly seat momentum, tier mix, and source attribution." Icon={Flame} />}
+      {tab === 'founder'   && <FounderWindowTab />}
       {tab === 'funnel'    && <FunnelTab accounts={accounts} loading={loading} error={error} />}
       {tab === 'segments'  && <SegmentsTab accounts={accounts} loading={loading} error={error} />}
       {tab === 'sequence'  && <OutreachTab />}
 
-      {tab === 'seo'       && <PlaceholderTab title="SEO" note="Organic impressions, clicks, average position, and queries — connect Search Console to fill." Icon={Search} />}
-      {tab === 'serp'      && <PlaceholderTab title="SERP" note="Rankings, share of voice and content gaps across the 169-county programmatic footprint." Icon={TrendingUp} />}
-      {tab === 'ads'       && <PlaceholderTab title="Google Ads" note="Spend, clicks, CPC and cost per demo by campaign — connect Google Ads to fill." Icon={Megaphone} />}
+      {tab === 'seo'       && <SEOTab />}
+      {tab === 'serp'      && <SERPTab />}
+      {tab === 'ads'       && <GoogleAdsTab />}
       {tab === 'forecast'  && <PlaceholderTab title="Forecast vs Actual" note="Per-week actuals against the seeded campaign forecast." Icon={FileBarChart} />}
 
       {/* ── Add-account modal ──────────────────────────────────────── */}
