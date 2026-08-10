@@ -80,6 +80,26 @@ export function useContentScheduleData() {
     return { error: null };
   };
 
+  // ── Update post ─────────────────────────────────────────────
+
+  const updatePost = async (id: string, input: AddPostInput): Promise<{ error: string | null }> => {
+    const { error: updateErr } = await supabase
+      .from('content_schedule')
+      .update({
+        title: input.title,
+        channel_label: input.channel_label,
+        scheduled_date: input.scheduled_date,
+        status: input.status,
+        owner: input.owner || null,
+        notes: input.notes || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id);
+    if (updateErr) return { error: updateErr.message };
+    await refresh();
+    return { error: null };
+  };
+
   // ── Delete post ──────────────────────────────────────────────
 
   const deletePost = async (id: string): Promise<{ error: string | null }> => {
@@ -92,5 +112,5 @@ export function useContentScheduleData() {
     return { error: null };
   };
 
-  return { posts, loading, error, refresh, addPost, deletePost };
+  return { posts, loading, error, refresh, addPost, updatePost, deletePost };
 }
