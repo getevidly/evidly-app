@@ -192,10 +192,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       <AdminBreadcrumb crumbs={[{ label: 'Marketing' }, { label: activeLabel }]} />
 
       <div>
-        <div className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: EV_EMBER, fontFamily: BODY }}>
-          52-week campaign · Jul 2026 — Jun 2027
-        </div>
-        <h1 className="text-[26px] mt-1" style={{ color: EV_NAVY, fontFamily: DISPLAY, fontWeight: 600, letterSpacing: '-0.02em' }}>
+        <h1 className="text-[26px]" style={{ color: EV_NAVY, fontFamily: DISPLAY, fontWeight: 600, letterSpacing: '-0.02em' }}>
           Marketing
         </h1>
         <p className="text-[13px] mt-0.5 font-medium" style={{ color: EV_MUTED, fontFamily: BODY }}>
