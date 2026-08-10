@@ -21,6 +21,10 @@ export interface ContentPostRow {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  brand: string | null;
+  body: string | null;
+  cta: string | null;
+  post_type: string | null;
 }
 
 export interface AddPostInput {
@@ -112,5 +116,32 @@ export function useContentScheduleData() {
     return { error: null };
   };
 
-  return { posts, loading, error, refresh, addPost, updatePost, deletePost };
+  // ── Bulk update dates ──────────────────────────────────────────
+
+  const bulkUpdateDates = async (
+    updates: { id: string; scheduled_date: string }[],
+  ): Promise<{ error: string | null }> => {
+    if (updates.length === 0) return { error: 'No posts to update' };
+    const batchSize = 50;
+    for (let i = 0; i < updates.length; i += batchSize) {
+      const batch = updates.slice(i, i + batchSize);
+      const results = await Promise.all(
+        batch.map(u =>
+          supabase
+            .from('content_schedule')
+            .update({
+              scheduled_date: u.scheduled_date,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', u.id),
+        ),
+      );
+      const failed = results.find(r => r.error);
+      if (failed?.error) return { error: failed.error.message };
+    }
+    await refresh();
+    return { error: null };
+  };
+
+  return { posts, loading, error, refresh, addPost, updatePost, deletePost, bulkUpdateDates };
 }
