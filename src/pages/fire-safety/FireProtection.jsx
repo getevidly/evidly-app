@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Flame, DollarSign, TrendingUp, TrendingDown, Minus, FileText, Upload,
   Loader2, Shield, Droplets, FireExtinguisher, Fan, Filter, Info,
-  ShieldAlert, BellRing, Calendar,
+  ShieldAlert, BellRing, Calendar, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
@@ -116,6 +116,12 @@ export default function FireProtection() {
   const [requestModal, setRequestModal] = useState({ open: false, serviceType: '' });
   const [rescheduleModal, setRescheduleModal] = useState(null);
 
+  // ── All-locations portfolio state ─────────────────────────
+  const [allLocSchedules, setAllLocSchedules] = useState({});
+  const [allLocSchedulesLoading, setAllLocSchedulesLoading] = useState(false);
+  const [expandedLocId, setExpandedLocId] = useState(null);
+  const [uploadLocationId, setUploadLocationId] = useState(null);
+
   // ── Fetch service_type_definitions (fire_safety) ──────────
   useEffect(() => {
     supabase
@@ -154,6 +160,13 @@ export default function FireProtection() {
   const handleLocationChange = useCallback((e) => {
     const id = e.target.value;
     setLocationId(id);
+    if (id === '__all__') {
+      setLocationName('All locations');
+      setJurisdictionId(undefined);
+      setCookingType(null);
+      setExpandedLocId(null);
+      return;
+    }
     const loc = locations.find(l => l.id === id);
     setLocationName(loc?.name || '');
     setJurisdictionId(loc?.jurisdiction_id || undefined);
@@ -178,6 +191,29 @@ export default function FireProtection() {
         for (const r of (data || [])) map[r.service_type_code] = r;
         setSystemSchedules(map);
         setScheduleLoading(false);
+      });
+  }, [orgId, locationId, fireServices]);
+
+  // ── Fetch schedules for ALL locations (portfolio roll-up) ──
+  useEffect(() => {
+    if (!orgId || locationId !== '__all__') { setAllLocSchedules({}); return; }
+    const codes = fireServices.map(s => s.code);
+    if (codes.length === 0) { setAllLocSchedulesLoading(false); return; }
+    setAllLocSchedulesLoading(true);
+    supabase
+      .from('location_service_schedules')
+      .select('id, location_id, service_type_code, vendor_name, vendor_id, last_service_date, next_due_date, negotiated_price, frequency, frequency_interval_days')
+      .eq('organization_id', orgId)
+      .in('service_type_code', codes)
+      .eq('is_active', true)
+      .then(({ data }) => {
+        const map = {};
+        for (const r of (data || [])) {
+          if (!map[r.location_id]) map[r.location_id] = {};
+          map[r.location_id][r.service_type_code] = r;
+        }
+        setAllLocSchedules(map);
+        setAllLocSchedulesLoading(false);
       });
   }, [orgId, locationId, fireServices]);
 
@@ -252,6 +288,31 @@ export default function FireProtection() {
     if (sys.always_required && !sys.is_pse) parts.push('Always required');
     return parts.join(' \u00b7 ');
   };
+
+  const isAllLocations = locationId === '__all__';
+
+  // ── Portfolio roll-up derived data ──────────────────────────
+  let portfolioCurrent = 0;
+  let portfolioTotal = 0;
+  let portfolioNeedsAction = 0;
+  const locationSummaries = [];
+  if (isAllLocations && locations.length > 0) {
+    const coverageCodes = topLevel.filter(s => s.counts_toward_coverage).map(s => s.code);
+    for (const loc of locations) {
+      const locScheds = allLocSchedules[loc.id] || {};
+      let locCurrent = 0;
+      let locNeedsAction = 0;
+      for (const code of coverageCodes) {
+        const st = deriveSystemState(locScheds[code]);
+        if (st === 'current') locCurrent++;
+        else locNeedsAction++;
+      }
+      portfolioCurrent += locCurrent;
+      portfolioTotal += coverageCodes.length;
+      portfolioNeedsAction += locNeedsAction;
+      locationSummaries.push({ ...loc, schedules: locScheds, current: locCurrent, needsAction: locNeedsAction, total: coverageCodes.length });
+    }
+  }
 
   if (!profile) return null;
 
@@ -405,16 +466,18 @@ export default function FireProtection() {
   // ── Vendor lookup for RequestServiceModal ──────────────────
   const modalVendorId = (() => {
     const code = requestModal.serviceType;
-    if (systemSchedules[code]?.vendor_id) return systemSchedules[code].vendor_id;
+    const scheds = requestModal.locationId ? (allLocSchedules[requestModal.locationId] || {}) : systemSchedules;
+    if (scheds[code]?.vendor_id) return scheds[code].vendor_id;
     const child = fireServices.find(s => s.code === code);
-    if (child?.parent_code === 'KEC' && systemSchedules['KEC']?.vendor_id) return systemSchedules['KEC'].vendor_id;
+    if (child?.parent_code === 'KEC' && scheds['KEC']?.vendor_id) return scheds['KEC'].vendor_id;
     return undefined;
   })();
   const modalVendorName = (() => {
     const code = requestModal.serviceType;
-    if (systemSchedules[code]?.vendor_name) return systemSchedules[code].vendor_name;
+    const scheds = requestModal.locationId ? (allLocSchedules[requestModal.locationId] || {}) : systemSchedules;
+    if (scheds[code]?.vendor_name) return scheds[code].vendor_name;
     const child = fireServices.find(s => s.code === code);
-    if (child?.parent_code === 'KEC' && systemSchedules['KEC']?.vendor_name) return systemSchedules['KEC'].vendor_name;
+    if (child?.parent_code === 'KEC' && scheds['KEC']?.vendor_name) return scheds['KEC'].vendor_name;
     return undefined;
   })();
 
@@ -435,6 +498,7 @@ export default function FireProtection() {
             onChange={handleLocationChange}
             style={{ marginTop: 6, fontSize: typography.size.sm, color: colors.textSecondary, border: 'none', background: 'transparent', cursor: 'pointer', padding: 0 }}
           >
+            <option value="__all__">All locations</option>
             {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
         )}
@@ -443,6 +507,129 @@ export default function FireProtection() {
         )}
       </div>
 
+      {/* ── Portfolio Roll-up (all locations) ──────────────── */}
+      {isAllLocations && (
+        <>
+          <div className="rounded-lg" style={{ background: colors.white, padding: '14px', boxShadow: shadows.sm }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <svg width={64} height={64} viewBox="0 0 64 64">
+                <circle cx={32} cy={32} r={28} fill="none" stroke="#E5E7EB" strokeWidth={6} />
+                {portfolioTotal > 0 && (
+                  <circle
+                    cx={32} cy={32} r={28}
+                    fill="none" stroke="#2E9E6B" strokeWidth={6}
+                    strokeDasharray={`${(portfolioCurrent / portfolioTotal) * 175.93} 175.93`}
+                    strokeLinecap="round"
+                    transform="rotate(-90 32 32)"
+                  />
+                )}
+                <text x={32} y={32} textAnchor="middle" dominantBaseline="central" style={{ fontSize: 14, fontWeight: 700, fill: colors.textPrimary }}>
+                  {portfolioTotal > 0 ? Math.round((portfolioCurrent / portfolioTotal) * 100) + '%' : '\u2014'}
+                </text>
+              </svg>
+              <div style={{ display: 'flex', gap: 12, flex: 1 }}>
+                <div style={{ flex: 1, borderLeft: '3px solid #2E9E6B', paddingLeft: 8 }}>
+                  <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>Systems current</p>
+                  <p style={{ fontSize: typography.size.h3, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{portfolioCurrent}</p>
+                </div>
+                <div style={{ flex: 1, borderLeft: '3px solid #C0392B', paddingLeft: 8 }}>
+                  <p style={{ fontSize: typography.size.xs, color: colors.textMuted }}>Needs action</p>
+                  <p style={{ fontSize: typography.size.h3, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>{portfolioNeedsAction}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {allLocSchedulesLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+              <Loader2 size={20} className="animate-spin" color={colors.textMuted} />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {locationSummaries.map((loc) => {
+                const isExpanded = expandedLocId === loc.id;
+                return (
+                  <div key={loc.id} className="rounded-lg" style={{ background: colors.white, boxShadow: shadows.sm, overflow: 'hidden' }}>
+                    <button
+                      onClick={() => setExpandedLocId(isExpanded ? null : loc.id)}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '10px 12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+                      }}
+                    >
+                      <div>
+                        <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.textPrimary, margin: 0 }}>{loc.name}</p>
+                        <p style={{ fontSize: typography.size.xs, color: colors.textSecondary, margin: 0 }}>
+                          {loc.current} of {loc.total} current
+                          {loc.needsAction > 0 && <span style={{ color: '#991B1B' }}> &middot; {loc.needsAction} needs action</span>}
+                        </p>
+                      </div>
+                      {isExpanded ? <ChevronUp size={16} color={colors.textMuted} /> : <ChevronDown size={16} color={colors.textMuted} />}
+                    </button>
+
+                    {isExpanded && (
+                      <div style={{ borderTop: `1px solid ${colors.border}`, padding: '8px 12px' }} className="space-y-2">
+                        {topLevel.filter(s => s.counts_toward_coverage).map((sys) => {
+                          const sched = loc.schedules[sys.code];
+                          const state = deriveSystemState(sched);
+                          const pill = statusPill(state);
+                          const SysIcon = getIcon(sys.icon);
+                          return (
+                            <div key={sys.code} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${colors.border}` }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                                <SysIcon size={14} color="#D85A30" />
+                                <div>
+                                  <p style={{ fontSize: typography.size.sm, fontWeight: typography.weight.medium, color: colors.textPrimary, margin: 0 }}>{sys.name}</p>
+                                  <div style={{ display: 'flex', gap: 10, fontSize: typography.size.xs, color: colors.textSecondary }}>
+                                    <span>Last: {sched ? fmtDate(sched.last_service_date) : '\u2014'}</span>
+                                    <span>Next: {sched ? fmtDate(sched.next_due_date) : '\u2014'}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                                <span className="rounded-full" style={{ fontSize: 10, fontWeight: typography.weight.semibold, padding: '2px 8px', background: pill.bg, color: pill.text, whiteSpace: 'nowrap' }}>
+                                  {pill.label}
+                                </span>
+                                {sched ? (
+                                  <button
+                                    onClick={() => setRescheduleModal({ code: sys.code, name: sys.name, dueDate: sched.next_due_date || '', scheduleId: sched.id, locationId: loc.id })}
+                                    style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                  >
+                                    Request different date
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => setRequestModal({ open: true, serviceType: sys.code, locationId: loc.id })}
+                                    style={{ padding: '3px 8px', fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: colors.white, background: colors.navy, border: 'none', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                  >
+                                    Request schedule
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <button
+                          onClick={() => { setUploadLocationId(loc.id); setShowUpload(true); }}
+                          style={{
+                            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                            padding: '8px 0', fontSize: typography.size.xs, fontWeight: typography.weight.semibold,
+                            color: colors.navy, background: 'transparent', border: `1px solid ${colors.navy}`, borderRadius: radius.md, cursor: 'pointer', marginTop: 4,
+                          }}
+                        >
+                          <Upload size={14} /> Upload Service Record
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+
+      {!isAllLocations && (<>
       {/* ── 2. Coverage Hero ───────────────────────────────── */}
       <div className="rounded-lg" style={{ background: colors.white, padding: '14px', boxShadow: shadows.sm }}>
         <p style={{ fontSize: typography.size.body, fontWeight: typography.weight.semibold, color: colors.textPrimary }}>
@@ -646,14 +833,15 @@ export default function FireProtection() {
           <Upload size={16} /> Upload Vendor Service Record
         </button>
       </div>
+      </>)}
 
       {/* ── Upload Modal ─────────────────────────────────── */}
       {showUpload && (
         <Suspense fallback={null}>
           <UploadServiceRecordModal
             category="fire_protection"
-            defaultLocationId={locationId}
-            onClose={() => setShowUpload(false)}
+            defaultLocationId={uploadLocationId || locationId}
+            onClose={() => { setShowUpload(false); setUploadLocationId(null); }}
             onSuccess={() => { setShowUpload(false); window.location.reload(); }}
           />
         </Suspense>
@@ -664,8 +852,8 @@ export default function FireProtection() {
         <Suspense fallback={null}>
           <RequestServiceModal
             isOpen
-            onClose={() => setRequestModal({ open: false, serviceType: '' })}
-            locationId={locationId || ''}
+            onClose={() => setRequestModal({ open: false, serviceType: '', locationId: null })}
+            locationId={requestModal.locationId || locationId || ''}
             organizationId={orgId}
             defaultServiceType={requestModal.serviceType}
             vendorId={modalVendorId}
@@ -681,7 +869,7 @@ export default function FireProtection() {
           <RescheduleServiceModal
             isOpen
             onClose={() => setRescheduleModal(null)}
-            locationId={locationId || ''}
+            locationId={rescheduleModal?.locationId || locationId || ''}
             organizationId={orgId}
             serviceTypeCode={rescheduleModal.code}
             serviceName={rescheduleModal.name}
