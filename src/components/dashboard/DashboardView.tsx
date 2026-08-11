@@ -1,13 +1,15 @@
 /**
  * DashboardView — Full dashboard layout matching DashboardMockup.jsx.
- * Renders: LocationTabs → Hero → WatchingBanner → Alerts → Pillars → TemperatureLogs
+ * Renders: LocationTabs → Hero → QuickActions → ExposureBand → Pillars → BusinessRecords → Alerts → TemperatureLogs
  * All data from live PROD hooks. No fake/sample data.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Utensils, CheckCircle2, AlertTriangle, Calendar, Bell, Eye, TrendingUp, FileText, Thermometer, ArrowRight, Home, Upload, ClipboardList, Truck, Download, Building2, Users } from 'lucide-react';
-import { FONT } from '../../design/tokens';
+import { Flame, Utensils, AlertTriangle, Calendar, Bell, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users } from 'lucide-react';
+import { FONT, TONE, PILLAR } from '../../design/tokens';
+import { useWhatsAtRisk } from '../../hooks/useWhatsAtRisk';
+import type { WhatsAtRisk } from '../../hooks/useWhatsAtRisk';
 import { useDashboardLocation } from '../../contexts/DashboardLocationContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOrgSummary } from '../../hooks/useOrgSummary';
@@ -111,6 +113,7 @@ export function DashboardView() {
   const foodProof = useProofStats('food_safety', selectedLocationId || undefined);
   const { chips: fireChips } = useFireChipStatus(selectedLocationId || undefined);
   const businessProof = useBusinessProofStatus(selectedLocationId || undefined);
+  const risk = useWhatsAtRisk(selectedLocationId);
 
   const alertCount = openCatches.length;
 
@@ -143,21 +146,11 @@ export function DashboardView() {
         foodProof={foodProof}
       />
 
-      {/* Watching Banner */}
-      <WatchingBanner alertCount={alertCount} watchingCount={watchingCount} />
-
       {/* Quick Actions */}
       <QuickActions />
 
-      {/* Alerts */}
-      {alertCount > 0 && (
-        <AlertsSection
-          catches={openCatches}
-          routingMap={routingMap}
-          onAcknowledge={acknowledge}
-          roleLabel={roleLabel}
-        />
-      )}
+      {/* Exposure Band — real at-risk figures from useWhatsAtRisk */}
+      <ExposureBand risk={risk} locationCount={locationCount} isAllLocations={selectedLocationId === null} />
 
       {/* Fire + Food Pillars side by side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -204,6 +197,16 @@ export function DashboardView() {
             </>
           )}
         </div>
+      )}
+
+      {/* Alerts */}
+      {alertCount > 0 && (
+        <AlertsSection
+          catches={openCatches}
+          routingMap={routingMap}
+          onAcknowledge={acknowledge}
+          roleLabel={roleLabel}
+        />
       )}
 
       {/* Temperature Logs — real query, hidden when no equipment */}
@@ -320,27 +323,6 @@ function Hero({ alertCount, locationName, kitchenCount, isMulti, isAllLocations,
   );
 }
 
-// ─── WatchingBanner ──────────────────────────────────────────────
-function WatchingBanner({ alertCount, watchingCount }: { alertCount: number; watchingCount: number }) {
-  const clean = alertCount === 0;
-  return (
-    <div className="border" style={{ borderColor: LINE, backgroundColor: clean ? '#E4EBE3' : '#FBF9F2' }}>
-      <div className="px-5 py-3 flex items-center gap-3 flex-wrap">
-        {clean ? <CheckCircle2 size={16} style={{ color: GREEN }} /> : <Eye size={16} style={{ color: NAVY }} />}
-        <div className="text-sm font-semibold flex-1" style={{ color: clean ? GREEN : NAVY, fontFamily: FONT.display }}>
-          {clean
-            ? `EvidLY is watching ${watchingCount} requirements · all clear`
-            : 'EvidLY is watching · real-time alerts routed automatically'}
-        </div>
-        <span className="text-xs inline-flex items-center gap-1.5" style={{ color: MUTED }}>
-          <TrendingUp size={12} />
-          Active monitoring
-        </span>
-      </div>
-    </div>
-  );
-}
-
 // ─── Quick Actions ───────────────────────────────────────────────
 function QuickActions() {
   const actions = [
@@ -361,6 +343,157 @@ function QuickActions() {
         </Link>
       ))}
     </div>
+  );
+}
+
+// ─── Exposure Band ──────────────────────────────────────────────
+function ExposureBand({ risk, locationCount, isAllLocations }: {
+  risk: WhatsAtRisk; locationCount: number; isAllLocations: boolean;
+}) {
+  const fmtMoney = (n: number) => {
+    const v = Math.round(n);
+    if (v >= 1_000_000) return '$' + (v / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (v >= 1_000) return '$' + (v / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return '$' + v.toLocaleString();
+  };
+  const fmtRange = (lo: number, hi: number) => fmtMoney(lo) + '\u2013' + fmtMoney(hi);
+
+  const scopeLabel = isAllLocations && locationCount > 1
+    ? `${locationCount} kitchens`
+    : 'your kitchen';
+
+  if (risk.loading) {
+    return (
+      <div className="bg-white border px-6 py-5" style={{ borderColor: LINE }}>
+        <div className="text-[10px] tracking-[0.15em] font-semibold" style={{ color: MUTED, fontFamily: FONT.mono }}>
+          Estimated at risk {'\u00b7'} {scopeLabel}
+        </div>
+        <div className="text-2xl font-bold mt-2" style={{ color: NAVY, fontFamily: FONT.display }}>{'\u2014'}</div>
+      </div>
+    );
+  }
+
+  const fireCounts = risk.fire.counts;
+  const foodCounts = risk.food.counts;
+  const totalDone = fireCounts.done + foodCounts.done;
+  const totalPending = fireCounts.pending + foodCounts.pending;
+  const totalLive = fireCounts.live + foodCounts.live;
+  const totalAll = fireCounts.total + foodCounts.total;
+
+  const stillLo = risk.total.pending.low + risk.total.live.low;
+  const stillHi = risk.total.pending.high + risk.total.live.high;
+  const fireStillLo = risk.fire.pending.low + risk.fire.live.low;
+  const fireStillHi = risk.fire.pending.high + risk.fire.live.high;
+  const foodStillLo = risk.food.pending.low + risk.food.live.low;
+  const foodStillHi = risk.food.pending.high + risk.food.live.high;
+
+  const allClear = stillHi === 0 && totalLive === 0;
+
+  if (risk.isPlaceholder) {
+    return (
+      <Link to="/insights/whats-at-risk" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <div className="bg-white border px-6 py-5" style={{ borderColor: LINE }}>
+          <div className="text-[10px] tracking-[0.15em] font-semibold mb-3" style={{ color: MUTED, fontFamily: FONT.mono }}>
+            Estimated at risk {'\u00b7'} {scopeLabel}
+          </div>
+          <div className="text-2xl font-bold" style={{ color: totalLive > 0 ? TONE.red.text : NAVY, fontFamily: FONT.display }}>
+            {totalLive > 0 ? `${totalLive} overdue` : 'Clear'}
+          </div>
+          <div style={{ display: 'flex', gap: 32, marginTop: 16 }}>
+            <div>
+              <div className="text-[10px] tracking-[0.12em] font-semibold" style={{ color: PILLAR.fire.text, fontFamily: FONT.mono }}>Fire</div>
+              <div className="text-sm font-semibold mt-1" style={{ color: fireCounts.live > 0 ? TONE.red.text : NAVY }}>
+                {fireCounts.live > 0 ? `${fireCounts.live} overdue` : 'Clear'}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] tracking-[0.12em] font-semibold" style={{ color: PILLAR.food.text, fontFamily: FONT.mono }}>Food</div>
+              <div className="text-sm font-semibold mt-1" style={{ color: foodCounts.live > 0 ? TONE.red.text : NAVY }}>
+                {foodCounts.live > 0 ? `${foodCounts.live} overdue` : 'Clear'}
+              </div>
+            </div>
+          </div>
+          <div className="text-[11px] mt-3" style={{ color: MUTED }}>Dollar exposure {'\u2014'} coming</div>
+        </div>
+      </Link>
+    );
+  }
+
+  return (
+    <Link to="/insights/whats-at-risk" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div className="bg-white border px-6 py-5" style={{ borderColor: LINE }}>
+        <div className="text-[10px] tracking-[0.15em] font-semibold mb-3" style={{ color: MUTED, fontFamily: FONT.mono }}>
+          Estimated at risk {'\u00b7'} {scopeLabel}
+        </div>
+
+        {/* Combined total */}
+        <div style={{ fontFamily: FONT.display, fontWeight: 700, fontSize: 34, lineHeight: 1, color: allClear ? NAVY : TONE.red.text }}>
+          {allClear ? 'Clear' : fmtRange(stillLo, stillHi)}
+        </div>
+        {!allClear && totalLive > 0 && (
+          <div className="text-xs font-semibold mt-1" style={{ color: TONE.red.text }}>{totalLive} overdue</div>
+        )}
+        {risk.total.reduced.high > 0 && (
+          <div className="text-xs mt-1" style={{ color: TONE.sage.text }}>{'\u2193'} {fmtRange(risk.total.reduced.low, risk.total.reduced.high)} reduced by your records</div>
+        )}
+
+        {/* Fire / Food split */}
+        <div style={{ display: 'flex', gap: 32, marginTop: 20 }}>
+          <div style={{ flex: 1 }}>
+            <div className="text-[10px] tracking-[0.12em] font-semibold" style={{ color: PILLAR.fire.text, fontFamily: FONT.mono }}>Fire safety</div>
+            <div className="text-lg font-bold mt-1" style={{ color: fireStillHi === 0 ? NAVY : TONE.red.text, fontFamily: FONT.display }}>
+              {fireStillHi === 0 ? '$0 exposed' : fmtRange(fireStillLo, fireStillHi)}
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: fireCounts.live > 0 ? TONE.red.text : TONE.sage.text }}>
+              {fireCounts.live > 0 ? `${fireCounts.live} not on file` : 'all current'}
+            </div>
+            {risk.fire.reduced.high > 0 && (
+              <div className="text-[11px] mt-0.5" style={{ color: TONE.sage.text }}>{'\u2193'} {fmtRange(risk.fire.reduced.low, risk.fire.reduced.high)} reduced</div>
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div className="text-[10px] tracking-[0.12em] font-semibold" style={{ color: PILLAR.food.text, fontFamily: FONT.mono }}>Food safety</div>
+            <div className="text-lg font-bold mt-1" style={{ color: foodStillHi === 0 ? NAVY : TONE.red.text, fontFamily: FONT.display }}>
+              {foodStillHi === 0 ? '$0 exposed' : fmtRange(foodStillLo, foodStillHi)}
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: foodCounts.live > 0 ? TONE.red.text : TONE.sage.text }}>
+              {foodCounts.live > 0 ? `${foodCounts.live} not on file` : 'all current'}
+            </div>
+            {risk.food.reduced.high > 0 && (
+              <div className="text-[11px] mt-0.5" style={{ color: TONE.sage.text }}>{'\u2193'} {fmtRange(risk.food.reduced.low, risk.food.reduced.high)} reduced</div>
+            )}
+          </div>
+        </div>
+
+        {/* On-file / due-soon / open bar */}
+        {totalAll > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <div style={{ display: 'flex', height: 6, borderRadius: 3, overflow: 'hidden', backgroundColor: '#F0EEE8' }}>
+              {totalDone > 0 && <div style={{ width: `${(totalDone / totalAll) * 100}%`, backgroundColor: TONE.sage.fill }} />}
+              {totalPending > 0 && <div style={{ width: `${(totalPending / totalAll) * 100}%`, backgroundColor: TONE.amber.fill }} />}
+              {totalLive > 0 && <div style={{ width: `${(totalLive / totalAll) * 100}%`, backgroundColor: TONE.red.fill }} />}
+            </div>
+            <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
+              <span className="text-[10px] font-semibold" style={{ color: TONE.sage.text, fontFamily: FONT.mono }}>
+                <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', backgroundColor: TONE.sage.fill, marginRight: 4, verticalAlign: 'middle' }} />
+                {totalDone} on file
+              </span>
+              <span className="text-[10px] font-semibold" style={{ color: TONE.amber.text, fontFamily: FONT.mono }}>
+                <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', backgroundColor: TONE.amber.fill, marginRight: 4, verticalAlign: 'middle' }} />
+                {totalPending} due soon
+              </span>
+              <span className="text-[10px] font-semibold" style={{ color: TONE.red.text, fontFamily: FONT.mono }}>
+                <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', backgroundColor: TONE.red.fill, marginRight: 4, verticalAlign: 'middle' }} />
+                {totalLive} open
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Segment + version meta */}
+        <div className="text-[11px] mt-3" style={{ color: MUTED }}>{risk.segment} {'\u00b7'} {risk.version}</div>
+      </div>
+    </Link>
   );
 }
 
