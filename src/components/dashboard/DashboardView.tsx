@@ -1,6 +1,6 @@
 /**
  * DashboardView — Full dashboard layout matching DashboardMockup.jsx.
- * Renders: LocationTabs → Hero → QuickActions → ExposureBand → Pillars → BusinessRecords → Alerts → TemperatureLogs
+ * Renders: LocationTabs → Hero → QuickActions → ExposureBand → Pillars → Explore → BusinessRecords → Alerts → TemperatureLogs
  * All data from live PROD hooks. No fake/sample data.
  */
 
@@ -42,6 +42,23 @@ const EMBER = '#B24A2E';
 const SLATE = '#3E6B8A';
 const INK_SECONDARY = '#4A5566';
 const HOVER_EASE = 'cubic-bezier(.34,1.4,.64,1)';
+
+// ─── Explore catalog types ──────────────────────────────────────
+interface CatalogItem {
+  requirement_code: string;
+  label: string;
+  pillar: string;
+  is_conditional: boolean;
+  counts_toward_total: boolean;
+  sort_order: number;
+  action_type: string;
+}
+const EXPLORE_ACTION_LABEL: Record<string, string> = {
+  route_out: 'Request from vendor',
+  upload: 'Upload document',
+  confirm: 'Confirm',
+  identify_vendor: 'Identify vendor',
+};
 
 // ─── StatusPill ──────────────────────────────────────────────────
 type PillStatus = 'clear' | 'action' | 'urgent' | 'empty';
@@ -115,6 +132,61 @@ export function DashboardView() {
   const businessProof = useBusinessProofStatus(selectedLocationId || undefined);
   const risk = useWhatsAtRisk(selectedLocationId);
 
+  // Explore: requirement catalog + what-if toggle state
+  const [reqCatalog, setReqCatalog] = useState<CatalogItem[]>([]);
+  const [catalogReady, setCatalogReady] = useState(false);
+  const [toggledCodes, setToggledCodes] = useState<Set<string>>(new Set());
+  const [exploreOpen, setExploreOpen] = useState(false);
+
+  useEffect(() => {
+    let dead = false;
+    (async () => {
+      const { data } = await supabase
+        .from('pillar_requirements')
+        .select('requirement_code, label, pillar, is_conditional, counts_toward_total, sort_order, action_type')
+        .eq('state_code', 'CA')
+        .order('pillar')
+        .order('sort_order');
+      if (!dead) {
+        setReqCatalog((data || []) as CatalogItem[]);
+        setCatalogReady(true);
+      }
+    })();
+    return () => { dead = true; };
+  }, []);
+
+  const toggleExploreReq = useCallback((code: string) => {
+    setToggledCodes(prev => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
+  }, []);
+
+  // What-if projection: each toggled counting requirement reduces exposure proportionally
+  const fireCountingReqs = reqCatalog.filter(r => r.pillar === 'fire_safety' && r.counts_toward_total);
+  const foodCountingReqs = reqCatalog.filter(r => r.pillar === 'food_safety' && r.counts_toward_total);
+  const fireToggledN = fireCountingReqs.filter(r => toggledCodes.has(r.requirement_code)).length;
+  const foodToggledN = foodCountingReqs.filter(r => toggledCodes.has(r.requirement_code)).length;
+  const anyToggled = fireToggledN + foodToggledN > 0;
+
+  const projection = !risk.loading && !risk.isPlaceholder && anyToggled ? (() => {
+    const fcDenom = fireCountingReqs.length || 1;
+    const fdDenom = foodCountingReqs.length || 1;
+    const fStillLo = risk.fire.pending.low + risk.fire.live.low;
+    const fStillHi = risk.fire.pending.high + risk.fire.live.high;
+    const fdStillLo = risk.food.pending.low + risk.food.live.low;
+    const fdStillHi = risk.food.pending.high + risk.food.live.high;
+    return {
+      fireStillLo: Math.max(0, fStillLo - fireToggledN * (risk.fire.baseline.low / fcDenom)),
+      fireStillHi: Math.max(0, fStillHi - fireToggledN * (risk.fire.baseline.high / fcDenom)),
+      foodStillLo: Math.max(0, fdStillLo - foodToggledN * (risk.food.baseline.low / fdDenom)),
+      foodStillHi: Math.max(0, fdStillHi - foodToggledN * (risk.food.baseline.high / fdDenom)),
+      label: `Projected \u00b7 ${fireToggledN + foodToggledN} what-if`,
+    };
+  })() : null;
+
   const alertCount = openCatches.length;
 
   // Watching bar: total requirement count across all locations
@@ -150,7 +222,7 @@ export function DashboardView() {
       <QuickActions />
 
       {/* Exposure Band — real at-risk figures from useWhatsAtRisk */}
-      <ExposureBand risk={risk} locationCount={locationCount} isAllLocations={selectedLocationId === null} />
+      <ExposureBand risk={risk} locationCount={locationCount} isAllLocations={selectedLocationId === null} projection={projection} />
 
       {/* Fire + Food Pillars side by side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -178,6 +250,18 @@ export function DashboardView() {
           proof={foodProof}
         />
       </div>
+
+      {/* Explore — what-if projection */}
+      {catalogReady && reqCatalog.length > 0 && (
+        <ExplorePanel
+          fireItems={reqCatalog.filter(r => r.pillar === 'fire_safety')}
+          foodItems={reqCatalog.filter(r => r.pillar === 'food_safety')}
+          toggledCodes={toggledCodes}
+          onToggle={toggleExploreReq}
+          isOpen={exploreOpen}
+          onToggleOpen={() => setExploreOpen(!exploreOpen)}
+        />
+      )}
 
       {/* Business + Vendor Records */}
       {!businessProof.loading && (businessProof.requirements.length > 0 || businessProof.error) && (
@@ -347,8 +431,9 @@ function QuickActions() {
 }
 
 // ─── Exposure Band ──────────────────────────────────────────────
-function ExposureBand({ risk, locationCount, isAllLocations }: {
+function ExposureBand({ risk, locationCount, isAllLocations, projection }: {
   risk: WhatsAtRisk; locationCount: number; isAllLocations: boolean;
+  projection?: { fireStillLo: number; fireStillHi: number; foodStillLo: number; foodStillHi: number; label: string } | null;
 }) {
   const fmtMoney = (n: number) => {
     const v = Math.round(n);
@@ -387,7 +472,15 @@ function ExposureBand({ risk, locationCount, isAllLocations }: {
   const foodStillLo = risk.food.pending.low + risk.food.live.low;
   const foodStillHi = risk.food.pending.high + risk.food.live.high;
 
-  const allClear = stillHi === 0 && totalLive === 0;
+  // Override with what-if projection when active
+  const displayFireLo = projection ? projection.fireStillLo : fireStillLo;
+  const displayFireHi = projection ? projection.fireStillHi : fireStillHi;
+  const displayFoodLo = projection ? projection.foodStillLo : foodStillLo;
+  const displayFoodHi = projection ? projection.foodStillHi : foodStillHi;
+  const displayTotalLo = displayFireLo + displayFoodLo;
+  const displayTotalHi = displayFireHi + displayFoodHi;
+  const isProjected = !!projection;
+  const allClear = displayTotalHi === 0 && totalLive === 0;
 
   if (risk.isPlaceholder) {
     return (
@@ -424,11 +517,12 @@ function ExposureBand({ risk, locationCount, isAllLocations }: {
       <div className="bg-white border px-6 py-5" style={{ borderColor: LINE }}>
         <div className="text-[10px] tracking-[0.15em] font-semibold mb-3" style={{ color: MUTED, fontFamily: FONT.mono }}>
           Estimated at risk {'\u00b7'} {scopeLabel}
+          {isProjected && <span style={{ marginLeft: 8, padding: '1px 6px', backgroundColor: TONE.amber.tint, color: TONE.amber.text }}>{projection!.label}</span>}
         </div>
 
         {/* Combined total */}
         <div style={{ fontFamily: FONT.display, fontWeight: 700, fontSize: 34, lineHeight: 1, color: allClear ? NAVY : TONE.red.text }}>
-          {allClear ? 'Clear' : fmtRange(stillLo, stillHi)}
+          {allClear ? 'Clear' : fmtRange(displayTotalLo, displayTotalHi)}
         </div>
         {!allClear && totalLive > 0 && (
           <div className="text-xs font-semibold mt-1" style={{ color: TONE.red.text }}>{totalLive} overdue</div>
@@ -436,13 +530,16 @@ function ExposureBand({ risk, locationCount, isAllLocations }: {
         {risk.total.reduced.high > 0 && (
           <div className="text-xs mt-1" style={{ color: TONE.sage.text }}>{'\u2193'} {fmtRange(risk.total.reduced.low, risk.total.reduced.high)} reduced by your records</div>
         )}
+        {isProjected && displayTotalHi < stillHi && (
+          <div className="text-xs mt-1" style={{ color: TONE.amber.text }}>{'\u2193'} {fmtRange(stillLo - displayTotalLo, stillHi - displayTotalHi)} if these were on file</div>
+        )}
 
         {/* Fire / Food split */}
         <div style={{ display: 'flex', gap: 32, marginTop: 20 }}>
           <div style={{ flex: 1 }}>
             <div className="text-[10px] tracking-[0.12em] font-semibold" style={{ color: PILLAR.fire.text, fontFamily: FONT.mono }}>Fire safety</div>
-            <div className="text-lg font-bold mt-1" style={{ color: fireStillHi === 0 ? NAVY : TONE.red.text, fontFamily: FONT.display }}>
-              {fireStillHi === 0 ? '$0 exposed' : fmtRange(fireStillLo, fireStillHi)}
+            <div className="text-lg font-bold mt-1" style={{ color: displayFireHi === 0 ? NAVY : TONE.red.text, fontFamily: FONT.display }}>
+              {displayFireHi === 0 ? '$0 exposed' : fmtRange(displayFireLo, displayFireHi)}
             </div>
             <div className="text-[11px] mt-0.5" style={{ color: fireCounts.live > 0 ? TONE.red.text : TONE.sage.text }}>
               {fireCounts.live > 0 ? `${fireCounts.live} not on file` : 'all current'}
@@ -453,8 +550,8 @@ function ExposureBand({ risk, locationCount, isAllLocations }: {
           </div>
           <div style={{ flex: 1 }}>
             <div className="text-[10px] tracking-[0.12em] font-semibold" style={{ color: PILLAR.food.text, fontFamily: FONT.mono }}>Food safety</div>
-            <div className="text-lg font-bold mt-1" style={{ color: foodStillHi === 0 ? NAVY : TONE.red.text, fontFamily: FONT.display }}>
-              {foodStillHi === 0 ? '$0 exposed' : fmtRange(foodStillLo, foodStillHi)}
+            <div className="text-lg font-bold mt-1" style={{ color: displayFoodHi === 0 ? NAVY : TONE.red.text, fontFamily: FONT.display }}>
+              {displayFoodHi === 0 ? '$0 exposed' : fmtRange(displayFoodLo, displayFoodHi)}
             </div>
             <div className="text-[11px] mt-0.5" style={{ color: foodCounts.live > 0 ? TONE.red.text : TONE.sage.text }}>
               {foodCounts.live > 0 ? `${foodCounts.live} not on file` : 'all current'}
@@ -494,6 +591,81 @@ function ExposureBand({ risk, locationCount, isAllLocations }: {
         <div className="text-[11px] mt-3" style={{ color: MUTED }}>{risk.segment} {'\u00b7'} {risk.version}</div>
       </div>
     </Link>
+  );
+}
+
+// ─── Explore Panel ──────────────────────────────────────────────
+function ExplorePanel({ fireItems, foodItems, toggledCodes, onToggle, isOpen, onToggleOpen }: {
+  fireItems: CatalogItem[]; foodItems: CatalogItem[];
+  toggledCodes: Set<string>; onToggle: (code: string) => void;
+  isOpen: boolean; onToggleOpen: () => void;
+}) {
+  return (
+    <div className="bg-white border" style={{ borderColor: LINE }}>
+      <div
+        onClick={onToggleOpen}
+        style={{ display: 'flex', alignItems: 'center', padding: '14px 24px', cursor: 'pointer', gap: 8 }}
+      >
+        <span className="text-sm font-bold" style={{ color: NAVY, fontFamily: FONT.display }}>Explore</span>
+        <span className="text-xs" style={{ color: MUTED }}>what-if {'\u00b7'} doesn{'\u2019'}t change your account</span>
+        <span style={{ marginLeft: 'auto', color: MUTED, fontSize: 12, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms ease' }}>{'\u25be'}</span>
+      </div>
+      {isOpen && (
+        <div style={{ padding: '0 24px 20px' }}>
+          <p className="text-xs mb-4" style={{ color: MUTED, lineHeight: 1.6 }}>
+            Turn on a requirement to see how it would lower your exposure. Nothing here changes your account {'\u2014'} it{'\u2019'}s a projection only.
+          </p>
+          <div>
+            <div className="text-[10px] tracking-[0.12em] font-semibold mb-2" style={{ color: PILLAR.fire.text, fontFamily: FONT.mono }}>
+              Fire Safeguards
+            </div>
+            {fireItems.map(r => {
+              const on = toggledCodes.has(r.requirement_code);
+              return (
+                <label key={r.requirement_code} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', cursor: 'pointer', borderBottom: `1px solid ${LINE}` }}>
+                  <input type="checkbox" checked={on} onChange={() => onToggle(r.requirement_code)} style={{ accentColor: TONE.sage.fill }} />
+                  <span className="text-sm flex-1" style={{ color: NAVY }}>{r.label}</span>
+                  {r.is_conditional && <span className="text-[10px] px-1.5 py-0.5" style={{ color: MUTED, backgroundColor: '#F0EEE8', fontFamily: FONT.mono }}>not applicable</span>}
+                  <span className="text-[10px]" style={{ color: on ? TONE.sage.text : MUTED, fontFamily: FONT.mono }}>
+                    {on ? '\u2713 projected' : `${EXPLORE_ACTION_LABEL[r.action_type] || 'Add record'} \u2192`}
+                  </span>
+                </label>
+              );
+            })}
+
+            <div className="text-[10px] tracking-[0.12em] font-semibold mb-2 mt-4" style={{ color: PILLAR.food.text, fontFamily: FONT.mono }}>
+              Food Safety
+            </div>
+            {(() => {
+              let tempShown = false;
+              return foodItems.map(r => {
+                const on = toggledCodes.has(r.requirement_code);
+                const isTempLog = r.requirement_code.startsWith('temp_');
+                const showTempSub = isTempLog && !tempShown;
+                if (showTempSub) tempShown = true;
+                return (
+                  <div key={r.requirement_code}>
+                    {showTempSub && (
+                      <div className="text-[10px] tracking-[0.12em] font-semibold mt-3 mb-1" style={{ color: MUTED, fontFamily: FONT.mono }}>
+                        Temperature Logs
+                      </div>
+                    )}
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', cursor: 'pointer', borderBottom: `1px solid ${LINE}` }}>
+                      <input type="checkbox" checked={on} onChange={() => onToggle(r.requirement_code)} style={{ accentColor: TONE.sage.fill }} />
+                      <span className="text-sm flex-1" style={{ color: NAVY }}>{r.label}</span>
+                      {r.is_conditional && <span className="text-[10px] px-1.5 py-0.5" style={{ color: MUTED, backgroundColor: '#F0EEE8', fontFamily: FONT.mono }}>not applicable</span>}
+                      <span className="text-[10px]" style={{ color: on ? TONE.sage.text : MUTED, fontFamily: FONT.mono }}>
+                        {on ? '\u2713 projected' : `${EXPLORE_ACTION_LABEL[r.action_type] || 'Add record'} \u2192`}
+                      </span>
+                    </label>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
