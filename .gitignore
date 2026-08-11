@@ -55,6 +55,9 @@ email-preview-sample.html
 
 # Scratch — temp scripts, audit reports, test harnesses, loose assets
 tmp_*
+tmp-*
+content_schedule_import.sql
+fire-protection-mock-v4.html
 C*Usersnewpa*
 AUDIT_*.txt
 *_AUDIT*.txt
