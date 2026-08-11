@@ -1,12 +1,12 @@
 /**
  * DashboardView — Full dashboard layout matching DashboardMockup.jsx.
- * Renders: LocationTabs → Hero → QuickActions → ExposureBand → Pillars → Explore → BusinessRecords → Alerts → TemperatureLogs
+ * Renders: LocationTabs → Hero → QuickActions → ExposureBand → WhoCanAsk → Pillars → Explore → BusinessRecords → Alerts → TemperatureLogs
  * All data from live PROD hooks. No fake/sample data.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Utensils, AlertTriangle, Calendar, Bell, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users } from 'lucide-react';
+import { Flame, Utensils, AlertTriangle, Calendar, Bell, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users, Shield, ClipboardList } from 'lucide-react';
 import { FONT, TONE, PILLAR } from '../../design/tokens';
 import { useWhatsAtRisk } from '../../hooks/useWhatsAtRisk';
 import type { WhatsAtRisk } from '../../hooks/useWhatsAtRisk';
@@ -223,6 +223,9 @@ export function DashboardView() {
 
       {/* Exposure Band — real at-risk figures from useWhatsAtRisk */}
       <ExposureBand risk={risk} locationCount={locationCount} isAllLocations={selectedLocationId === null} projection={projection} />
+
+      {/* Who can ask — five asker cards */}
+      <WhoCanAsk />
 
       {/* Fire + Food Pillars side by side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -591,6 +594,42 @@ function ExposureBand({ risk, locationCount, isAllLocations, projection }: {
         <div className="text-[11px] mt-3" style={{ color: MUTED }}>{risk.segment} {'\u00b7'} {risk.version}</div>
       </div>
     </Link>
+  );
+}
+
+// ─── Who Can Ask ────────────────────────────────────────────────
+const ASKER_CARDS: { slug: string; name: string; Icon: typeof Flame; when: string; tail: string }[] = [
+  { slug: 'insurance-broker', name: 'Insurance Broker', Icon: Shield, when: 'At renewal \u00b7 and whenever underwriting asks', tail: 'Adjuster, only if there\u2019s an incident' },
+  { slug: 'property-manager', name: 'Property Manager', Icon: Building2, when: 'Day to day \u00b7 and every renewal', tail: 'The lease is where the insurance and fire clauses start' },
+  { slug: 'fire-marshal', name: 'Fire Marshal', Icon: Flame, when: 'On inspection \u00b7 by schedule', tail: 'Wants the fire systems current to their NFPA standard' },
+  { slug: 'health-inspector', name: 'Health Inspector', Icon: ClipboardList, when: 'Unannounced \u00b7 during service', tail: 'Permits, logs and pest control, on the spot' },
+  { slug: 'compliance-officer', name: 'Compliance Officer', Icon: FileText, when: 'On audit \u00b7 and before every renewal', tail: 'Wants the whole set aligned \u2014 fire, food and the lease' },
+];
+
+function WhoCanAsk() {
+  return (
+    <div>
+      <div className="text-[10px] tracking-[0.15em] font-semibold mb-3" style={{ color: MUTED, fontFamily: FONT.mono }}>
+        Who can ask
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {ASKER_CARDS.map(a => (
+          <Link key={a.slug} to={`/records/for/${a.slug}`}
+            className="bg-white border px-5 py-4 flex items-start gap-4 transition-shadow hover:shadow-sm"
+            style={{ borderColor: LINE, textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
+            <div className="p-2 flex-shrink-0" style={{ backgroundColor: '#F4F1E6' }}>
+              <a.Icon size={16} style={{ color: GOLD }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold" style={{ color: NAVY, fontFamily: FONT.display }}>{a.name}</div>
+              <div className="text-[11px] mt-0.5" style={{ color: MUTED }}>{a.when}</div>
+              <div className="text-[11px] mt-1" style={{ color: INK_SECONDARY }}>{a.tail}</div>
+            </div>
+            <ArrowRight size={14} style={{ color: MUTED, flexShrink: 0, marginTop: 4 }} />
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

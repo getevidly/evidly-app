@@ -4,9 +4,6 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { logger } from "../_shared/logger.ts";
 
-// TODO: replace with the real URL once the resource PDF/page is live
-const RESOURCE_URL = "";
-
 const VALID_FORM_TYPES = [
   "founding_member",
   "alerts",
@@ -39,14 +36,18 @@ interface ReplyTemplate {
   ctaUrl?: string;
 }
 
-function getReplyTemplate(formType: FormType): ReplyTemplate {
+function getReplyTemplate(formType: FormType, seatsRemaining?: number): ReplyTemplate {
   switch (formType) {
-    case "founding_member":
+    case "founding_member": {
+      const seatsCopy = seatsRemaining != null
+        ? `<strong>${seatsRemaining} seats</strong> left`
+        : `<strong>limited seats</strong> available`;
       return {
         subject: "You\u2019re on the list \u2014 EvidLY Founder seats",
         bodyHtml:
-          "<p>Thanks for putting your name in for an EvidLY Founder seat \u2014 we\u2019ve got your details.</p><p>Here\u2019s what\u2019s next: the Founder Window opens <strong>July 4</strong>, with 250 seats for California kitchen leaders. Claim one and your rate locks for 36 months. We\u2019ll reach out before the window opens with your invitation to lock your seat. Seats close when the 250th is taken \u2014 not on a date \u2014 so being early matters.</p><p>Questions in the meantime? Just reply; it comes straight to us.</p><p>\u2014 Arthur Haggerty, Founder &amp; CEO<br>EvidLY</p>",
+          `<p>Thanks for putting your name in for an EvidLY Founder seat \u2014 we\u2019ve got your details.</p><p>The Founder Window is open now, with ${seatsCopy} for California kitchen leaders. Claim yours and your rate locks for 36 months. Seats close when they\u2019re gone \u2014 not on a date \u2014 so being early matters.</p><p>Questions? Just reply; it comes straight to us.</p><p>\u2014 Arthur Haggerty, Founder &amp; CEO<br>EvidLY</p>`,
       };
+    }
     case "alerts":
       return {
         subject: "You\u2019re on the list \u2014 EvidLY alerts",
@@ -65,25 +66,21 @@ function getReplyTemplate(formType: FormType): ReplyTemplate {
         bodyHtml:
           "<p>Thanks for applying to partner with EvidLY \u2014 we\u2019ve got your application and we\u2019ll review it.</p><p>We\u2019re building a network of quality service companies: the kind that do the work right and stand behind it. We review each application personally, and if it\u2019s a fit, we\u2019ll reach out to talk next steps \u2014 usually within a few business days.</p><p>Questions in the meantime? Reply here.</p><p>\u2014 The EvidLY team</p>",
       };
-    case "cta":
+    case "cta": {
+      const ctaSeatsCopy = seatsRemaining != null
+        ? `${seatsRemaining} seats left`
+        : `limited seats available`;
       return {
         subject: "Thanks \u2014 here\u2019s what\u2019s next with EvidLY",
         bodyHtml:
-          "<p>Thanks for reaching out about EvidLY \u2014 we\u2019ve got your details and someone will follow up shortly.</p><p>In short: EvidLY keeps your kitchen\u2019s record aligned to what both your county and your insurance carrier require \u2014 documenting the work and identifying what\u2019s missing before it costs you. The Founder Window opens July 4 with 250 seats for California kitchen leaders.</p><p>Reply with anything specific you want to cover.</p>",
+          `<p>Thanks for reaching out about EvidLY \u2014 we\u2019ve got your details and someone will follow up shortly.</p><p>In short: EvidLY keeps your kitchen\u2019s record aligned to what both your county and your insurance carrier require \u2014 documenting the work and identifying what\u2019s missing before it costs you. The Founder Window is open now with ${ctaSeatsCopy} for California kitchen leaders.</p><p>Reply with anything specific you want to cover.</p>`,
       };
+    }
     case "resource":
-      if (RESOURCE_URL) {
-        return {
-          subject: "Here\u2019s your EvidLY resource",
-          bodyHtml: "<p>Thanks \u2014 here\u2019s the resource you requested:</p>",
-          ctaText: "Download Resource",
-          ctaUrl: RESOURCE_URL,
-        };
-      }
       return {
-        subject: "Here\u2019s your EvidLY resource",
+        subject: "You\u2019re on the list \u2014 EvidLY resource",
         bodyHtml:
-          "<p>Thanks \u2014 we\u2019ve saved your email. The resource you requested is on its way; we\u2019ll send it to this address shortly.</p>",
+          "<p>Thanks \u2014 you\u2019re on the list. We\u2019ll email this address when the resource is ready.</p>",
       };
   }
 }
@@ -168,7 +165,19 @@ Deno.serve(async (req: Request) => {
 
     // ── Auto-reply email (non-blocking) ──────────────────
     const recipientName = name?.trim() || "there";
-    const template = getReplyTemplate(form_type as FormType);
+
+    // Fetch live founder seat count for founding_member / cta templates
+    let seatsRemaining: number | undefined;
+    if (form_type === "founding_member" || form_type === "cta") {
+      const { data, error: rpcError } = await supabase.rpc("get_founder_count");
+      if (rpcError) {
+        logger.error("[FORM-SUBMIT] get_founder_count RPC failed", rpcError);
+      } else {
+        seatsRemaining = 250 - (data as number);
+      }
+    }
+
+    const template = getReplyTemplate(form_type as FormType, seatsRemaining);
 
     const emailHtml = buildEmailHtml({
       recipientName,
