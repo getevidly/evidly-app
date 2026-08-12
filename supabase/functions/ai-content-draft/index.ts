@@ -73,8 +73,10 @@ Rules that override everything:
 3. NEVER fabricate a regulatory citation or a legal reference. Do not invent code-section numbers (CalCode §, NFPA, CFC), standard editions, statistics, or court-case names. Wherever the post makes a regulatory claim that needs a citation, write the claim in plain language and mark it inline with [verify] — e.g. "the daily temperature logs [verify: CalCode section]". For any legal reference write [verify: published case caption]. Flagging [verify] is always correct; guessing a citation is never correct.
 4. Write in EvidLY's voice: plain and direct, addressed to the reader's situation rather than the company's features. Open on the reader; close on a why.
 
+5. TITLE IS REQUIRED — never return an empty title. For an email, the title is the subject line. For a social post or any other format, the title is a short identifying label or hook (a few words) that names the post in the calendar. Derive it from the brief's theme and angle, not from the theme name verbatim.
+
 Output STRICT JSON and nothing else — no markdown, no preamble, no code fences:
-{"title": "<the real post title or email subject derived from the brief, NOT the theme name>", "body": "<the drafted post>", "cta": "<the call to action, or an empty string if the brief names none>"}`,
+{"title": "<required — email subject line or short calendar label; must not be empty>", "body": "<the drafted post>", "cta": "<the call to action, or an empty string if the brief names none>"}`,
         messages: [
           {
             role: "user",
@@ -117,16 +119,23 @@ Output STRICT JSON and nothing else — no markdown, no preamble, no code fences
     const updatedNotes = (row.notes || "")
       .replace("[copy_state: To write]", "[copy_state: Draft]");
 
+    // Guard: only overwrite title if model returned a non-empty one
+    const hasDraftTitle = draft.title.trim() !== "";
+
+    const updatePayload: Record<string, unknown> = {
+      body: draft.body,
+      cta: draft.cta,
+      status: "drafted",
+      notes: updatedNotes,
+      updated_at: new Date().toISOString(),
+    };
+    if (hasDraftTitle) {
+      updatePayload.title = draft.title;
+    }
+
     const { error: updateErr } = await supabase
       .from("content_schedule")
-      .update({
-        title: draft.title,
-        body: draft.body,
-        cta: draft.cta,
-        status: "drafted",
-        notes: updatedNotes,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq("id", rowId);
 
     if (updateErr) {
