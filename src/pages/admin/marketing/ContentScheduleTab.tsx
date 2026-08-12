@@ -13,7 +13,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Plus, Trash2, ChevronUp, ChevronDown,
   ChevronLeft, ChevronRight, CalendarDays, List,
-  SlidersHorizontal,
+  SlidersHorizontal, Wand2,
 } from 'lucide-react';
 import {
   useContentScheduleData,
@@ -45,6 +45,8 @@ const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
+
+const BATCH_DRAFT_CAP = 25;
 
 type SortKey = 'title' | 'channel_label' | 'scheduled_date' | 'owner' | 'status';
 type SortDir = 'asc' | 'desc';
@@ -424,6 +426,67 @@ export default function ContentScheduleTab() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts]);
 
+  // ── Batch draft eligible rows ──────────────────────────────────
+
+  const [batchDrafting, setBatchDrafting] = useState(false);
+  const [batchProgress, setBatchProgress] = useState('');
+
+  const batchEligible = useMemo(
+    () => displayed.filter(
+      p => p.brief && p.brief.trim() !== '' && (p.notes || '').includes('[copy_state: To write]'),
+    ),
+    [displayed],
+  );
+
+  const handleBatchDraft = async () => {
+    const total = Math.min(batchEligible.length, BATCH_DRAFT_CAP);
+    if (total === 0) return;
+
+    const cappedNote = batchEligible.length > BATCH_DRAFT_CAP
+      ? ` (capped at ${BATCH_DRAFT_CAP} of ${batchEligible.length} eligible)`
+      : '';
+    if (!confirm(`Draft ${total} unwritten post${total !== 1 ? 's' : ''} in the current view${cappedNote}? Each is a Claude call.`)) return;
+
+    const queue = batchEligible.slice(0, BATCH_DRAFT_CAP);
+    setBatchDrafting(true);
+    let drafted = 0;
+    let failed = 0;
+
+    // Process with concurrency of 3
+    const concurrency = 3;
+    let cursor = 0;
+
+    const next = async (): Promise<void> => {
+      while (cursor < queue.length) {
+        const idx = cursor++;
+        const row = queue[idx];
+        setBatchProgress(`Drafting ${idx + 1} of ${queue.length}\u2026`);
+        try {
+          const { data, error: fnErr } = await supabase.functions.invoke('ai-content-draft', {
+            body: { rowId: row.id },
+          });
+          if (fnErr || data?.error) {
+            failed++;
+          } else {
+            drafted++;
+          }
+        } catch {
+          failed++;
+        }
+      }
+    };
+
+    await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, () => next()));
+
+    await refresh();
+    setBatchDrafting(false);
+    setBatchProgress('');
+
+    const parts = [`${drafted} drafted`];
+    if (failed > 0) parts.push(`${failed} failed`);
+    toast.success(`Batch complete: ${parts.join(', ')}`);
+  };
+
   // ── Apply date adjustment ─────────────────────────────────────
 
   const handleApply = async () => {
@@ -565,6 +628,20 @@ export default function ContentScheduleTab() {
             }}
           >
             <SlidersHorizontal size={14} /> Adjust Dates
+          </button>
+          <button
+            onClick={handleBatchDraft}
+            disabled={batchEligible.length === 0 || batchDrafting}
+            className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
+            style={{
+              borderColor: batchEligible.length === 0 || batchDrafting ? EV_LINE : '#93C5FD',
+              backgroundColor: batchDrafting ? EV_LIGHT : batchEligible.length === 0 ? '#fff' : '#DBEAFE',
+              color: batchEligible.length === 0 || batchDrafting ? EV_MUTED : '#1D4ED8',
+              fontFamily: BODY,
+            }}
+          >
+            <Wand2 size={14} />
+            {batchDrafting ? batchProgress || 'Drafting\u2026' : `Draft filtered from brief${batchEligible.length > 0 ? ` (${batchEligible.length})` : ''}`}
           </button>
           <button
             onClick={() => { setEditingId(null); setForm({ ...EMPTY_FORM }); setShowForm(!showForm); }}
