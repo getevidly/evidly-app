@@ -27,6 +27,7 @@ import {
   DISPLAY, BODY,
 } from './marketingTokens';
 import { toast } from 'sonner';
+import { supabase } from '../../../lib/supabase';
 
 // ── Constants ────────────────────────────────────────────────────
 
@@ -95,7 +96,7 @@ type AdjOp = 'start' | 'shift' | 'cadence';
 // ── Component ────────────────────────────────────────────────────
 
 export default function ContentScheduleTab() {
-  const { posts, loading, error, addPost, updatePost, deletePost, bulkUpdateDates } = useContentScheduleData();
+  const { posts, loading, error, refresh, addPost, updatePost, deletePost, bulkUpdateDates } = useContentScheduleData();
   const { channels: mktChannels } = useChannelsData();
 
   const formRef = useRef<HTMLDivElement>(null);
@@ -112,6 +113,7 @@ export default function ContentScheduleTab() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<AddPostInput>({ ...EMPTY_FORM });
   const [saving, setSaving] = useState(false);
+  const [drafting, setDrafting] = useState(false);
 
   // Sort state (list view)
   const [sortKey, setSortKey] = useState<SortKey>('scheduled_date');
@@ -365,6 +367,62 @@ export default function ContentScheduleTab() {
     setEditingId(null);
     setForm({ ...EMPTY_FORM });
   };
+
+  // ── Editing row lookup (for brief access) ───────────────────
+
+  const editingRow = useMemo(
+    () => (editingId ? posts.find(p => p.id === editingId) ?? null : null),
+    [editingId, posts],
+  );
+
+  // ── Draft from brief ───────────────────────────────────────
+
+  const handleDraft = async () => {
+    if (!editingId || !editingRow?.brief) return;
+    setDrafting(true);
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('ai-content-draft', {
+        body: { rowId: editingId },
+      });
+      if (fnErr) {
+        toast.error(`Draft failed: ${fnErr.message}`);
+        setDrafting(false);
+        return;
+      }
+      if (data?.error) {
+        toast.error(`Draft failed: ${data.error}`);
+        setDrafting(false);
+        return;
+      }
+      // Refresh from DB, then re-populate form from the updated row
+      await refresh();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Draft request failed';
+      toast.error(msg);
+    }
+    setDrafting(false);
+  };
+
+  // Re-populate form when posts refresh while editing (e.g. after draft)
+  useEffect(() => {
+    if (editingId && posts.length > 0) {
+      const updated = posts.find(p => p.id === editingId);
+      if (updated) {
+        setForm({
+          title: updated.title,
+          channel_label: updated.channel_label,
+          scheduled_date: updated.scheduled_date,
+          status: updated.status,
+          owner: updated.owner || '',
+          notes: updated.notes || '',
+          body: updated.body || '',
+          cta: updated.cta || '',
+          post_type: updated.post_type || '',
+        });
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts]);
 
   // ── Apply date adjustment ─────────────────────────────────────
 
@@ -620,11 +678,50 @@ export default function ContentScheduleTab() {
               />
             </div>
 
+            {/* Brief (read-only) */}
+            {editingId && editingRow?.brief && (
+              <div className="sm:col-span-2 lg:col-span-4">
+                <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                  Brief
+                </label>
+                <pre
+                  className="w-full py-[7px] px-[10px] text-[12px] border rounded-md whitespace-pre-wrap"
+                  style={{
+                    borderColor: EV_LINE,
+                    color: EV_MUTED,
+                    backgroundColor: EV_LIGHT,
+                    fontFamily: BODY,
+                    maxHeight: 160,
+                    overflowY: 'auto',
+                    margin: 0,
+                  }}
+                >
+                  {editingRow.brief}
+                </pre>
+              </div>
+            )}
+
             {/* Body */}
             <div className="sm:col-span-2 lg:col-span-4">
-              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
-                Body
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[11px] font-semibold" style={{ color: EV_MUTED }}>
+                  Body
+                </label>
+                {editingId && editingRow?.brief && (
+                  <button
+                    onClick={handleDraft}
+                    disabled={drafting}
+                    type="button"
+                    className="py-[4px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+                    style={{
+                      backgroundColor: drafting ? EV_LIGHT : '#DBEAFE',
+                      color: drafting ? EV_MUTED : '#1D4ED8',
+                    }}
+                  >
+                    {drafting ? 'Drafting\u2026' : 'Draft from brief'}
+                  </button>
+                )}
+              </div>
               <textarea
                 value={form.body}
                 onChange={e => setForm(prev => ({ ...prev, body: e.target.value }))}

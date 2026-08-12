@@ -25,6 +25,7 @@ export interface ContentPostRow {
   body: string | null;
   cta: string | null;
   post_type: string | null;
+  brief: string | null;
 }
 
 export interface AddPostInput {
