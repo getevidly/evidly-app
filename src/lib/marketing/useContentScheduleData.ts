@@ -54,7 +54,7 @@ export function useContentScheduleData() {
       const { data, error: pErr } = await supabase
         .from('content_schedule')
         .select('*')
-        .order('scheduled_date', { ascending: false });
+        .order('scheduled_date', { ascending: true });
       if (pErr) throw pErr;
       setPosts((data || []) as ContentPostRow[]);
     } catch (e: unknown) {
