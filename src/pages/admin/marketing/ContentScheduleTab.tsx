@@ -55,6 +55,9 @@ const EMPTY_FORM: AddPostInput = {
   status: 'planned',
   owner: '',
   notes: '',
+  body: '',
+  cta: '',
+  post_type: '',
 };
 
 // ── Calendar helpers ─────────────────────────────────────────────
@@ -313,6 +316,9 @@ export default function ContentScheduleTab() {
       status: post.status,
       owner: post.owner || '',
       notes: post.notes || '',
+      body: post.body || '',
+      cta: post.cta || '',
+      post_type: post.post_type || '',
     });
     setShowForm(true);
   };
@@ -611,6 +617,49 @@ export default function ContentScheduleTab() {
                 className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
                 style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
                 placeholder="Content brief or link…"
+              />
+            </div>
+
+            {/* Body */}
+            <div className="sm:col-span-2 lg:col-span-4">
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Body
+              </label>
+              <textarea
+                value={form.body}
+                onChange={e => setForm(prev => ({ ...prev, body: e.target.value }))}
+                rows={6}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none resize-y"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                placeholder="Full post or email content…"
+              />
+            </div>
+
+            {/* CTA */}
+            <div className="sm:col-span-2">
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                CTA
+              </label>
+              <input
+                value={form.cta}
+                onChange={e => setForm(prev => ({ ...prev, cta: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                placeholder="e.g. CLAIM YOUR SEAT"
+              />
+            </div>
+
+            {/* Post type */}
+            <div className="sm:col-span-2">
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Post type
+              </label>
+              <input
+                value={form.post_type}
+                onChange={e => setForm(prev => ({ ...prev, post_type: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                placeholder="e.g. Email"
               />
             </div>
           </div>

@@ -34,6 +34,9 @@ export interface AddPostInput {
   status: string;
   owner: string;
   notes: string;
+  body: string;
+  cta: string;
+  post_type: string;
 }
 
 // ── Hook ─────────────────────────────────────────────────────────
@@ -78,6 +81,9 @@ export function useContentScheduleData() {
         status: input.status,
         owner: input.owner || null,
         notes: input.notes || null,
+        body: input.body || null,
+        cta: input.cta || null,
+        post_type: input.post_type || null,
       });
     if (insertErr) return { error: insertErr.message };
     await refresh();
@@ -96,6 +102,9 @@ export function useContentScheduleData() {
         status: input.status,
         owner: input.owner || null,
         notes: input.notes || null,
+        body: input.body || null,
+        cta: input.cta || null,
+        post_type: input.post_type || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id);
