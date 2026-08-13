@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { anonClient } from '../lib/anonClient';
 
 const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
 const GATE_STATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gate-record-state`;
@@ -431,7 +431,7 @@ export function ProspectGate() {
     if (!token) { setError('Missing invite link.'); setLoading(false); return; }
     (async () => {
       // 1. Resolve invite (anon read on evidly_client_invites)
-      const { data, error: err } = await supabase
+      const { data, error: err } = await anonClient
         .from('evidly_client_invites')
         .select('organization_name, business_name, status, expires_at')
         .eq('token', token)

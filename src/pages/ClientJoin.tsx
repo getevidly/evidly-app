@@ -14,7 +14,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Send } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { anonClient } from '../lib/anonClient';
 import { toast } from 'sonner';
 import { EvidLYDashboard, LOC_TABS } from '../components/join/EvidLYDashboard';
 
@@ -69,7 +69,7 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
     if (previewOnly) return;
     (async () => {
       if (!token) { setLoadError('Missing invite link.'); setLoading(false); return; }
-      const { data, error } = await supabase
+      const { data, error } = await anonClient
         .from('evidly_client_invites')
         .select('organization_id, organization_name, business_name, contact_name, email, phone, message, status, expires_at')
         .eq('token', token)
