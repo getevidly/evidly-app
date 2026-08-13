@@ -39,6 +39,19 @@ export const JURISDICTIONS: Record<string, JurisdictionEntry> = {
   'Santa Barbara':    { foodTier: 'C', foodPts: 10, fireLevel: 'high',   firePts: 25 },
 };
 
+// ── All 58 California counties (canonical list for dropdowns) ────
+export const CALIFORNIA_COUNTIES: string[] = [
+  'Alameda','Alpine','Amador','Butte','Calaveras','Colusa','Contra Costa',
+  'Del Norte','El Dorado','Fresno','Glenn','Humboldt','Imperial','Inyo',
+  'Kern','Kings','Lake','Lassen','Los Angeles','Madera','Marin','Mariposa',
+  'Mendocino','Merced','Modoc','Mono','Monterey','Napa','Nevada','Orange',
+  'Placer','Plumas','Riverside','Sacramento','San Benito','San Bernardino',
+  'San Diego','San Francisco','San Joaquin','San Luis Obispo','San Mateo',
+  'Santa Barbara','Santa Clara','Santa Cruz','Shasta','Sierra','Siskiyou',
+  'Solano','Sonoma','Stanislaus','Sutter','Tehama','Trinity','Tulare',
+  'Tuolumne','Ventura','Yolo','Yuba',
+];
+
 // ── Segments ─────────────────────────────────────────────────────
 export interface SegmentEntry {
   category: 'owner' | 'institution';

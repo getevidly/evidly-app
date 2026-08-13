@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
 import { supabase } from '../../../lib/supabase';
 import { type AccountRow } from '../../../lib/marketing/useMarketingData';
 import {
-  JURISDICTIONS,
+  CALIFORNIA_COUNTIES,
   SEGMENTS,
   STAGE_LABELS,
   deriveICP,
@@ -35,7 +35,7 @@ import { toast } from 'sonner';
 
 // ── Constants ────────────────────────────────────────────────────
 
-const COUNTY_LIST = Object.keys(JURISDICTIONS).sort();
+const COUNTY_LIST = CALIFORNIA_COUNTIES;
 const SEGMENT_LIST = Object.keys(SEGMENTS).sort();
 
 const IMPORT_FIELDS = [
