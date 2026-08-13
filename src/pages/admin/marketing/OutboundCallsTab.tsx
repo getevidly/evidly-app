@@ -73,12 +73,23 @@ type SortDir = 'asc' | 'desc';
 // ── Add-prospect form ────────────────────────────────────────────
 
 function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRefresh: () => void }) {
+  // Prospect fields
   const [org, setOrg] = useState('');
   const [county, setCounty] = useState('');
   const [countySearch, setCountySearch] = useState('');
   const [showCountyDropdown, setShowCountyDropdown] = useState(false);
   const [segment, setSegment] = useState('');
   const [locations, setLocations] = useState(1);
+  // Contact fields
+  const [contactName, setContactName] = useState('');
+  const [contactTitle, setContactTitle] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactAddress, setContactAddress] = useState('');
+  // Call log fields
+  const [callDate, setCallDate] = useState('');
+  const [callSummary, setCallSummary] = useState('');
+
   const [saving, setSaving] = useState(false);
 
   const filteredCounties = useMemo(() => {
@@ -112,45 +123,51 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       source: 'cold_call',
       buyer_type: segment ? (SEGMENTS[segment]?.category ?? null) : null,
       notes: `ICP ${icp} on entry`,
+      contact_name: contactName.trim() || null,
+      contact_title: contactTitle.trim() || null,
+      contact_phone: contactPhone.trim() || null,
+      contact_email: contactEmail.trim() || null,
+      contact_address: contactAddress.trim() || null,
+      call_date: callDate || null,
+      call_summary: callSummary.trim() || null,
     });
     setSaving(false);
 
     if (error) { toast.error(error.message); return; }
     toast.success(`Added ${trimOrg}`);
     setOrg(''); setCounty(''); setCountySearch(''); setSegment(''); setLocations(1);
+    setContactName(''); setContactTitle(''); setContactPhone('');
+    setContactEmail(''); setContactAddress('');
+    setCallDate(''); setCallSummary('');
     onRefresh();
   };
+
+  const LBL = "block text-[10px] uppercase tracking-wider font-bold mb-1";
+  const INP = "w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none";
+  const inpStyle = { borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY };
 
   return (
     <div className="border rounded-lg p-4" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
       <h4 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Add Prospect</h4>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
-        {/* Organization */}
+
+      {/* Row 1: Prospect */}
+      <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Prospect</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className={LBL} style={{ color: EV_MUTED }}>
             Organization <span style={{ color: EV_DANGER }}>*</span>
           </label>
-          <input
-            type="text" value={org} onChange={e => setOrg(e.target.value)}
-            placeholder="Business name"
-            className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-          />
+          <input type="text" value={org} onChange={e => setOrg(e.target.value)}
+            placeholder="Business name" className={INP} style={inpStyle} />
         </div>
-
-        {/* County (type-to-search) */}
         <div className="relative">
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>County</label>
-          <input
-            type="text"
+          <label className={LBL} style={{ color: EV_MUTED }}>County</label>
+          <input type="text"
             value={showCountyDropdown ? countySearch : county}
             onChange={e => { setCountySearch(e.target.value); setShowCountyDropdown(true); }}
             onFocus={() => setShowCountyDropdown(true)}
             onBlur={() => setTimeout(() => setShowCountyDropdown(false), 200)}
-            placeholder="Type to search..."
-            className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-          />
+            placeholder="Type to search..." className={INP} style={inpStyle} />
           {showCountyDropdown && filteredCounties.length > 0 && (
             <div className="absolute z-10 top-full left-0 right-0 mt-1 max-h-48 overflow-y-auto border rounded-md bg-white shadow-md"
               style={{ borderColor: EV_LINE }}>
@@ -165,37 +182,71 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
             </div>
           )}
         </div>
-
-        {/* Segment */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Segment</label>
-          <select
-            value={segment} onChange={e => setSegment(e.target.value)}
-            className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-          >
+          <label className={LBL} style={{ color: EV_MUTED }}>Segment</label>
+          <select value={segment} onChange={e => setSegment(e.target.value)}
+            className={`${INP} bg-white`} style={inpStyle}>
             <option value="">Select...</option>
             {SEGMENT_LIST.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
-
-        {/* Location count */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Locations</label>
-          <input
-            type="number" min={1} value={locations}
+          <label className={LBL} style={{ color: EV_MUTED }}>Locations</label>
+          <input type="number" min={1} value={locations}
             onChange={e => setLocations(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-          />
+            className={INP} style={inpStyle} />
         </div>
+      </div>
 
-        {/* Submit */}
-        <button
-          onClick={handleSubmit} disabled={saving}
+      {/* Row 2: Contact */}
+      <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Contact</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Name</label>
+          <input type="text" value={contactName} onChange={e => setContactName(e.target.value)}
+            placeholder="Contact name" className={INP} style={inpStyle} />
+        </div>
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Title</label>
+          <input type="text" value={contactTitle} onChange={e => setContactTitle(e.target.value)}
+            placeholder="Job title" className={INP} style={inpStyle} />
+        </div>
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Phone</label>
+          <input type="tel" value={contactPhone} onChange={e => setContactPhone(e.target.value)}
+            placeholder="(555) 555-5555" className={INP} style={inpStyle} />
+        </div>
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Email</label>
+          <input type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)}
+            placeholder="email@example.com" className={INP} style={inpStyle} />
+        </div>
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Address</label>
+          <input type="text" value={contactAddress} onChange={e => setContactAddress(e.target.value)}
+            placeholder="Business address" className={INP} style={inpStyle} />
+        </div>
+      </div>
+
+      {/* Row 3: Call log + submit */}
+      <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Call log</div>
+      <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr_auto] gap-3 items-end">
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Call date</label>
+          <input type="date" value={callDate} onChange={e => setCallDate(e.target.value)}
+            className={INP} style={inpStyle} />
+        </div>
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Summary</label>
+          <textarea value={callSummary} onChange={e => setCallSummary(e.target.value)}
+            placeholder="Call notes or outcome..."
+            rows={1}
+            className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none resize-y"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY, minHeight: 36 }} />
+        </div>
+        <button onClick={handleSubmit} disabled={saving}
           className="inline-flex items-center justify-center gap-2 py-[7px] px-4 text-[13px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
-          style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
-        >
+          style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}>
           <Plus size={14} /> {saving ? 'Saving...' : 'Add'}
         </button>
       </div>
