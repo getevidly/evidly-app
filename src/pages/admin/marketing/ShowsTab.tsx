@@ -7,15 +7,24 @@
  * provides a form to add new shows.
  */
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Plus, ChevronDown, ChevronUp, Calendar, MapPin, Users, Target } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Calendar, MapPin, Users } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { type AccountRow } from '../../../lib/marketing/useMarketingData';
+import {
+  JURISDICTIONS,
+  SEGMENTS,
+  STAGE_LABELS,
+  type Stage,
+} from '../../../lib/marketing/gtmReference';
 import {
   EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, EV_PAPER, EV_LIGHT, EV_FAINT,
   EV_SUCCESS, EV_WARN, EV_DANGER, DISPLAY, BODY,
 } from './marketingTokens';
-import { KpiMini } from './marketingPrimitives';
+import { KpiMini, BarRow } from './marketingPrimitives';
 import { toast } from 'sonner';
+
+const COUNTY_LIST = Object.keys(JURISDICTIONS).sort();
+const SEGMENT_LIST = Object.keys(SEGMENTS).sort();
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -199,12 +208,111 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
   );
 }
 
+// ── Log-lead form (inside expanded show card) ────────────────────
+
+function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void }) {
+  const [org, setOrg] = useState('');
+  const [contact, setContact] = useState('');
+  const [county, setCounty] = useState('');
+  const [segment, setSegment] = useState('');
+  const [locations, setLocations] = useState(1);
+  const [mrr, setMrr] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async () => {
+    const trimOrg = org.trim();
+    if (!trimOrg) { toast.error('Organization name is required'); return; }
+
+    setSaving(true);
+    const { error } = await supabase.from('sales_pipeline').insert({
+      org_name: trimOrg,
+      contact_name: contact.trim() || null,
+      county: county || null,
+      segment: segment || null,
+      location_count: locations,
+      estimated_mrr_cents: Math.round((parseFloat(mrr) || 0) * 100),
+      stage: 'prospect',
+      source: 'show',
+      show_id: showId,
+      buyer_type: segment ? (SEGMENTS[segment]?.category ?? null) : null,
+    });
+    setSaving(false);
+
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Lead logged: ${trimOrg}`);
+    setOrg(''); setContact(''); setCounty(''); setSegment('');
+    setLocations(1); setMrr('');
+    onAdded();
+  };
+
+  return (
+    <div className="border rounded-lg p-3 mt-3" style={{ borderColor: EV_LINE, backgroundColor: EV_LIGHT }}>
+      <h5 className="text-[12px] font-bold mb-2 uppercase tracking-wider" style={{ color: EV_MUTED }}>Log a Booth Lead</h5>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>
+            Organization <span style={{ color: EV_DANGER }}>*</span>
+          </label>
+          <input type="text" value={org} onChange={e => setOrg(e.target.value)}
+            placeholder="Business name"
+            className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Contact Name</label>
+          <input type="text" value={contact} onChange={e => setContact(e.target.value)}
+            placeholder="Contact at booth"
+            className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>County</label>
+          <select value={county} onChange={e => setCounty(e.target.value)}
+            className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
+            <option value="">Select...</option>
+            {COUNTY_LIST.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Segment</label>
+          <select value={segment} onChange={e => setSegment(e.target.value)}
+            className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
+            <option value="">Select...</option>
+            {SEGMENT_LIST.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Est. MRR ($)</label>
+          <input type="number" min={0} value={mrr} onChange={e => setMrr(e.target.value)}
+            placeholder="0"
+            className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
+        </div>
+        <div className="flex items-end">
+          <button onClick={handleSubmit} disabled={saving}
+            className="inline-flex items-center gap-1.5 py-[6px] px-3 text-[12px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
+            style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}>
+            <Plus size={12} /> {saving ? 'Saving...' : 'Log Lead'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Show card ────────────────────────────────────────────────────
 
-function ShowCard({ show, leadCount }: { show: ShowRow; leadCount: number }) {
+function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow[]; onRefresh: () => void }) {
   const [open, setOpen] = useState(false);
   const st = STATUS_STYLE[show.status] ?? STATUS_STYLE.planned;
   const collateralEntries = Object.entries(show.collateral || {});
+  const leadCount = leads.length;
+  const followedUp = leads.filter(a => a.stage !== 'prospect').length;
+  const followPct = leadCount > 0 ? Math.round((followedUp / leadCount) * 100) : 0;
+  const showPipeline = leads.reduce((s, a) => s + a.estimated_mrr_cents, 0);
+  const cpl = leadCount > 0 && show.budget_cents > 0 ? Math.round(show.budget_cents / leadCount) : 0;
 
   return (
     <div className="border rounded-lg" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
@@ -252,6 +360,7 @@ function ShowCard({ show, leadCount }: { show: ShowRow; leadCount: number }) {
 
       {open && (
         <div className="px-4 pb-4 pt-1 border-t" style={{ borderColor: EV_LINE }}>
+          {/* Show details */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[12px] mb-3">
             <div>
               <span className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Booth</span>
@@ -267,14 +376,12 @@ function ShowCard({ show, leadCount }: { show: ShowRow; leadCount: number }) {
             </div>
             <div>
               <span className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Cost / Lead</span>
-              <span style={{ color: EV_NAVY }}>
-                {leadCount > 0 && show.budget_cents > 0 ? fmtDollars(Math.round(show.budget_cents / leadCount)) : '\u2014'}
-              </span>
+              <span style={{ color: EV_NAVY }}>{cpl > 0 ? fmtDollars(cpl) : '\u2014'}</span>
             </div>
           </div>
 
           {collateralEntries.length > 0 && (
-            <div>
+            <div className="mb-3">
               <span className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Collateral</span>
               <div className="flex flex-wrap gap-2">
                 {collateralEntries.map(([item, done]) => (
@@ -288,10 +395,80 @@ function ShowCard({ show, leadCount }: { show: ShowRow; leadCount: number }) {
           )}
 
           {show.notes && (
-            <div className="mt-3 text-[12px]" style={{ color: EV_MUTED }}>
+            <div className="mb-3 text-[12px]" style={{ color: EV_MUTED }}>
               <span className="font-bold" style={{ color: EV_NAVY }}>Notes:</span> {show.notes}
             </div>
           )}
+
+          {/* Follow-up progress */}
+          {leadCount > 0 && (
+            <div className="mb-3">
+              <BarRow
+                label={`${followedUp} of ${leadCount} followed up`}
+                pct={followPct}
+                color={EV_EMBER}
+                right={`${followPct}%`}
+              />
+              <div className="flex gap-4 text-[11px] mt-1" style={{ color: EV_MUTED }}>
+                {cpl > 0 && <span>{fmtDollars(cpl)} / lead</span>}
+                {showPipeline > 0 && <span>{fmtDollars(showPipeline)} pipeline created</span>}
+              </div>
+            </div>
+          )}
+
+          {/* Leads table */}
+          <div className="border rounded-lg mt-3" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
+            <div className="px-4 py-2 border-b" style={{ borderColor: EV_LINE }}>
+              <h5 className="text-[12px] font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Booth Leads</h5>
+            </div>
+            {leads.length === 0 ? (
+              <div className="p-6 text-center text-[12px]" style={{ color: EV_MUTED }}>
+                No leads captured yet. Log one below.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b" style={{ borderColor: EV_LINE }}>
+                      {['Contact / Org', 'County', 'Segment', 'Est. MRR', 'Stage'].map(h => (
+                        <th key={h} className="py-1.5 px-4 text-[10px] font-bold uppercase tracking-wider" style={{ color: EV_MUTED }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {leads.map(lead => (
+                      <tr key={lead.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
+                        <td className="py-2 px-4">
+                          <div className="text-[12px] font-semibold" style={{ color: EV_NAVY }}>{lead.org_name}</div>
+                          {lead.contact_name && (
+                            <div className="text-[11px]" style={{ color: EV_MUTED }}>{lead.contact_name}</div>
+                          )}
+                        </td>
+                        <td className="py-2 px-4 text-[12px]" style={{ color: EV_MUTED }}>{lead.county || '\u2014'}</td>
+                        <td className="py-2 px-4 text-[12px]" style={{ color: EV_MUTED }}>{lead.segment || '\u2014'}</td>
+                        <td className="py-2 px-4 text-[12px]" style={{ color: EV_NAVY, fontFamily: 'ui-monospace, monospace' }}>
+                          {lead.estimated_mrr_cents > 0 ? fmtDollars(lead.estimated_mrr_cents) : '\u2014'}
+                        </td>
+                        <td className="py-2 px-4">
+                          <span className="inline-flex text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                            style={{
+                              backgroundColor: lead.stage === 'prospect' ? EV_LIGHT : '#E7EDE7',
+                              color: lead.stage === 'prospect' ? EV_MUTED : EV_SUCCESS,
+                              letterSpacing: '0.08em',
+                            }}>
+                            {STAGE_LABELS[lead.stage as Stage] ?? lead.stage}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Log a lead form */}
+          <LogLeadForm showId={show.id} onAdded={onRefresh} />
         </div>
       )}
     </div>
@@ -326,12 +503,15 @@ export default function ShowsTab({
   // Pipeline rows tagged as show leads
   const showLeads = useMemo(() => accounts.filter(a => a.source === 'show'), [accounts]);
 
-  // Lead counts per show_id
+  // Leads grouped by show_id
   const leadsByShow = useMemo(() => {
-    const map: Record<string, number> = {};
+    const map: Record<string, AccountRow[]> = {};
     for (const lead of showLeads) {
       const sid = (lead as any).show_id as string | null;
-      if (sid) map[sid] = (map[sid] || 0) + 1;
+      if (sid) {
+        if (!map[sid]) map[sid] = [];
+        map[sid].push(lead);
+      }
     }
     return map;
   }, [showLeads]);
@@ -388,7 +568,7 @@ export default function ShowsTab({
         ) : (
           <div className="space-y-2">
             {shows.map(show => (
-              <ShowCard key={show.id} show={show} leadCount={leadsByShow[show.id] || 0} />
+              <ShowCard key={show.id} show={show} leads={leadsByShow[show.id] || []} onRefresh={handleAdded} />
             ))}
           </div>
         )}
