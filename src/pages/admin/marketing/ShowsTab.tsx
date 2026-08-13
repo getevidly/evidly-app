@@ -7,7 +7,7 @@
  * provides a form to add new shows.
  */
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Plus, ChevronDown, ChevronUp, Calendar, MapPin, Users } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Calendar, MapPin, Users, ArrowUpDown } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { type AccountRow } from '../../../lib/marketing/useMarketingData';
 import {
@@ -304,6 +304,9 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
 
 // ── Show card ────────────────────────────────────────────────────
 
+type LeadSortCol = 'org_name' | 'county' | 'segment' | 'estimated_mrr_cents' | 'stage';
+type LeadSortDir = 'asc' | 'desc';
+
 function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow[]; onRefresh: () => void }) {
   const [open, setOpen] = useState(false);
   const st = STATUS_STYLE[show.status] ?? STATUS_STYLE.planned;
@@ -313,6 +316,72 @@ function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow
   const followPct = leadCount > 0 ? Math.round((followedUp / leadCount) * 100) : 0;
   const showPipeline = leads.reduce((s, a) => s + a.estimated_mrr_cents, 0);
   const cpl = leadCount > 0 && show.budget_cents > 0 ? Math.round(show.budget_cents / leadCount) : 0;
+
+  // ── Booth-lead filters ────────────────────────────────────────
+  const [leadSearch, setLeadSearch] = useState('');
+  const [filterCounty, setFilterCounty] = useState('');
+  const [filterSegment, setFilterSegment] = useState('');
+  const [filterStage, setFilterStage] = useState('');
+
+  // ── Booth-lead sort ───────────────────────────────────────────
+  const [sortCol, setSortCol] = useState<LeadSortCol>('org_name');
+  const [sortDir, setSortDir] = useState<LeadSortDir>('asc');
+
+  function toggleSort(col: LeadSortCol) {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('asc'); }
+  }
+
+  const sortIcon = (active: boolean) => (
+    <ArrowUpDown size={11} style={{ color: active ? EV_EMBER : EV_MUTED, opacity: active ? 1 : 0.4 }} />
+  );
+
+  // Dropdown options derived from this show's leads
+  const leadCounties = useMemo(
+    () => [...new Set(leads.map(a => a.county).filter(Boolean) as string[])].sort(),
+    [leads],
+  );
+  const leadSegments = useMemo(
+    () => [...new Set(leads.map(a => a.segment).filter(Boolean) as string[])].sort(),
+    [leads],
+  );
+  const leadStages = useMemo(
+    () => [...new Set(leads.map(a => a.stage))].sort(),
+    [leads],
+  );
+
+  const filteredLeads = useMemo(() => {
+    return leads.filter(a => {
+      if (leadSearch) {
+        const q = leadSearch.toLowerCase();
+        const match = a.org_name.toLowerCase().includes(q)
+          || (a.contact_name || '').toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      if (filterCounty && a.county !== filterCounty) return false;
+      if (filterSegment && a.segment !== filterSegment) return false;
+      if (filterStage && a.stage !== filterStage) return false;
+      return true;
+    });
+  }, [leads, leadSearch, filterCounty, filterSegment, filterStage]);
+
+  const sortedLeads = useMemo(() => {
+    const rows = [...filteredLeads];
+    rows.sort((a, b) => {
+      let cmp = 0;
+      switch (sortCol) {
+        case 'org_name': cmp = a.org_name.localeCompare(b.org_name); break;
+        case 'county': cmp = (a.county || '').localeCompare(b.county || ''); break;
+        case 'segment': cmp = (a.segment || '').localeCompare(b.segment || ''); break;
+        case 'estimated_mrr_cents': cmp = a.estimated_mrr_cents - b.estimated_mrr_cents; break;
+        case 'stage': cmp = a.stage.localeCompare(b.stage); break;
+      }
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
+    return rows;
+  }, [filteredLeads, sortCol, sortDir]);
+
+  const hasLeadFilters = !!(leadSearch || filterCounty || filterSegment || filterStage);
 
   return (
     <div className="border rounded-lg" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
@@ -426,44 +495,103 @@ function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow
                 No leads captured yet. Log one below.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b" style={{ borderColor: EV_LINE }}>
-                      {['Contact / Org', 'County', 'Segment', 'Est. MRR', 'Stage'].map(h => (
-                        <th key={h} className="py-1.5 px-4 text-[10px] font-bold uppercase tracking-wider" style={{ color: EV_MUTED }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leads.map(lead => (
-                      <tr key={lead.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
-                        <td className="py-2 px-4">
-                          <div className="text-[12px] font-semibold" style={{ color: EV_NAVY }}>{lead.org_name}</div>
-                          {lead.contact_name && (
-                            <div className="text-[11px]" style={{ color: EV_MUTED }}>{lead.contact_name}</div>
-                          )}
-                        </td>
-                        <td className="py-2 px-4 text-[12px]" style={{ color: EV_MUTED }}>{lead.county || '\u2014'}</td>
-                        <td className="py-2 px-4 text-[12px]" style={{ color: EV_MUTED }}>{lead.segment || '\u2014'}</td>
-                        <td className="py-2 px-4 text-[12px]" style={{ color: EV_NAVY, fontFamily: 'ui-monospace, monospace' }}>
-                          {lead.estimated_mrr_cents > 0 ? fmtDollars(lead.estimated_mrr_cents) : '\u2014'}
-                        </td>
-                        <td className="py-2 px-4">
-                          <span className="inline-flex text-[10px] font-bold uppercase px-2 py-0.5 rounded"
-                            style={{
-                              backgroundColor: lead.stage === 'prospect' ? EV_LIGHT : '#E7EDE7',
-                              color: lead.stage === 'prospect' ? EV_MUTED : EV_SUCCESS,
-                              letterSpacing: '0.08em',
-                            }}>
-                            {STAGE_LABELS[lead.stage as Stage] ?? lead.stage}
-                          </span>
-                        </td>
+              <>
+                {/* Filter bar */}
+                <div className="px-4 py-2 flex items-center gap-2 flex-wrap border-b" style={{ borderColor: EV_LINE }}>
+                  <input
+                    type="text" value={leadSearch} onChange={e => setLeadSearch(e.target.value)}
+                    placeholder="Search contact / org..."
+                    className="py-[5px] px-[8px] text-[12px] border rounded-md outline-none"
+                    style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY, minWidth: 140 }}
+                  />
+                  <select value={filterCounty} onChange={e => setFilterCounty(e.target.value)}
+                    className="py-[5px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
+                    style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
+                    <option value="">All counties</option>
+                    {leadCounties.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <select value={filterSegment} onChange={e => setFilterSegment(e.target.value)}
+                    className="py-[5px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
+                    style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
+                    <option value="">All segments</option>
+                    {leadSegments.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <select value={filterStage} onChange={e => setFilterStage(e.target.value)}
+                    className="py-[5px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
+                    style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
+                    <option value="">All stages</option>
+                    {leadStages.map(s => <option key={s} value={s}>{STAGE_LABELS[s as Stage] ?? s}</option>)}
+                  </select>
+                  {hasLeadFilters && (
+                    <button
+                      onClick={() => { setLeadSearch(''); setFilterCounty(''); setFilterSegment(''); setFilterStage(''); }}
+                      className="py-[5px] px-2 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+                      style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}>
+                      Clear
+                    </button>
+                  )}
+                  <span className="ml-auto text-[11px] font-semibold" style={{ color: EV_MUTED }}>
+                    {filteredLeads.length} lead{filteredLeads.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b" style={{ borderColor: EV_LINE }}>
+                        {([
+                          ['Contact / Org', 'org_name'],
+                          ['County', 'county'],
+                          ['Segment', 'segment'],
+                          ['Est. MRR', 'estimated_mrr_cents'],
+                          ['Stage', 'stage'],
+                        ] as [string, LeadSortCol][]).map(([label, col]) => (
+                          <th key={col} onClick={() => toggleSort(col)}
+                            className="py-1.5 px-4 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+                            style={{ color: EV_MUTED }}>
+                            <span className="inline-flex items-center gap-1">
+                              {label} {sortIcon(sortCol === col)}
+                            </span>
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {sortedLeads.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="p-4 text-center text-[12px]" style={{ color: EV_MUTED }}>
+                            No leads match filters.
+                          </td>
+                        </tr>
+                      ) : sortedLeads.map(lead => (
+                        <tr key={lead.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
+                          <td className="py-2 px-4">
+                            <div className="text-[12px] font-semibold" style={{ color: EV_NAVY }}>{lead.org_name}</div>
+                            {lead.contact_name && (
+                              <div className="text-[11px]" style={{ color: EV_MUTED }}>{lead.contact_name}</div>
+                            )}
+                          </td>
+                          <td className="py-2 px-4 text-[12px]" style={{ color: EV_MUTED }}>{lead.county || '\u2014'}</td>
+                          <td className="py-2 px-4 text-[12px]" style={{ color: EV_MUTED }}>{lead.segment || '\u2014'}</td>
+                          <td className="py-2 px-4 text-[12px]" style={{ color: EV_NAVY, fontFamily: 'ui-monospace, monospace' }}>
+                            {lead.estimated_mrr_cents > 0 ? fmtDollars(lead.estimated_mrr_cents) : '\u2014'}
+                          </td>
+                          <td className="py-2 px-4">
+                            <span className="inline-flex text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                              style={{
+                                backgroundColor: lead.stage === 'prospect' ? EV_LIGHT : '#E7EDE7',
+                                color: lead.stage === 'prospect' ? EV_MUTED : EV_SUCCESS,
+                                letterSpacing: '0.08em',
+                              }}>
+                              {STAGE_LABELS[lead.stage as Stage] ?? lead.stage}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
 
