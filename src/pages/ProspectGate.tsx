@@ -817,14 +817,6 @@ export function ProspectGate() {
             <p style={{ margin: '15px 0 0', fontSize: 13, color: '#a9b4cb' }}>
               A full 60 days to set up and run EvidLY before your first payment.
             </p>
-
-            {/* Single CTA — account action */}
-            <div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid ${NAVY_LINE}` }}>
-              <Link to={`/join/${token}`}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: EMBER, color: '#fff', fontFamily: FONT_INTER, fontWeight: 600, fontSize: '15.5px', textDecoration: 'none', padding: '15px 22px', borderRadius: 10, border: `1px solid ${EMBER_DEEP}`, width: '100%', justifyContent: 'center' }}>
-                Get started <span style={{ fontWeight: 700 }}>&rarr;</span>
-              </Link>
-            </div>
           </section>
 
           {/* ===== FOUNDER CARD ===== */}
