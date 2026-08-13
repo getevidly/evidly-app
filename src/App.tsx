@@ -192,6 +192,7 @@ const MarketingMethods = lazy(() => import('./pages/admin/marketing/MarketingMet
 const MarketingOverview = lazy(() => import('./pages/admin/marketing/MarketingOverview'));
 const MarketingOutboundCalls = lazy(() => import('./pages/admin/marketing/MarketingOutboundCalls'));
 const MarketingInPerson = lazy(() => import('./pages/admin/marketing/MarketingInPerson'));
+const MarketingShows = lazy(() => import('./pages/admin/marketing/MarketingShows'));
 const MarketingChannels = lazy(() => import('./pages/admin/marketing/MarketingChannels'));
 const MarketingSurvey = lazy(() => import('./pages/admin/marketing/MarketingSurvey'));
 const MarketingContentSchedule = lazy(() => import('./pages/admin/marketing/MarketingContentSchedule'));
@@ -844,6 +845,7 @@ function AppRoutes() {
           <Route path="/admin/marketing/overview" element={<SalesGuard><MarketingOverview /></SalesGuard>} />
           <Route path="/admin/marketing/outbound-calls" element={<SalesGuard><MarketingOutboundCalls /></SalesGuard>} />
           <Route path="/admin/marketing/in-person" element={<SalesGuard><MarketingInPerson /></SalesGuard>} />
+          <Route path="/admin/marketing/shows" element={<SalesGuard><MarketingShows /></SalesGuard>} />
           <Route path="/admin/marketing/accounts" element={<SalesGuard><MarketingAccounts /></SalesGuard>} />
           <Route path="/admin/marketing/network" element={<SalesGuard><MarketingNetwork /></SalesGuard>} />
           <Route path="/admin/marketing/channels" element={<SalesGuard><MarketingChannels /></SalesGuard>} />

@@ -18,6 +18,7 @@ import OutreachTab from './OutreachTab';
 import OverviewTab from './OverviewTab';
 import OutboundCallsTab from './OutboundCallsTab';
 import InPersonTab from './InPersonTab';
+import ShowsTab from './ShowsTab';
 import FunnelTab from './FunnelTab';
 import SegmentsTab from './SegmentsTab';
 import FounderWindowTab from './FounderWindowTab';
@@ -246,6 +247,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'overview'  && <OverviewTab accounts={accounts} sends={sends} loading={loading} error={error} />}
       {tab === 'calls'     && <OutboundCallsTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}
       {tab === 'field'     && <InPersonTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}
+      {tab === 'shows'     && <ShowsTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}
       {tab === 'channels'  && <ChannelsTab />}
       {tab === 'survey'    && <SurveyTab />}
       {tab === 'schedule'  && <ContentScheduleTab />}

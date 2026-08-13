@@ -13,6 +13,7 @@ import {
   LayoutDashboard, Radio, MapPin, Building2,
   Layers, ClipboardList, Calendar, Flame, GitBranch,
   Users, Mail, Search, TrendingUp, Megaphone, FileBarChart,
+  Ticket,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -29,6 +30,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'sequence',  label: 'Outreach',           Icon: Mail,            route: 'email-sequence' },
   { id: 'calls',     label: 'Outbound Calls',     Icon: Radio,           route: 'outbound-calls' },
   { id: 'field',     label: 'In Person',           Icon: MapPin,          route: 'in-person' },
+  { id: 'shows',     label: 'Shows',               Icon: Ticket,          route: 'shows' },
   { id: 'schedule',  label: 'Content Schedule',    Icon: Calendar,        route: 'content-schedule' },
   { id: 'survey',    label: 'Survey',              Icon: ClipboardList,   route: 'survey' },
   { id: 'funnel',    label: 'Funnel',              Icon: GitBranch,       route: 'funnel' },
@@ -42,7 +44,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 ];
 
 export type MarketingTabId =
-  | 'overview' | 'calls' | 'field' | 'accounts' | 'network'
+  | 'overview' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
   | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast';
 
