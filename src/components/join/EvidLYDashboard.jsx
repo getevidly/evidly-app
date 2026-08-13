@@ -163,7 +163,7 @@ const CSS = `
 .ev-rings{display:flex;gap:28px}
 .ev-ring-w{display:flex;flex-direction:column;align-items:center;gap:11px;cursor:default}
 .ev-ring{position:relative;width:124px;height:124px;transition:transform .3s cubic-bezier(.34,1.4,.64,1)}
-.ev-ring svg{display:block;transform:rotate(-90deg);overflow:visible}
+.ev-ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
 .ev-arc{transition:stroke-dashoffset 1.15s cubic-bezier(.22,1,.36,1) .15s,stroke-width .3s ease}
 .ev-halo{opacity:0;transition:opacity .3s ease}
 .ev-ring-w:hover .ev-ring{transform:scale(1.045)}
