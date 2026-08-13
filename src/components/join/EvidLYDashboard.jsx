@@ -418,12 +418,6 @@ const CSS = `
 /* ── Hero risk + CTA (mobile) ──────────────────────────── */
 .ev-hero-risk{text-align:center;margin-top:22px;font-size:13px;color:rgba(255,255,255,.55)}
 .ev-hero-risk b{color:#fff;font-family:'Instrument Sans',system-ui,sans-serif;font-size:18px;font-weight:700}
-.ev-hero-cta{display:block;width:100%;padding:13px 24px;background:#B24A2E;color:#fff;
-  text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;font-size:14.5px;
-  font-weight:600;border-radius:9px;text-align:center;margin-top:20px;transition:opacity .18s}
-.ev-hero-cta:hover{opacity:.9}
-.ev-hero-view{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;
-  color:rgba(255,255,255,.4);margin-top:8px;letter-spacing:.04em}
 
 /* ── Collapsible cards (mobile) ──────────────────────── */
 .ev-cards{padding:16px 16px 80px}
@@ -1154,12 +1148,6 @@ function EvidLYDashboard({ loc: locProp, onLocChange, embedded = false, gateToke
             <b>{range(risk.fire.lo + risk.food.lo, risk.fire.hi + risk.food.hi)}</b>/yr at risk
           </div>
 
-          {gateToken && (
-            <>
-              <a className="ev-hero-cta" href={`/gate/${gateToken}`}>See what{'\u2019'}s on file {'\u2192'}</a>
-              <div className="ev-hero-view">Your record {'\u00b7'} view-only, no account</div>
-            </>
-          )}
         </div>
 
         {/* ── Collapsible cards ── */}
