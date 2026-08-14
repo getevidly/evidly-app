@@ -140,6 +140,9 @@ export default function OutreachTab() {
   const [jurConfirm, setJurConfirm] = useState<{ county: string; changes: { field: string; before: string; after: string }[] } | null>(null);
   const [sourceConfirmed, setSourceConfirmed] = useState(false);
 
+  // Standalone county preview
+  const [previewAnyCounty, setPreviewAnyCounty] = useState('');
+
   // Queue filter
   const [queueFilter, setQueueFilter] = useState('all');
 
@@ -1044,6 +1047,63 @@ export default function OutreachTab() {
             County review
           </h3>
         </div>
+
+        {/* Standalone preview — any county */}
+        <div style={{
+          display: 'flex', flexWrap: 'wrap' as const, alignItems: 'end', gap: 10,
+          padding: '14px 16px', borderRadius: 8, marginBottom: 16,
+          background: EV_LIGHT, border: `1px solid ${EV_LINE}`,
+        }}>
+          <div style={{ flex: '0 0 auto' }}>
+            <div style={LABEL}>Preview any county ({counties.length})</div>
+            <select
+              value={previewAnyCounty}
+              onChange={e => setPreviewAnyCounty(e.target.value)}
+              style={{ ...INPUT, width: 240, background: '#FFF' }}
+            >
+              <option value="">Select a county</option>
+              {counties.map((c: any) => (
+                <option key={c.county} value={c.county}>{c.county}</option>
+              ))}
+            </select>
+          </div>
+          <button
+            onClick={() => previewAnyCounty && handlePreview(previewAnyCounty)}
+            disabled={!previewAnyCounty || !!actionLoading}
+            style={{
+              ...BTN(EV_NAVY, '#FFF'),
+              opacity: previewAnyCounty ? 1 : 0.4,
+              cursor: previewAnyCounty ? 'pointer' : 'not-allowed',
+            }}
+          >
+            {actionLoading === `preview-${previewAnyCounty}` ? 'Loading...' : 'Preview'}
+          </button>
+          {previewCounty && (
+            <button
+              onClick={() => { setPreviewHtml(null); setPreviewCounty(null); }}
+              style={BTN(EV_LIGHT, EV_NAVY)}
+            >
+              Close preview
+            </button>
+          )}
+        </div>
+
+        {/* Standalone preview render */}
+        {previewHtml && previewCounty && (
+          <div style={{
+            border: `1px solid ${EV_LINE}`, borderRadius: 8,
+            overflow: 'auto', maxHeight: 600, background: '#FFF',
+            marginBottom: 16,
+          }}>
+            <div style={{
+              padding: '8px 16px', background: EV_CREAM, borderBottom: `1px solid ${EV_LINE}`,
+              fontSize: 12, fontWeight: 700, color: EV_NAVY,
+            }}>
+              {previewCounty} County briefing preview
+            </div>
+            <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
+          </div>
+        )}
 
         {countiesWithRecipients.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 24, color: EV_MUTED, fontSize: 13 }}>
