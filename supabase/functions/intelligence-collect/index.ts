@@ -347,12 +347,17 @@ function normalizeForDedupe(content: string): string {
     .replace(/<nav[\s\S]*?<\/nav>/gi, "")
     .replace(/<header[\s\S]*?<\/header>/gi, "")
     .replace(/<footer[\s\S]*?<\/footer>/gi, "")
+    .replace(/<aside[\s\S]*?<\/aside>/gi, "")
     // Strip remaining HTML tags → plain text
     .replace(/<[^>]+>/g, " ")
     // Decode common entities
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     // Lowercase
     .toLowerCase()
+    // Collapse long hex/digit tokens (nonces, session IDs, CSRF tokens)
+    // 16+ hex chars or 10+ digits → constant placeholder
+    .replace(/\b[0-9a-f]{16,}\b/g, "TOKEN")
+    .replace(/\b\d{10,}\b/g, "TOKEN")
     // Strip date/time patterns so timestamp-only changes don't bust the hash
     // "August 13, 2026" / "August 13 2026"
     .replace(/\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s*\d{2,4}\b/g, "")
