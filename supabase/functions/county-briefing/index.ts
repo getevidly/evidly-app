@@ -672,7 +672,13 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   <!-- 3. SALUTATION -->
   <tr><td class="p40" style="padding:0 40px 0;" bgcolor="#FFFFFF">
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 20px;">Hi ${firstName} \u2014 you manage a kitchen in ${county} County; here is what your property management, insurance company, the fire marshal and health department can ask you to produce anytime.</p>
+    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 20px;">${
+      firstName !== 'there' && orgName
+        ? `Hi <strong style="color:#1C2A3A;">${firstName}</strong> \u2014 <strong style="color:#1C2A3A;">${orgName}</strong> runs a kitchen in ${county} County. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
+        : firstName !== 'there'
+        ? `Hi <strong style="color:#1C2A3A;">${firstName}</strong> \u2014 you manage a kitchen in ${county} County. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
+        : `Hi there \u2014 you manage a kitchen in ${county} County. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
+    }</p>
   </td></tr>
 
   <!-- 4. HEADLINE -->
