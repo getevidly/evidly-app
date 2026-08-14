@@ -665,7 +665,7 @@ async function handleDocumentEvent(
         .from("organizations")
         .insert({
           name: client_name || `HoodOps Client ${hoodops_client_id}`,
-          industry_type: "Restaurant",
+          industry_type: null,
           external_source: "hoodops",
           external_id: hoodops_client_id,
           primary_contact_phone: client_phone || null,
