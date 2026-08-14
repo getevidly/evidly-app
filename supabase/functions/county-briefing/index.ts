@@ -502,33 +502,84 @@ function buildBriefingEmail(
     ? `${unsubBase}?token=${encodeURIComponent(unsubToken)}`
     : 'https://app.getevidly.com/settings/notifications';
 
-  // ── Row builder for fire / food tables ──────────────────────────
-  const row = (name: string, cite: string, value: string) =>
-    `<tr><td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fInstrument};font-size:14px;">${name}</td>` +
-    `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#8B95AA;font-family:${fMono};font-size:11px;white-space:nowrap;">${cite}</td>` +
-    `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fInstrument};font-size:13px;text-align:right;">${value}</td></tr>`;
+  // ── Card builders for fire / food grids ─────────────────────────
+  // Standard card: white bg, solid border, coloured top accent
+  const card = (title: string, cite: string, value: string, accent: string, cadence?: string) => {
+    const citeLine = cadence
+      ? `${cite} <span style="color:#B24A2E;">\u00b7 ${cadence}</span>`
+      : cite;
+    const valueLine = value
+      ? `<div style="font-family:${fInstrument};font-size:11.5px;color:#4A5566;margin-top:5px;">${value}</div>`
+      : '';
+    return `<td width="33%" style="padding:0 4px 8px;" valign="top"><div style="border:1px solid #E7DFCE;border-top:3px solid ${accent};padding:11px;background:#FFFFFF;">` +
+      `<div style="font-family:${fInstrument};font-size:12.5px;font-weight:bold;color:#1C2A3A;">${title}</div>` +
+      `<div style="font-family:${fMono};font-size:9.5px;color:#8B95AA;margin-top:2px;">${citeLine}</div>` +
+      `${valueLine}</div></td>`;
+  };
+  // Listed card: dashed border, tinted bg, no accent, uppercase label
+  const listed = (label: string, title: string, cite: string) =>
+    `<td width="33%" style="padding:0 4px 8px;" valign="top"><div style="border:1px dashed #C9C2B4;padding:11px;background:#FCFAF5;">` +
+    `<div style="font-family:${fMono};font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:#A79E8D;margin-bottom:3px;">${label}</div>` +
+    `<div style="font-family:${fInstrument};font-size:12.5px;font-weight:bold;color:#1C2A3A;">${title}</div>` +
+    `<div style="font-family:${fMono};font-size:9.5px;color:#8B95AA;margin-top:2px;">${cite}</div>` +
+    `</div></td>`;
+  // Wrap cards into 3-per-row grid using nested tables (Outlook-safe)
+  const gridOpen = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">`;
+  const gridRow = (...cells: string[]) => `<tr>${cells.join('')}</tr>`;
+  const emptyCell = `<td width="33%" style="padding:0 4px 8px;" valign="top"></td>`;
 
-  const tblOpen = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">`;
+  const FA = '#B24A2E'; // fire accent
+  const XA = '#3E6B8A'; // food accent
 
-  const fireTable = tblOpen +
-    row('Exhaust &amp; hood cleaning', 'NFPA 96', 'By cooking volume and equipment type') +
-    row('Fire suppression', 'NFPA 17A', 'Every 6 months') +
-    row('Fire sprinklers', 'NFPA 25', 'Annually') +
-    row('Fire alarm', 'NFPA 72', 'Annually') +
-    row('Fire extinguishers', 'NFPA 10', 'Annually') +
+  const fireGrid = gridOpen +
+    gridRow(
+      card('Hood and exhaust cleaning', 'NFPA 96 \u00b7 CFC 609', 'By cooking volume and equipment type', FA),
+      card('Fire suppression system', 'NFPA 17A \u00b7 CFC 904', 'Every 6 months', FA),
+      card('Sprinkler system', 'NFPA 25 \u00b7 CFC 901', 'Annually', FA),
+    ) +
+    gridRow(
+      card('Fire alarm system', 'NFPA 72 \u00b7 CFC 907', 'Annually', FA),
+      card('Fire extinguishers', 'NFPA 10 \u00b7 CFC 906', 'Annually', FA),
+      listed('Issued to you', 'Fire authority inspection report', 'Local fire authority'),
+    ) +
     '</table>';
 
-  const foodTable = tblOpen +
-    row('Pest control', 'CalCode \u00a7114259', 'Monthly service') +
-    row('Receiving temperatures', 'CalCode \u00a7113996', 'At delivery') +
-    row('Hot holding', 'CalCode \u00a7113996', '\u2265135\u00b0F') +
-    row('Cold holding', 'CalCode \u00a7113996', '\u226441\u00b0F') +
-    row('Cooling', 'CalCode \u00a7114002', '135\u219270\u00b0F in 2 hrs') +
-    row('Reheating', 'CalCode \u00a7114014', '\u2265165\u00b0F within 2 hrs') +
-    row('Warewash &amp; sanitizer', 'CalCode \u00a7114099', 'Test kit on hand') +
-    row('Health permit', 'CalCode \u00a7114381', 'Current') +
-    row('Manager certification', 'CalCode \u00a7113947', 'One per facility') +
-    row('Food handler cards', 'CalCode \u00a7113948', 'All food staff') +
+  const foodGrid = gridOpen +
+    gridRow(
+      card('Pest control', '\u00a7114259', 'Monthly service', XA),
+      listed('If applicable', 'Grease trap service', 'Local fats, oils and grease ordinance'),
+      listed('If applicable', 'Backflow testing', 'California Code of Regulations Title 17'),
+    ) +
+    gridRow(
+      card('Receiving temperature log', '\u00a7113996', 'At delivery', XA, 'one per day'),
+      card('Cold holding log', '\u00a7113996', '\u226441\u00b0F', XA, 'one per day'),
+      card('Hot holding log', '\u00a7113996', '\u2265135\u00b0F', XA, 'one per day'),
+    ) +
+    gridRow(
+      card('Cooling log', '\u00a7114002', '135\u219270\u00b0F in 2 hrs', XA, 'one per day'),
+      card('Reheating log', '\u00a7114014', '\u2265165\u00b0F within 2 hrs', XA, 'one per day'),
+      card('Warewash and sanitizer', '\u00a7114099', 'Test kit on hand', XA),
+    ) +
+    gridRow(
+      card('Health permit', '\u00a7114381', 'Current', XA),
+      card('Food protection manager', '\u00a7113947.1', 'One per facility', XA, 'one per certified person'),
+      card('Food handler cards', '\u00a7113948', 'All food staff', XA, 'one per person'),
+    ) +
+    gridRow(
+      card('Allergen awareness and training', '\u00a7113947(b)', '', XA, 'one per person'),
+      card('Person in charge', '\u00a7113945', '', XA),
+      card('Employee health policy', '\u00a7113949', '', XA),
+    ) +
+    gridRow(
+      listed('If applicable', 'HACCP plan', '\u00a7114419'),
+      listed('If applicable', 'Edible food recovery agreement and log', 'California Code of Regulations Title 14 \u00a718991.3'),
+      listed('If applicable', 'Allergen labelling on menus', 'Senate Bill 68 \u00b7 effective 1 July 2026'),
+    ) +
+    gridRow(
+      listed('If applicable', 'Prepackaged food labelling', '\u00a7114089'),
+      listed('Issued to you', 'Health inspection report', 'County health department'),
+      emptyCell,
+    ) +
     '</table>';
 
   // ── Build evaluation block from jurisdiction data ─────────────────
@@ -631,15 +682,16 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   <!-- 5. FIRE SAFETY -->
   <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Fire Safety Compliance Records</h3>
-    ${fireTable}
-    <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Five systems, five separate service records \u2014 whether one company services them or five.</p>
+    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#B24A2E;">Fire safety</span> <span style="font-family:${fMono};font-size:9px;color:#A79E8D;letter-spacing:0.04em;">FIVE RECORDS \u00b7 PLUS 1 LISTED, NOT INCLUDED IN THE TOTAL</span></div>
+    ${fireGrid}
+    <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Every one is a vendor service record \u2014 the signed report from the licensed contractor who did the work. The fire authority\u2019s own inspection report is theirs, not yours.</p>
   </td></tr>
 
   <!-- 6. FOOD SAFETY -->
   <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">Food Safety Compliance Records</h3>
-    ${foodTable}
+    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#3E6B8A;">Food safety</span> <span style="font-family:${fMono};font-size:9px;color:#A79E8D;letter-spacing:0.04em;">13 RECORDS \u00b7 PLUS 7 LISTED, NOT INCLUDED IN THE TOTAL</span></div>
+    ${foodGrid}
+    <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Pest control, grease trap and backflow are vendor services \u2014 a company does the work and signs the record. Everything flagged here is listed but not included in the total.</p>
     <p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: California Retail Food Code.</p>
   </td></tr>
 
