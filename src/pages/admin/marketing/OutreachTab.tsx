@@ -8,6 +8,7 @@
  *   4. County review        — approval table (moved from standalone page)
  *   5. Cold handoff         — export cold recipients for HubSpot
  *   6. Queue                — all recipients, hold reasons inline
+ *   7. Missing clients      — orgs not in the briefing queue, with enroll action
  *
  * Master pause toggle above everything — nothing sends while it is off.
  */
@@ -142,6 +143,11 @@ export default function OutreachTab() {
   // Queue filter
   const [queueFilter, setQueueFilter] = useState('all');
 
+  // Missing clients reconciliation
+  type MissingClient = { id: string; name: string; email: string | null; county: string | null; created_at: string; reason: string };
+  const [missingClients, setMissingClients] = useState<MissingClient[]>([]);
+  const [enrollingId, setEnrollingId] = useState<string | null>(null);
+
   const flash = (msg: string) => {
     setMessage(msg);
     setTimeout(() => setMessage(null), 4000);
@@ -150,13 +156,16 @@ export default function OutreachTab() {
   // ── Data loading ─────────────────────────────────────────────
 
   const loadAll = useCallback(async () => {
-    const [stepsRes, countiesRes, recipientsRes] = await Promise.all([
+    const [stepsRes, countiesRes, recipientsRes, orgsRes] = await Promise.all([
       supabase.functions.invoke('county-briefing', { body: { action: 'list-steps' } }),
       supabase.functions.invoke('county-briefing', { body: { action: 'list' } }),
       supabase.from('county_briefing_recipients')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(500),
+      supabase.from('organizations')
+        .select('id, name, primary_contact_email, created_at')
+        .order('created_at', { ascending: false }),
     ]);
 
     const allSteps = stepsRes.data?.steps || [];
@@ -166,7 +175,49 @@ export default function OutreachTab() {
     setPaused(masterRow ? !masterRow.is_active : false);
 
     setCounties(countiesRes.data?.counties || []);
-    setRecipients(recipientsRes.data || []);
+    const recs = recipientsRes.data || [];
+    setRecipients(recs);
+
+    // Reconcile: orgs whose contact email is NOT in county_briefing_recipients
+    const recipientEmails = new Set(recs.map((r: any) => (r.email || '').toLowerCase()));
+    const orgs = orgsRes.data || [];
+    const missing: MissingClient[] = [];
+    for (const org of orgs) {
+      const email = (org.primary_contact_email || '').trim().toLowerCase();
+      if (email && recipientEmails.has(email)) continue;
+
+      // Resolve county from first location
+      let county: string | null = null;
+      const { data: loc } = await supabase
+        .from('locations')
+        .select('jurisdiction_id')
+        .eq('organization_id', org.id)
+        .not('jurisdiction_id', 'is', null)
+        .limit(1)
+        .maybeSingle();
+      if (loc?.jurisdiction_id) {
+        const { data: jur } = await supabase
+          .from('jurisdictions')
+          .select('county')
+          .eq('id', loc.jurisdiction_id)
+          .maybeSingle();
+        county = jur?.county || null;
+      }
+
+      let reason = 'Ready to enroll';
+      if (!email) reason = 'No contact email';
+      else if (!county) reason = 'County not resolved';
+
+      missing.push({
+        id: org.id,
+        name: org.name,
+        email: email || null,
+        county,
+        created_at: org.created_at,
+        reason,
+      });
+    }
+    setMissingClients(missing);
     setLoading(false);
   }, []);
 
@@ -338,6 +389,37 @@ export default function OutreachTab() {
     setBulkResult({ inserted: data.inserted, skipped, invalid });
     flash(`Imported ${data.inserted}, skipped ${skipped}, invalid ${invalid}`);
     loadAll();
+  };
+
+  // ── Enroll missing client ────────────────────────────────────
+
+  const enrollMissing = async (client: MissingClient) => {
+    if (!client.email) return;
+    setEnrollingId(client.id);
+    try {
+      const firstName = client.name ? client.name.split(/\s+/)[0] : undefined;
+      const { error } = await supabase.functions.invoke('county-briefing', {
+        body: {
+          action: 'add-recipients',
+          recipients: [{
+            email: client.email,
+            first_name: firstName,
+            org_name: client.name || undefined,
+            county: client.county || 'Unknown',
+            variant: 'warm',
+          }],
+        },
+      });
+      if (error) throw error;
+      flash(client.county
+        ? `Enrolled ${client.email} for ${client.county} County`
+        : `Enrolled ${client.email} as held (county not resolved)`);
+      loadAll();
+    } catch (err: any) {
+      flash(`Enroll failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setEnrollingId(null);
+    }
   };
 
   // ── Step management ──────────────────────────────────────────
@@ -1315,6 +1397,76 @@ export default function OutreachTab() {
                 Showing 100 of {filteredRecipients.length}
               </div>
             )}
+          </div>
+        )}
+      </div>
+
+      {/* ── Panel 7: Clients not in the briefing queue ─────── */}
+      <div style={CARD}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <span style={NUM_BADGE}>7</span>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: EV_NAVY, fontFamily: DISPLAY, margin: 0 }}>
+            Clients not in the briefing queue
+          </h3>
+          <span style={{ fontSize: 12, color: EV_MUTED }}>{missingClients.length} org{missingClients.length !== 1 ? 's' : ''}</span>
+        </div>
+
+        {missingClients.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 20, color: EV_MUTED, fontSize: 13 }}>
+            All active organizations are in the briefing queue.
+          </div>
+        ) : (
+          <div style={{ maxHeight: 400, overflowY: 'auto', border: `1px solid ${EV_LINE}`, borderRadius: 6 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: EV_CREAM }}>
+                  {['Org name', 'Contact email', 'County', 'Created', 'Status', ''].map(h => (
+                    <th key={h} style={TH}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {missingClients.map(c => {
+                  const tagColors: Record<string, { bg: string; fg: string }> = {
+                    'Ready to enroll': { bg: '#E3ECE1', fg: EV_SUCCESS },
+                    'County not resolved': { bg: '#F7EDD3', fg: EV_WARN },
+                    'No contact email': { bg: '#F6E3DF', fg: EV_DANGER },
+                  };
+                  const tag = tagColors[c.reason] || { bg: EV_FAINT, fg: EV_MUTED };
+                  return (
+                    <tr key={c.id} style={{ borderBottom: `1px solid ${EV_LINE}` }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: EV_NAVY }}>{c.name}</td>
+                      <td style={{ padding: '8px 12px', color: c.email ? EV_MUTED : EV_DANGER }}>
+                        {c.email || 'none on file'}
+                      </td>
+                      <td style={{ padding: '8px 12px', color: c.county ? EV_MUTED : EV_WARN }}>
+                        {c.county || 'not resolved'}
+                      </td>
+                      <td style={{ padding: '8px 12px', color: EV_FAINT, fontSize: 11 }}>
+                        {new Date(c.created_at).toLocaleDateString()}
+                      </td>
+                      <td style={{ padding: '8px 12px' }}>
+                        <span style={{
+                          fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                          background: tag.bg, color: tag.fg,
+                        }}>{c.reason}</span>
+                      </td>
+                      <td style={{ padding: '8px 12px' }}>
+                        {c.reason !== 'No contact email' && (
+                          <button
+                            onClick={() => enrollMissing(c)}
+                            disabled={enrollingId === c.id}
+                            style={{ ...BTN(EV_EMBER, '#FFF'), fontSize: 11, padding: '4px 10px' }}
+                          >
+                            {enrollingId === c.id ? '...' : 'Enroll'}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
