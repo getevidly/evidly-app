@@ -263,7 +263,7 @@ async function fetchOpenFDAEnforcement(
   }
 
   const res = await fetch(`${source.url}?${params}`, {
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(45_000),
   });
   if (!res.ok) throw new Error(`openFDA enforcement HTTP ${res.status}`);
   const data = await res.json();
@@ -294,7 +294,7 @@ async function fetchOpenFDAAdverseEvents(
   }
 
   const res = await fetch(`${source.url}?${params}`, {
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(45_000),
   });
   if (!res.ok) throw new Error(`openFDA adverse events HTTP ${res.status}`);
   const data = await res.json();
@@ -338,6 +338,39 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+/** Normalize content for dedupe hashing: strip boilerplate HTML, dates, and volatile text */
+function normalizeForDedupe(content: string): string {
+  return content
+    // Strip boilerplate HTML elements and their contents
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<nav[\s\S]*?<\/nav>/gi, "")
+    .replace(/<header[\s\S]*?<\/header>/gi, "")
+    .replace(/<footer[\s\S]*?<\/footer>/gi, "")
+    // Strip remaining HTML tags → plain text
+    .replace(/<[^>]+>/g, " ")
+    // Decode common entities
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    // Lowercase
+    .toLowerCase()
+    // Strip date/time patterns so timestamp-only changes don't bust the hash
+    // "August 13, 2026" / "August 13 2026"
+    .replace(/\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s*\d{2,4}\b/g, "")
+    // "Aug 13, 2026" / "Aug. 13 2026"
+    .replace(/\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\.?\s+\d{1,2},?\s*\d{2,4}\b/g, "")
+    // "8/13/2026" or "08-13-2026"
+    .replace(/\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/g, "")
+    // "2026-08-13" (ISO)
+    .replace(/\b\d{4}-\d{2}-\d{2}\b/g, "")
+    // "Updated 3 hours ago", "5 minutes ago"
+    .replace(/\b(?:updated?\s+)?\d+\s+(?:second|minute|hour|day|week|month|year)s?\s+ago\b/g, "")
+    // Standalone times "10:30 AM", "10:30:00"
+    .replace(/\b\d{1,2}:\d{2}(?::\d{2})?\s*(?:am|pm)?\b/g, "")
+    // Collapse whitespace
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 // ── Web Page Fetcher (generic) ────────────────────────────────
 
 async function fetchViaFirecrawl(url: string): Promise<string> {
@@ -346,7 +379,7 @@ async function fetchViaFirecrawl(url: string): Promise<string> {
     method: "POST",
     headers: { Authorization: `Bearer ${FIRECRAWL_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({ url, formats: ["markdown"], onlyMainContent: true }),
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(45_000),
   });
   const data = await res.json();
   if (!res.ok || !data.success) throw new Error(`Firecrawl error: ${data.error || res.status}`);
@@ -355,24 +388,28 @@ async function fetchViaFirecrawl(url: string): Promise<string> {
 
 async function fetchWebContent(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
   let text: string;
+  let rawContent: string;
   try {
-    const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(8_000) });
+    const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(45_000) });
     if (res.status === 403 || res.status === 401) throw new Error(`HTTP ${res.status}`);
     if (!res.ok) throw new Error(`${source.name} HTTP ${res.status}`);
-    const html = await res.text();
-    text = stripHtml(html).slice(0, 4000);
+    rawContent = await res.text();
+    text = stripHtml(rawContent).slice(0, 4000);
   } catch (directErr) {
     // Fallback to Firecrawl for bot-blocked or TLS-broken sites
     console.log(`[intelligence-collect] ${source.id}: direct fetch failed (${directErr}), trying Firecrawl`);
-    text = await fetchViaFirecrawl(source.url);
+    rawContent = await fetchViaFirecrawl(source.url);
+    text = rawContent;
   }
 
-  // Stable dedupe key: SHA-256 hash of page content (never includes crawl date).
-  // Same page content on consecutive days → same hash → deduped.
-  // Genuinely new content (new recall posted) → different hash → new signal.
+  // Stable dedupe key: SHA-256 of FULL normalized content.
+  // normalizeForDedupe strips boilerplate (script/style/nav/header/footer),
+  // lowercases, and removes volatile date/time strings so a changed
+  // timestamp alone does NOT produce a new hash.
+  const dedupeText = normalizeForDedupe(rawContent);
   const hashBytes = await crypto.subtle.digest(
     "SHA-256",
-    new TextEncoder().encode(text.slice(0, 2000)),
+    new TextEncoder().encode(dedupeText),
   );
   const contentHash = [...new Uint8Array(hashBytes)]
     .map((b) => b.toString(16).padStart(2, "0"))
@@ -393,7 +430,7 @@ async function fetchWebContent(source: IntelligenceSource): Promise<{ items: any
 // ── CDC Content API Fetcher ───────────────────────────────────
 
 async function fetchCdcContent(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
-  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(10_000) });
+  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(45_000) });
   if (!res.ok) throw new Error(`CDC API HTTP ${res.status}`);
   const data = await res.json();
   const results = data.results || [];
@@ -411,7 +448,7 @@ async function fetchCdcContent(source: IntelligenceSource): Promise<{ items: any
 async function fetchNwsAlerts(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
   const res = await fetch(source.url, {
     headers: { ...FETCH_HEADERS, "Accept": "application/geo+json" },
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(45_000),
   });
   if (!res.ok) throw new Error(`NWS API HTTP ${res.status}`);
   const data = await res.json();
@@ -438,7 +475,7 @@ async function fetchNwsAlerts(source: IntelligenceSource): Promise<{ items: any[
 // ── CPSC Recalls API Fetcher ──────────────────────────────────
 
 async function fetchCpscRecalls(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
-  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(10_000) });
+  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(45_000) });
   if (!res.ok) throw new Error(`CPSC API HTTP ${res.status}`);
   const data = await res.json();
   const all = Array.isArray(data) ? data : data.results || [];
@@ -465,7 +502,7 @@ async function fetchCpscRecalls(source: IntelligenceSource): Promise<{ items: an
 // ── Federal Register API Fetcher ──────────────────────────────
 
 async function fetchFederalRegister(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
-  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(10_000) });
+  const res = await fetch(source.url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(45_000) });
   if (!res.ok) throw new Error(`Federal Register API HTTP ${res.status}`);
   const data = await res.json();
   const results = data.results || [];
@@ -487,7 +524,7 @@ async function fetchFederalRegister(source: IntelligenceSource): Promise<{ items
 async function fetchCalFireIncidents(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
   const res = await fetch("https://incidents.fire.ca.gov/umbraco/api/IncidentApi/List?inactive=false", {
     headers: { ...FETCH_HEADERS, "Accept": "application/json" },
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(45_000),
   });
   if (!res.ok) throw new Error(`Cal Fire API HTTP ${res.status}`);
   const data = await res.json();
@@ -509,7 +546,8 @@ async function fetchCalFireIncidents(source: IntelligenceSource): Promise<{ item
 async function fetchFsisRecalls(source: IntelligenceSource): Promise<{ items: any[]; raw: any }> {
   // FSIS entire domain is behind Akamai WAF — use Firecrawl to get recall page content
   const text = await fetchViaFirecrawl("https://www.fsis.usda.gov/recalls");
-  const hashBytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text.slice(0, 2000)));
+  const dedupeText = normalizeForDedupe(text);
+  const hashBytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(dedupeText));
   const contentHash = [...new Uint8Array(hashBytes)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 16);
   return {
     items: [{
