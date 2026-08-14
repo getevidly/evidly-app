@@ -525,7 +525,7 @@ function buildBriefingEmail(
     row('Cold holding', 'CalCode \u00a7113996', '\u226441\u00b0F') +
     row('Cooling', 'CalCode \u00a7114002', '135\u219270\u00b0F in 2 hrs') +
     row('Reheating', 'CalCode \u00a7114014', '\u2265165\u00b0F within 2 hrs') +
-    row('Warewash &amp; sanitizer', 'CalCode \u00a7114099, \u00a7114125', 'Test kit on hand') +
+    row('Warewash &amp; sanitizer', 'CalCode \u00a7114099', 'Test kit on hand') +
     row('Health permit', 'CalCode \u00a7114381', 'Current') +
     row('Manager certification', 'CalCode \u00a7113947', 'One per facility') +
     row('Food handler cards', 'CalCode \u00a7113948', 'All food staff') +
