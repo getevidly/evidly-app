@@ -119,6 +119,13 @@ export default function OutreachTab() {
   const [pasteMode, setPasteMode] = useState(false);
   const [pasteText, setPasteText] = useState('');
 
+  // Bulk import
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkText, setBulkText] = useState('');
+  type BulkRow = { email: string; first_name: string; org_name: string; county: string; variant: string; error?: string };
+  const [bulkPreview, setBulkPreview] = useState<BulkRow[] | null>(null);
+  const [bulkResult, setBulkResult] = useState<{ inserted: number; skipped: number; invalid: number } | null>(null);
+
   // Step editor
   const [editingStep, setEditingStep] = useState<number | null>(null);
   const [stepForm, setStepForm] = useState<any>({});
@@ -235,6 +242,101 @@ export default function OutreachTab() {
     }
     flash(`Added ${data.inserted} recipient(s)`);
     setPasteText('');
+    loadAll();
+  };
+
+  // ── Bulk import ─────────────────────────────────────────────
+
+  const parseBulk = () => {
+    const lines = bulkText.trim().split('\n').filter(Boolean);
+    if (lines.length < 2) { flash('Need a header line + at least one data row'); return; }
+
+    // Parse header (case-insensitive, trimmed)
+    const hdr = lines[0].includes('\t')
+      ? lines[0].split('\t').map(h => h.trim().toLowerCase())
+      : lines[0].split(',').map(h => h.trim().toLowerCase());
+    const sep = lines[0].includes('\t') ? '\t' : ',';
+
+    const idx = (name: string) => hdr.indexOf(name);
+    const iEmail = idx('email');
+    const iFirst = idx('first_name');
+    const iOrg = idx('org_name');
+    const iCounty = idx('county');
+    const iVariant = idx('variant');
+
+    if (iEmail === -1 || iCounty === -1) {
+      flash('Header must contain at least "email" and "county" columns');
+      return;
+    }
+
+    const countyNames = counties.map((c: any) => (c.county as string).toLowerCase());
+    const existingEmails = new Set(recipients.map((r: any) => (r.email as string).toLowerCase()));
+    const seenEmails = new Set<string>();
+
+    const rows: BulkRow[] = lines.slice(1).map(line => {
+      const parts = line.split(sep).map(s => s.trim());
+      const email = (parts[iEmail] || '').toLowerCase();
+      const first_name = iFirst !== -1 ? parts[iFirst] || '' : '';
+      const org_name = iOrg !== -1 ? parts[iOrg] || '' : '';
+      const county = iCounty !== -1 ? parts[iCounty] || '' : '';
+      const variant = iVariant !== -1 ? (parts[iVariant] || 'cold').toLowerCase() : 'cold';
+
+      // Validate
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return { email, first_name, org_name, county, variant, error: 'Invalid email' };
+      }
+      if (!county) {
+        return { email, first_name, org_name, county, variant, error: 'County missing' };
+      }
+      // Case-insensitive county match
+      const matchIdx = countyNames.indexOf(county.toLowerCase());
+      const matchedCounty = matchIdx !== -1 ? (counties[matchIdx] as any).county : null;
+      if (!matchedCounty) {
+        return { email, first_name, org_name, county, variant, error: `County "${county}" not found` };
+      }
+      if (variant !== 'cold' && variant !== 'warm') {
+        return { email, first_name, org_name, county: matchedCounty, variant, error: `Invalid variant "${variant}"` };
+      }
+      if (existingEmails.has(email) || seenEmails.has(email)) {
+        return { email, first_name, org_name, county: matchedCounty, variant, error: 'Duplicate — already exists or repeated' };
+      }
+      seenEmails.add(email);
+      return { email, first_name, org_name, county: matchedCounty, variant };
+    });
+
+    setBulkPreview(rows);
+    setBulkResult(null);
+  };
+
+  const submitBulk = async () => {
+    if (!bulkPreview) return;
+    const valid = bulkPreview.filter(r => !r.error);
+    if (valid.length === 0) { flash('No valid rows to import'); return; }
+
+    setActionLoading('bulk');
+    const { data, error } = await supabase.functions.invoke('county-briefing', {
+      body: {
+        action: 'add-recipients',
+        recipients: valid.map(r => ({
+          email: r.email,
+          first_name: r.first_name || undefined,
+          org_name: r.org_name || undefined,
+          county: r.county,
+          variant: r.variant,
+        })),
+      },
+    });
+    setActionLoading(null);
+
+    if (error || !data?.inserted) {
+      flash(`Import failed: ${error?.message || data?.error || 'Unknown error'}`);
+      return;
+    }
+
+    const invalid = bulkPreview.filter(r => r.error && r.error !== 'Duplicate — already exists or repeated').length;
+    const skipped = bulkPreview.filter(r => r.error === 'Duplicate — already exists or repeated').length;
+    setBulkResult({ inserted: data.inserted, skipped, invalid });
+    flash(`Imported ${data.inserted}, skipped ${skipped}, invalid ${invalid}`);
     loadAll();
   };
 
@@ -569,12 +671,78 @@ export default function OutreachTab() {
             Add a recipient
           </h3>
           <div style={{ flex: 1 }} />
-          <button onClick={() => setPasteMode(!pasteMode)} style={{ ...BTN(EV_LIGHT, EV_NAVY), fontSize: 11 }}>
+          <button onClick={() => { setBulkMode(false); setPasteMode(!pasteMode); }} style={{ ...BTN(EV_LIGHT, EV_NAVY), fontSize: 11 }}>
             {pasteMode ? 'Single entry' : 'Paste rows'}
+          </button>
+          <button onClick={() => { setPasteMode(false); setBulkMode(!bulkMode); setBulkPreview(null); setBulkResult(null); }} style={{ ...BTN(EV_LIGHT, EV_NAVY), fontSize: 11 }}>
+            {bulkMode ? 'Single entry' : 'Bulk import'}
           </button>
         </div>
 
-        {pasteMode ? (
+        {bulkMode ? (
+          <div>
+            <div style={LABEL}>Paste CSV or tab-separated rows with a header line: email, first_name, org_name, county, variant</div>
+            <textarea
+              value={bulkText}
+              onChange={e => { setBulkText(e.target.value); setBulkPreview(null); setBulkResult(null); }}
+              rows={8}
+              placeholder={'email,first_name,org_name,county,variant\njane@example.com,Jane,Jane\'s Kitchen,Los Angeles,warm\njohn@example.com,John,,Orange,cold'}
+              style={{ ...INPUT, resize: 'vertical' as const, fontFamily: 'monospace', fontSize: 12 }}
+            />
+            <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+              <button onClick={parseBulk} style={BTN(EV_NAVY, '#FFF')}>
+                Preview import
+              </button>
+              {bulkPreview && bulkPreview.some(r => !r.error) && (
+                <button onClick={submitBulk} disabled={actionLoading === 'bulk'} style={BTN(EV_EMBER, '#FFF')}>
+                  {actionLoading === 'bulk' ? 'Importing...' : `Import ${bulkPreview.filter(r => !r.error).length} valid rows`}
+                </button>
+              )}
+            </div>
+
+            {bulkResult && (
+              <div style={{ marginTop: 12, padding: '8px 14px', borderRadius: 6, background: '#E3ECE1', fontSize: 13 }}>
+                Inserted: {bulkResult.inserted} &middot; Skipped: {bulkResult.skipped} &middot; Invalid: {bulkResult.invalid}
+              </div>
+            )}
+
+            {bulkPreview && (
+              <div style={{ marginTop: 12, maxHeight: 320, overflowY: 'auto', border: `1px solid ${EV_LINE}`, borderRadius: 6 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <thead>
+                    <tr style={{ background: EV_CREAM }}>
+                      <th style={TH}>#</th>
+                      <th style={TH}>Email</th>
+                      <th style={TH}>First name</th>
+                      <th style={TH}>Org</th>
+                      <th style={TH}>County</th>
+                      <th style={TH}>Variant</th>
+                      <th style={TH}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bulkPreview.map((r, i) => (
+                      <tr key={i} style={{ background: r.error ? '#FDF0ED' : '#FFF' }}>
+                        <td style={{ padding: '6px 12px', color: EV_MUTED }}>{i + 1}</td>
+                        <td style={{ padding: '6px 12px' }}>{r.email || '\u2014'}</td>
+                        <td style={{ padding: '6px 12px', color: EV_MUTED }}>{r.first_name || '\u2014'}</td>
+                        <td style={{ padding: '6px 12px', color: EV_MUTED }}>{r.org_name || '\u2014'}</td>
+                        <td style={{ padding: '6px 12px' }}>{r.county || '\u2014'}</td>
+                        <td style={{ padding: '6px 12px' }}>{r.variant}</td>
+                        <td style={{ padding: '6px 12px', color: r.error ? EV_DANGER : EV_SUCCESS, fontWeight: 600, fontSize: 11 }}>
+                          {r.error || 'Valid'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ padding: '8px 12px', fontSize: 11, color: EV_MUTED, borderTop: `1px solid ${EV_LINE}` }}>
+                  {bulkPreview.length} rows &middot; {bulkPreview.filter(r => !r.error).length} valid &middot; {bulkPreview.filter(r => r.error).length} excluded
+                </div>
+              </div>
+            )}
+          </div>
+        ) : pasteMode ? (
           <div>
             <div style={LABEL}>Paste tab-separated rows: email, first_name, org_name, county, variant</div>
             <textarea
