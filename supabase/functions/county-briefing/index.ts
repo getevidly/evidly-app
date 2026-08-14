@@ -99,6 +99,14 @@ async function computeStepContentHash(step: Record<string, any>): Promise<string
   return sha256(buf.buffer);
 }
 
+const DEFAULT_SUBJECT = (county: string) =>
+  `${county} County Briefing — How ${county} County Evaluates Commercial Kitchens`;
+
+function buildSubject(template: string | null | undefined, county: string, firstName: string): string {
+  if (!template) return DEFAULT_SUBJECT(county);
+  return template.replace(/\{\{COUNTY\}\}/g, county).replace(/\{\{FIRST_NAME\}\}/g, firstName);
+}
+
 // Named-requirement gate. Each required section is checked individually
 // so the block reason names the specific gap, not a generic count.
 // "What It Weights Heaviest" (violation_weight_map) is optional — only
@@ -848,6 +856,20 @@ Deno.serve(async (req: Request) => {
       const county = body.county as string;
       if (!county) return jsonResponse({ error: "county required" }, 400);
 
+      const sendStepNumber = body.step_number as number | undefined;
+
+      // If step_number supplied, fetch the step's subject_template
+      let stepSubjectTemplate: string | null = null;
+      if (sendStepNumber !== undefined) {
+        const { data: stepRow } = await supabase
+          .from('outreach_steps')
+          .select('subject_template')
+          .eq('step_number', sendStepNumber)
+          .eq('is_active', true)
+          .maybeSingle();
+        if (stepRow) stepSubjectTemplate = stepRow.subject_template;
+      }
+
       // Fetch approval
       const { data: approval } = await supabase
         .from('county_briefing_approvals')
@@ -895,12 +917,16 @@ Deno.serve(async (req: Request) => {
       }
 
       // Fetch queued recipients
-      const { data: recipients } = await supabase
+      let recipientQuery = supabase
         .from('county_briefing_recipients')
         .select('*')
         .eq('county', county)
         .eq('state_code', 'CA')
         .eq('status', 'queued');
+      if (sendStepNumber !== undefined) {
+        recipientQuery = recipientQuery.eq('step_number', sendStepNumber);
+      }
+      const { data: recipients } = await recipientQuery;
 
       if (!recipients || recipients.length === 0) {
         return jsonResponse({ sent: 0, failed: 0, held: 0, detail: "No queued recipients" });
@@ -966,7 +992,7 @@ Deno.serve(async (req: Request) => {
 
         const firstName = r.first_name || 'there';
         const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
-        const subject = `${county} County Briefing — How ${county} County Evaluates Commercial Kitchens`;
+        const subject = buildSubject(stepSubjectTemplate, county, firstName);
 
         const result = await sendEmail({ to: r.email, subject, html });
 
@@ -1418,9 +1444,7 @@ Deno.serve(async (req: Request) => {
           const ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
           const firstName = r.first_name || 'there';
           const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
-          const emailSubject = step.subject_template
-            ? step.subject_template.replace(/\{\{COUNTY\}\}/g, r.county).replace(/\{\{FIRST_NAME\}\}/g, firstName)
-            : `${r.county} County Briefing — How This County Evaluates Commercial Kitchens`;
+          const emailSubject = buildSubject(step.subject_template, r.county, firstName);
 
           const result = await sendEmail({ to: r.email, subject: emailSubject, html });
 
