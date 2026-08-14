@@ -27,82 +27,6 @@ import {
   sha256,
 } from "../_shared/seal-canonicalization.ts";
 
-// ── Auto-enroll into county briefing queue ────────────────────
-// Resolves county from org's first location's jurisdiction_id.
-// Never sends — only queues at status 'queued' (or 'held' if county unresolvable).
-// Failure here must NEVER fail the parent operation.
-
-type EnrollResult = 'enrolled' | 'skipped' | 'held' | 'no_email';
-
-async function enrollBriefingRecipient(
-  sb: ReturnType<typeof createClient>,
-  orgId: string,
-  opts?: { clientEmail?: string | null; clientName?: string | null },
-): Promise<EnrollResult> {
-  // 1. Resolve email: primary_contact_email, falling back to client_email
-  const { data: org } = await sb
-    .from('organizations')
-    .select('primary_contact_email, primary_contact_name, name')
-    .eq('id', orgId)
-    .maybeSingle();
-
-  const email = (org?.primary_contact_email || opts?.clientEmail || '').trim().toLowerCase();
-  if (!email) return 'no_email';
-
-  // 2. Dedupe: if a recipient row already exists for this email, skip
-  const { data: existing } = await sb
-    .from('county_briefing_recipients')
-    .select('id')
-    .eq('email', email)
-    .limit(1)
-    .maybeSingle();
-
-  if (existing) return 'skipped';
-
-  // 3. Resolve county from org's first location → jurisdiction
-  let county: string | null = null;
-  const { data: loc } = await sb
-    .from('locations')
-    .select('jurisdiction_id')
-    .eq('organization_id', orgId)
-    .not('jurisdiction_id', 'is', null)
-    .limit(1)
-    .maybeSingle();
-
-  if (loc?.jurisdiction_id) {
-    const { data: jur } = await sb
-      .from('jurisdictions')
-      .select('county')
-      .eq('id', loc.jurisdiction_id)
-      .maybeSingle();
-    county = jur?.county || null;
-  }
-
-  // 4. Derive first_name from org contact name or client_name
-  const rawName = org?.primary_contact_name || opts?.clientName || '';
-  const firstName = rawName.split(/\s+/)[0] || null;
-  const orgName = org?.name || null;
-
-  // 5. Insert — held if county unresolvable, queued otherwise
-  const status = county ? 'queued' : 'held';
-  const holdReason = county ? null : 'County not resolved at enrollment';
-
-  await sb.from('county_briefing_recipients').insert({
-    email,
-    first_name: firstName,
-    org_name: orgName,
-    county: county || 'Unknown',
-    state_code: 'CA',
-    variant: 'warm',
-    step_number: 1,
-    status,
-    hold_reason: holdReason,
-    unsub_token: crypto.randomUUID(),
-  });
-
-  return status === 'held' ? 'held' : 'enrolled';
-}
-
 // Maps HoodOps service_type_code → PSE safeguard_type
 const SERVICE_CODE_TO_SAFEGUARD: Record<string, string> = {
   KEC: "hood_cleaning",
@@ -894,14 +818,6 @@ async function handleDocumentEvent(
       .update({ external_source: "hoodops", external_id: hoodops_location_id })
       .eq("id", locId)
       .is("external_source", null);
-
-    // ── 4a-enroll. Auto-enroll into county briefing queue ────────
-    try {
-      const enrollResult = await enrollBriefingRecipient(supabase, orgId!, { clientEmail: client_email, clientName: client_name });
-      console.log(`[hoodops-webhook] Briefing enrollment: ${enrollResult} for org ${orgId}`);
-    } catch (enrollErr: any) {
-      console.error(`[hoodops-webhook] Briefing enrollment failed (non-fatal): ${enrollErr.message}`);
-    }
 
     // ── 4b. Find-or-create vendor ────────────────────────────────
     //    Normalized lookup (trim + case-insensitive) so "Cleaning Pros Plus"
