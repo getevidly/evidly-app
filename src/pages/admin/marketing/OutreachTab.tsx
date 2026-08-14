@@ -394,7 +394,7 @@ export default function OutreachTab() {
   // ── Enroll missing client ────────────────────────────────────
 
   const enrollMissing = async (client: MissingClient) => {
-    if (!client.email) return;
+    if (!client.email || !client.county) return;
     setEnrollingId(client.id);
     try {
       const firstName = client.name ? client.name.split(/\s+/)[0] : undefined;
@@ -405,15 +405,13 @@ export default function OutreachTab() {
             email: client.email,
             first_name: firstName,
             org_name: client.name || undefined,
-            county: client.county || 'Unknown',
+            county: client.county,
             variant: 'warm',
           }],
         },
       });
       if (error) throw error;
-      flash(client.county
-        ? `Enrolled ${client.email} for ${client.county} County`
-        : `Enrolled ${client.email} as held (county not resolved)`);
+      flash(`Enrolled ${client.email} for ${client.county} County`);
       loadAll();
     } catch (err: any) {
       flash(`Enroll failed: ${err.message || 'Unknown error'}`);
@@ -1452,7 +1450,7 @@ export default function OutreachTab() {
                         }}>{c.reason}</span>
                       </td>
                       <td style={{ padding: '8px 12px' }}>
-                        {c.reason !== 'No contact email' && (
+                        {c.reason === 'Ready to enroll' && (
                           <button
                             onClick={() => enrollMissing(c)}
                             disabled={enrollingId === c.id}
@@ -1460,6 +1458,9 @@ export default function OutreachTab() {
                           >
                             {enrollingId === c.id ? '...' : 'Enroll'}
                           </button>
+                        )}
+                        {c.reason === 'County not resolved' && (
+                          <span style={{ fontSize: 10, color: EV_WARN, fontWeight: 600 }}>Check location</span>
                         )}
                       </td>
                     </tr>

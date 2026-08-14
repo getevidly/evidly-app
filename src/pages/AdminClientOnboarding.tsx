@@ -615,35 +615,34 @@ export function AdminClientOnboarding() {
             county = jur?.county || null;
           }
 
-          // Dedupe check
-          const { data: existing } = await supabase
-            .from('county_briefing_recipients')
-            .select('id')
-            .eq('email', ownerEmail.trim().toLowerCase())
-            .limit(1)
-            .maybeSingle();
-
-          if (existing) {
-            enrollNote = 'Already in the briefing queue.';
+          if (!county) {
+            enrollNote = 'Briefing enrollment skipped \u2014 no county on this client\u2019s location.';
           } else {
-            const firstName = ownerName ? ownerName.split(/\s+/)[0] : null;
-            const { error: enrollErr } = await supabase.functions.invoke('county-briefing', {
-              body: {
-                action: 'add-recipients',
-                recipients: [{
-                  email: ownerEmail,
-                  first_name: firstName || undefined,
-                  org_name: orgName || undefined,
-                  county: county || 'Unknown',
-                  variant: 'warm',
-                }],
-              },
-            });
-            if (enrollErr) throw enrollErr;
+            // Dedupe check
+            const { data: existing } = await supabase
+              .from('county_briefing_recipients')
+              .select('id')
+              .eq('email', ownerEmail.trim().toLowerCase())
+              .limit(1)
+              .maybeSingle();
 
-            if (!county) {
-              enrollNote = 'Client saved, but the county could not be resolved \u2014 they are HELD in the briefing queue and need a county before they can be sent.';
+            if (existing) {
+              enrollNote = 'Already in the briefing queue.';
             } else {
+              const firstName = ownerName ? ownerName.split(/\s+/)[0] : null;
+              const { error: enrollErr } = await supabase.functions.invoke('county-briefing', {
+                body: {
+                  action: 'add-recipients',
+                  recipients: [{
+                    email: ownerEmail,
+                    first_name: firstName || undefined,
+                    org_name: orgName || undefined,
+                    county,
+                    variant: 'warm',
+                  }],
+                },
+              });
+              if (enrollErr) throw enrollErr;
               enrollNote = 'Client queued for the county briefing.';
             }
           }
