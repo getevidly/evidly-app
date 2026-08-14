@@ -596,6 +596,38 @@ export function AdminClientOnboarding() {
           .eq('id', contactId);
       }
 
+      // 4. Auto-enroll into county briefing queue (non-fatal)
+      try {
+        const jurId = locations[0]?.jurisdictionId;
+        let county: string | null = null;
+        if (jurId) {
+          const { data: jur } = await supabase
+            .from('jurisdictions')
+            .select('county')
+            .eq('id', jurId)
+            .maybeSingle();
+          county = jur?.county || null;
+        }
+        if (ownerEmail) {
+          const firstName = ownerName ? ownerName.split(/\s+/)[0] : null;
+          await supabase.functions.invoke('county-briefing', {
+            body: {
+              action: 'add-recipients',
+              recipients: [{
+                email: ownerEmail,
+                first_name: firstName || undefined,
+                org_name: orgName || undefined,
+                county: county || 'Unknown',
+                variant: 'warm',
+              }],
+            },
+          });
+          console.log(`[onboarding] Briefing enrollment: ${county ? 'enrolled' : 'held (no county)'} for ${ownerEmail}`);
+        }
+      } catch (enrollErr: any) {
+        console.error(`[onboarding] Briefing enrollment failed (non-fatal): ${enrollErr.message}`);
+      }
+
       setSuccess('Client account created. Use Invite people to grant access.');
       setTimeout(() => {
         setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
