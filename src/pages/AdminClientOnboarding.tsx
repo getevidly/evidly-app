@@ -639,6 +639,7 @@ export function AdminClientOnboarding() {
                     org_name: orgName || undefined,
                     county,
                     variant: 'warm',
+                    ...(jurId ? { jurisdiction_id: jurId } : {}),
                   }],
                 },
               });

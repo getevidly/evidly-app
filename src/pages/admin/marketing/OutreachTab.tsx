@@ -123,7 +123,7 @@ export default function OutreachTab() {
   // Bulk import
   const [bulkMode, setBulkMode] = useState(false);
   const [bulkText, setBulkText] = useState('');
-  type BulkRow = { email: string; first_name: string; org_name: string; county: string; variant: string; error?: string };
+  type BulkRow = { email: string; first_name: string; org_name: string; county: string; variant: string; jurisdiction_id?: string; error?: string };
   const [bulkPreview, setBulkPreview] = useState<BulkRow[] | null>(null);
   const [bulkResult, setBulkResult] = useState<{ inserted: number; skipped: number; invalid: number } | null>(null);
 
@@ -140,14 +140,14 @@ export default function OutreachTab() {
   const [jurConfirm, setJurConfirm] = useState<{ county: string; changes: { field: string; before: string; after: string }[] } | null>(null);
   const [sourceConfirmed, setSourceConfirmed] = useState(false);
 
-  // Standalone county preview
-  const [previewAnyCounty, setPreviewAnyCounty] = useState('');
+  // Standalone county preview — stores jurisdiction_id
+  const [previewAnyJurId, setPreviewAnyJurId] = useState('');
 
   // Queue filter
   const [queueFilter, setQueueFilter] = useState('all');
 
   // Missing clients reconciliation
-  type MissingClient = { id: string; name: string; email: string | null; county: string | null; created_at: string; reason: string };
+  type MissingClient = { id: string; name: string; email: string | null; county: string | null; jurisdiction_id: string | null; created_at: string; reason: string };
   const [missingClients, setMissingClients] = useState<MissingClient[]>([]);
   const [enrollingId, setEnrollingId] = useState<string | null>(null);
 
@@ -189,8 +189,9 @@ export default function OutreachTab() {
       const email = (org.primary_contact_email || '').trim().toLowerCase();
       if (email && recipientEmails.has(email)) continue;
 
-      // Resolve county from first location
+      // Resolve county + jurisdiction_id from first location
       let county: string | null = null;
+      let jurisdictionId: string | null = null;
       const { data: loc } = await supabase
         .from('locations')
         .select('jurisdiction_id')
@@ -199,6 +200,7 @@ export default function OutreachTab() {
         .limit(1)
         .maybeSingle();
       if (loc?.jurisdiction_id) {
+        jurisdictionId = loc.jurisdiction_id;
         const { data: jur } = await supabase
           .from('jurisdictions')
           .select('county')
@@ -216,6 +218,7 @@ export default function OutreachTab() {
         name: org.name,
         email: email || null,
         county,
+        jurisdiction_id: jurisdictionId,
         created_at: org.created_at,
         reason,
       });
@@ -249,6 +252,7 @@ export default function OutreachTab() {
     e.preventDefault();
     if (!addEmail || !addCounty) return;
     setActionLoading('add');
+    const addJur = counties.find((c: any) => c.county === addCounty && c.governmental_level === 'county');
     const { data, error } = await supabase.functions.invoke('county-briefing', {
       body: {
         action: 'add-recipients',
@@ -258,6 +262,7 @@ export default function OutreachTab() {
           org_name: addOrgName || undefined,
           county: addCounty,
           variant: addVariant,
+          ...(addJur ? { jurisdiction_id: addJur.jurisdiction_id } : {}),
         }],
       },
     });
@@ -317,13 +322,13 @@ export default function OutreachTab() {
     const iOrg = idx('org_name');
     const iCounty = idx('county');
     const iVariant = idx('variant');
+    const iCity = idx('city');
 
     if (iEmail === -1 || iCounty === -1) {
       flash('Header must contain at least "email" and "county" columns');
       return;
     }
 
-    const countyNames = counties.map((c: any) => (c.county as string).toLowerCase());
     const existingEmails = new Set(recipients.map((r: any) => (r.email as string).toLowerCase()));
     const seenEmails = new Set<string>();
 
@@ -334,6 +339,7 @@ export default function OutreachTab() {
       const org_name = iOrg !== -1 ? parts[iOrg] || '' : '';
       const county = iCounty !== -1 ? parts[iCounty] || '' : '';
       const variant = iVariant !== -1 ? (parts[iVariant] || 'cold').toLowerCase() : 'cold';
+      const city = iCity !== -1 ? (parts[iCity] || '').trim() : '';
 
       // Validate
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -342,20 +348,40 @@ export default function OutreachTab() {
       if (!county) {
         return { email, first_name, org_name, county, variant, error: 'County missing' };
       }
-      // Case-insensitive county match
-      const matchIdx = countyNames.indexOf(county.toLowerCase());
-      const matchedCounty = matchIdx !== -1 ? (counties[matchIdx] as any).county : null;
-      if (!matchedCounty) {
-        return { email, first_name, org_name, county, variant, error: `County "${county}" not found` };
+
+      // Resolve jurisdiction — city column narrows to a city row; otherwise county-level
+      let matched: any = null;
+      if (city) {
+        matched = counties.find((c: any) =>
+          c.governmental_level === 'city'
+          && (c.city || '').toLowerCase() === city.toLowerCase()
+          && (c.county || '').toLowerCase() === county.toLowerCase()
+        );
+        if (!matched) {
+          return { email, first_name, org_name, county, variant, error: `City "${city}" not found in ${county} County` };
+        }
+      } else {
+        matched = counties.find((c: any) =>
+          c.governmental_level === 'county'
+          && (c.county || '').toLowerCase() === county.toLowerCase()
+        );
+        if (!matched) {
+          // Fallback: any row matching county name
+          matched = counties.find((c: any) => (c.county || '').toLowerCase() === county.toLowerCase());
+        }
+        if (!matched) {
+          return { email, first_name, org_name, county, variant, error: `County "${county}" not found` };
+        }
       }
+
       if (variant !== 'cold' && variant !== 'warm') {
-        return { email, first_name, org_name, county: matchedCounty, variant, error: `Invalid variant "${variant}"` };
+        return { email, first_name, org_name, county: matched.county, variant, error: `Invalid variant "${variant}"` };
       }
       if (existingEmails.has(email) || seenEmails.has(email)) {
-        return { email, first_name, org_name, county: matchedCounty, variant, error: 'Duplicate — already exists or repeated' };
+        return { email, first_name, org_name, county: matched.county, variant, jurisdiction_id: matched.jurisdiction_id, error: 'Duplicate — already exists or repeated' };
       }
       seenEmails.add(email);
-      return { email, first_name, org_name, county: matchedCounty, variant };
+      return { email, first_name, org_name, county: matched.county, variant, jurisdiction_id: matched.jurisdiction_id };
     });
 
     setBulkPreview(rows);
@@ -377,6 +403,7 @@ export default function OutreachTab() {
           org_name: r.org_name || undefined,
           county: r.county,
           variant: r.variant,
+          ...(r.jurisdiction_id ? { jurisdiction_id: r.jurisdiction_id } : {}),
         })),
       },
     });
@@ -401,17 +428,16 @@ export default function OutreachTab() {
     setEnrollingId(client.id);
     try {
       const firstName = client.name ? client.name.split(/\s+/)[0] : undefined;
+      const recipient: any = {
+        email: client.email,
+        first_name: firstName,
+        org_name: client.name || undefined,
+        county: client.county,
+        variant: 'warm',
+      };
+      if (client.jurisdiction_id) recipient.jurisdiction_id = client.jurisdiction_id;
       const { error } = await supabase.functions.invoke('county-briefing', {
-        body: {
-          action: 'add-recipients',
-          recipients: [{
-            email: client.email,
-            first_name: firstName,
-            org_name: client.name || undefined,
-            county: client.county,
-            variant: 'warm',
-          }],
-        },
+        body: { action: 'add-recipients', recipients: [recipient] },
       });
       if (error) throw error;
       flash(`Enrolled ${client.email} for ${client.county} County`);
@@ -493,10 +519,13 @@ export default function OutreachTab() {
 
   // ── County actions ───────────────────────────────────────────
 
-  const handlePreview = async (county: string, variant?: string) => {
-    setActionLoading(`preview-${county}`);
+  const handlePreview = async (county: string, variant?: string, jurisdictionId?: string) => {
+    const key = jurisdictionId || county;
+    setActionLoading(`preview-${key}`);
+    const reqBody: any = { action: 'preview', county, variant: variant || 'cold' };
+    if (jurisdictionId) reqBody.jurisdiction_id = jurisdictionId;
     const { data, error } = await supabase.functions.invoke('county-briefing', {
-      body: { action: 'preview', county, variant: variant || 'cold' },
+      body: reqBody,
     });
     setActionLoading(null);
     if (error || !data?.preview_html) {
@@ -764,12 +793,12 @@ export default function OutreachTab() {
 
         {bulkMode ? (
           <div>
-            <div style={LABEL}>Paste CSV or tab-separated rows with a header line: email, first_name, org_name, county, variant</div>
+            <div style={LABEL}>Paste CSV or tab-separated rows with a header line: email, first_name, org_name, county, variant, city (optional)</div>
             <textarea
               value={bulkText}
               onChange={e => { setBulkText(e.target.value); setBulkPreview(null); setBulkResult(null); }}
               rows={8}
-              placeholder={'email,first_name,org_name,county,variant\njane@example.com,Jane,Jane\'s Kitchen,Los Angeles,warm\njohn@example.com,John,,Orange,cold'}
+              placeholder={'email,first_name,org_name,county,variant,city\njane@example.com,Jane,Jane\'s Kitchen,Los Angeles,warm,\njohn@example.com,John,,Los Angeles,cold,Long Beach'}
               style={{ ...INPUT, resize: 'vertical' as const, fontFamily: 'monospace', fontSize: 12 }}
             />
             <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
@@ -865,7 +894,9 @@ export default function OutreachTab() {
               <select value={addCounty} onChange={e => setAddCounty(e.target.value)} required
                 style={{ ...INPUT, background: '#FFF' }}>
                 <option value="">Select</option>
-                {counties.map((c: any) => <option key={c.county} value={c.county}>{c.county}</option>)}
+                {counties.filter((c: any) => c.governmental_level === 'county').map((c: any) => (
+                  <option key={c.jurisdiction_id} value={c.county}>{c.county}</option>
+                ))}
               </select>
             </div>
             <div>
@@ -1048,35 +1079,43 @@ export default function OutreachTab() {
           </h3>
         </div>
 
-        {/* Standalone preview — any county */}
+        {/* Standalone preview — any jurisdiction */}
         <div style={{
           display: 'flex', flexWrap: 'wrap' as const, alignItems: 'end', gap: 10,
           padding: '14px 16px', borderRadius: 8, marginBottom: 16,
           background: EV_LIGHT, border: `1px solid ${EV_LINE}`,
         }}>
           <div style={{ flex: '0 0 auto' }}>
-            <div style={LABEL}>Preview any county ({counties.length})</div>
+            <div style={LABEL}>Preview any jurisdiction ({counties.length})</div>
             <select
-              value={previewAnyCounty}
-              onChange={e => setPreviewAnyCounty(e.target.value)}
-              style={{ ...INPUT, width: 240, background: '#FFF' }}
+              value={previewAnyJurId}
+              onChange={e => setPreviewAnyJurId(e.target.value)}
+              style={{ ...INPUT, width: 320, background: '#FFF' }}
             >
-              <option value="">Select a county</option>
+              <option value="">Select a jurisdiction</option>
               {counties.map((c: any) => (
-                <option key={c.county} value={c.county}>{c.county}</option>
+                <option key={c.jurisdiction_id} value={c.jurisdiction_id}>
+                  {c.governmental_level === 'city'
+                    ? `${c.city} (city) \u00B7 ${c.county} County`
+                    : c.county}
+                </option>
               ))}
             </select>
           </div>
           <button
-            onClick={() => previewAnyCounty && handlePreview(previewAnyCounty)}
-            disabled={!previewAnyCounty || !!actionLoading}
+            onClick={() => {
+              if (!previewAnyJurId) return;
+              const sel = counties.find((c: any) => c.jurisdiction_id === previewAnyJurId);
+              if (sel) handlePreview(sel.county, undefined, sel.jurisdiction_id);
+            }}
+            disabled={!previewAnyJurId || !!actionLoading}
             style={{
               ...BTN(EV_NAVY, '#FFF'),
-              opacity: previewAnyCounty ? 1 : 0.4,
-              cursor: previewAnyCounty ? 'pointer' : 'not-allowed',
+              opacity: previewAnyJurId ? 1 : 0.4,
+              cursor: previewAnyJurId ? 'pointer' : 'not-allowed',
             }}
           >
-            {actionLoading === `preview-${previewAnyCounty}` ? 'Loading...' : 'Preview'}
+            {actionLoading === `preview-${previewAnyJurId}` ? 'Loading...' : 'Preview'}
           </button>
           {previewCounty && (
             <button

@@ -1044,7 +1044,7 @@ Deno.serve(async (req: Request) => {
     if (action === "add-recipients") {
       const list = body.recipients as Array<{
         email: string; first_name?: string; org_name?: string;
-        county: string; variant?: string;
+        county: string; variant?: string; jurisdiction_id?: string;
       }>;
 
       if (!list || !Array.isArray(list) || list.length === 0) {
@@ -1060,6 +1060,7 @@ Deno.serve(async (req: Request) => {
         variant: r.variant || 'cold',
         status: 'queued',
         unsub_token: crypto.randomUUID(),
+        ...(r.jurisdiction_id ? { jurisdiction_id: r.jurisdiction_id } : {}),
       }));
 
       const { error } = await supabase
