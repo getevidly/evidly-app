@@ -772,20 +772,26 @@ Deno.serve(async (req: Request) => {
     if (action === "preview") {
       const county = body.county as string;
       const variant = body.variant || 'cold';
-      if (!county) return jsonResponse({ error: "county required" }, 400);
+      const reqJurId = body.jurisdiction_id as string | undefined;
+      if (!county && !reqJurId) return jsonResponse({ error: "county or jurisdiction_id required" }, 400);
 
-      const { data: jur } = await supabase
-        .from('jurisdictions')
-        .select('*')
-        .eq('county', county)
-        .eq('state', 'CA')
-        .eq('is_active', true)
-        .eq('governmental_level', 'county')
-        .limit(1)
-        .single();
+      let jur: any;
+      if (reqJurId) {
+        const { data } = await supabase
+          .from('jurisdictions').select('*')
+          .eq('id', reqJurId).eq('is_active', true).single();
+        jur = data;
+      } else {
+        const { data } = await supabase
+          .from('jurisdictions').select('*')
+          .eq('county', county).eq('state', 'CA')
+          .eq('is_active', true).eq('governmental_level', 'county')
+          .limit(1).single();
+        jur = data;
+      }
 
       if (!jur) {
-        return jsonResponse({ error: `No active jurisdiction found for ${county} County, CA` }, 404);
+        return jsonResponse({ error: `No active jurisdiction found for ${county || reqJurId}` }, 404);
       }
 
       const gate = checkRequirements(jur);
@@ -807,20 +813,26 @@ Deno.serve(async (req: Request) => {
     // ── APPROVE ─────────────────────────────────────────────────
     if (action === "approve") {
       const county = body.county as string;
-      if (!county) return jsonResponse({ error: "county required" }, 400);
+      const reqJurId = body.jurisdiction_id as string | undefined;
+      if (!county && !reqJurId) return jsonResponse({ error: "county or jurisdiction_id required" }, 400);
 
-      const { data: jur } = await supabase
-        .from('jurisdictions')
-        .select('*')
-        .eq('county', county)
-        .eq('state', 'CA')
-        .eq('is_active', true)
-        .eq('governmental_level', 'county')
-        .limit(1)
-        .single();
+      let jur: any;
+      if (reqJurId) {
+        const { data } = await supabase
+          .from('jurisdictions').select('*')
+          .eq('id', reqJurId).eq('is_active', true).single();
+        jur = data;
+      } else {
+        const { data } = await supabase
+          .from('jurisdictions').select('*')
+          .eq('county', county).eq('state', 'CA')
+          .eq('is_active', true).eq('governmental_level', 'county')
+          .limit(1).single();
+        jur = data;
+      }
 
       if (!jur) {
-        return jsonResponse({ error: `No active jurisdiction for ${county} County, CA` }, 404);
+        return jsonResponse({ error: `No active jurisdiction for ${county || reqJurId}` }, 404);
       }
 
       const gate = checkRequirements(jur);
@@ -888,18 +900,24 @@ Deno.serve(async (req: Request) => {
       }
 
       // Fetch jurisdiction + recompute hash
-      const { data: jur } = await supabase
-        .from('jurisdictions')
-        .select('*')
-        .eq('county', county)
-        .eq('state', 'CA')
-        .eq('is_active', true)
-        .eq('governmental_level', 'county')
-        .limit(1)
-        .single();
+      const sendJurId = body.jurisdiction_id as string | undefined;
+      let jur: any;
+      if (sendJurId) {
+        const { data } = await supabase
+          .from('jurisdictions').select('*')
+          .eq('id', sendJurId).eq('is_active', true).single();
+        jur = data;
+      } else {
+        const { data } = await supabase
+          .from('jurisdictions').select('*')
+          .eq('county', county).eq('state', 'CA')
+          .eq('is_active', true).eq('governmental_level', 'county')
+          .limit(1).single();
+        jur = data;
+      }
 
       if (!jur) {
-        return jsonResponse({ error: `No active jurisdiction for ${county} County, CA` }, 404);
+        return jsonResponse({ error: `No active jurisdiction for ${county || sendJurId}` }, 404);
       }
 
       const currentHash = await computeJurisdictionHash(jur);
@@ -1057,13 +1075,12 @@ Deno.serve(async (req: Request) => {
 
     // ── LIST ────────────────────────────────────────────────────
     if (action === "list") {
-      // All active CA county-level jurisdictions, left-joined to approvals + recipient counts
+      // All active CA jurisdictions (county + city rows), left-joined to approvals + recipient counts
       const { data: jurisdictions } = await supabase
         .from('jurisdictions')
-        .select('id, county, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status')
+        .select('id, county, city, governmental_level, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status')
         .eq('state', 'CA')
         .eq('is_active', true)
-        .eq('governmental_level', 'county')
         .order('county');
 
       if (!jurisdictions) {
@@ -1105,6 +1122,8 @@ Deno.serve(async (req: Request) => {
 
         return {
           county: j.county,
+          city: (j as any).city || null,
+          governmental_level: (j as any).governmental_level || null,
           jurisdiction_id: j.id,
           sendable: gate.ok,
           block_reason: gate.block_reason,
@@ -1363,16 +1382,21 @@ Deno.serve(async (req: Request) => {
             continue;
           }
 
-          // Jurisdiction hash check
-          const { data: jur } = await supabase
-            .from('jurisdictions')
-            .select('*')
-            .eq('county', r.county)
-            .eq('state', 'CA')
-            .eq('is_active', true)
-            .eq('governmental_level', 'county')
-            .limit(1)
-            .single();
+          // Jurisdiction hash check — prefer jurisdiction_id when available
+          let jur: any;
+          if (r.jurisdiction_id) {
+            const { data } = await supabase
+              .from('jurisdictions').select('*')
+              .eq('id', r.jurisdiction_id).eq('is_active', true).single();
+            jur = data;
+          } else {
+            const { data } = await supabase
+              .from('jurisdictions').select('*')
+              .eq('county', r.county).eq('state', 'CA')
+              .eq('is_active', true).eq('governmental_level', 'county')
+              .limit(1).single();
+            jur = data;
+          }
 
           if (!jur) {
             await supabase.from('county_briefing_recipients')
@@ -1599,21 +1623,28 @@ Deno.serve(async (req: Request) => {
     // insert fails the jurisdiction row is never touched.
     if (action === "update-jurisdiction") {
       const { county, edits, source_confirmed } = body;
-      if (!county) return jsonResponse({ error: "county required" }, 400);
+      const reqJurId = body.jurisdiction_id as string | undefined;
+      if (!county && !reqJurId) return jsonResponse({ error: "county or jurisdiction_id required" }, 400);
       if (!edits || typeof edits !== 'object') return jsonResponse({ error: "edits object required" }, 400);
 
-      const { data: jur, error: jurError } = await supabase
-        .from('jurisdictions')
-        .select('*')
-        .eq('county', county)
-        .eq('state', 'CA')
-        .eq('is_active', true)
-        .eq('governmental_level', 'county')
-        .limit(1)
-        .single();
+      let jur: any;
+      let jurError: any;
+      if (reqJurId) {
+        const res = await supabase
+          .from('jurisdictions').select('*')
+          .eq('id', reqJurId).eq('is_active', true).single();
+        jur = res.data; jurError = res.error;
+      } else {
+        const res = await supabase
+          .from('jurisdictions').select('*')
+          .eq('county', county).eq('state', 'CA')
+          .eq('is_active', true).eq('governmental_level', 'county')
+          .limit(1).single();
+        jur = res.data; jurError = res.error;
+      }
 
       if (jurError || !jur) {
-        return jsonResponse({ error: `Jurisdiction not found for ${county}` }, 404);
+        return jsonResponse({ error: `Jurisdiction not found for ${county || reqJurId}` }, 404);
       }
 
       // Build diff — only allowed fields
