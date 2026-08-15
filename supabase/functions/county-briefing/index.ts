@@ -780,6 +780,7 @@ Deno.serve(async (req: Request) => {
         .eq('county', county)
         .eq('state', 'CA')
         .eq('is_active', true)
+        .eq('governmental_level', 'county')
         .limit(1)
         .single();
 
@@ -814,6 +815,7 @@ Deno.serve(async (req: Request) => {
         .eq('county', county)
         .eq('state', 'CA')
         .eq('is_active', true)
+        .eq('governmental_level', 'county')
         .limit(1)
         .single();
 
@@ -892,6 +894,7 @@ Deno.serve(async (req: Request) => {
         .eq('county', county)
         .eq('state', 'CA')
         .eq('is_active', true)
+        .eq('governmental_level', 'county')
         .limit(1)
         .single();
 
@@ -1054,12 +1057,13 @@ Deno.serve(async (req: Request) => {
 
     // ── LIST ────────────────────────────────────────────────────
     if (action === "list") {
-      // All active CA jurisdictions, left-joined to approvals + recipient counts
+      // All active CA county-level jurisdictions, left-joined to approvals + recipient counts
       const { data: jurisdictions } = await supabase
         .from('jurisdictions')
         .select('id, county, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status')
         .eq('state', 'CA')
         .eq('is_active', true)
+        .eq('governmental_level', 'county')
         .order('county');
 
       if (!jurisdictions) {
@@ -1366,6 +1370,7 @@ Deno.serve(async (req: Request) => {
             .eq('county', r.county)
             .eq('state', 'CA')
             .eq('is_active', true)
+            .eq('governmental_level', 'county')
             .limit(1)
             .single();
 
@@ -1603,6 +1608,7 @@ Deno.serve(async (req: Request) => {
         .eq('county', county)
         .eq('state', 'CA')
         .eq('is_active', true)
+        .eq('governmental_level', 'county')
         .limit(1)
         .single();
 
