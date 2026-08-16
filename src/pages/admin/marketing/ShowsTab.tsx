@@ -217,6 +217,7 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
   const [segment, setSegment] = useState('');
   const [locations, setLocations] = useState(1);
   const [mrr, setMrr] = useState('');
+  const [nextActionAt, setNextActionAt] = useState('');
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async () => {
@@ -235,13 +236,14 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
       source: 'show',
       show_id: showId,
       buyer_type: segment ? (SEGMENTS[segment]?.category ?? null) : null,
+      next_action_at: nextActionAt || null,
     });
     setSaving(false);
 
     if (error) { toast.error(error.message); return; }
     toast.success(`Lead logged: ${trimOrg}`);
     setOrg(''); setContact(''); setCounty(''); setSegment('');
-    setLocations(1); setMrr('');
+    setLocations(1); setMrr(''); setNextActionAt('');
     onAdded();
   };
 
@@ -287,6 +289,12 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
           <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Est. MRR ($)</label>
           <input type="number" min={0} value={mrr} onChange={e => setMrr(e.target.value)}
             placeholder="0"
+            className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Next action date</label>
+          <input type="date" value={nextActionAt} onChange={e => setNextActionAt(e.target.value)}
             className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>

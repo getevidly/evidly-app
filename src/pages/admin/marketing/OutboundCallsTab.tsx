@@ -89,6 +89,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
   // Call log fields
   const [callDate, setCallDate] = useState('');
   const [callSummary, setCallSummary] = useState('');
+  const [nextActionAt, setNextActionAt] = useState('');
 
   const [saving, setSaving] = useState(false);
 
@@ -130,6 +131,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       contact_address: contactAddress.trim() || null,
       call_date: callDate || null,
       call_summary: callSummary.trim() || null,
+      next_action_at: nextActionAt || null,
     });
     setSaving(false);
 
@@ -138,7 +140,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
     setOrg(''); setCounty(''); setCountySearch(''); setSegment(''); setLocations(1);
     setContactName(''); setContactTitle(''); setContactPhone('');
     setContactEmail(''); setContactAddress('');
-    setCallDate(''); setCallSummary('');
+    setCallDate(''); setCallSummary(''); setNextActionAt('');
     onRefresh();
   };
 
@@ -230,10 +232,15 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
 
       {/* Row 3: Call log + submit */}
       <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Call log</div>
-      <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr_auto] gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-[160px_160px_1fr_auto] gap-3 items-end">
         <div>
           <label className={LBL} style={{ color: EV_MUTED }}>Call date</label>
           <input type="date" value={callDate} onChange={e => setCallDate(e.target.value)}
+            className={INP} style={inpStyle} />
+        </div>
+        <div>
+          <label className={LBL} style={{ color: EV_MUTED }}>Next action date</label>
+          <input type="date" value={nextActionAt} onChange={e => setNextActionAt(e.target.value)}
             className={INP} style={inpStyle} />
         </div>
         <div>

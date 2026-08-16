@@ -100,6 +100,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
   const [locations, setLocations] = useState(1);
   const [rep, setRep] = useState('');
   const [outcome, setOutcome] = useState('');
+  const [nextActionAt, setNextActionAt] = useState('');
   const [saving, setSaving] = useState(false);
 
   const filteredCounties = useMemo(() => {
@@ -135,6 +136,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       source: 'in_person',
       assigned_to: trimRep,
       next_action: outcome || null,
+      next_action_at: nextActionAt || null,
       buyer_type: segment ? (SEGMENTS[segment]?.category ?? null) : null,
       notes: `ICP ${icp} on entry · field visit by ${trimRep}`,
     });
@@ -143,7 +145,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
     if (error) { toast.error(error.message); return; }
     toast.success(`Added ${trimOrg} (rep: ${trimRep})`);
     setOrg(''); setCounty(''); setCountySearch(''); setSegment('');
-    setLocations(1); setOutcome('');
+    setLocations(1); setOutcome(''); setNextActionAt('');
     // Keep rep — likely the same person is entering multiple visits
     onRefresh();
   };
@@ -208,7 +210,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
         {/* Rep (required) */}
         <div>
           <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
@@ -229,6 +231,14 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
             <option value="">Select...</option>
             {OUTCOMES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
+        </div>
+
+        {/* Next action date */}
+        <div>
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Next action date</label>
+          <input type="date" value={nextActionAt} onChange={e => setNextActionAt(e.target.value)}
+            className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>
 
         {/* Submit */}
