@@ -90,8 +90,16 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
   const [callDate, setCallDate] = useState('');
   const [callSummary, setCallSummary] = useState('');
   const [nextActionAt, setNextActionAt] = useState('');
+  const [nextActionErr, setNextActionErr] = useState(false);
 
   const [saving, setSaving] = useState(false);
+
+  const quickSet = (days: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    setNextActionAt(d.toISOString().slice(0, 10));
+    setNextActionErr(false);
+  };
 
   const filteredCounties = useMemo(() => {
     if (!countySearch) return COUNTY_LIST;
@@ -102,6 +110,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
   const handleSubmit = async () => {
     const trimOrg = org.trim();
     if (!trimOrg) { toast.error('Organization name is required'); return; }
+    if (!nextActionAt) { setNextActionErr(true); return; }
 
     // Dedupe check: org_name + county
     const duplicate = accounts.find(
@@ -140,7 +149,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
     setOrg(''); setCounty(''); setCountySearch(''); setSegment(''); setLocations(1);
     setContactName(''); setContactTitle(''); setContactPhone('');
     setContactEmail(''); setContactAddress('');
-    setCallDate(''); setCallSummary(''); setNextActionAt('');
+    setCallDate(''); setCallSummary(''); setNextActionAt(''); setNextActionErr(false);
     onRefresh();
   };
 
@@ -239,9 +248,24 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
             className={INP} style={inpStyle} />
         </div>
         <div>
-          <label className={LBL} style={{ color: EV_MUTED }}>Next action date</label>
-          <input type="date" value={nextActionAt} onChange={e => setNextActionAt(e.target.value)}
+          <label className={LBL} style={{ color: EV_MUTED }}>
+            Next action date <span style={{ color: EV_DANGER }}>*</span>
+          </label>
+          <input type="date" value={nextActionAt}
+            onChange={e => { setNextActionAt(e.target.value); setNextActionErr(false); }}
             className={INP} style={inpStyle} />
+          <div className="flex flex-wrap gap-1 mt-1">
+            {[3, 7, 14, 30].map(n => (
+              <button key={n} type="button" onClick={() => quickSet(n)}
+                className="py-0.5 px-2 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+                style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}>
+                +{n} days
+              </button>
+            ))}
+          </div>
+          {nextActionErr && (
+            <div className="text-[11px] mt-1" style={{ color: EV_DANGER }}>Set a next action before saving.</div>
+          )}
         </div>
         <div>
           <label className={LBL} style={{ color: EV_MUTED }}>Summary</label>
