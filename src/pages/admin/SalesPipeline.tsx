@@ -46,6 +46,7 @@ export default function SalesPipeline() {
   const [loadError, setLoadError] = useState(false);
   const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
   const [selectedDeal, setSelectedDeal] = useState<any | null>(null);
+  const [stageBlockedId, setStageBlockedId] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -80,9 +81,18 @@ export default function SalesPipeline() {
     return Object.entries(reasons).sort((a, b) => b[1] - a[1]);
   }, [pipeline]);
 
-  const handleStageChange = async (dealId: string, newStage: string) => {
+  const handleStageChange = async (dealId: string, newStage: string, nextActionOverride?: string) => {
     if (isDemoMode) return;
+    const TERMINAL = ['won', 'lost', 'churned'];
+    const deal = pipeline.find(p => p.id === dealId);
+    const effectiveNextAction = nextActionOverride !== undefined ? nextActionOverride : deal?.next_action_at;
+    if (!TERMINAL.includes(newStage) && !effectiveNextAction) {
+      setStageBlockedId(dealId);
+      return;
+    }
+    setStageBlockedId(null);
     const updates: any = { stage: newStage, updated_at: new Date().toISOString() };
+    if (nextActionOverride !== undefined) updates.next_action_at = nextActionOverride || null;
     const probMap: Record<string, number> = {
       prospect: 10, tour_scheduled: 20, tour_completed: 35, proposal_sent: 50, negotiating: 70, won: 100, lost: 0,
     };
@@ -93,7 +103,6 @@ export default function SalesPipeline() {
     await supabase.from('sales_pipeline').update(updates).eq('id', dealId);
 
     // Also update linked demo_session
-    const deal = pipeline.find(p => p.id === dealId);
     if (deal?.session_id) {
       const sessUpdates: any = { sales_stage: newStage };
       if (newStage === 'won') sessUpdates.converted_at = new Date().toISOString();
@@ -119,6 +128,17 @@ export default function SalesPipeline() {
     if (!date) return;
     await supabase.from('sales_pipeline').update({ expected_close_date: date, updated_at: new Date().toISOString() }).eq('id', dealId);
     toast.success('Close date set');
+    loadData();
+  };
+
+  const handleUpdateNextAction = async (dealId: string, date: string) => {
+    if (isDemoMode) return;
+    await supabase.from('sales_pipeline').update({
+      next_action_at: date || null,
+      updated_at: new Date().toISOString(),
+    }).eq('id', dealId);
+    toast.success('Next action date updated');
+    setStageBlockedId(null);
     loadData();
   };
 
@@ -174,10 +194,10 @@ export default function SalesPipeline() {
 
       {viewMode === 'kanban' ? (
         <KanbanView pipeline={pipeline} onStageChange={handleStageChange} onSelect={setSelectedDeal}
-          onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} />
+          onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} stageBlockedId={stageBlockedId} />
       ) : (
         <TableView pipeline={pipeline} onStageChange={handleStageChange}
-          onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} />
+          onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} stageBlockedId={stageBlockedId} />
       )}
 
       {/* Win/Loss analysis */}
@@ -201,7 +221,8 @@ export default function SalesPipeline() {
       {/* Deal detail panel */}
       {selectedDeal && (
         <DealPanel deal={selectedDeal} onClose={() => setSelectedDeal(null)}
-          onStageChange={handleStageChange} onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate} onRefresh={loadData} isDemoMode={isDemoMode} />
+          onStageChange={handleStageChange} onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate}
+          onUpdateNextAction={handleUpdateNextAction} onRefresh={loadData} isDemoMode={isDemoMode} />
       )}
     </div>
   );
@@ -209,9 +230,10 @@ export default function SalesPipeline() {
 
 // -- Kanban View --
 
-function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }: {
+function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate, stageBlockedId }: {
   pipeline: any[]; onStageChange: (id: string, stage: string) => void;
   onSelect: (deal: any) => void; onNotes: (id: string) => void; onCloseDate: (id: string) => void;
+  stageBlockedId: string | null;
 }) {
   const columns = PIPELINE_STAGES;
 
@@ -256,6 +278,9 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
                       </>
                     )}
                   </div>
+                  {stageBlockedId === deal.id && (
+                    <div className="text-[11px] mt-1 text-red-500">Set a next action before saving.</div>
+                  )}
                 </div>
               ))}
               {deals.length === 0 && (
@@ -271,9 +296,10 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate }:
 
 // -- Table View --
 
-function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
+function TableView({ pipeline, onStageChange, onNotes, onCloseDate, stageBlockedId }: {
   pipeline: any[]; onStageChange: (id: string, stage: string) => void;
   onNotes: (id: string) => void; onCloseDate: (id: string) => void;
+  stageBlockedId: string | null;
 }) {
   return (
     <div className="bg-white rounded-xl border border-navy/10 overflow-hidden">
@@ -289,6 +315,7 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
               <th className="text-left px-3 py-2 font-semibold text-navy/80">Stage</th>
               <th className="text-center px-3 py-2 font-semibold text-navy/80">Prob</th>
               <th className="text-left px-3 py-2 font-semibold text-navy/80">Close</th>
+              <th className="text-left px-3 py-2 font-semibold text-navy/80">Next Action</th>
               <th className="text-right px-3 py-2 font-semibold text-navy/80">Actions</th>
             </tr>
           </thead>
@@ -305,9 +332,13 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
                     className="text-xs border border-navy/10 rounded px-2 py-1 bg-white">
                     {PIPELINE_STAGES.map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
                   </select>
+                  {stageBlockedId === deal.id && (
+                    <div className="text-[10px] text-red-500 mt-0.5">Set a next action before saving.</div>
+                  )}
                 </td>
                 <td className="px-3 py-2 text-center text-xs text-navy/50">{deal.probability_pct || 0}%</td>
                 <td className="px-3 py-2 text-xs text-navy/50">{formatDate(deal.expected_close_date)}</td>
+                <td className="px-3 py-2 text-xs text-navy/50">{formatDate(deal.next_action_at)}</td>
                 <td className="px-3 py-2 text-right">
                   <div className="flex items-center gap-1 justify-end">
                     <Button onClick={() => onCloseDate(deal.id)} variant="ghost" size="sm" className="p-1" title="Set close date"><Calendar className="h-3.5 w-3.5 text-navy/30" /></Button>
@@ -317,7 +348,7 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
               </tr>
             ))}
             {pipeline.length === 0 && (
-              <tr><td colSpan={9} className="px-4 py-8 text-center text-navy/30">No deals in pipeline. Launch a guided tour to create one.</td></tr>
+              <tr><td colSpan={10} className="px-4 py-8 text-center text-navy/30">No deals in pipeline. Launch a guided tour to create one.</td></tr>
             )}
           </tbody>
         </table>
@@ -328,12 +359,24 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate }: {
 
 // -- Deal detail panel --
 
-function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefresh, isDemoMode }: {
+function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onUpdateNextAction, onRefresh, isDemoMode }: {
   deal: any; onClose: () => void;
-  onStageChange: (id: string, stage: string) => void;
+  onStageChange: (id: string, stage: string, nextAction?: string) => void;
   onNotes: (id: string) => void; onCloseDate: (id: string) => void;
+  onUpdateNextAction: (id: string, date: string) => void;
   onRefresh: () => void; isDemoMode: boolean;
 }) {
+  const TERMINAL = ['won', 'lost', 'churned'];
+  const [localNextAction, setLocalNextAction] = useState(deal.next_action_at || '');
+  const [nextActionErr, setNextActionErr] = useState(false);
+
+  const quickSet = (days: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    setLocalNextAction(d.toISOString().slice(0, 10));
+    setNextActionErr(false);
+  };
+
   const handleLostReason = async () => {
     if (isDemoMode) return;
     const reason = prompt('Lost reason:');
@@ -365,13 +408,50 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefre
           <Row label="Est. MRR" value={formatCents(deal.estimated_mrr_cents || 0) + '/mo'} />
           <Row label="Probability" value={`${deal.probability_pct || 0}%`} />
           <Row label="Expected Close" value={formatDate(deal.expected_close_date)} />
+          <Row label="Next Action" value={formatDate(deal.next_action_at)} />
           <Row label="Assigned To" value={deal.assigned_to || '—'} />
           {deal.notes && <Row label="Notes" value={deal.notes} />}
         </div>
 
+        {/* Next action date — editable */}
+        <div className="mt-4 pt-4 border-t border-navy/10">
+          <label className="block text-xs font-medium text-navy/80 mb-1">
+            Next action date {!TERMINAL.includes(deal.stage) && <span className="text-red-500">*</span>}
+          </label>
+          <input type="date" value={localNextAction}
+            onChange={e => { setLocalNextAction(e.target.value); setNextActionErr(false); }}
+            className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white" />
+          <div className="flex flex-wrap gap-1 mt-1">
+            {[3, 7, 14, 30].map(n => (
+              <button key={n} type="button" onClick={() => quickSet(n)}
+                className="px-2 py-0.5 text-xs font-medium rounded border border-navy/10 bg-cream text-navy/50 cursor-pointer hover:bg-navy/5">
+                +{n} days
+              </button>
+            ))}
+          </div>
+          {nextActionErr && (
+            <div className="text-xs mt-1 text-red-500">Set a next action before saving.</div>
+          )}
+          {localNextAction !== (deal.next_action_at || '') && (
+            <button onClick={() => onUpdateNextAction(deal.id, localNextAction)}
+              className="mt-2 px-3 py-1 text-xs font-bold rounded-lg border-none bg-navy text-white cursor-pointer">
+              Save
+            </button>
+          )}
+        </div>
+
         <div className="mt-4 pt-4 border-t border-navy/10">
           <label className="block text-xs font-medium text-navy/80 mb-1">Update Stage</label>
-          <select value={deal.stage} onChange={e => { onStageChange(deal.id, e.target.value); onClose(); }}
+          <select value={deal.stage} onChange={e => {
+            const newStage = e.target.value;
+            if (!TERMINAL.includes(newStage) && !localNextAction) {
+              setNextActionErr(true);
+              return;
+            }
+            setNextActionErr(false);
+            onStageChange(deal.id, newStage, localNextAction);
+            onClose();
+          }}
             className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white">
             {PIPELINE_STAGES.map(s => <option key={s} value={s}>{STAGE_LABELS[s]}</option>)}
           </select>
