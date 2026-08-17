@@ -112,12 +112,12 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
       const cc = cite
         ? `<td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;text-align:right;white-space:nowrap">${cite}</td>`
         : `<td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;text-align:right">&mdash;</td>`;
-      rows += `<tr><td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#1E2D4D">${rName}</td>${cc}</tr>`;
+      rows += `<tr><td bgcolor="#FFFFFF" style="padding:5px 8px 5px 0;vertical-align:middle;width:19px"><div style="width:11px;height:11px;border:1.5px solid #C4CBD4;border-radius:3px;background:#FFFFFF"></div></td><td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#1E2D4D">${rName}</td>${cc}</tr>`;
     }
     sectionHtml +=
       `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px">` +
       `<tr>` +
-      `<td bgcolor="#FFFFFF" style="vertical-align:middle"><table cellpadding="0" cellspacing="0" border="0"><tr>` +
+      `<td colspan="2" bgcolor="#FFFFFF" style="vertical-align:middle"><table cellpadding="0" cellspacing="0" border="0"><tr>` +
       `<td width="11" height="11" bgcolor="${s.color}" style="width:11px;height:11px;font-size:0;line-height:0">&nbsp;</td>` +
       `<td bgcolor="#FFFFFF" style="padding-left:8px;font-family:'Montserrat',Arial,sans-serif;font-size:12.5pt;font-weight:700;color:${s.text}">${s.title}</td>` +
       `</tr></table></td>` +
@@ -125,7 +125,7 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
       `<span style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:12.5pt;color:#1E2D4D">${s.total}</span> ` +
       `<span style="font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484">${s.mult}</span>` +
       `</td></tr>` +
-      `<tr><td colspan="2" height="2" bgcolor="${s.color}" style="height:2px;font-size:0;line-height:0">&nbsp;</td></tr>` +
+      `<tr><td colspan="3" height="2" bgcolor="${s.color}" style="height:2px;font-size:0;line-height:0">&nbsp;</td></tr>` +
       rows +
       `</table>`;
   }
@@ -140,9 +140,12 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
   // ── assemble full email ──
   return `<div style="color-scheme:light only;font-family:'Inter',Arial,sans-serif;max-width:600px;margin:0 auto">` +
 
+    // ── context ──
+    `<p style="font-family:'Inter',Arial,sans-serif;font-size:10pt;color:#243044;margin:0 0 12px 0">You counted ${recordCount} records. Here is the itemized list &mdash; every one, with the code behind it.</p>` +
+    `<p style="font-family:'Inter',Arial,sans-serif;font-size:10pt;color:#243044;margin:0 0 20px 0">Check each record you can produce today. What you cannot is where to start.</p>` +
+
     // ── HEADER ──
     `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#1E2D4D" style="padding:28px">` +
-    `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:22pt;margin-bottom:20px"><span style="color:#CB5C39">E</span><span style="color:#FFFFFF">vid</span><span style="color:#CB5C39">LY</span></div>` +
     `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td bgcolor="#1E2D4D" style="vertical-align:top">` +
     `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:20pt;color:#FFFFFF;line-height:1.15">Your compliance record checklist</div>` +
