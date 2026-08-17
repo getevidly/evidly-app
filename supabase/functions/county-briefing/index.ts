@@ -1387,8 +1387,8 @@ Deno.serve(async (req: Request) => {
             continue; // Don't hold — just not ready yet
           }
 
-          // Cold recipients never send from EvidLY (briefing steps only)
-          if (r.variant === 'cold' && (step.email_kind || 'briefing') !== 'invite') {
+          // Cold recipients never send from EvidLY
+          if (r.variant === 'cold') {
             trackSkip('Cold variant — export to HubSpot');
             continue; // Leave as queued — cold exported manually
           }
