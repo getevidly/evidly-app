@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import Button from '../../components/ui/Button';
+import { TOUCH_LADDERS, PARK_DAYS } from './marketing/touchLadders';
 
 const PIPELINE_STAGES = ['prospect', 'tour_scheduled', 'tour_completed', 'proposal_sent', 'negotiating', 'won', 'lost'];
 const STAGE_LABELS: Record<string, string> = {
@@ -28,16 +29,6 @@ const STAGE_COLORS: Record<string, string> = {
   prospect: '#6b7280', tour_scheduled: '#3b82f6', tour_completed: '#8b5cf6',
   proposal_sent: '#f59e0b', negotiating: '#ef4444', won: '#16a34a', lost: '#9ca3af',
 };
-
-// Adjustable: touch-type follow-up ladders (days) and parking interval
-const TOUCH_LADDERS: Record<string, number[]> = {
-  call:      [3, 7, 21, 60],
-  email:     [5, 14, 45],
-  in_person: [4, 14, 45],
-  show:      [2, 7, 21, 60],
-  other:     [7, 21, 60],
-};
-const PARK_DAYS = 90;
 
 function formatCents(cents: number): string {
   return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0 });

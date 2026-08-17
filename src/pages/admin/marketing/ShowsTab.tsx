@@ -22,6 +22,7 @@ import {
 } from './marketingTokens';
 import { KpiMini, BarRow } from './marketingPrimitives';
 import { toast } from 'sonner';
+import { TOUCH_LADDERS, todayPlus } from './touchLadders';
 
 const COUNTY_LIST = Object.keys(JURISDICTIONS).sort();
 const SEGMENT_LIST = Object.keys(SEGMENTS).sort();
@@ -217,16 +218,9 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
   const [segment, setSegment] = useState('');
   const [locations, setLocations] = useState(1);
   const [mrr, setMrr] = useState('');
-  const [nextActionAt, setNextActionAt] = useState('');
+  const [nextActionAt, setNextActionAt] = useState(todayPlus(TOUCH_LADDERS.show[0]));
   const [nextActionErr, setNextActionErr] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  const quickSet = (days: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() + days);
-    setNextActionAt(d.toISOString().slice(0, 10));
-    setNextActionErr(false);
-  };
 
   const handleSubmit = async () => {
     const trimOrg = org.trim();
@@ -252,7 +246,7 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
     if (error) { toast.error(error.message); return; }
     toast.success(`Lead logged: ${trimOrg}`);
     setOrg(''); setContact(''); setCounty(''); setSegment('');
-    setLocations(1); setMrr(''); setNextActionAt(''); setNextActionErr(false);
+    setLocations(1); setMrr(''); setNextActionAt(todayPlus(TOUCH_LADDERS.show[0])); setNextActionErr(false);
     onAdded();
   };
 
@@ -309,14 +303,8 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
             onChange={e => { setNextActionAt(e.target.value); setNextActionErr(false); }}
             className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
-          <div className="flex flex-wrap gap-1 mt-1">
-            {[3, 7, 14, 30].map(n => (
-              <button key={n} type="button" onClick={() => quickSet(n)}
-                className="py-0.5 px-1.5 text-[10px] font-semibold rounded cursor-pointer border-none"
-                style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}>
-                +{n} days
-              </button>
-            ))}
+          <div className="text-[10px] mt-1" style={{ color: EV_MUTED }}>
+            Touch 1 · Show ladder: {TOUCH_LADDERS.show.join(' → ')} days
           </div>
           {nextActionErr && (
             <div className="text-[10px] mt-1" style={{ color: EV_DANGER }}>Set a next action before saving.</div>

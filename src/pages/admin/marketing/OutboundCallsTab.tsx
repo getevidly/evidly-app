@@ -32,6 +32,7 @@ import {
   EV_SUCCESS, EV_WARN, EV_DANGER, DISPLAY, BODY,
 } from './marketingTokens';
 import { toast } from 'sonner';
+import { TOUCH_LADDERS, todayPlus } from './touchLadders';
 
 // ── Constants ────────────────────────────────────────────────────
 
@@ -90,17 +91,10 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
   // Call log fields
   const [callDate, setCallDate] = useState('');
   const [callSummary, setCallSummary] = useState('');
-  const [nextActionAt, setNextActionAt] = useState('');
+  const [nextActionAt, setNextActionAt] = useState(todayPlus(TOUCH_LADDERS.call[0]));
   const [nextActionErr, setNextActionErr] = useState(false);
 
   const [saving, setSaving] = useState(false);
-
-  const quickSet = (days: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() + days);
-    setNextActionAt(d.toISOString().slice(0, 10));
-    setNextActionErr(false);
-  };
 
   const filteredCounties = useMemo(() => {
     if (!countySearch) return COUNTY_LIST;
@@ -150,7 +144,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
     setOrg(''); setCounty(''); setCountySearch(''); setSegment(''); setLocations(1);
     setContactName(''); setContactTitle(''); setContactPhone('');
     setContactEmail(''); setContactAddress('');
-    setCallDate(''); setCallSummary(''); setNextActionAt(''); setNextActionErr(false);
+    setCallDate(''); setCallSummary(''); setNextActionAt(todayPlus(TOUCH_LADDERS.call[0])); setNextActionErr(false);
     onRefresh();
   };
 
@@ -255,14 +249,8 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
           <input type="date" value={nextActionAt}
             onChange={e => { setNextActionAt(e.target.value); setNextActionErr(false); }}
             className={INP} style={inpStyle} />
-          <div className="flex flex-wrap gap-1 mt-1">
-            {[3, 7, 14, 30].map(n => (
-              <button key={n} type="button" onClick={() => quickSet(n)}
-                className="py-0.5 px-2 text-[11px] font-semibold rounded-md cursor-pointer border-none"
-                style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}>
-                +{n} days
-              </button>
-            ))}
+          <div className="text-[11px] mt-1" style={{ color: EV_MUTED }}>
+            Touch 1 · Call ladder: {TOUCH_LADDERS.call.join(' → ')} days
           </div>
           {nextActionErr && (
             <div className="text-[11px] mt-1" style={{ color: EV_DANGER }}>Set a next action before saving.</div>
@@ -302,15 +290,8 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
     next_action_at: '',
   });
   const [result, setResult] = useState<ImportResult | null>(null);
-  const [defaultNextActionAt, setDefaultNextActionAt] = useState('');
+  const [defaultNextActionAt, setDefaultNextActionAt] = useState(todayPlus(TOUCH_LADDERS.call[0]));
   const [defaultNextActionErr, setDefaultNextActionErr] = useState(false);
-
-  const quickSetDefault = (days: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() + days);
-    setDefaultNextActionAt(d.toISOString().slice(0, 10));
-    setDefaultNextActionErr(false);
-  };
 
   const parseFile = (file: File) => {
     const ext = file.name.split('.').pop()?.toLowerCase();
@@ -443,7 +424,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
     setRawRows([]);
     setFileHeaders([]);
     setResult(null);
-    setDefaultNextActionAt('');
+    setDefaultNextActionAt(todayPlus(TOUCH_LADDERS.call[0]));
     setDefaultNextActionErr(false);
     if (fileRef.current) fileRef.current.value = '';
   };
@@ -538,19 +519,10 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
           <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Default next action date <span style={{ color: EV_DANGER }}>*</span>
           </label>
-          <div className="flex items-center gap-2">
-            <input type="date" value={defaultNextActionAt}
-              onChange={e => { setDefaultNextActionAt(e.target.value); setDefaultNextActionErr(false); }}
-              className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
-              style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
-            {[3, 7, 14, 30].map(n => (
-              <button key={n} type="button" onClick={() => quickSetDefault(n)}
-                className="py-0.5 px-2 text-[11px] font-semibold rounded-md cursor-pointer border-none"
-                style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}>
-                +{n} days
-              </button>
-            ))}
-          </div>
+          <input type="date" value={defaultNextActionAt}
+            onChange={e => { setDefaultNextActionAt(e.target.value); setDefaultNextActionErr(false); }}
+            className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
           {defaultNextActionErr && (
             <div className="text-[11px] mt-1" style={{ color: EV_DANGER }}>Set a default next action before importing.</div>
           )}
