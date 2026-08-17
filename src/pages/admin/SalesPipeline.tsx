@@ -369,6 +369,11 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onUpdat
   const TERMINAL = ['won', 'lost', 'churned'];
   const [localNextAction, setLocalNextAction] = useState(deal.next_action_at || '');
   const [nextActionErr, setNextActionErr] = useState(false);
+  const [touchType, setTouchType] = useState('other');
+  const [touchOutcome, setTouchOutcome] = useState('');
+  const [touchNote, setTouchNote] = useState('');
+  const [touchSaving, setTouchSaving] = useState(false);
+  const [touchSaveErr, setTouchSaveErr] = useState<string | null>(null);
 
   const quickSet = (days: number) => {
     const d = new Date();
@@ -433,10 +438,75 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onUpdat
             <div className="text-xs mt-1 text-red-500">Set a next action before saving.</div>
           )}
           {localNextAction !== (deal.next_action_at || '') && (
-            <button onClick={() => onUpdateNextAction(deal.id, localNextAction)}
-              className="mt-2 px-3 py-1 text-xs font-bold rounded-lg border-none bg-navy text-white cursor-pointer">
-              Save
-            </button>
+            <>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div>
+                  <label className="block text-xs font-medium text-navy/80 mb-1">Touch type</label>
+                  <select value={touchType} onChange={e => setTouchType(e.target.value)}
+                    className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white">
+                    <option value="call">Call</option>
+                    <option value="email">Email</option>
+                    <option value="in_person">In person</option>
+                    <option value="show">Show</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-navy/80 mb-1">Outcome</label>
+                  <select value={touchOutcome} onChange={e => setTouchOutcome(e.target.value)}
+                    className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white">
+                    <option value="">—</option>
+                    <option value="connected">Connected</option>
+                    <option value="no_answer">No answer</option>
+                    <option value="not_now">Not now</option>
+                    <option value="not_a_fit">Not a fit</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-2">
+                <label className="block text-xs font-medium text-navy/80 mb-1">Note</label>
+                <input type="text" value={touchNote} onChange={e => setTouchNote(e.target.value)}
+                  placeholder="What would future you want to know?"
+                  className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white" />
+              </div>
+              {touchSaveErr && (
+                <div className="text-xs mt-1 text-red-500">{touchSaveErr}</div>
+              )}
+              <button disabled={touchSaving} onClick={async () => {
+                setTouchSaving(true);
+                setTouchSaveErr(null);
+                const wasDueOn = deal.next_action_at || null;
+                const { data: { user } } = await supabase.auth.getUser();
+                const { error: insertErr } = await supabase.from('pipeline_touches').insert({
+                  pipeline_id: deal.id,
+                  touch_type: touchType,
+                  outcome: touchOutcome || null,
+                  note: touchNote.trim() || null,
+                  next_action_set: localNextAction || null,
+                  was_due_on: wasDueOn,
+                  created_by: user?.email || null,
+                });
+                if (insertErr) {
+                  setTouchSaveErr(insertErr.message);
+                  setTouchSaving(false);
+                  return;
+                }
+                await supabase.from('sales_pipeline').update({
+                  next_action_at: localNextAction || null,
+                  updated_at: new Date().toISOString(),
+                }).eq('id', deal.id);
+                setTouchSaving(false);
+                setTouchType('other');
+                setTouchOutcome('');
+                setTouchNote('');
+                toast.success('Next action date updated');
+                onRefresh();
+              }}
+                className="mt-2 px-3 py-1 text-xs font-bold rounded-lg border-none bg-navy text-white cursor-pointer disabled:opacity-50">
+                {touchSaving ? 'Saving...' : 'Save'}
+              </button>
+            </>
           )}
         </div>
 
