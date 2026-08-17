@@ -20,6 +20,9 @@ import { QUESTION_META } from '../_shared/study-questions.ts';
 
 const cors = PUBLIC_CORS_HEADERS;
 
+// Placeholder — replace with per-touch-type ladders when follow-up cadence rules are defined
+const DEFAULT_FOLLOW_UP_DAYS = 3;
+
 const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'client', 'other', 'research', 'stovio-home', 'stovio-food', 'stovio-fire', 'stovio-article']);
 
 /* Study kitchen_type → gtmReference SEGMENTS key (so ICP scoring works).
@@ -86,6 +89,7 @@ async function writePipeline(
   } else {
     // org_name is NOT NULL — derive from email domain
     const orgName = email.split('@')[1]?.split('.')[0] || 'Unknown';
+    const followUpDate = new Date(Date.now() + DEFAULT_FOLLOW_UP_DAYS * 86400000).toISOString().split('T')[0];
     await sb.from('sales_pipeline').insert({
       org_name: orgName,
       contact_email: email,
@@ -95,6 +99,7 @@ async function writePipeline(
       stage: 'prospect',
       source: 'study',
       notes: `Study completed ${today}`,
+      next_action_at: followUpDate,
     });
   }
 }
