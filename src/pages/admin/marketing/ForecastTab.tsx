@@ -213,7 +213,7 @@ export default function ForecastTab() {
   const SortHeader = ({ label, col, align }: { label: string; col: SortKey; align?: 'right' }) => (
     <th
       onClick={() => toggleSort(col)}
-      className="py-2 px-3 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+      className="py-2 px-3 text-[10px] font-bold tracking-wider cursor-pointer select-none"
       style={{ color: EV_MUTED, textAlign: align || 'left' }}
     >
       <span className="inline-flex items-center gap-1">
@@ -378,7 +378,7 @@ export default function ForecastTab() {
       <div className="flex items-end gap-3 flex-wrap mb-4">
         {/* Channel filter */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             Channel
           </label>
           <select
@@ -396,7 +396,7 @@ export default function ForecastTab() {
 
         {/* Period from */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             From
           </label>
           <input
@@ -410,7 +410,7 @@ export default function ForecastTab() {
 
         {/* Period to */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             To
           </label>
           <input

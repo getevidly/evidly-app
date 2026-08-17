@@ -141,7 +141,7 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
         {/* Name */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Show Name <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <input type="text" value={name} onChange={e => setName(e.target.value)}
@@ -151,7 +151,7 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
         </div>
         {/* Organization */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Organization</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Organization</label>
           <input type="text" value={organization} onChange={e => setOrganization(e.target.value)}
             placeholder="Host org"
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
@@ -159,14 +159,14 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
         </div>
         {/* Start date */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Start Date</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Start Date</label>
           <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>
         {/* End date */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>End Date</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>End Date</label>
           <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
@@ -175,7 +175,7 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
         {/* Venue */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Venue / City</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Venue / City</label>
           <input type="text" value={venue} onChange={e => setVenue(e.target.value)}
             placeholder="Convention center, city"
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
@@ -183,7 +183,7 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
         </div>
         {/* Budget */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Budget ($)</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Budget ($)</label>
           <input type="number" min={0} step="1" value={budget} onChange={e => setBudget(e.target.value)}
             placeholder="0"
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
@@ -191,7 +191,7 @@ function AddShowForm({ onAdded }: { onAdded: () => void }) {
         </div>
         {/* Leads goal */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Leads Goal</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Leads Goal</label>
           <input type="number" min={0} value={leadsGoal} onChange={e => setLeadsGoal(e.target.value)}
             placeholder="Target leads"
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
@@ -258,10 +258,10 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
 
   return (
     <div className="border rounded-lg p-3 mt-3" style={{ borderColor: EV_LINE, backgroundColor: EV_LIGHT }}>
-      <h5 className="text-[12px] font-bold mb-2 uppercase tracking-wider" style={{ color: EV_MUTED }}>Log a Booth Lead</h5>
+      <h5 className="text-[12px] font-bold mb-2 tracking-wider" style={{ color: EV_MUTED }}>Log a Booth Lead</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>
             Organization <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <input type="text" value={org} onChange={e => setOrg(e.target.value)}
@@ -270,14 +270,14 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Contact Name</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Contact Name</label>
           <input type="text" value={contact} onChange={e => setContact(e.target.value)}
             placeholder="Contact at booth"
             className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>County</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>County</label>
           <select value={county} onChange={e => setCounty(e.target.value)}
             className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
@@ -286,7 +286,7 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
           </select>
         </div>
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Segment</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Segment</label>
           <select value={segment} onChange={e => setSegment(e.target.value)}
             className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none bg-white"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
@@ -295,14 +295,14 @@ function LogLeadForm({ showId, onAdded }: { showId: string; onAdded: () => void 
           </select>
         </div>
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Est. MRR ($)</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Est. MRR ($)</label>
           <input type="number" min={0} value={mrr} onChange={e => setMrr(e.target.value)}
             placeholder="0"
             className="w-full py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
         </div>
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>
             Next action date <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <input type="date" value={nextActionAt}
@@ -426,7 +426,7 @@ function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[15px] font-bold" style={{ color: EV_NAVY }}>{show.name}</span>
             <span
-              className="inline-flex items-center text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+              className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded"
               style={{ backgroundColor: st.bg, color: st.fg, letterSpacing: '0.1em' }}
             >
               {statusLabel(show.status)}
@@ -464,26 +464,26 @@ function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow
           {/* Show details */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[12px] mb-3">
             <div>
-              <span className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Booth</span>
+              <span className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Booth</span>
               <span style={{ color: EV_NAVY }}>{show.booth || '\u2014'}</span>
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Budget</span>
+              <span className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Budget</span>
               <span style={{ color: EV_NAVY }}>{show.budget_cents ? fmtDollars(show.budget_cents) : '\u2014'}</span>
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Staff</span>
+              <span className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Staff</span>
               <span style={{ color: EV_NAVY }}>{show.staff || '\u2014'}</span>
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Cost / Lead</span>
+              <span className="block text-[10px] tracking-wider font-bold mb-0.5" style={{ color: EV_MUTED }}>Cost / Lead</span>
               <span style={{ color: EV_NAVY }}>{cpl > 0 ? fmtDollars(cpl) : '\u2014'}</span>
             </div>
           </div>
 
           {collateralEntries.length > 0 && (
             <div className="mb-3">
-              <span className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Collateral</span>
+              <span className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Collateral</span>
               <div className="flex flex-wrap gap-2">
                 {collateralEntries.map(([item, done]) => (
                   <span key={item} className="inline-flex items-center gap-1 text-[12px] px-2 py-0.5 rounded"
@@ -609,7 +609,7 @@ function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow
                             {lead.estimated_mrr_cents > 0 ? fmtDollars(lead.estimated_mrr_cents) : '\u2014'}
                           </td>
                           <td className="py-2 px-4">
-                            <span className="inline-flex text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                            <span className="inline-flex text-[10px] font-bold px-2 py-0.5 rounded"
                               style={{
                                 backgroundColor: lead.stage === 'prospect' ? EV_LIGHT : '#E7EDE7',
                                 color: lead.stage === 'prospect' ? EV_MUTED : EV_SUCCESS,

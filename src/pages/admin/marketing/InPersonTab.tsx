@@ -166,7 +166,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
         {/* Organization */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Organization <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <input type="text" value={org} onChange={e => setOrg(e.target.value)}
@@ -177,7 +177,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
 
         {/* County (type-to-search) */}
         <div className="relative">
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>County</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>County</label>
           <input type="text"
             value={showCountyDropdown ? countySearch : county}
             onChange={e => { setCountySearch(e.target.value); setShowCountyDropdown(true); }}
@@ -202,7 +202,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
 
         {/* Segment */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Segment</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Segment</label>
           <select value={segment} onChange={e => setSegment(e.target.value)}
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
@@ -213,7 +213,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
 
         {/* Locations */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Locations</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Locations</label>
           <input type="number" min={1} value={locations}
             onChange={e => setLocations(Math.max(1, parseInt(e.target.value) || 1))}
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
@@ -223,7 +223,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
         {/* Rep (required) */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Rep <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <input type="text" value={rep} onChange={e => setRep(e.target.value)}
@@ -234,7 +234,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
 
         {/* Outcome */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Outcome</label>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Outcome</label>
           <select value={outcome} onChange={e => setOutcome(e.target.value)}
             className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}>
@@ -245,7 +245,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
 
         {/* Next action date */}
         <div>
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Next action date <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <input type="date" value={nextActionAt}
@@ -459,7 +459,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
           {IMPORT_FIELDS.map(f => (
             <div key={f.key}>
-              <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+              <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
                 {f.label} {f.required && <span style={{ color: EV_DANGER }}>*</span>}
               </label>
               <select value={columnMap[f.key]}
@@ -475,7 +475,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
 
         {rawRows.length > 0 && columnMap.org_name && (
           <div className="mb-4">
-            <div className="text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Preview (first 3 rows)</div>
+            <div className="text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Preview (first 3 rows)</div>
             <div className="overflow-x-auto border rounded" style={{ borderColor: EV_LINE }}>
               <table className="w-full text-left border-collapse text-[12px]">
                 <thead>
@@ -503,7 +503,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
 
         {/* Default next action date */}
         <div className="mb-4">
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Default next action date <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <div className="flex items-center gap-2">

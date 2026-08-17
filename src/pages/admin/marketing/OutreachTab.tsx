@@ -23,7 +23,7 @@ import {
 // ── Inline style helpers ─────────────────────────────────────────
 
 const LABEL: React.CSSProperties = {
-  fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+  fontSize: 10, fontWeight: 700,
   letterSpacing: '0.12em', color: EV_MUTED, fontFamily: BODY, marginBottom: 4,
 };
 
@@ -46,7 +46,7 @@ const CARD: React.CSSProperties = {
 const TH: React.CSSProperties = {
   padding: '8px 12px', textAlign: 'left', fontSize: 10,
   fontWeight: 700, letterSpacing: '0.12em',
-  textTransform: 'uppercase', color: EV_MUTED,
+  color: EV_MUTED,
 };
 
 const NUM_BADGE: React.CSSProperties = {
@@ -1273,7 +1273,7 @@ export default function OutreachTab() {
                                 } />
                                 {gc?.tiers && typeof gc.tiers === 'object' && !Array.isArray(gc.tiers) && (
                                   <div style={{ marginTop: 8 }}>
-                                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Tiers</div>
+                                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Tiers</div>
                                     {Object.entries(gc.tiers).map(([name, range]: [string, any]) => (
                                       <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
                                         <span>{name}</span>
@@ -1286,7 +1286,7 @@ export default function OutreachTab() {
                                 )}
                                 {gc?.point_values && typeof gc.point_values === 'object' && (
                                   <div style={{ marginTop: 8 }}>
-                                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Point weights</div>
+                                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: EV_MUTED, marginBottom: 4 }}>Point weights</div>
                                     {Object.entries(gc.point_values).map(([cat, pts]: [string, any]) => (
                                       <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: EV_NAVY, padding: '2px 0' }}>
                                         <span>{cat.replace(/_/g, ' ')}</span>

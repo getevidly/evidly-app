@@ -154,7 +154,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
     onRefresh();
   };
 
-  const LBL = "block text-[10px] uppercase tracking-wider font-bold mb-1";
+  const LBL = "block text-[10px] tracking-wider font-bold mb-1";
   const INP = "w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none";
   const inpStyle = { borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY };
 
@@ -163,7 +163,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       <h4 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Add Prospect</h4>
 
       {/* Row 1: Prospect */}
-      <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Prospect</div>
+      <div className="text-[10px] tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Prospect</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <div>
           <label className={LBL} style={{ color: EV_MUTED }}>
@@ -211,7 +211,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       </div>
 
       {/* Row 2: Contact */}
-      <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Contact</div>
+      <div className="text-[10px] tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Contact</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
         <div>
           <label className={LBL} style={{ color: EV_MUTED }}>Name</label>
@@ -241,7 +241,7 @@ function AddProspectForm({ accounts, onRefresh }: { accounts: AccountRow[]; onRe
       </div>
 
       {/* Row 3: Call log + submit */}
-      <div className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Call log</div>
+      <div className="text-[10px] tracking-wider font-bold mb-2" style={{ color: EV_EMBER, letterSpacing: '0.15em' }}>Call log</div>
       <div className="grid grid-cols-1 sm:grid-cols-[160px_160px_1fr_auto] gap-3 items-end">
         <div>
           <label className={LBL} style={{ color: EV_MUTED }}>Call date</label>
@@ -488,7 +488,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           {IMPORT_FIELDS.map(f => (
             <div key={f.key}>
-              <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+              <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
                 {f.label} {f.required && <span style={{ color: EV_DANGER }}>*</span>}
               </label>
               <select
@@ -507,7 +507,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
         {/* Preview first 3 rows */}
         {rawRows.length > 0 && columnMap.org_name && (
           <div className="mb-4">
-            <div className="text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Preview (first 3 rows)</div>
+            <div className="text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>Preview (first 3 rows)</div>
             <div className="overflow-x-auto border rounded" style={{ borderColor: EV_LINE }}>
               <table className="w-full text-left border-collapse text-[12px]">
                 <thead>
@@ -535,7 +535,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
 
         {/* Default next action date */}
         <div className="mb-4">
-          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+          <label className="block text-[10px] tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
             Default next action date <span style={{ color: EV_DANGER }}>*</span>
           </label>
           <div className="flex items-center gap-2">

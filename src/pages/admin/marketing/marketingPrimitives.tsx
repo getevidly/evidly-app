@@ -36,7 +36,7 @@ export function BandPill({ band }: { band: string }) {
   const c = BAND_COLORS[band] ?? { bg: EV_LIGHT, fg: EV_MUTED };
   return (
     <span
-      className="inline-flex items-center font-bold uppercase text-[10px] px-2 py-0.5 rounded"
+      className="inline-flex items-center font-bold text-[10px] px-2 py-0.5 rounded"
       style={{ backgroundColor: c.bg, color: c.fg, letterSpacing: '0.12em', fontFamily: BODY }}
     >
       {band}
@@ -48,7 +48,7 @@ export function BandPill({ band }: { band: string }) {
 export function KpiMini({ l, v, sub, accent }: { l: string; v: string | number; sub?: string; accent?: string }) {
   return (
     <div className="border p-4 rounded-lg" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
-      <div className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: EV_MUTED }}>{l}</div>
+      <div className="text-[10px] tracking-[0.15em] font-semibold" style={{ color: EV_MUTED }}>{l}</div>
       <div className="text-2xl font-bold mt-1" style={{ color: accent ?? EV_NAVY, fontFamily: DISPLAY }}>{v}</div>
       {sub && <div className="text-[11px] mt-0.5" style={{ color: EV_MUTED }}>{sub}</div>}
     </div>
@@ -86,7 +86,7 @@ export function TableCard({ title, cols, rows, note }: {
       </div>
       <div className="grid px-4 py-2" style={{ gridTemplateColumns: grid, borderBottom: `1px solid ${EV_LINE}` }}>
         {cols.map((c, i) => (
-          <div key={i} className="text-[10px] font-bold uppercase tracking-wider" style={{ color: EV_MUTED, textAlign: i === 0 ? 'left' : 'right' }}>{c}</div>
+          <div key={i} className="text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED, textAlign: i === 0 ? 'left' : 'right' }}>{c}</div>
         ))}
       </div>
       {rows.map((r, ri) => (
@@ -123,7 +123,7 @@ export function ConnectBanner({ Icon, name, blurb }: { Icon: LucideIcon; name: s
       <div className="flex-1">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="text-base font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>{name}</h3>
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase px-2 py-0.5 rounded" style={{ backgroundColor: '#F6E9E3', color: EV_EMBER_HOT, letterSpacing: '0.1em' }}>
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#F6E9E3', color: EV_EMBER_HOT, letterSpacing: '0.1em' }}>
             <span className="rounded-full" style={{ width: 6, height: 6, backgroundColor: EV_EMBER_HOT }} /> Not connected
           </span>
         </div>
@@ -141,7 +141,7 @@ export function PreviewGate({ children }: { children: ReactNode }) {
   return (
     <div>
       <div className="mb-3">
-        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded" style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, letterSpacing: '0.12em' }}>
+        <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, letterSpacing: '0.12em' }}>
           Sample preview · fills in once connected
         </span>
       </div>

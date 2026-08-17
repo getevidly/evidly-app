@@ -111,7 +111,7 @@ export default function SurveyTab() {
 
           {/* Tagged links */}
           <div className="max-w-md mx-auto text-left">
-            <div className="text-[10px] font-bold uppercase tracking-wider mb-3" style={{ color: EV_MUTED }}>
+            <div className="text-[10px] font-bold tracking-wider mb-3" style={{ color: EV_MUTED }}>
               Tagged Links
             </div>
             {TAGGED_LINKS.map(link => (
@@ -171,7 +171,7 @@ export default function SurveyTab() {
       <Panel title="Record readiness" note="Bands per record, worst first">
         {stats.recordBands.filter(b => b.n > 0).length > 0 ? (
           <div className="space-y-1">
-            <div className="grid px-0 py-1 text-[10px] font-bold uppercase tracking-wider"
+            <div className="grid px-0 py-1 text-[10px] font-bold tracking-wider"
               style={{ gridTemplateColumns: '1.4fr repeat(5,1fr)', color: EV_MUTED }}>
               <div>Record</div>
               <div className="text-right">Ready</div>
@@ -349,7 +349,7 @@ export default function SurveyTab() {
           </div>
         ) : (
           <div>
-            <div className="grid px-5 py-2 text-[10px] font-bold uppercase tracking-wider"
+            <div className="grid px-5 py-2 text-[10px] font-bold tracking-wider"
               style={{ gridTemplateColumns: '24px 1fr 1fr 1fr 1fr 1fr', color: EV_MUTED, borderBottom: `1px solid ${EV_LINE}` }}>
               <div />
               <div>Scope</div>
@@ -534,7 +534,7 @@ function ResponseDetail({ row, contact }: { row: ResponseRow; contact?: { email?
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
         {fields.map(f => (
           <div key={f.label}>
-            <div className="text-[10px] font-bold uppercase tracking-wider" style={{ color: EV_FAINT }}>{f.label}</div>
+            <div className="text-[10px] font-bold tracking-wider" style={{ color: EV_FAINT }}>{f.label}</div>
             <div className="text-[12px] mt-0.5" style={{ color: EV_NAVY }}>{f.value}</div>
           </div>
         ))}

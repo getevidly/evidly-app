@@ -325,7 +325,7 @@ export default function OverviewTab({
                     <th
                       key={col}
                       onClick={() => toggleStageSort(col)}
-                      className="py-2 px-4 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+                      className="py-2 px-4 text-[10px] font-bold tracking-wider cursor-pointer select-none"
                       style={{ color: EV_MUTED, textAlign: col === 'stage' ? 'left' : 'right' }}
                     >
                       <span className="inline-flex items-center gap-1">
@@ -365,7 +365,7 @@ export default function OverviewTab({
                     <th
                       key={col}
                       onClick={() => toggleSegSort(col)}
-                      className="py-2 px-4 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+                      className="py-2 px-4 text-[10px] font-bold tracking-wider cursor-pointer select-none"
                       style={{ color: EV_MUTED, textAlign: col === 'segment' ? 'left' : 'right' }}
                     >
                       <span className="inline-flex items-center gap-1">

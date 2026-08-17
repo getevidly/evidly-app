@@ -932,7 +932,7 @@ export default function ContentScheduleTab() {
 
           {/* ── Operation ─────────────────────────────────────────── */}
           <p
-            className="text-[10px] font-bold uppercase tracking-wider mb-2"
+            className="text-[10px] font-bold tracking-wider mb-2"
             style={{ color: EV_MUTED }}
           >
             Operation
@@ -963,7 +963,7 @@ export default function ContentScheduleTab() {
             {adjOp === 'start' && (
               <div>
                 <label
-                  className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+                  className="text-[10px] font-bold tracking-wider block mb-1"
                   style={{ color: EV_MUTED }}
                 >
                   New start date
@@ -980,7 +980,7 @@ export default function ContentScheduleTab() {
             {adjOp === 'shift' && (
               <div>
                 <label
-                  className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+                  className="text-[10px] font-bold tracking-wider block mb-1"
                   style={{ color: EV_MUTED }}
                 >
                   Days to shift (negative = earlier)
@@ -997,7 +997,7 @@ export default function ContentScheduleTab() {
             {adjOp === 'cadence' && (
               <div>
                 <label
-                  className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+                  className="text-[10px] font-bold tracking-wider block mb-1"
                   style={{ color: EV_MUTED }}
                 >
                   Days between posts
@@ -1021,7 +1021,7 @@ export default function ContentScheduleTab() {
               style={{ backgroundColor: '#DBEAFE' }}
             >
               <p
-                className="text-[10px] font-bold uppercase tracking-wider mb-1"
+                className="text-[10px] font-bold tracking-wider mb-1"
                 style={{ color: EV_MUTED }}
               >
                 Preview
@@ -1066,7 +1066,7 @@ export default function ContentScheduleTab() {
       <div className="flex items-end gap-3 flex-wrap mb-4">
         {/* Channel filter */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             Channel
           </label>
           <select
@@ -1084,7 +1084,7 @@ export default function ContentScheduleTab() {
 
         {/* Owner filter */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             Owner
           </label>
           <select
@@ -1102,7 +1102,7 @@ export default function ContentScheduleTab() {
 
         {/* Status filter */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             Status
           </label>
           <select
@@ -1120,7 +1120,7 @@ export default function ContentScheduleTab() {
 
         {/* Date from */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             From
           </label>
           <input
@@ -1134,7 +1134,7 @@ export default function ContentScheduleTab() {
 
         {/* Date to */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider block mb-1" style={{ color: EV_MUTED }}>
+          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
             To
           </label>
           <input
@@ -1208,7 +1208,7 @@ export default function ContentScheduleTab() {
             {WEEKDAYS.map(d => (
               <div
                 key={d}
-                className="py-2 text-center text-[10px] font-bold uppercase tracking-wider"
+                className="py-2 text-center text-[10px] font-bold tracking-wider"
                 style={{ color: EV_MUTED }}
               >
                 {d}
@@ -1335,7 +1335,7 @@ export default function ContentScheduleTab() {
                     <SortHeader label="Owner" col="owner" />
                     <SortHeader label="Status" col="status" />
                     <th
-                      className="py-2 px-3 text-[10px] font-bold uppercase tracking-wider"
+                      className="py-2 px-3 text-[10px] font-bold tracking-wider"
                       style={{ color: EV_MUTED }}
                     >
                       Notes
@@ -1412,7 +1412,7 @@ export default function ContentScheduleTab() {
       {/* ── Status legend ────────────────────────────────────────── */}
       <div className="flex items-center gap-4 flex-wrap mt-4">
         <span
-          className="text-[10px] font-bold uppercase tracking-wider"
+          className="text-[10px] font-bold tracking-wider"
           style={{ color: EV_MUTED }}
         >
           Status:

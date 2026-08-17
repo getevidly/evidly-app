@@ -446,7 +446,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
 
           {/* Live-preview ICP panel */}
           <div className="bg-cream rounded-lg p-4 mb-5 border border-border_ui-warm">
-            <p className="text-[10px] font-bold text-slate_ui uppercase tracking-wider mb-2">Auto-derived</p>
+            <p className="text-[10px] font-bold text-slate_ui tracking-wider mb-2">Auto-derived</p>
             <div className="flex gap-6 items-center flex-wrap">
               <div>
                 <span className="text-[11px] text-gray-400 mr-1">ICP Score:</span>
@@ -579,7 +579,7 @@ function AccountsTab({ accounts, influencerMap, stats, loading, error, onAdd }: 
                 {['Kitchen', 'Segment', 'County', 'Buyer', 'Stage', 'ICP', 'Championed by'].map(h => (
                   <th
                     key={h}
-                    className="py-2 px-3 text-[10px] font-bold text-slate_ui uppercase tracking-wider"
+                    className="py-2 px-3 text-[10px] font-bold text-slate_ui tracking-wider"
                   >
                     {h}
                   </th>
@@ -840,7 +840,7 @@ function NetworkTab({ accounts, influencers, types, loading, error, addType, add
                 {/* Enablement arc (hero only) */}
                 {isHero && inf.stage && (
                   <div className="mb-3">
-                    <p className="text-[10px] font-bold text-slate_ui uppercase tracking-wider mb-1.5">Enablement</p>
+                    <p className="text-[10px] font-bold text-slate_ui tracking-wider mb-1.5">Enablement</p>
                     <div className="flex gap-1">
                       {ENABLEMENT_STAGES.map(s => (
                         <div
@@ -861,7 +861,7 @@ function NetworkTab({ accounts, influencers, types, loading, error, addType, add
                 {/* Book (hero only) */}
                 {isHero && (
                   <div>
-                    <p className="text-[10px] font-bold text-slate_ui uppercase tracking-wider mb-1.5">
+                    <p className="text-[10px] font-bold text-slate_ui tracking-wider mb-1.5">
                       Book ({book.length})
                     </p>
                     {book.length === 0 ? (

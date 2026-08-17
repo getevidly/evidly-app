@@ -166,7 +166,7 @@ export default function SegmentsTab({ accounts, loading, error }: SegmentsTabPro
   const SortHeader = ({ label, col, right }: { label: string; col: SortKey; right?: boolean }) => (
     <th
       onClick={() => toggleSort(col)}
-      className="py-2 px-3 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+      className="py-2 px-3 text-[10px] font-bold tracking-wider cursor-pointer select-none"
       style={{ color: EV_MUTED, textAlign: right ? 'right' : 'left' }}
     >
       <span
@@ -216,7 +216,7 @@ export default function SegmentsTab({ accounts, loading, error }: SegmentsTabPro
       <div className="flex items-end gap-3 flex-wrap mb-4">
         <div>
           <label
-            className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+            className="text-[10px] font-bold tracking-wider block mb-1"
             style={{ color: EV_MUTED }}
           >
             County
@@ -236,7 +236,7 @@ export default function SegmentsTab({ accounts, loading, error }: SegmentsTabPro
 
         <div>
           <label
-            className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+            className="text-[10px] font-bold tracking-wider block mb-1"
             style={{ color: EV_MUTED }}
           >
             Segment
@@ -256,7 +256,7 @@ export default function SegmentsTab({ accounts, loading, error }: SegmentsTabPro
 
         <div>
           <label
-            className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+            className="text-[10px] font-bold tracking-wider block mb-1"
             style={{ color: EV_MUTED }}
           >
             ICP Band
