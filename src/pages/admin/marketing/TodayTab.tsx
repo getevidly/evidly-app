@@ -15,6 +15,7 @@ import {
 import { ArrowRight } from 'lucide-react';
 import ChannelCadences from './ChannelCadences';
 import StartToday from './StartToday';
+import AdherenceCards from './AdherenceCards';
 
 interface PipelineRow {
   id: string;
@@ -144,6 +145,12 @@ export default function TodayTab() {
           </div>
         </div>
       )}
+
+      {/* Adherence cards */}
+      <div>
+        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>The number you are graded on</h3>
+        <AdherenceCards today={today} />
+      </div>
 
       {/* Channel cadences */}
       <div>
