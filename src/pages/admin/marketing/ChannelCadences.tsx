@@ -48,7 +48,7 @@ function cadenceDisplay(cadenceType: string, targetCount: number | null): string
 
 const INP = "w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none";
 const inpStyle = { borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY };
-const LBL = "block text-[10px] uppercase tracking-wider font-bold mb-1";
+const LBL = "block text-[10px] tracking-wider font-bold mb-1";
 
 export default function ChannelCadences() {
   const [rows, setRows] = useState<CadenceRow[]>([]);
