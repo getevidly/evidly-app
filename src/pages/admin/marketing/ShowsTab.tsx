@@ -579,7 +579,7 @@ function ShowCard({ show, leads, onRefresh }: { show: ShowRow; leads: AccountRow
                           ['Stage', 'stage'],
                         ] as [string, LeadSortCol][]).map(([label, col]) => (
                           <th key={col} onClick={() => toggleSort(col)}
-                            className="py-1.5 px-4 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+                            className="py-1.5 px-4 text-[10px] font-bold tracking-wider cursor-pointer select-none"
                             style={{ color: EV_MUTED }}>
                             <span className="inline-flex items-center gap-1">
                               {label} {sortIcon(sortCol === col)}

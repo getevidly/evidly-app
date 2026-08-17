@@ -286,7 +286,7 @@ export default function ChannelsTab() {
                         </div>
                         <div className="flex items-center gap-4">
                           <div>
-                            <div className="text-[10px] uppercase tracking-wider font-semibold mb-1" style={{ color: EV_MUTED }}>
+                            <div className="text-[10px] tracking-wider font-semibold mb-1" style={{ color: EV_MUTED }}>
                               Demos
                             </div>
                             <Num
@@ -296,7 +296,7 @@ export default function ChannelsTab() {
                             />
                           </div>
                           <div>
-                            <div className="text-[10px] uppercase tracking-wider font-semibold mb-1" style={{ color: EV_MUTED }}>
+                            <div className="text-[10px] tracking-wider font-semibold mb-1" style={{ color: EV_MUTED }}>
                               Spend
                             </div>
                             <Num
@@ -307,7 +307,7 @@ export default function ChannelsTab() {
                             />
                           </div>
                           <div className="ml-auto text-right">
-                            <div className="text-[10px] uppercase tracking-wider font-semibold mb-1" style={{ color: EV_MUTED }}>
+                            <div className="text-[10px] tracking-wider font-semibold mb-1" style={{ color: EV_MUTED }}>
                               CPD
                             </div>
                             <span className="text-[13px] font-mono font-semibold" style={{ color: EV_NAVY }}>

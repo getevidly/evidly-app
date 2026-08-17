@@ -506,7 +506,7 @@ export default function ContentScheduleTab() {
   const SortHeader = ({ label, col }: { label: string; col: SortKey }) => (
     <th
       onClick={() => toggleSort(col)}
-      className="py-2 px-3 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+      className="py-2 px-3 text-[10px] font-bold tracking-wider cursor-pointer select-none"
       style={{ color: EV_MUTED }}
     >
       <span className="inline-flex items-center gap-1">
@@ -530,7 +530,7 @@ export default function ContentScheduleTab() {
   }) => (
     <div>
       <label
-        className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+        className="text-[10px] font-bold tracking-wider block mb-1"
         style={{ color: EV_MUTED }}
       >
         {label}
@@ -883,7 +883,7 @@ export default function ContentScheduleTab() {
 
           {/* ── Select a slice ───────────────────────────────────────── */}
           <p
-            className="text-[10px] font-bold uppercase tracking-wider mb-2"
+            className="text-[10px] font-bold tracking-wider mb-2"
             style={{ color: EV_MUTED }}
           >
             Select a slice
@@ -897,7 +897,7 @@ export default function ContentScheduleTab() {
             <AdjSelect label="Week to" value={adjWeekTo} onChange={setAdjWeekTo} options={weekOptions} />
             <div>
               <label
-                className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+                className="text-[10px] font-bold tracking-wider block mb-1"
                 style={{ color: EV_MUTED }}
               >
                 From
@@ -912,7 +912,7 @@ export default function ContentScheduleTab() {
             </div>
             <div>
               <label
-                className="text-[10px] font-bold uppercase tracking-wider block mb-1"
+                className="text-[10px] font-bold tracking-wider block mb-1"
                 style={{ color: EV_MUTED }}
               >
                 To

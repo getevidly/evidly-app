@@ -179,7 +179,7 @@ export default function ChannelCadences() {
               <thead>
                 <tr className="border-b" style={{ borderColor: EV_LINE }}>
                   {['Label', 'Source value', 'Stage', 'Cadence', 'Target', 'Owner', 'Active', ''].map(h => (
-                    <th key={h} className="py-2 px-4 text-[10px] font-bold uppercase tracking-wider" style={{ color: EV_MUTED }}>
+                    <th key={h} className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>
                       {h}
                     </th>
                   ))}

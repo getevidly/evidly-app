@@ -725,7 +725,7 @@ export default function InPersonTab({
                     ['Date', 'created_at'],
                   ] as const).map(([label, col]) => (
                     <th key={col} onClick={() => toggleSort(col)}
-                      className="py-2 px-4 text-[10px] font-bold uppercase tracking-wider cursor-pointer select-none"
+                      className="py-2 px-4 text-[10px] font-bold tracking-wider cursor-pointer select-none"
                       style={{ color: EV_MUTED }}>
                       <span className="inline-flex items-center gap-1">
                         {label} {sortIcon(sortCol === col)}
