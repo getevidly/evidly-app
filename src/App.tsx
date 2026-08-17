@@ -842,7 +842,7 @@ function AppRoutes() {
           <Route path="/admin/evidly-vault" element={<EvidlyVault />} />
           <Route path="/admin/vault" element={<Navigate to="/admin/evidly-vault" replace />} />
           <Route path="/admin/event-log" element={<EventLog />} />
-          <Route path="/admin/marketing" element={<Navigate to="/admin/marketing/overview" replace />} />
+          <Route path="/admin/marketing" element={<Navigate to="/admin/marketing/today" replace />} />
           <Route path="/admin/marketing/today" element={<SalesGuard><MarketingToday /></SalesGuard>} />
           <Route path="/admin/marketing/overview" element={<SalesGuard><MarketingOverview /></SalesGuard>} />
           <Route path="/admin/marketing/outbound-calls" element={<SalesGuard><MarketingOutboundCalls /></SalesGuard>} />
