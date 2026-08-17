@@ -25,6 +25,7 @@ export interface MarketingTab {
 }
 
 export const MARKETING_TABS: MarketingTab[] = [
+  { id: 'today',     label: 'Today',              Icon: Calendar,        route: 'today' },
   { id: 'overview',  label: 'Overview',           Icon: LayoutDashboard, route: 'overview' },
   { id: 'accounts',  label: 'Accounts',            Icon: Building2,       route: 'accounts' },
   { id: 'sequence',  label: 'Outreach',           Icon: Mail,            route: 'email-sequence' },
@@ -44,7 +45,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 ];
 
 export type MarketingTabId =
-  | 'overview' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
+  | 'today' | 'overview' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
   | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast';
 

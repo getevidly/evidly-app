@@ -189,6 +189,7 @@ const MarketingCampaigns = lazy(() => import('./pages/admin/MarketingCampaigns')
 const MarketingAccounts = lazy(() => import('./pages/admin/marketing/MarketingAccounts'));
 const MarketingNetwork = lazy(() => import('./pages/admin/marketing/MarketingNetwork'));
 const MarketingMethods = lazy(() => import('./pages/admin/marketing/MarketingMethods'));
+const MarketingToday = lazy(() => import('./pages/admin/marketing/MarketingToday'));
 const MarketingOverview = lazy(() => import('./pages/admin/marketing/MarketingOverview'));
 const MarketingOutboundCalls = lazy(() => import('./pages/admin/marketing/MarketingOutboundCalls'));
 const MarketingInPerson = lazy(() => import('./pages/admin/marketing/MarketingInPerson'));
@@ -842,6 +843,7 @@ function AppRoutes() {
           <Route path="/admin/vault" element={<Navigate to="/admin/evidly-vault" replace />} />
           <Route path="/admin/event-log" element={<EventLog />} />
           <Route path="/admin/marketing" element={<Navigate to="/admin/marketing/overview" replace />} />
+          <Route path="/admin/marketing/today" element={<SalesGuard><MarketingToday /></SalesGuard>} />
           <Route path="/admin/marketing/overview" element={<SalesGuard><MarketingOverview /></SalesGuard>} />
           <Route path="/admin/marketing/outbound-calls" element={<SalesGuard><MarketingOutboundCalls /></SalesGuard>} />
           <Route path="/admin/marketing/in-person" element={<SalesGuard><MarketingInPerson /></SalesGuard>} />
