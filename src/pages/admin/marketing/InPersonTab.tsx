@@ -53,6 +53,7 @@ const IMPORT_FIELDS = [
   { key: 'contact_name', label: 'Contact Name', required: false },
   { key: 'contact_email', label: 'Contact Email', required: false },
   { key: 'notes', label: 'Notes', required: false },
+  { key: 'next_action_at', label: 'Next action date', required: false },
 ] as const;
 
 type ImportFieldKey = typeof IMPORT_FIELDS[number]['key'];
@@ -289,8 +290,18 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
   const [columnMap, setColumnMap] = useState<Record<ImportFieldKey, string>>({
     org_name: '', county: '', segment: '', location_count: '',
     assigned_to: '', next_action: '', contact_name: '', contact_email: '', notes: '',
+    next_action_at: '',
   });
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [defaultNextActionAt, setDefaultNextActionAt] = useState('');
+  const [defaultNextActionErr, setDefaultNextActionErr] = useState(false);
+
+  const quickSetDefault = (days: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    setDefaultNextActionAt(d.toISOString().slice(0, 10));
+    setDefaultNextActionErr(false);
+  };
 
   const parseFile = (file: File) => {
     const ext = file.name.split('.').pop()?.toLowerCase();
@@ -346,6 +357,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
   const runImport = async () => {
     if (!columnMap.org_name) { toast.error('Organization column must be mapped'); return; }
     if (!columnMap.assigned_to) { toast.error('Rep column must be mapped'); return; }
+    if (!defaultNextActionAt) { setDefaultNextActionErr(true); return; }
     setStep('importing');
     const res: ImportResult = { added: 0, skipped: 0, errors: [] };
     const existingSet = new Set(
@@ -370,6 +382,9 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
 
       const icp = deriveICP({ county: county || null, segment: segment || null, location_count: locs });
 
+      const rawNaAt = columnMap.next_action_at ? (row[columnMap.next_action_at] || '').trim() : '';
+      const nextActionAtVal = rawNaAt && !isNaN(Date.parse(rawNaAt)) ? rawNaAt : defaultNextActionAt;
+
       batchInserts.push({
         org_name: orgName,
         county: county || null,
@@ -377,6 +392,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
         location_count: locs,
         assigned_to: repName || null,
         next_action: outcomeVal || null,
+        next_action_at: nextActionAtVal,
         stage: 'prospect',
         source: 'in_person',
         buyer_type: segment ? (SEGMENTS[segment]?.category ?? null) : null,
@@ -403,6 +419,7 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
 
   const reset = () => {
     setStep('idle'); setFileName(''); setRawRows([]); setFileHeaders([]); setResult(null);
+    setDefaultNextActionAt(''); setDefaultNextActionErr(false);
     if (fileRef.current) fileRef.current.value = '';
   };
 
@@ -483,6 +500,29 @@ function ImportWizard({ accounts, onRefresh }: { accounts: AccountRow[]; onRefre
             </div>
           </div>
         )}
+
+        {/* Default next action date */}
+        <div className="mb-4">
+          <label className="block text-[10px] uppercase tracking-wider font-bold mb-1" style={{ color: EV_MUTED }}>
+            Default next action date <span style={{ color: EV_DANGER }}>*</span>
+          </label>
+          <div className="flex items-center gap-2">
+            <input type="date" value={defaultNextActionAt}
+              onChange={e => { setDefaultNextActionAt(e.target.value); setDefaultNextActionErr(false); }}
+              className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+              style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }} />
+            {[3, 7, 14, 30].map(n => (
+              <button key={n} type="button" onClick={() => quickSetDefault(n)}
+                className="py-0.5 px-2 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+                style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}>
+                +{n} days
+              </button>
+            ))}
+          </div>
+          {defaultNextActionErr && (
+            <div className="text-[11px] mt-1" style={{ color: EV_DANGER }}>Set a default next action before importing.</div>
+          )}
+        </div>
 
         <div className="flex items-center gap-3">
           <button onClick={runImport} disabled={!canConfirm}
