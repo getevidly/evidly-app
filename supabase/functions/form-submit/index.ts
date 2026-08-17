@@ -350,7 +350,18 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const template = getReplyTemplate(form_type as FormType, seatsRemaining, source_page, name, metadata);
+    let template: ReturnType<typeof getReplyTemplate>;
+    try {
+      template = getReplyTemplate(form_type as FormType, seatsRemaining, source_page, name, metadata);
+    } catch (templateErr) {
+      console.error("[FORM-SUBMIT] buildChecklistEmail threw:", templateErr, (templateErr as Error)?.message);
+      // Fall back to generic resource reply so the send still happens
+      template = {
+        subject: "You\u2019re on the list \u2014 EvidLY resource",
+        bodyHtml:
+          "<p>Thanks \u2014 you\u2019re on the list. We\u2019ll email this address when the resource is ready.</p>",
+      };
+    }
 
     const emailHtml = buildEmailHtml({
       recipientName,
@@ -360,14 +371,18 @@ Deno.serve(async (req: Request) => {
     });
 
     // Fire-and-forget style: await but don't fail on error
-    const emailResult = await sendEmail({
-      to: email.trim(),
-      subject: template.subject,
-      html: emailHtml,
-    });
+    try {
+      const emailResult = await sendEmail({
+        to: email.trim(),
+        subject: template.subject,
+        html: emailHtml,
+      });
 
-    if (!emailResult) {
-      logger.error("[FORM-SUBMIT] Auto-reply email failed for", email);
+      if (!emailResult) {
+        console.error("[FORM-SUBMIT] Auto-reply email failed for", email);
+      }
+    } catch (sendErr) {
+      console.error("[FORM-SUBMIT] sendEmail threw for", email, ":", sendErr, (sendErr as Error)?.message);
     }
 
     return json({ ok: true }, 200, headers);
