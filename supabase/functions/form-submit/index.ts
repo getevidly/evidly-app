@@ -44,11 +44,10 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
   const businessName = metadata.business_name ? String(metadata.business_name) : "";
   const CAL = "https://calendly.com/founders-getevidly/discovery-call";
 
-  const sections: { title: string; color: string; text: string; total: number; mult: string; records: [string, string][] }[] = [
+  const sections: { title: string; color: string; text: string; total: number; records: [string, string][] }[] = [
     {
       title: "Fire safety", color: "#CB5C39", text: "#CB5C39",
       total: 5 * kitchens,
-      mult: `5 &times; ${kitchens} ${kitchens === 1 ? "kitchen" : "kitchens"}`,
       records: [
         ["Hood and exhaust cleaning", "NFPA 96 &middot; CFC 609"],
         ["Fire suppression system", "NFPA 17A &middot; CFC 904"],
@@ -60,7 +59,6 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
     {
       title: "Food safety", color: "#3E6B8A", text: "#3E6B8A",
       total: 13 * kitchens,
-      mult: `13 &times; ${kitchens} ${kitchens === 1 ? "kitchen" : "kitchens"}`,
       records: [
         ["Pest control", "&sect;114259"],
         ["Receiving temperature log", "&sect;113996 &middot; one per day"],
@@ -80,7 +78,6 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
     {
       title: "Kitchen business", color: "#D8A93A", text: "#B08611",
       total: 6,
-      mult: "held once",
       records: [
         ["General liability insurance", ""],
         ["Food contamination and spoilage insurance", ""],
@@ -93,7 +90,6 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
     {
       title: "Service company", color: "#A79E8B", text: "#5A5346",
       total: 5 * svcCos,
-      mult: `5 &times; ${svcCos} ${svcCos === 1 ? "company" : "companies"}`,
       records: [
         ["General liability certificate of insurance", ""],
         ["Workers' compensation certificate of insurance", ""],
@@ -109,23 +105,22 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
   for (const s of sections) {
     let rows = "";
     for (const [rName, cite] of s.records) {
-      const cc = cite
-        ? `<td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;text-align:right;white-space:nowrap">${cite}</td>`
-        : `<td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;text-align:right">&mdash;</td>`;
-      rows += `<tr><td bgcolor="#FFFFFF" style="padding:5px 8px 5px 0;vertical-align:middle;width:19px"><div style="width:11px;height:11px;border:1.5px solid #C4CBD4;border-radius:3px;background:#FFFFFF"></div></td><td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#1E2D4D">${rName}</td>${cc}</tr>`;
+      const citeLine = cite
+        ? `<div style="font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;margin-top:1px">${cite}</div>`
+        : "";
+      rows += `<tr><td bgcolor="#FFFFFF" style="padding:5px 8px 5px 0;vertical-align:top;width:19px"><div style="width:11px;height:11px;border:1.5px solid #C4CBD4;border-radius:3px;background:#FFFFFF;margin-top:2px"></div></td><td bgcolor="#FFFFFF" style="padding:5px 0"><div style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#1E2D4D">${rName}</div>${citeLine}</td></tr>`;
     }
     sectionHtml +=
       `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px">` +
       `<tr>` +
-      `<td colspan="2" bgcolor="#FFFFFF" style="vertical-align:middle"><table cellpadding="0" cellspacing="0" border="0"><tr>` +
+      `<td bgcolor="#FFFFFF" style="vertical-align:middle"><table cellpadding="0" cellspacing="0" border="0"><tr>` +
       `<td width="11" height="11" bgcolor="${s.color}" style="width:11px;height:11px;font-size:0;line-height:0">&nbsp;</td>` +
       `<td bgcolor="#FFFFFF" style="padding-left:8px;font-family:'Montserrat',Arial,sans-serif;font-size:12.5pt;font-weight:700;color:${s.text}">${s.title}</td>` +
       `</tr></table></td>` +
       `<td bgcolor="#FFFFFF" style="text-align:right;vertical-align:middle">` +
-      `<span style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:12.5pt;color:#1E2D4D">${s.total}</span> ` +
-      `<span style="font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484">${s.mult}</span>` +
+      `<span style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:12.5pt;color:#1E2D4D">${s.total}</span>` +
       `</td></tr>` +
-      `<tr><td colspan="3" height="2" bgcolor="${s.color}" style="height:2px;font-size:0;line-height:0">&nbsp;</td></tr>` +
+      `<tr><td colspan="2" height="2" bgcolor="${s.color}" style="height:2px;font-size:0;line-height:0">&nbsp;</td></tr>` +
       rows +
       `</table>`;
   }
@@ -172,26 +167,20 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
     // ── CTA ──
     `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px"><tr>` +
     `<td bgcolor="#1E2D4D" style="border-radius:8px;padding:18px">` +
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
-    `<td bgcolor="#1E2D4D" style="vertical-align:top">` +
-    `<a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:14pt;color:#FFFFFF;text-decoration:none">Schedule a meeting &rarr;</a>` +
+    `<a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:14pt;color:#FFFFFF;text-decoration:none;display:block">Schedule a meeting &rarr;</a>` +
     `<div style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#AEBACD;margin-top:6px">Bring this checklist to the call.</div>` +
-    `</td>` +
-    `<td bgcolor="#1E2D4D" style="text-align:right;vertical-align:top">` +
-    `<a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:11.5pt;color:#CB5C39;text-decoration:none">Book a discovery call</a>` +
+    `<div style="margin-top:12px"><a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:11.5pt;color:#CB5C39;text-decoration:none">Book a discovery call</a></div>` +
     `<div style="margin-top:4px"><a href="tel:+18553843591" style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#FFFFFF;text-decoration:none">(855) 384-3591</a></div>` +
-    `</td></tr></table>` +
     `</td></tr></table>` +
     `</td></tr></table>` +
 
     // ── FOOTER ──
     `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td bgcolor="#FFFFFF" style="border-top:1px solid #ECE8DE;padding:16px 24px">` +
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
-    `<td bgcolor="#FFFFFF" style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;line-height:1.5;vertical-align:top">How to read this: Check each record you can produce today. EvidLY reads and identifies; it does not decide your coverage.</td>` +
-    `<td bgcolor="#FFFFFF" style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;text-align:right;vertical-align:top;white-space:nowrap;padding-left:20px">` +
+    `<div style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;line-height:1.5">How to read this: Check each record you can produce today. EvidLY reads and identifies; it does not decide your coverage.</div>` +
+    `<div style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;line-height:1.5;margin-top:10px">` +
     `<span style="font-weight:700;color:#1E2D4D">getevidly.com</span><br>(855) 384-3591<br>a Cleaning Pros Plus, LLC company` +
-    `</td></tr></table>` +
+    `</div>` +
     `</td></tr></table>` +
     `</div>`;
 }
@@ -337,7 +326,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── Auto-reply email (non-blocking) ──────────────────
-    const recipientName = name?.trim() || "there";
+    const recipientName = (metadata?.first_name ? String(metadata.first_name).trim() : "") || name?.trim() || "there";
 
     // Fetch live founder seat count for founding_member / cta templates
     let seatsRemaining: number | undefined;
