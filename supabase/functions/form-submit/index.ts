@@ -41,7 +41,7 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
   const kitchens = Number(metadata.kitchens) || 1;
   const svcCos = Number(metadata.service_companies) || 1;
   const recordCount = Number(metadata.record_count) || 0;
-  const businessName = String(metadata.business_name || name || "your business");
+  const businessName = metadata.business_name ? String(metadata.business_name) : "";
   const CAL = "https://calendly.com/founders-getevidly/discovery-call";
 
   const sections: { title: string; color: string; text: string; total: number; mult: string; records: [string, string][] }[] = [
@@ -149,7 +149,7 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
     `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td bgcolor="#1E2D4D" style="vertical-align:top">` +
     `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:20pt;color:#FFFFFF;line-height:1.15">Your compliance record checklist</div>` +
-    `<div style="font-family:'Inter',Arial,sans-serif;font-size:9.5pt;color:#AEBACD;margin-top:8px">Prepared for ${businessName} &middot; ${kitchens} kitchen${kitchens === 1 ? "" : "s"} &middot; ${svcCos} service ${svcCos === 1 ? "company" : "companies"}</div>` +
+    `<div style="font-family:'Inter',Arial,sans-serif;font-size:9.5pt;color:#AEBACD;margin-top:8px">${businessName ? `Prepared for ${businessName} &middot; ` : ""}${kitchens} kitchen${kitchens === 1 ? "" : "s"} &middot; ${svcCos} service ${svcCos === 1 ? "company" : "companies"}</div>` +
     `</td>` +
     `<td bgcolor="#1E2D4D" style="text-align:right;vertical-align:top;padding-left:20px">` +
     `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:40pt;color:#FFFFFF;line-height:1">${recordCount}</div>` +
