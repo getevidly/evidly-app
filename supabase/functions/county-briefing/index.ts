@@ -4,6 +4,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 import { QUESTION_META } from '../_shared/study-questions.ts';
 import { sortedJsonStringify, sha256 } from '../_shared/seal-canonicalization.ts';
+import { buildClientInviteEmail } from '../_shared/invites.ts';
 
 const corsHeaders = getCorsHeaders(null);
 
@@ -775,6 +776,22 @@ Deno.serve(async (req: Request) => {
       const reqJurId = body.jurisdiction_id as string | undefined;
       if (!county && !reqJurId) return jsonResponse({ error: "county or jurisdiction_id required" }, 400);
 
+      // If step_number supplied, check email_kind — invite steps cannot be previewed
+      const previewStepNumber = body.step_number as number | undefined;
+      if (previewStepNumber !== undefined) {
+        const { data: previewStep } = await supabase
+          .from('outreach_steps')
+          .select('email_kind')
+          .eq('step_number', previewStepNumber)
+          .eq('is_active', true)
+          .maybeSingle();
+        if (previewStep?.email_kind === 'invite') {
+          return jsonResponse({
+            error: "Preview is not available for invite steps. Invite emails are built per-recipient using their invite token.",
+          }, 422);
+        }
+      }
+
       let jur: any;
       if (reqJurId) {
         const { data } = await supabase
@@ -872,16 +889,20 @@ Deno.serve(async (req: Request) => {
 
       const sendStepNumber = body.step_number as number | undefined;
 
-      // If step_number supplied, fetch the step's subject_template
+      // If step_number supplied, fetch the step's subject_template + email_kind
       let stepSubjectTemplate: string | null = null;
+      let stepEmailKind: string = 'briefing';
       if (sendStepNumber !== undefined) {
         const { data: stepRow } = await supabase
           .from('outreach_steps')
-          .select('subject_template')
+          .select('subject_template, email_kind')
           .eq('step_number', sendStepNumber)
           .eq('is_active', true)
           .maybeSingle();
-        if (stepRow) stepSubjectTemplate = stepRow.subject_template;
+        if (stepRow) {
+          stepSubjectTemplate = stepRow.subject_template;
+          stepEmailKind = stepRow.email_kind || 'briefing';
+        }
       }
 
       // Fetch approval
@@ -976,9 +997,10 @@ Deno.serve(async (req: Request) => {
 
         let ctaUrl: string;
         let sendAccessVia: string | undefined;
+        let sendInviteToken: string | undefined;
 
-        if (r.variant === 'warm') {
-          // Look up invite token + org for access_via branching
+        if (r.variant === 'warm' || stepEmailKind === 'invite') {
+          // Look up invite token + org for access_via / invite branching
           const { data: invite } = await supabase
             .from('evidly_client_invites')
             .select('token, organization_id')
@@ -995,6 +1017,7 @@ Deno.serve(async (req: Request) => {
             held++;
             continue;
           }
+          sendInviteToken = invite.token;
           const slug = county.toLowerCase().replace(/\s+/g, '-');
           ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
 
@@ -1012,8 +1035,22 @@ Deno.serve(async (req: Request) => {
         }
 
         const firstName = r.first_name || 'there';
-        const html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
-        const subject = buildSubject(stepSubjectTemplate, county, firstName);
+        let html: string;
+        let subject: string;
+        if (stepEmailKind === 'invite') {
+          const inviteResult = await buildClientInviteEmail({
+            recipientName: firstName,
+            businessName: r.org_name || 'your kitchen',
+            inviteLink: `https://app.getevidly.com/join/${sendInviteToken}`,
+            accessVia: sendAccessVia,
+            supabase,
+          });
+          html = inviteResult.html;
+          subject = inviteResult.subject;
+        } else {
+          html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
+          subject = buildSubject(stepSubjectTemplate, county, firstName);
+        }
 
         const result = await sendEmail({ to: r.email, subject, html });
 
@@ -1350,8 +1387,8 @@ Deno.serve(async (req: Request) => {
             continue; // Don't hold — just not ready yet
           }
 
-          // Cold recipients never send from EvidLY
-          if (r.variant === 'cold') {
+          // Cold recipients never send from EvidLY (briefing steps only)
+          if (r.variant === 'cold' && (step.email_kind || 'briefing') !== 'invite') {
             trackSkip('Cold variant — export to HubSpot');
             continue; // Leave as queued — cold exported manually
           }
@@ -1469,11 +1506,25 @@ Deno.serve(async (req: Request) => {
             cronAccessVia = org?.access_via || undefined;
           }
 
-          const slug = r.county.toLowerCase().replace(/\s+/g, '-');
-          const ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
           const firstName = r.first_name || 'there';
-          const html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
-          const emailSubject = buildSubject(step.subject_template, r.county, firstName);
+          let html: string;
+          let emailSubject: string;
+          if ((step.email_kind || 'briefing') === 'invite') {
+            const inviteResult = await buildClientInviteEmail({
+              recipientName: firstName,
+              businessName: r.org_name || 'your kitchen',
+              inviteLink: `https://app.getevidly.com/join/${invite.token}`,
+              accessVia: cronAccessVia,
+              supabase,
+            });
+            html = inviteResult.html;
+            emailSubject = inviteResult.subject;
+          } else {
+            const slug = r.county.toLowerCase().replace(/\s+/g, '-');
+            const ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
+            html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
+            emailSubject = buildSubject(step.subject_template, r.county, firstName);
+          }
 
           const result = await sendEmail({ to: r.email, subject: emailSubject, html });
 
