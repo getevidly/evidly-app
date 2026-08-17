@@ -29,6 +29,16 @@ const STAGE_COLORS: Record<string, string> = {
   proposal_sent: '#f59e0b', negotiating: '#ef4444', won: '#16a34a', lost: '#9ca3af',
 };
 
+// Adjustable: touch-type follow-up ladders (days) and parking interval
+const TOUCH_LADDERS: Record<string, number[]> = {
+  call:      [3, 7, 21, 60],
+  email:     [5, 14, 45],
+  in_person: [4, 14, 45],
+  show:      [2, 7, 21, 60],
+  other:     [7, 21, 60],
+};
+const PARK_DAYS = 90;
+
 function formatCents(cents: number): string {
   return '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 0 });
 }
@@ -374,13 +384,31 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onUpdat
   const [touchNote, setTouchNote] = useState('');
   const [touchSaving, setTouchSaving] = useState(false);
   const [touchSaveErr, setTouchSaveErr] = useState<string | null>(null);
+  const [touchCount, setTouchCount] = useState<number | null>(null);
+  const [userEditedDate, setUserEditedDate] = useState(false);
 
-  const quickSet = (days: number) => {
+  useEffect(() => {
+    let cancelled = false;
+    supabase.from('pipeline_touches').select('*', { count: 'exact', head: true })
+      .eq('pipeline_id', deal.id)
+      .then(({ count }) => { if (!cancelled) setTouchCount(count ?? 0); });
+    return () => { cancelled = true; };
+  }, [deal.id]);
+
+  const ladder = TOUCH_LADDERS[touchType] || TOUCH_LADDERS.other;
+  const rung = (touchCount ?? 0) + 1;
+  const pastLastRung = rung > ladder.length;
+
+  useEffect(() => {
+    if (touchCount === null || userEditedDate) return;
+    const currentLadder = TOUCH_LADDERS[touchType] || TOUCH_LADDERS.other;
+    const currentRung = touchCount + 1;
+    const days = currentRung > currentLadder.length ? PARK_DAYS : currentLadder[currentRung - 1];
     const d = new Date();
     d.setDate(d.getDate() + days);
     setLocalNextAction(d.toISOString().slice(0, 10));
     setNextActionErr(false);
-  };
+  }, [touchType, touchCount]);
 
   const handleLostReason = async () => {
     if (isDemoMode) return;
@@ -424,16 +452,15 @@ function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onUpdat
             Next action date {!TERMINAL.includes(deal.stage) && <span className="text-red-500">*</span>}
           </label>
           <input type="date" value={localNextAction}
-            onChange={e => { setLocalNextAction(e.target.value); setNextActionErr(false); }}
+            onChange={e => { setLocalNextAction(e.target.value); setNextActionErr(false); setUserEditedDate(true); }}
             className="w-full px-3 py-2 border border-navy/15 rounded-xl text-sm bg-white" />
-          <div className="flex flex-wrap gap-1 mt-1">
-            {[3, 7, 14, 30].map(n => (
-              <button key={n} type="button" onClick={() => quickSet(n)}
-                className="px-2 py-0.5 text-xs font-medium rounded border border-navy/10 bg-cream text-navy/50 cursor-pointer hover:bg-navy/5">
-                +{n} days
-              </button>
-            ))}
-          </div>
+          {touchCount !== null && (
+            <div className="text-xs text-navy/50 mt-1">
+              {pastLastRung
+                ? `Last rung reached — parking ${PARK_DAYS} days out.`
+                : `Touch ${rung} of ${ladder.length} · ${touchType === 'in_person' ? 'In person' : touchType.charAt(0).toUpperCase() + touchType.slice(1)} ladder: ${ladder.join(' → ')} days`}
+            </div>
+          )}
           {nextActionErr && (
             <div className="text-xs mt-1 text-red-500">Set a next action before saving.</div>
           )}
