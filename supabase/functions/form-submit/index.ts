@@ -41,12 +41,14 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
   const kitchens = Number(metadata.kitchens) || 1;
   const svcCos = Number(metadata.service_companies) || 1;
   const recordCount = Number(metadata.record_count) || 0;
+  const businessName = String(metadata.business_name || name || "your business");
+  const CAL = "https://calendly.com/founders-getevidly/discovery-call";
 
-  const sections: { title: string; color: string; count: string; records: [string, string][] }[] = [
+  const sections: { title: string; color: string; text: string; total: number; mult: string; records: [string, string][] }[] = [
     {
-      title: "FIRE SAFETY",
-      color: "#B24A2E",
-      count: `5 &times; ${kitchens} ${kitchens === 1 ? "kitchen" : "kitchens"} = ${5 * kitchens} records`,
+      title: "Fire safety", color: "#CB5C39", text: "#CB5C39",
+      total: 5 * kitchens,
+      mult: `5 &times; ${kitchens} ${kitchens === 1 ? "kitchen" : "kitchens"}`,
       records: [
         ["Hood and exhaust cleaning", "NFPA 96 &middot; CFC 609"],
         ["Fire suppression system", "NFPA 17A &middot; CFC 904"],
@@ -56,9 +58,9 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
       ],
     },
     {
-      title: "FOOD SAFETY",
-      color: "#3E6B8A",
-      count: `13 &times; ${kitchens} ${kitchens === 1 ? "kitchen" : "kitchens"} = ${13 * kitchens} records`,
+      title: "Food safety", color: "#3E6B8A", text: "#3E6B8A",
+      total: 13 * kitchens,
+      mult: `13 &times; ${kitchens} ${kitchens === 1 ? "kitchen" : "kitchens"}`,
       records: [
         ["Pest control", "&sect;114259"],
         ["Receiving temperature log", "&sect;113996 &middot; one per day"],
@@ -76,9 +78,9 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
       ],
     },
     {
-      title: "KITCHEN BUSINESS",
-      color: "#B08611",
-      count: "6 records &mdash; held once",
+      title: "Kitchen business", color: "#D8A93A", text: "#B08611",
+      total: 6,
+      mult: "held once",
       records: [
         ["General liability insurance", ""],
         ["Food contamination and spoilage insurance", ""],
@@ -89,9 +91,9 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
       ],
     },
     {
-      title: "SERVICE COMPANY",
-      color: "#A79E8B",
-      count: `5 &times; ${svcCos} ${svcCos === 1 ? "company" : "companies"} = ${5 * svcCos} records`,
+      title: "Service company", color: "#A79E8B", text: "#5A5346",
+      total: 5 * svcCos,
+      mult: `5 &times; ${svcCos} ${svcCos === 1 ? "company" : "companies"}`,
       records: [
         ["General liability certificate of insurance", ""],
         ["Workers' compensation certificate of insurance", ""],
@@ -102,24 +104,93 @@ function buildChecklistEmail(name: string, metadata: Record<string, unknown>): s
     },
   ];
 
-  let html = `<p style="font-size: 20px; font-weight: 700; color: #1E2D4D; margin: 0 0 24px 0;"><strong>${recordCount}</strong> records to keep current, at least.</p>`;
-
-  for (const section of sections) {
-    html += `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">`;
-    html += `<tr><td colspan="2" style="background: ${section.color}; color: #ffffff; padding: 10px 14px; font-weight: 700; font-size: 14px; letter-spacing: 0.05em;">${section.title}</td></tr>`;
-    html += `<tr><td colspan="2" style="padding: 6px 14px; font-size: 12px; color: #7C8BA5; border-bottom: 1px solid #E7E3DA;">${section.count}</td></tr>`;
-    for (const [recordName, cite] of section.records) {
-      const citeCell = cite
-        ? `<td style="padding: 8px 14px; font-size: 13px; color: #7C8BA5; text-align: right; border-bottom: 1px solid #f0ede6; white-space: nowrap;">${cite}</td>`
-        : `<td style="padding: 8px 14px; font-size: 13px; color: #b8b0a0; text-align: right; border-bottom: 1px solid #f0ede6;">&mdash;</td>`;
-      html += `<tr><td style="padding: 8px 14px; font-size: 14px; color: #1E2D4D; border-bottom: 1px solid #f0ede6;">${recordName}</td>${citeCell}</tr>`;
+  // ── build section tables ──
+  let sectionHtml = "";
+  for (const s of sections) {
+    let rows = "";
+    for (const [rName, cite] of s.records) {
+      const cc = cite
+        ? `<td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;text-align:right;white-space:nowrap">${cite}</td>`
+        : `<td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;text-align:right">&mdash;</td>`;
+      rows += `<tr><td bgcolor="#FFFFFF" style="padding:5px 0;font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#1E2D4D">${rName}</td>${cc}</tr>`;
     }
-    html += `</table>`;
+    sectionHtml +=
+      `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px">` +
+      `<tr>` +
+      `<td bgcolor="#FFFFFF" style="vertical-align:middle"><table cellpadding="0" cellspacing="0" border="0"><tr>` +
+      `<td width="11" height="11" bgcolor="${s.color}" style="width:11px;height:11px;font-size:0;line-height:0">&nbsp;</td>` +
+      `<td bgcolor="#FFFFFF" style="padding-left:8px;font-family:'Montserrat',Arial,sans-serif;font-size:12.5pt;font-weight:700;color:${s.text}">${s.title}</td>` +
+      `</tr></table></td>` +
+      `<td bgcolor="#FFFFFF" style="text-align:right;vertical-align:middle">` +
+      `<span style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:12.5pt;color:#1E2D4D">${s.total}</span> ` +
+      `<span style="font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484">${s.mult}</span>` +
+      `</td></tr>` +
+      `<tr><td colspan="2" height="2" bgcolor="${s.color}" style="height:2px;font-size:0;line-height:0">&nbsp;</td></tr>` +
+      rows +
+      `</table>`;
   }
 
-  html += `<p style="font-size: 13px; color: #4a5563; line-height: 1.5; margin: 24px 0 0 0;">Use the service company set for every vendor who works in your kitchen, not only the services listed above.</p>`;
+  // ── vendor note ──
+  sectionHtml +=
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px"><tr>` +
+    `<td width="2" bgcolor="#CB5C39" style="width:2px;font-size:0">&nbsp;</td>` +
+    `<td bgcolor="#FFFFFF" style="padding:8px 12px;font-family:'Inter',Arial,sans-serif;font-size:7.8pt;color:#4A5464;line-height:1.5">Use this set for every vendor who works in your kitchen &mdash; refrigeration, plumbing, grease hauling, equipment repair, linen &mdash; not only the services listed above.</td>` +
+    `</tr></table>`;
 
-  return html;
+  // ── assemble full email ──
+  return `<div style="color-scheme:light only;font-family:'Inter',Arial,sans-serif;max-width:600px;margin:0 auto">` +
+
+    // ── HEADER ──
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#1E2D4D" style="padding:28px">` +
+    `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:22pt;margin-bottom:20px"><span style="color:#CB5C39">E</span><span style="color:#FFFFFF">vid</span><span style="color:#CB5C39">LY</span></div>` +
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td bgcolor="#1E2D4D" style="vertical-align:top">` +
+    `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:20pt;color:#FFFFFF;line-height:1.15">Your compliance record checklist</div>` +
+    `<div style="font-family:'Inter',Arial,sans-serif;font-size:9.5pt;color:#AEBACD;margin-top:8px">Prepared for ${businessName} &middot; ${kitchens} kitchen${kitchens === 1 ? "" : "s"} &middot; ${svcCos} service ${svcCos === 1 ? "company" : "companies"}</div>` +
+    `</td>` +
+    `<td bgcolor="#1E2D4D" style="text-align:right;vertical-align:top;padding-left:20px">` +
+    `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:40pt;color:#FFFFFF;line-height:1">${recordCount}</div>` +
+    `<div style="font-family:'Inter',Arial,sans-serif;font-size:7.5pt;color:#AEBACD;letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">Records to keep current, at least</div>` +
+    `</td></tr></table>` +
+    `</td></tr>` +
+
+    // ── color bar ──
+    `<tr><td style="font-size:0;line-height:0"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td width="25%" height="4" bgcolor="#CB5C39" style="font-size:0;line-height:0">&nbsp;</td>` +
+    `<td width="33%" height="4" bgcolor="#3E6B8A" style="font-size:0;line-height:0">&nbsp;</td>` +
+    `<td width="14%" height="4" bgcolor="#D8A93A" style="font-size:0;line-height:0">&nbsp;</td>` +
+    `<td width="28%" height="4" bgcolor="#A79E8B" style="font-size:0;line-height:0">&nbsp;</td>` +
+    `</tr></table></td></tr></table>` +
+
+    // ── BODY ──
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#FFFFFF" style="padding:24px">` +
+    sectionHtml +
+
+    // ── CTA ──
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px"><tr>` +
+    `<td bgcolor="#1E2D4D" style="border-radius:8px;padding:18px">` +
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td bgcolor="#1E2D4D" style="vertical-align:top">` +
+    `<a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:14pt;color:#FFFFFF;text-decoration:none">Schedule a meeting &rarr;</a>` +
+    `<div style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#AEBACD;margin-top:6px">Bring this checklist to the call.</div>` +
+    `</td>` +
+    `<td bgcolor="#1E2D4D" style="text-align:right;vertical-align:top">` +
+    `<a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:11.5pt;color:#CB5C39;text-decoration:none">Book a discovery call</a>` +
+    `<div style="margin-top:4px"><a href="tel:+18553843591" style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#FFFFFF;text-decoration:none">(855) 384-3591</a></div>` +
+    `</td></tr></table>` +
+    `</td></tr></table>` +
+    `</td></tr></table>` +
+
+    // ── FOOTER ──
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td bgcolor="#FFFFFF" style="border-top:1px solid #ECE8DE;padding:16px 24px">` +
+    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td bgcolor="#FFFFFF" style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;line-height:1.5;vertical-align:top">How to read this: Check each record you can produce today. EvidLY reads and identifies; it does not decide your coverage.</td>` +
+    `<td bgcolor="#FFFFFF" style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;text-align:right;vertical-align:top;white-space:nowrap;padding-left:20px">` +
+    `<span style="font-weight:700;color:#1E2D4D">getevidly.com</span><br>(855) 384-3591<br>a Cleaning Pros Plus, LLC company` +
+    `</td></tr></table>` +
+    `</td></tr></table>` +
+    `</div>`;
 }
 
 function getReplyTemplate(
