@@ -14,6 +14,7 @@ import {
 } from './marketingTokens';
 import { ArrowRight } from 'lucide-react';
 import ChannelCadences from './ChannelCadences';
+import StartToday from './StartToday';
 
 interface PipelineRow {
   id: string;
@@ -61,7 +62,16 @@ export default function TodayTab() {
 
   return (
     <div className="space-y-6">
-      {/* Due / overdue list */}
+      {/* Start today */}
+      <div>
+        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Start today</h3>
+        <StartToday today={today} />
+      </div>
+
+      {/* Follow up today */}
+      <div>
+        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Follow up today</h3>
+      </div>
       {error ? (
         <div className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-md px-4 py-2">{error}</div>
       ) : rows.length === 0 ? (
@@ -70,13 +80,9 @@ export default function TodayTab() {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Header */}
-          <div>
-            <h3 className="text-sm font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Today</h3>
-            <p className="text-[12px] mt-0.5" style={{ color: EV_MUTED }}>
-              {dueCount} due &middot; {overdueCount} overdue
-            </p>
-          </div>
+          <p className="text-[12px]" style={{ color: EV_MUTED }}>
+            {dueCount} due &middot; {overdueCount} overdue
+          </p>
 
           {/* Table */}
           <div className="border rounded-lg" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
