@@ -132,17 +132,6 @@ export default function SalesPipeline() {
     loadData();
   };
 
-  const handleUpdateNextAction = async (dealId: string, date: string) => {
-    if (isDemoMode) return;
-    await supabase.from('sales_pipeline').update({
-      next_action_at: date || null,
-      updated_at: new Date().toISOString(),
-    }).eq('id', dealId);
-    toast.success('Next action date updated');
-    setStageBlockedId(null);
-    loadData();
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -223,7 +212,7 @@ export default function SalesPipeline() {
       {selectedDeal && (
         <DealPanel deal={selectedDeal} onClose={() => setSelectedDeal(null)}
           onStageChange={handleStageChange} onNotes={handleUpdateNotes} onCloseDate={handleSetCloseDate}
-          onUpdateNextAction={handleUpdateNextAction} onRefresh={loadData} isDemoMode={isDemoMode} />
+          onRefresh={loadData} isDemoMode={isDemoMode} />
       )}
     </div>
   );
@@ -360,11 +349,10 @@ function TableView({ pipeline, onStageChange, onNotes, onCloseDate, stageBlocked
 
 // -- Deal detail panel --
 
-function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onUpdateNextAction, onRefresh, isDemoMode }: {
+function DealPanel({ deal, onClose, onStageChange, onNotes, onCloseDate, onRefresh, isDemoMode }: {
   deal: any; onClose: () => void;
   onStageChange: (id: string, stage: string, nextAction?: string) => void;
   onNotes: (id: string) => void; onCloseDate: (id: string) => void;
-  onUpdateNextAction: (id: string, date: string) => void;
   onRefresh: () => void; isDemoMode: boolean;
 }) {
   const TERMINAL = ['won', 'lost', 'churned'];
