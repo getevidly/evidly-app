@@ -17,6 +17,9 @@ import ChannelCadences from './ChannelCadences';
 import StartToday from './StartToday';
 import AdherenceCards from './AdherenceCards';
 
+// Adjustable — controls how many follow-up rows render before deferring the rest
+const DAILY_QUEUE_CAP = 15;
+
 interface PipelineRow {
   id: string;
   org_name: string;
@@ -78,11 +81,16 @@ export default function TodayTab() {
       ) : rows.length === 0 ? (
         <div className="border rounded-lg p-8 text-center" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
           <div className="text-[13px]" style={{ color: EV_MUTED }}>Nothing due today.</div>
+          <div className="text-[12px] mt-1" style={{ color: EV_MUTED }}>You are done for today.</div>
         </div>
       ) : (
         <div className="space-y-4">
           <p className="text-[12px]" style={{ color: EV_MUTED }}>
             {dueCount} due &middot; {overdueCount} overdue
+          </p>
+
+          <p className="text-[12px]" style={{ color: EV_MUTED }}>
+            Clear the first three and today counts.
           </p>
 
           {/* Table */}
@@ -99,7 +107,7 @@ export default function TodayTab() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map(r => {
+                  {rows.slice(0, DAILY_QUEUE_CAP).map(r => {
                     const daysAgo = Math.floor(
                       (new Date(today).getTime() - new Date(r.next_action_at).getTime()) / 86400000,
                     );
@@ -143,6 +151,11 @@ export default function TodayTab() {
               </table>
             </div>
           </div>
+          {rows.length > DAILY_QUEUE_CAP && (
+            <p className="text-[12px] mt-2" style={{ color: EV_MUTED }}>
+              {rows.length - DAILY_QUEUE_CAP} deferred to tomorrow.
+            </p>
+          )}
         </div>
       )}
 
