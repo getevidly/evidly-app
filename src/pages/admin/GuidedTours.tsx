@@ -42,6 +42,9 @@ const STAGE_LABELS: Record<string, string> = {
   won: 'Won', lost: 'Lost', nurture: 'Nurture',
 };
 
+// Placeholder — replace with per-touch-type ladders when follow-up cadence rules are defined
+const DEFAULT_FOLLOW_UP_DAYS = 3;
+
 // ── PRICING — EXACT RULES ──
 // Pilot:    $49 covers 1st location. +$49 each additional.  (Founder testing tier)
 // Founder:  $99 covers 1st location. +$49 each additional.
@@ -589,6 +592,7 @@ function SetupTourTab({ templates, campaigns, orgs, onLaunch }: {
         estimated_mrr_cents: estimatedMRR,
         stage: 'tour_scheduled',
         probability_pct: 20,
+        next_action_at: new Date(Date.now() + DEFAULT_FOLLOW_UP_DAYS * 86400000).toISOString().slice(0, 10),
       });
 
       if (campaignId) {
@@ -956,6 +960,10 @@ function HistoryTab({ sessions, pipeline, onRefresh }: {
         tour_scheduled: 20, tour_completed: 35, proposal_sent: 50, negotiating: 70, won: 100, lost: 0,
       };
       if (probMap[newStage] !== undefined) pipeUpdates.probability_pct = probMap[newStage];
+      const nonTerminal = ['prospect', 'tour_scheduled', 'tour_completed', 'proposal_sent', 'negotiating'];
+      if (nonTerminal.includes(newStage) && !pipelineRow.next_action_at) {
+        pipeUpdates.next_action_at = new Date(Date.now() + DEFAULT_FOLLOW_UP_DAYS * 86400000).toISOString().slice(0, 10);
+      }
       await supabase.from('sales_pipeline').update(pipeUpdates).eq('id', pipelineRow.id);
     }
 
