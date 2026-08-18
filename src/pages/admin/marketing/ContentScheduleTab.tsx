@@ -521,19 +521,20 @@ export default function ContentScheduleTab() {
     setShowAdjustPanel(false);
   };
 
-  // ── Quick action: start today on consecutive weekdays ───────
+  // ── Quick action: rebase to today, preserve spacing ─────────
 
   const handleStartTodayWeekdays = async () => {
     if (adjSlice.length === 0) { toast.error('No posts in the selected slice.'); return; }
     setApplying(true);
     const todayStr = new Date().toISOString().slice(0, 10);
     const sorted = [...adjSlice].sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
-    const assigned: string[] = [];
-    assigned[0] = nextWeekday(todayStr, 1);
-    for (let i = 1; i < sorted.length; i++) {
-      assigned[i] = nextWeekday(addDaysToDate(assigned[i - 1], 1), 1);
-    }
-    const updates = sorted.map((p, i) => ({ id: p.id, scheduled_date: assigned[i] }));
+    const oldStart = sorted[0].scheduled_date;
+    const newStart = nextWeekday(todayStr, 1);
+    const updates = sorted.map(p => {
+      const offset = daysBetween(oldStart, p.scheduled_date);
+      const rebased = addDaysToDate(newStart, offset);
+      return { id: p.id, scheduled_date: nextWeekday(rebased, 1) };
+    });
     const { error: err } = await bulkUpdateDates(updates);
     setApplying(false);
     if (err) { toast.error(`Update failed: ${err}`); return; }
@@ -941,7 +942,7 @@ export default function ContentScheduleTab() {
               {applying ? 'Applying\u2026' : 'Start this week today \u00b7 skip weekends'}
             </button>
             <p className="text-[11px] mt-1" style={{ color: EV_MUTED }}>
-              Rebases the selected slice to start today on consecutive weekdays.
+              Rebases the selected slice to start today, keeping each post's spacing.
             </p>
           </div>
 
