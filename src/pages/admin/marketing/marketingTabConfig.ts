@@ -27,7 +27,6 @@ export interface MarketingTab {
 export const MARKETING_TABS: MarketingTab[] = [
   { id: 'today',     label: 'Today',              Icon: Calendar,        route: 'today' },
   { id: 'overview',  label: 'Overview',           Icon: LayoutDashboard, route: 'overview' },
-  { id: 'accounts',  label: 'Accounts',            Icon: Building2,       route: 'accounts' },
   { id: 'schedule',  label: 'Content Schedule',    Icon: Calendar,        route: 'content-schedule' },
   { id: 'sequence',  label: 'Outreach',           Icon: Mail,            route: 'email-sequence' },
   { id: 'calls',     label: 'Outbound Calls',     Icon: Radio,           route: 'outbound-calls' },
@@ -35,6 +34,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'shows',     label: 'Shows',               Icon: Ticket,          route: 'shows' },
   { id: 'survey',    label: 'Survey',              Icon: ClipboardList,   route: 'survey' },
   { id: 'funnel',    label: 'Funnel',              Icon: GitBranch,       route: 'funnel' },
+  { id: 'accounts',  label: 'Accounts',            Icon: Building2,       route: 'accounts' },
   { id: 'segments',  label: 'Segments',            Icon: Users,           route: 'segments' },
   { id: 'channels',  label: 'Channels',            Icon: Layers,          route: 'channels' },
   { id: 'founder',   label: 'Founder Window',      Icon: Flame,           route: 'founder-window' },
