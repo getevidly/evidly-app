@@ -93,7 +93,22 @@ function daysBetween(a: string, b: string): number {
   return Math.round((db.getTime() - da.getTime()) / 86400000);
 }
 
+function nextWeekday(dateStr: string, dir: 1 | -1 = 1): string {
+  let d = dateStr;
+  while (true) {
+    const day = new Date(d + 'T12:00:00Z').getUTCDay(); // 0 Sun … 6 Sat
+    if (day !== 0 && day !== 6) return d;
+    d = addDaysToDate(d, dir);
+  }
+}
+
+const WEEKDAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+function weekdayName(dateStr: string): string {
+  return WEEKDAY_SHORT[new Date(dateStr + 'T12:00:00Z').getUTCDay()];
+}
+
 type AdjOp = 'start' | 'shift' | 'cadence';
+type AdjWeekend = 'skip_fwd' | 'skip_back' | 'allow';
 
 // ── Component ────────────────────────────────────────────────────
 
@@ -142,6 +157,7 @@ export default function ContentScheduleTab() {
   const [adjStartDate, setAdjStartDate] = useState('');
   const [adjShiftDays, setAdjShiftDays] = useState(0);
   const [adjCadenceDays, setAdjCadenceDays] = useState(1);
+  const [adjWeekend, setAdjWeekend] = useState<AdjWeekend>('skip_fwd');
   const [applying, setApplying] = useState(false);
 
   // ── Scroll form into view when it opens ────────────────────────
@@ -246,26 +262,30 @@ export default function ContentScheduleTab() {
     const sorted = [...adjSlice];
     let updates: { id: string; oldDate: string; newDate: string }[] = [];
 
+    const applyWeekend = (d: string) =>
+      adjWeekend === 'skip_fwd'  ? nextWeekday(d, 1) :
+      adjWeekend === 'skip_back' ? nextWeekday(d, -1) : d;
+
     if (adjOp === 'start' && adjStartDate) {
       const earliest = sorted[0].scheduled_date;
       const delta = daysBetween(earliest, adjStartDate);
       updates = sorted.map(p => ({
         id: p.id,
         oldDate: p.scheduled_date,
-        newDate: addDaysToDate(p.scheduled_date, delta),
+        newDate: applyWeekend(addDaysToDate(p.scheduled_date, delta)),
       }));
     } else if (adjOp === 'shift' && adjShiftDays !== 0) {
       updates = sorted.map(p => ({
         id: p.id,
         oldDate: p.scheduled_date,
-        newDate: addDaysToDate(p.scheduled_date, adjShiftDays),
+        newDate: applyWeekend(addDaysToDate(p.scheduled_date, adjShiftDays)),
       }));
     } else if (adjOp === 'cadence' && adjCadenceDays >= 1) {
       const baseDate = sorted[0].scheduled_date;
       updates = sorted.map((p, i) => ({
         id: p.id,
         oldDate: p.scheduled_date,
-        newDate: addDaysToDate(baseDate, i * adjCadenceDays),
+        newDate: applyWeekend(addDaysToDate(baseDate, i * adjCadenceDays)),
       }));
     }
 
@@ -276,7 +296,7 @@ export default function ContentScheduleTab() {
       last: updates[updates.length - 1],
       updates,
     };
-  }, [adjSlice, adjOp, adjStartDate, adjShiftDays, adjCadenceDays]);
+  }, [adjSlice, adjOp, adjStartDate, adjShiftDays, adjCadenceDays, adjWeekend]);
 
   // ── Sort toggle ───────────────────────────────────────────────
 
@@ -1012,6 +1032,24 @@ export default function ContentScheduleTab() {
                 />
               </div>
             )}
+            <div className="mt-3">
+              <label
+                className="text-[10px] font-bold tracking-wider block mb-1"
+                style={{ color: EV_MUTED }}
+              >
+                Weekends
+              </label>
+              <select
+                value={adjWeekend}
+                onChange={e => setAdjWeekend(e.target.value as AdjWeekend)}
+                className="py-[5px] px-[8px] text-[12px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+              >
+                <option value="skip_fwd">Skip to next weekday</option>
+                <option value="skip_back">Skip to previous weekday</option>
+                <option value="allow">Allow weekend dates</option>
+              </select>
+            </div>
           </div>
 
           {/* ── Preview ───────────────────────────────────────────── */}
@@ -1030,10 +1068,10 @@ export default function ContentScheduleTab() {
                 {adjPreview.count} post{adjPreview.count !== 1 ? 's' : ''} will be updated
               </p>
               <p className="text-[11px]" style={{ color: EV_MUTED, fontFamily: 'ui-monospace, monospace' }}>
-                First: {adjPreview.first.oldDate} &rarr; {adjPreview.first.newDate}
+                First: {adjPreview.first.oldDate} &rarr; {adjPreview.first.newDate} ({weekdayName(adjPreview.first.newDate)})
               </p>
               <p className="text-[11px]" style={{ color: EV_MUTED, fontFamily: 'ui-monospace, monospace' }}>
-                Last: {adjPreview.last.oldDate} &rarr; {adjPreview.last.newDate}
+                Last: {adjPreview.last.oldDate} &rarr; {adjPreview.last.newDate} ({weekdayName(adjPreview.last.newDate)})
               </p>
             </div>
           )}
