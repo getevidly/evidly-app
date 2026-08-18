@@ -521,24 +521,41 @@ export default function ContentScheduleTab() {
     setShowAdjustPanel(false);
   };
 
-  // ── Quick action: rebase to today, preserve spacing ─────────
+  // ── Quick action: reset schedule, weekly per channel ────────
 
-  const handleStartTodayWeekdays = async () => {
-    if (adjSlice.length === 0) { toast.error('No posts in the selected slice.'); return; }
+  const handleResetSchedule = async () => {
+    if (posts.length === 0) { toast.error('No posts loaded.'); return; }
+    if (!confirm('Reset all posts to start today, weekly per channel? This overwrites every scheduled date.')) return;
     setApplying(true);
     const todayStr = new Date().toISOString().slice(0, 10);
-    const sorted = [...adjSlice].sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
-    const oldStart = sorted[0].scheduled_date;
-    const newStart = nextWeekday(todayStr, 1);
-    const updates = sorted.map(p => {
-      const offset = daysBetween(oldStart, p.scheduled_date);
-      const rebased = addDaysToDate(newStart, offset);
-      return { id: p.id, scheduled_date: nextWeekday(rebased, 1) };
-    });
+    const week0 = nextWeekday(todayStr, 1);
+
+    // Group by channel_label
+    const byChannel: Record<string, typeof posts> = {};
+    for (const p of posts) {
+      const ch = p.channel_label || '(none)';
+      if (!byChannel[ch]) byChannel[ch] = [];
+      byChannel[ch].push(p);
+    }
+
+    // Within each channel, sort by created_at asc (tiebreak by id)
+    const updates: { id: string; scheduled_date: string }[] = [];
+    for (const ch of Object.keys(byChannel)) {
+      const sorted = byChannel[ch].sort((a, b) =>
+        a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id),
+      );
+      for (let i = 0; i < sorted.length; i++) {
+        updates.push({
+          id: sorted[i].id,
+          scheduled_date: nextWeekday(addDaysToDate(week0, i * 7), 1),
+        });
+      }
+    }
+
     const { error: err } = await bulkUpdateDates(updates);
     setApplying(false);
     if (err) { toast.error(`Update failed: ${err}`); return; }
-    toast.success(`${updates.length} post${updates.length !== 1 ? 's' : ''} rebased to weekdays starting today`);
+    toast.success(`${updates.length} post${updates.length !== 1 ? 's' : ''} reset to weekly schedule`);
     setShowAdjustPanel(false);
   };
 
@@ -931,18 +948,18 @@ export default function ContentScheduleTab() {
           </p>
           <div className="mb-4">
             <button
-              onClick={handleStartTodayWeekdays}
-              disabled={applying || adjSlice.length === 0}
+              onClick={handleResetSchedule}
+              disabled={applying || posts.length === 0}
               className="py-[7px] px-5 text-[12px] font-semibold rounded-md cursor-pointer border-none"
               style={{
-                backgroundColor: (applying || adjSlice.length === 0) ? EV_LIGHT : EV_NAVY,
-                color: (applying || adjSlice.length === 0) ? EV_MUTED : '#fff',
+                backgroundColor: (applying || posts.length === 0) ? EV_LIGHT : EV_NAVY,
+                color: (applying || posts.length === 0) ? EV_MUTED : '#fff',
               }}
             >
-              {applying ? 'Applying\u2026' : 'Start this week today \u00b7 skip weekends'}
+              {applying ? 'Applying\u2026' : 'Reset schedule \u00b7 start today, weekly per channel'}
             </button>
             <p className="text-[11px] mt-1" style={{ color: EV_MUTED }}>
-              Rebases the selected slice to start today, keeping each post's spacing.
+              Re-lays every channel from today, one post per week, weekends skipped. Order follows when each post was created.
             </p>
           </div>
 
