@@ -58,12 +58,23 @@ export function useContentScheduleData() {
     setError(null);
 
     try {
-      const { data, error: pErr } = await supabase
-        .from('content_schedule')
-        .select('*')
-        .order('scheduled_date', { ascending: true });
-      if (pErr) throw pErr;
-      setPosts((data || []) as ContentPostRow[]);
+      // Paginate to fetch ALL rows — PostgREST caps at 1000 per request
+      const allRows: ContentPostRow[] = [];
+      const PAGE = 1000;
+      let from = 0;
+      while (true) {
+        const { data, error: pErr } = await supabase
+          .from('content_schedule')
+          .select('*')
+          .order('scheduled_date', { ascending: true })
+          .range(from, from + PAGE - 1);
+        if (pErr) throw pErr;
+        if (!data || data.length === 0) break;
+        allRows.push(...(data as ContentPostRow[]));
+        if (data.length < PAGE) break;
+        from += PAGE;
+      }
+      setPosts(allRows);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load schedule';
       setError(msg);
