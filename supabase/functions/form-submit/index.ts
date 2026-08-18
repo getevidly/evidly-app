@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { PUBLIC_CORS_HEADERS } from "../_shared/cors.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { logger } from "../_shared/logger.ts";
 
@@ -36,7 +36,7 @@ interface ReplyTemplate {
   ctaUrl?: string;
 }
 
-// ── Checklist email builder  v20 ────────────────────────────────────────
+// ── Checklist email builder  v21 ────────────────────────────────────────
 function buildChecklistEmail(name: string, metadata: Record<string, unknown>): string {
   const firstName = metadata.first_name ? String(metadata.first_name).trim() : "";
   const greeting = firstName || (name ? name.trim() : "") || "there";
@@ -143,12 +143,11 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ── Handler ─────────────────────────────────────────────────
 Deno.serve(async (req: Request) => {
-  const corsHeaders = getCorsHeaders(req.headers.get("origin"));
   if (req.method === "OPTIONS") {
-    return new Response(null, { status: 200, headers: corsHeaders });
+    return new Response(null, { status: 200, headers: PUBLIC_CORS_HEADERS });
   }
 
-  const headers = { ...corsHeaders, "Content-Type": "application/json" };
+  const headers = { ...PUBLIC_CORS_HEADERS, "Content-Type": "application/json" };
 
   try {
     // ── Parse body ────────────────────────────────────────
