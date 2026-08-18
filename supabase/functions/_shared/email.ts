@@ -124,6 +124,8 @@ export interface EmailTemplateParams {
   unsubscribeToken?: string;
   /** Campaign emails show an Unsubscribe link. Transactional (default) do not. */
   campaign?: boolean;
+  /** When true, suppress the wrapper "Hi name," — the body provides its own. */
+  skipGreeting?: boolean;
 }
 
 /**
@@ -161,7 +163,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
   </div>
   ${urgencyBlock}
   <div style="padding: 32px;">
-    <p>Hi ${params.recipientName},</p>
+    ${params.skipGreeting ? '' : `<p>Hi ${params.recipientName},</p>`}
     ${params.bodyHtml}
     ${ctaBlock}
   </div>
