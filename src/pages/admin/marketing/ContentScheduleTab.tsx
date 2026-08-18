@@ -14,6 +14,7 @@ import {
   Plus, Trash2, ChevronUp, ChevronDown,
   ChevronLeft, ChevronRight, CalendarDays, List,
   SlidersHorizontal, Wand2,
+  Image as ImageIcon, Video, Paperclip,
 } from 'lucide-react';
 import {
   useContentScheduleData,
@@ -62,6 +63,8 @@ const EMPTY_FORM: AddPostInput = {
   body: '',
   cta: '',
   post_type: '',
+  media_type: 'none',
+  media_url: '',
 };
 
 // ── Calendar helpers ─────────────────────────────────────────────
@@ -391,6 +394,8 @@ export default function ContentScheduleTab() {
       body: post.body || '',
       cta: post.cta || '',
       post_type: post.post_type || '',
+      media_type: post.media_type || 'none',
+      media_url: post.media_url || '',
     });
     setShowForm(true);
   };
@@ -488,6 +493,8 @@ export default function ContentScheduleTab() {
           body: updated.body || '',
           cta: updated.cta || '',
           post_type: updated.post_type || '',
+          media_type: updated.media_type || 'none',
+          media_url: updated.media_url || '',
         });
       }
     }
@@ -904,6 +911,40 @@ export default function ContentScheduleTab() {
                 placeholder="e.g. Email"
               />
             </div>
+
+            {/* Media type */}
+            <div>
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Media
+              </label>
+              <select
+                value={form.media_type}
+                onChange={e => setForm(prev => ({ ...prev, media_type: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+              >
+                <option value="none">None</option>
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+                <option value="file">File</option>
+              </select>
+            </div>
+
+            {/* Media URL */}
+            {form.media_type !== 'none' && (
+              <div className="sm:col-span-3">
+                <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                  Link or filename
+                </label>
+                <input
+                  value={form.media_url}
+                  onChange={e => setForm(prev => ({ ...prev, media_url: e.target.value }))}
+                  className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                  style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                  placeholder="Drive/Dropbox link or file name"
+                />
+              </div>
+            )}
           </div>
 
           {/* Form actions */}
@@ -1481,6 +1522,17 @@ export default function ContentScheduleTab() {
                         >
                           {p.title}
                         </span>
+                        {p.media_type !== 'none' && (
+                          <span
+                            className="flex-shrink-0"
+                            title={p.media_url || p.media_type}
+                            style={{ color: EV_MUTED, lineHeight: 0 }}
+                          >
+                            {p.media_type === 'image' && <ImageIcon size={8} />}
+                            {p.media_type === 'video' && <Video size={8} />}
+                            {p.media_type === 'file' && <Paperclip size={8} />}
+                          </span>
+                        )}
                         <span
                           className="ml-auto flex-shrink-0 text-[8px] font-bold leading-none rounded-sm px-[3px] py-[1px]"
                           style={{
@@ -1539,6 +1591,12 @@ export default function ContentScheduleTab() {
                       style={{ color: EV_MUTED }}
                     >
                       Post as
+                    </th>
+                    <th
+                      className="py-2 px-3 text-[10px] font-bold tracking-wider"
+                      style={{ color: EV_MUTED }}
+                    >
+                      Media
                     </th>
                     <th
                       className="py-2 px-3 text-[10px] font-bold tracking-wider"
@@ -1604,6 +1662,36 @@ export default function ContentScheduleTab() {
                             <option value="personal">You</option>
                             <option value="company">Company</option>
                           </select>
+                        </td>
+                        <td className="py-2.5 px-3 text-[11px]" style={{ color: EV_MUTED }}>
+                          {p.media_type !== 'none' ? (
+                            <span className="inline-flex items-center gap-1">
+                              {p.media_type === 'image' && <ImageIcon size={12} />}
+                              {p.media_type === 'video' && <Video size={12} />}
+                              {p.media_type === 'file' && <Paperclip size={12} />}
+                              {p.media_url ? (
+                                p.media_url.startsWith('http') ? (
+                                  <a
+                                    href={p.media_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={e => e.stopPropagation()}
+                                    className="text-[11px] underline truncate max-w-[120px]"
+                                    style={{ color: '#1D4ED8' }}
+                                    title={p.media_url}
+                                  >
+                                    Link
+                                  </a>
+                                ) : (
+                                  <span className="truncate max-w-[120px]" title={p.media_url}>
+                                    {p.media_url}
+                                  </span>
+                                )
+                              ) : null}
+                            </span>
+                          ) : (
+                            '\u2014'
+                          )}
                         </td>
                         <td
                           className="py-2.5 px-3 text-[11px] max-w-[200px] truncate"

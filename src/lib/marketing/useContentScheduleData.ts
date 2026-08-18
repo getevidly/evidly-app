@@ -27,6 +27,8 @@ export interface ContentPostRow {
   post_type: string | null;
   brief: string | null;
   post_as: string;
+  media_type: string;
+  media_url: string | null;
 }
 
 export interface AddPostInput {
@@ -39,6 +41,8 @@ export interface AddPostInput {
   body: string;
   cta: string;
   post_type: string;
+  media_type: string;
+  media_url: string;
 }
 
 export interface BaselineInfo {
@@ -103,6 +107,8 @@ export function useContentScheduleData() {
         body: input.body || null,
         cta: input.cta || null,
         post_type: input.post_type || null,
+        media_type: input.media_type || 'none',
+        media_url: input.media_url || null,
       });
     if (insertErr) return { error: insertErr.message };
     await refresh();
@@ -124,6 +130,8 @@ export function useContentScheduleData() {
         body: input.body || null,
         cta: input.cta || null,
         post_type: input.post_type || null,
+        media_type: input.media_type || 'none',
+        media_url: input.media_url || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id);
