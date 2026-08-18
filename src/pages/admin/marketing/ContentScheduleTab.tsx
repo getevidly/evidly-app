@@ -521,6 +521,26 @@ export default function ContentScheduleTab() {
     setShowAdjustPanel(false);
   };
 
+  // ── Quick action: start today on consecutive weekdays ───────
+
+  const handleStartTodayWeekdays = async () => {
+    if (adjSlice.length === 0) { toast.error('No posts in the selected slice.'); return; }
+    setApplying(true);
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const sorted = [...adjSlice].sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
+    const assigned: string[] = [];
+    assigned[0] = nextWeekday(todayStr, 1);
+    for (let i = 1; i < sorted.length; i++) {
+      assigned[i] = nextWeekday(addDaysToDate(assigned[i - 1], 1), 1);
+    }
+    const updates = sorted.map((p, i) => ({ id: p.id, scheduled_date: assigned[i] }));
+    const { error: err } = await bulkUpdateDates(updates);
+    setApplying(false);
+    if (err) { toast.error(`Update failed: ${err}`); return; }
+    toast.success(`${updates.length} post${updates.length !== 1 ? 's' : ''} rebased to weekdays starting today`);
+    setShowAdjustPanel(false);
+  };
+
   // ── Sort header helper ────────────────────────────────────────
 
   const SortHeader = ({ label, col }: { label: string; col: SortKey }) => (
@@ -900,6 +920,30 @@ export default function ContentScheduleTab() {
           <h3 className="text-sm font-bold mb-4" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
             Date Adjustment
           </h3>
+
+          {/* ── Quick actions ──────────────────────────────────────── */}
+          <p
+            className="text-[10px] font-bold tracking-wider mb-2"
+            style={{ color: EV_MUTED }}
+          >
+            Quick actions
+          </p>
+          <div className="mb-4">
+            <button
+              onClick={handleStartTodayWeekdays}
+              disabled={applying || adjSlice.length === 0}
+              className="py-[7px] px-5 text-[12px] font-semibold rounded-md cursor-pointer border-none"
+              style={{
+                backgroundColor: (applying || adjSlice.length === 0) ? EV_LIGHT : EV_NAVY,
+                color: (applying || adjSlice.length === 0) ? EV_MUTED : '#fff',
+              }}
+            >
+              {applying ? 'Applying\u2026' : 'Start this week today \u00b7 skip weekends'}
+            </button>
+            <p className="text-[11px] mt-1" style={{ color: EV_MUTED }}>
+              Rebases the selected slice to start today on consecutive weekdays.
+            </p>
+          </div>
 
           {/* ── Select a slice ───────────────────────────────────────── */}
           <p
