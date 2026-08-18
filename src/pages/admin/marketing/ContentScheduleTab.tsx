@@ -23,7 +23,7 @@ import {
 } from '../../../lib/marketing/useContentScheduleData';
 import { useChannelsData } from '../../../lib/marketing/useChannelsData';
 import {
-  EV_NAVY, EV_MUTED, EV_FAINT,
+  EV_NAVY, EV_EMBER, EV_MUTED, EV_FAINT,
   EV_LINE, EV_LIGHT, EV_PAPER,
   DISPLAY, BODY,
 } from './marketingTokens';
@@ -1480,6 +1480,16 @@ export default function ContentScheduleTab() {
                           style={{ color: EV_NAVY, maxWidth: 'calc(100% - 12px)' }}
                         >
                           {p.title}
+                        </span>
+                        <span
+                          className="ml-auto flex-shrink-0 text-[8px] font-bold leading-none rounded-sm px-[3px] py-[1px]"
+                          style={{
+                            color: p.post_as === 'personal' ? EV_EMBER : EV_MUTED,
+                            backgroundColor: p.post_as === 'personal' ? '#F8E8E3' : '#EEECEA',
+                          }}
+                          title={p.post_as === 'personal' ? 'You' : 'Company'}
+                        >
+                          {p.post_as === 'personal' ? 'You' : 'Co'}
                         </span>
                       </div>
                     ))}
