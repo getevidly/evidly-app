@@ -9,7 +9,7 @@
  * Writes to: content_schedule table.
  * REAL DATA ONLY — no hardcoded posts.
  */
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import {
   Plus, Trash2, ChevronUp, ChevronDown,
   ChevronLeft, ChevronRight, CalendarDays, List,
@@ -19,6 +19,7 @@ import {
   useContentScheduleData,
   type ContentPostRow,
   type AddPostInput,
+  type BaselineInfo,
 } from '../../../lib/marketing/useContentScheduleData';
 import { useChannelsData } from '../../../lib/marketing/useChannelsData';
 import {
@@ -113,7 +114,7 @@ type AdjWeekend = 'skip_fwd' | 'skip_back' | 'allow';
 // ── Component ────────────────────────────────────────────────────
 
 export default function ContentScheduleTab() {
-  const { posts, loading, error, refresh, addPost, updatePost, deletePost, bulkUpdateDates } = useContentScheduleData();
+  const { posts, loading, error, refresh, addPost, updatePost, deletePost, bulkUpdateDates, saveBaseline, restoreBaseline, fetchBaselineInfo } = useContentScheduleData();
   const { channels: mktChannels } = useChannelsData();
 
   const formRef = useRef<HTMLDivElement>(null);
@@ -159,6 +160,51 @@ export default function ContentScheduleTab() {
   const [adjCadenceDays, setAdjCadenceDays] = useState(1);
   const [adjWeekend, setAdjWeekend] = useState<AdjWeekend>('skip_fwd');
   const [applying, setApplying] = useState(false);
+
+  // Baseline state
+  const [baselineInfo, setBaselineInfo] = useState<BaselineInfo | null>(null);
+  const [baselineLoading, setBaselineLoading] = useState(false);
+
+  // ── Load baseline info on mount ──────────────────────────────
+
+  const refreshBaselineInfo = useCallback(async () => {
+    try {
+      const info = await fetchBaselineInfo();
+      setBaselineInfo(info);
+    } catch { /* silent */ }
+  }, [fetchBaselineInfo]);
+
+  useEffect(() => { refreshBaselineInfo(); }, [refreshBaselineInfo]);
+
+  // ── Baseline handlers ───────────────────────────────────────
+
+  const handleSaveBaseline = async () => {
+    if (!confirm('Save the current dates as the baseline? This replaces the last saved version.')) return;
+    setBaselineLoading(true);
+    try {
+      const { count } = await saveBaseline();
+      toast.success(`Baseline saved (${count} posts)`);
+      await refreshBaselineInfo();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Save failed';
+      toast.error(msg);
+    }
+    setBaselineLoading(false);
+  };
+
+  const handleRestoreBaseline = async () => {
+    if (!confirm('Restore every post to the last saved baseline? This overwrites current dates.')) return;
+    setBaselineLoading(true);
+    try {
+      const { count } = await restoreBaseline();
+      toast.success(`Restored ${count} posts to baseline`);
+      await refreshBaselineInfo();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Restore failed';
+      toast.error(msg);
+    }
+    setBaselineLoading(false);
+  };
 
   // ── Scroll form into view when it opens ────────────────────────
 
@@ -900,6 +946,47 @@ export default function ContentScheduleTab() {
           <h3 className="text-sm font-bold mb-4" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
             Date Adjustment
           </h3>
+
+          {/* ── Baseline ──────────────────────────────────────────── */}
+          <p
+            className="text-[10px] font-bold tracking-wider mb-2"
+            style={{ color: EV_MUTED }}
+          >
+            Baseline
+          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <button
+              onClick={handleSaveBaseline}
+              disabled={applying || baselineLoading || posts.length === 0}
+              className="py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
+              style={{
+                borderColor: (applying || baselineLoading || posts.length === 0) ? EV_LINE : EV_LINE,
+                backgroundColor: (applying || baselineLoading || posts.length === 0) ? EV_LIGHT : '#fff',
+                color: (applying || baselineLoading || posts.length === 0) ? EV_MUTED : EV_NAVY,
+                fontFamily: BODY,
+              }}
+            >
+              {baselineLoading ? 'Working\u2026' : 'Save as baseline'}
+            </button>
+            <button
+              onClick={handleRestoreBaseline}
+              disabled={applying || baselineLoading || !baselineInfo}
+              className="py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
+              style={{
+                borderColor: (applying || baselineLoading || !baselineInfo) ? EV_LINE : EV_LINE,
+                backgroundColor: (applying || baselineLoading || !baselineInfo) ? EV_LIGHT : '#fff',
+                color: (applying || baselineLoading || !baselineInfo) ? EV_MUTED : EV_NAVY,
+                fontFamily: BODY,
+              }}
+            >
+              {baselineLoading ? 'Working\u2026' : 'Restore baseline'}
+            </button>
+          </div>
+          <p className="text-[11px] mb-4" style={{ color: EV_MUTED }}>
+            {baselineInfo
+              ? `Last saved: ${baselineInfo.name} \u00b7 ${new Date(baselineInfo.savedAt).toLocaleDateString()} \u00b7 ${baselineInfo.count} posts`
+              : 'No baseline saved yet'}
+          </p>
 
           {/* ── Select a slice ───────────────────────────────────────── */}
           <p
