@@ -11,7 +11,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useFounderCount, FOUNDER_CAP } from '../../../hooks/useFounderCount';
 import { useChannelsData, type ChannelRow, type ChannelActualRow } from '../../../lib/marketing/useChannelsData';
-import { KpiMini, BarRow, BandPill } from './marketingPrimitives';
+import { KpiMini, BarRow } from './marketingPrimitives';
 import {
   EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, EV_LIGHT, EV_PAPER,
   DISPLAY, BODY,
@@ -278,11 +278,10 @@ export default function ChannelsTab() {
                           borderLeftColor: catColor,
                         }}
                       >
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="mb-3">
                           <span className="text-[13px] font-semibold" style={{ color: EV_NAVY }}>
                             {ch.label}
                           </span>
-                          <BandPill band={ch.prp_band} />
                         </div>
                         <div className="flex items-center gap-4">
                           <div>
