@@ -13,7 +13,7 @@ import {
   LayoutDashboard, Radio, MapPin, Building2,
   Layers, ClipboardList, Calendar, Flame, GitBranch,
   Users, Mail, Search, TrendingUp, Megaphone, FileBarChart,
-  Ticket,
+  Ticket, Target,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -27,6 +27,7 @@ export interface MarketingTab {
 export const MARKETING_TABS: MarketingTab[] = [
   { id: 'today',     label: 'Today',              Icon: Calendar,        route: 'today' },
   { id: 'overview',  label: 'Overview',           Icon: LayoutDashboard, route: 'overview' },
+  { id: 'planner',   label: 'Planner',            Icon: Target,          route: 'planner' },
   { id: 'schedule',  label: 'Content Schedule',    Icon: Calendar,        route: 'content-schedule' },
   { id: 'sequence',  label: 'Outreach',           Icon: Mail,            route: 'email-sequence' },
   { id: 'calls',     label: 'Outbound Calls',     Icon: Radio,           route: 'outbound-calls' },
@@ -45,7 +46,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 ];
 
 export type MarketingTabId =
-  | 'today' | 'overview' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
+  | 'today' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
   | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast';
 

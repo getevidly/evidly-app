@@ -27,6 +27,7 @@ import SEOTab from './SEOTab';
 import SERPTab from './SERPTab';
 import GoogleAdsTab from './GoogleAdsTab';
 import ForecastTab from './ForecastTab';
+import PlannerTab from './PlannerTab';
 import {
   Layers, ClipboardList,
   Calendar, Mail,
@@ -261,6 +262,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'seo'       && <SEOTab />}
       {tab === 'serp'      && <SERPTab />}
       {tab === 'ads'       && <GoogleAdsTab />}
+      {tab === 'planner'   && <PlannerTab />}
       {tab === 'forecast'  && <ForecastTab />}
 
       {/* ── Add-account modal ──────────────────────────────────────── */}
