@@ -36,153 +36,63 @@ interface ReplyTemplate {
   ctaUrl?: string;
 }
 
-// ── Checklist email builder ─────────────────────────────────
+// ── Checklist email builder  v18 ────────────────────────────────────────
 function buildChecklistEmail(name: string, metadata: Record<string, unknown>): string {
-  const kitchens = Number(metadata.kitchens) || 1;
-  const svcCos = Number(metadata.service_companies) || 1;
-  const recordCount = Number(metadata.record_count) || 0;
+  const firstName = metadata.first_name ? String(metadata.first_name).trim() : "";
+  const greeting = firstName || (name ? name.trim() : "") || "there";
+  const recordCount = metadata.record_count != null ? String(metadata.record_count) : "";
   const businessName = metadata.business_name ? String(metadata.business_name) : "";
-  const CAL = "https://calendly.com/founders-getevidly/discovery-call";
+  const kitchenCount = Number(metadata.kitchens) || 1;
+  const svcCount = Number(metadata.service_companies) || 1;
+  const kitchenStr = `${kitchenCount} kitchen${kitchenCount === 1 ? "" : "s"}`;
+  const svcStr = `${svcCount} service ${svcCount === 1 ? "company" : "companies"}`;
 
-  const sections: { title: string; color: string; text: string; total: number; records: [string, string][] }[] = [
-    {
-      title: "Fire safety", color: "#CB5C39", text: "#CB5C39",
-      total: 5 * kitchens,
-      records: [
-        ["Hood and exhaust cleaning", "NFPA 96 &middot; CFC 609"],
-        ["Fire suppression system", "NFPA 17A &middot; CFC 904"],
-        ["Sprinkler system", "NFPA 25 &middot; CFC 901"],
-        ["Fire alarm system", "NFPA 72 &middot; CFC 907"],
-        ["Fire extinguishers", "NFPA 10 &middot; CFC 906"],
-      ],
-    },
-    {
-      title: "Food safety", color: "#3E6B8A", text: "#3E6B8A",
-      total: 13 * kitchens,
-      records: [
-        ["Pest control", "&sect;114259"],
-        ["Receiving temperature log", "&sect;113996 &middot; one per day"],
-        ["Cold holding log", "&sect;113996 &middot; one per day"],
-        ["Hot holding log", "&sect;113996 &middot; one per day"],
-        ["Cooling log", "&sect;114002 &middot; one per day"],
-        ["Reheating log", "&sect;114014 &middot; one per day"],
-        ["Warewash and sanitizer", "&sect;114099"],
-        ["Health permit", "&sect;114381"],
-        ["Food protection manager", "&sect;113947.1"],
-        ["Food handler cards", "&sect;113948 &middot; one per person"],
-        ["Allergen awareness and training", "&sect;113947(b)"],
-        ["Person in charge", "&sect;113945"],
-        ["Employee health policy", "&sect;113949"],
-      ],
-    },
-    {
-      title: "Kitchen business", color: "#D8A93A", text: "#B08611",
-      total: 6,
-      records: [
-        ["General liability insurance", ""],
-        ["Food contamination and spoilage insurance", ""],
-        ["Business license", ""],
-        ["Seller's permit", ""],
-        ["Form W-9", ""],
-        ["Certificate of occupancy", ""],
-      ],
-    },
-    {
-      title: "Service company", color: "#A79E8B", text: "#5A5346",
-      total: 5 * svcCos,
-      records: [
-        ["General liability certificate of insurance", ""],
-        ["Workers' compensation certificate of insurance", ""],
-        ["Professional license", ""],
-        ["Business license", ""],
-        ["Form W-9", ""],
-      ],
-    },
-  ];
+  const countLine = recordCount
+    ? `You counted ${recordCount} records. Here is the itemized list &mdash; every one, with the code behind it.`
+    : `Here is your itemized list &mdash; every one, with the code behind it.`;
 
-  // ── build section tables ──
-  let sectionHtml = "";
-  for (const s of sections) {
-    let rows = "";
-    for (const [rName, cite] of s.records) {
-      const citeLine = cite
-        ? `<div style="font-family:'JetBrains Mono','Courier New',monospace;font-size:7pt;color:#9A9484;margin-top:1px">${cite}</div>`
-        : "";
-      rows += `<tr><td bgcolor="#FFFFFF" style="padding:5px 8px 5px 0;vertical-align:top;width:19px"><div style="width:11px;height:11px;border:1.5px solid #C4CBD4;border-radius:3px;background:#FFFFFF;margin-top:2px"></div></td><td bgcolor="#FFFFFF" style="padding:5px 0"><div style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#1E2D4D">${rName}</div>${citeLine}</td></tr>`;
-    }
-    sectionHtml +=
-      `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px">` +
-      `<tr>` +
-      `<td bgcolor="#FFFFFF" style="vertical-align:middle"><table cellpadding="0" cellspacing="0" border="0"><tr>` +
-      `<td width="11" height="11" bgcolor="${s.color}" style="width:11px;height:11px;font-size:0;line-height:0">&nbsp;</td>` +
-      `<td bgcolor="#FFFFFF" style="padding-left:8px;font-family:'Montserrat',Arial,sans-serif;font-size:12.5pt;font-weight:700;color:${s.text}">${s.title}</td>` +
-      `</tr></table></td>` +
-      `<td bgcolor="#FFFFFF" style="text-align:right;vertical-align:middle">` +
-      `<span style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:12.5pt;color:#1E2D4D">${s.total}</span>` +
-      `</td></tr>` +
-      `<tr><td colspan="2" height="2" bgcolor="${s.color}" style="height:2px;font-size:0;line-height:0">&nbsp;</td></tr>` +
-      rows +
-      `</table>`;
-  }
+  const prep = businessName
+    ? `Prepared for <b style="color:#fff">${businessName}</b> &middot; ${kitchenStr} &middot; ${svcStr}`
+    : `${kitchenStr} &middot; ${svcStr}`;
 
-  // ── vendor note ──
-  sectionHtml +=
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px"><tr>` +
-    `<td width="2" bgcolor="#CB5C39" style="width:2px;font-size:0">&nbsp;</td>` +
-    `<td bgcolor="#FFFFFF" style="padding:8px 12px;font-family:'Inter',Arial,sans-serif;font-size:7.8pt;color:#4A5464;line-height:1.5">Use this set for every vendor who works in your kitchen &mdash; refrigeration, plumbing, grease hauling, equipment repair, linen &mdash; not only the services listed above.</td>` +
-    `</tr></table>`;
-
-  // ── assemble full email ──
-  return `<div style="color-scheme:light only;font-family:'Inter',Arial,sans-serif;max-width:600px;margin:0 auto">` +
-
-    // ── context ──
-    `<p style="font-family:'Inter',Arial,sans-serif;font-size:10pt;color:#243044;margin:0 0 12px 0">You counted ${recordCount} records. Here is the itemized list &mdash; every one, with the code behind it.</p>` +
-    `<p style="font-family:'Inter',Arial,sans-serif;font-size:10pt;color:#243044;margin:0 0 20px 0">Check each record you can produce today. What you cannot is where to start.</p>` +
-
-    // ── HEADER ──
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#1E2D4D" style="padding:28px">` +
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
-    `<td bgcolor="#1E2D4D" style="vertical-align:top">` +
-    `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:20pt;color:#FFFFFF;line-height:1.15">Your compliance record checklist</div>` +
-    `<div style="font-family:'Inter',Arial,sans-serif;font-size:9.5pt;color:#AEBACD;margin-top:8px">${businessName ? `Prepared for ${businessName} &middot; ` : ""}${kitchens} kitchen${kitchens === 1 ? "" : "s"} &middot; ${svcCos} service ${svcCos === 1 ? "company" : "companies"}</div>` +
-    `</td>` +
-    `<td bgcolor="#1E2D4D" style="text-align:right;vertical-align:top;padding-left:20px">` +
-    `<div style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:40pt;color:#FFFFFF;line-height:1">${recordCount}</div>` +
-    `<div style="font-family:'Inter',Arial,sans-serif;font-size:7.5pt;color:#AEBACD;letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">Records to keep current, at least</div>` +
-    `</td></tr></table>` +
-    `</td></tr>` +
-
-    // ── color bar ──
-    `<tr><td style="font-size:0;line-height:0"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
-    `<td width="25%" height="4" bgcolor="#CB5C39" style="font-size:0;line-height:0">&nbsp;</td>` +
-    `<td width="33%" height="4" bgcolor="#3E6B8A" style="font-size:0;line-height:0">&nbsp;</td>` +
-    `<td width="14%" height="4" bgcolor="#D8A93A" style="font-size:0;line-height:0">&nbsp;</td>` +
-    `<td width="28%" height="4" bgcolor="#A79E8B" style="font-size:0;line-height:0">&nbsp;</td>` +
-    `</tr></table></td></tr></table>` +
-
-    // ── BODY ──
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#FFFFFF" style="padding:24px">` +
-    sectionHtml +
-
-    // ── CTA ──
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px"><tr>` +
-    `<td bgcolor="#1E2D4D" style="border-radius:8px;padding:18px">` +
-    `<a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:14pt;color:#FFFFFF;text-decoration:none;display:block">Schedule a meeting &rarr;</a>` +
-    `<div style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#AEBACD;margin-top:6px">Bring this checklist to the call.</div>` +
-    `<div style="margin-top:12px"><a href="${CAL}" style="font-family:'Montserrat',Arial,sans-serif;font-weight:700;font-size:11.5pt;color:#CB5C39;text-decoration:none">Book a discovery call</a></div>` +
-    `<div style="margin-top:4px"><a href="tel:+18553843591" style="font-family:'Inter',Arial,sans-serif;font-size:9pt;color:#FFFFFF;text-decoration:none">(855) 384-3591</a></div>` +
-    `</td></tr></table>` +
-    `</td></tr></table>` +
-
-    // ── FOOTER ──
-    `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
-    `<td bgcolor="#FFFFFF" style="border-top:1px solid #ECE8DE;padding:16px 24px">` +
-    `<div style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;line-height:1.5">How to read this: Check each record you can produce today. EvidLY reads and identifies; it does not decide your coverage.</div>` +
-    `<div style="font-family:'Inter',Arial,sans-serif;font-size:7.6pt;color:#8A8578;line-height:1.5;margin-top:10px">` +
-    `<span style="font-weight:700;color:#1E2D4D">getevidly.com</span><br>(855) 384-3591<br>a Cleaning Pros Plus, LLC company` +
-    `</div>` +
-    `</td></tr></table>` +
-    `</div>`;
+  return `<table width="600" cellpadding="0" cellspacing="0" border="0" align="center" bgcolor="#FFFFFF" style="width:600px;max-width:600px;background:#FFFFFF;border-collapse:collapse"><tr><td><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:24px 28px 20px">
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#1E2D4D;line-height:1.5;margin-bottom:12px">Hi ${greeting},</div>
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#4A5568;line-height:1.6;margin-bottom:8px">${countLine}</div>
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#4A5568;line-height:1.6">Check each record you can produce today. What you cannot is where to start.</div>
+</td></tr></table></td></tr><tr><td><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td bgcolor="#1E2D4D" style="background:#1E2D4D;padding:22px 28px 20px">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+    <td valign="top">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:19px;color:#FFFFFF;line-height:1.1">Your compliance record checklist</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#AEBACD;margin-top:6px">${prep}</div>
+    </td>
+    <td align="right" valign="top" width="70">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:38px;color:#FFFFFF;line-height:0.9">39</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.6px;text-transform:uppercase;color:#AEBACD;margin-top:3px">Records to keep<br>current, at least</div>
+    </td>
+  </tr></table>
+</td></tr>
+<tr><td style="font-size:0;line-height:0"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+  <td width="25%" height="4" bgcolor="#CB5C39" style="font-size:0;line-height:0">&nbsp;</td>
+  <td width="33%" height="4" bgcolor="#3E6B8A" style="font-size:0;line-height:0">&nbsp;</td>
+  <td width="14%" height="4" bgcolor="#D8A93A" style="font-size:0;line-height:0">&nbsp;</td>
+  <td width="28%" height="4" bgcolor="#A79E8B" style="font-size:0;line-height:0">&nbsp;</td>
+</tr></table></td></tr></table></td></tr><tr><td style="padding:22px 28px 0"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td style="padding:0 0 22px"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-bottom:2px solid #CB5C39;margin-bottom:6px"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:16px;color:#CB5C39;padding:0 0 5px"><span style="display:inline-block;width:11px;height:11px;background:#CB5C39;border-radius:3px;margin-right:7px;vertical-align:middle"></span>Fire safety</td><td align="right" style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:19px;color:#1E2D4D;padding:0 0 5px">5</td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Hood and exhaust cleaning</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">NFPA 96-2024 &middot; CFC 609</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Fire suppression system</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">19 CCR &sect;904(a)(2) &middot; NFPA 17A-2024</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Sprinkler system</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">NFPA 25 (2013 CA ed.) &middot; CFC 901</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Fire alarm system</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">NFPA 72-2025 &middot; CFC 907</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Fire extinguishers</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">NFPA 10 &middot; CFC 906</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:8px"><tr><td bgcolor="#F4F1EA" style="background:#F4F1EA;border-radius:6px;padding:9px 11px"><div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9a9484;margin-bottom:5px">Also listed &mdash; not counted above</div><div style="padding:0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Fire authority inspection report</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">Issued to you &middot; Local fire authority</div></div></td></tr></table></td></tr><tr><td style="padding:0 0 22px"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-bottom:2px solid #3E6B8A;margin-bottom:6px"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:16px;color:#3E6B8A;padding:0 0 5px"><span style="display:inline-block;width:11px;height:11px;background:#3E6B8A;border-radius:3px;margin-right:7px;vertical-align:middle"></span>Food safety</td><td align="right" style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:19px;color:#1E2D4D;padding:0 0 5px">13</td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Pest control</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;114259</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Receiving temperature log</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;114037 &middot; one per day</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Cold holding log</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113996 &middot; one per day</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Hot holding log</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113996 &middot; one per day</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Cooling log</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;114002 &middot; one per day</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Reheating log</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;114016 &middot; one per day</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Warewash and sanitizer</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;114099 &middot; &sect;114107</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Health permit</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;114381</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Food protection manager</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113947.1 &middot; one certified person</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Food handler cards</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113948 &middot; one per person</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Allergen awareness and training</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113947(b) &middot; one per person</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Person in charge</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113945</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Employee health policy</div><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">&sect;113949</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:8px"><tr><td bgcolor="#F4F1EA" style="background:#F4F1EA;border-radius:6px;padding:9px 11px"><div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9a9484;margin-bottom:5px">Also listed &mdash; not counted above</div><div style="padding:0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Grease trap service</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; Local FOG ordinance</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Backflow testing</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; 17 CCR</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">HACCP plan</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; &sect;114419</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Edible food recovery agreement and log</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; 14 CCR &sect;18991.3</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Allergen labelling on menus</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; &sect;114093.5 &middot; effective 1 July 2026</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Prepackaged food labelling</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; &sect;114089</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Health inspection report</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">Issued to you &middot; County health department</div></div></td></tr></table></td></tr><tr><td style="padding:0 0 22px"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-bottom:2px solid #D8A93A;margin-bottom:6px"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:16px;color:#B08611;padding:0 0 5px"><span style="display:inline-block;width:11px;height:11px;background:#D8A93A;border-radius:3px;margin-right:7px;vertical-align:middle"></span>Kitchen business</td><td align="right" style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:19px;color:#1E2D4D;padding:0 0 5px">6</td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">General liability insurance</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Workers compensation insurance</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Food contamination and spoilage insurance</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Business licence</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Seller's permit</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Certificate of occupancy</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:8px"><tr><td bgcolor="#F4F1EA" style="background:#F4F1EA;border-radius:6px;padding:9px 11px"><div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9a9484;margin-bottom:5px">Also listed &mdash; not counted above</div><div style="padding:0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Liquor licence</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable &middot; California ABC</div></div><div style="padding:5px 0 0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Lease</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable</div></div></td></tr></table><div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-style:italic;color:#6b7280;line-height:1.4;margin-top:8px">Held once for the business, however many kitchens you run. A liquor licence applies only if you serve alcohol.</div></td></tr><tr><td style="padding:0 0 22px"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-bottom:2px solid #A79E8B;margin-bottom:6px"><tr><td style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:16px;color:#5a5346;padding:0 0 5px"><span style="display:inline-block;width:11px;height:11px;background:#A79E8B;border-radius:3px;margin-right:7px;vertical-align:middle"></span>Service company</td><td align="right" style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:19px;color:#1E2D4D;padding:0 0 5px">15</td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">General liability certificate of insurance</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Workers compensation certificate of insurance</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Professional licence</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Business licence</div></td></tr><tr><td width="20" valign="top" style="padding:5px 0"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="12" height="12" bgcolor="#FFFFFF" style="width:12px;height:12px;background:#FFFFFF;border:1.5px solid #C4CBD4;border-radius:3px;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td valign="top" style="padding:5px 0"><div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;color:#1E2D4D;line-height:1.25">Form W-9</div></td></tr></table><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:8px"><tr><td bgcolor="#F4F1EA" style="background:#F4F1EA;border-radius:6px;padding:9px 11px"><div style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9a9484;margin-bottom:5px">Also listed &mdash; not counted above</div><div style="padding:0"><span style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#4a5464">Commercial auto insurance certificate</span><div style="font-family:'Courier New',monospace;font-size:11px;color:#9a9484;line-height:1.4;margin-top:1px">If applicable</div></div></td></tr></table><div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-style:italic;color:#6b7280;line-height:1.4;margin-top:8px">The company's own paperwork &mdash; separate from the service records above. One company can hold several services; the fire contractor is often all four. Commercial auto applies where they drive to you.</div></td></tr></table></td></tr><tr><td><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:16px 28px 0">
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6b7280;line-height:1.45;border-top:1px solid #ECE8DE;padding-top:12px"><b style="color:#1E2D4D">How to read this:</b> Check each record you can produce today. Items in the shaded box are listed for awareness &mdash; they apply only to some kitchens, or are issued to you by an authority, and aren&#39;t in your count. EvidLY reads and identifies; it does not decide your coverage.</div>
+</td></tr></table></td></tr><tr><td style="padding-top:8px"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr><td bgcolor="#1E2D4D" style="background:#1E2D4D;padding:20px 28px">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+    <td valign="middle">
+      <table cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#CB5C39" style="background:#CB5C39;border-radius:5px">
+        <a href="https://calendly.com/founders-getevidly/discovery-call" style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:14px;color:#FFFFFF;text-decoration:none;padding:10px 20px">Schedule a meeting</a>
+      </td></tr></table>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#AEBACD;line-height:1.45;margin-top:10px;max-width:340px">Bring this checklist. We will go through it with you &mdash; what you can produce today, what is missing, and what it takes to keep every record current.</div>
+    </td>
+    <td align="right" valign="middle" width="130">
+      <a href="tel:+18553843591" style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:15px;color:#CB5C39;text-decoration:none">(855) 384-3591</a>
+    </td>
+  </tr></table>
+</td></tr></table></td></tr><tr><td><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:16px 28px 24px">
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#8a8578;line-height:1.6"><b style="color:#1E2D4D"><a href="https://www.getevidly.com" style="color:#1E2D4D;text-decoration:none">getevidly.com</a></b> &nbsp;&middot;&nbsp; (855) 384-3591 &nbsp;&middot;&nbsp; a Cleaning Pros Plus, LLC company</div>
+</td></tr></table></td></tr></table>`;
 }
 
 function getReplyTemplate(
