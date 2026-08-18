@@ -114,7 +114,7 @@ type AdjWeekend = 'skip_fwd' | 'skip_back' | 'allow';
 // ── Component ────────────────────────────────────────────────────
 
 export default function ContentScheduleTab() {
-  const { posts, loading, error, refresh, addPost, updatePost, deletePost, bulkUpdateDates, saveBaseline, restoreBaseline, fetchBaselineInfo } = useContentScheduleData();
+  const { posts, loading, error, refresh, addPost, updatePost, deletePost, bulkUpdateDates, bulkUpdatePostAs, saveBaseline, restoreBaseline, fetchBaselineInfo } = useContentScheduleData();
   const { channels: mktChannels } = useChannelsData();
 
   const formRef = useRef<HTMLDivElement>(null);
@@ -154,6 +154,7 @@ export default function ContentScheduleTab() {
   const [adjWeekTo, setAdjWeekTo] = useState('');
   const [adjDateFrom, setAdjDateFrom] = useState('');
   const [adjDateTo, setAdjDateTo] = useState('');
+  const [adjPostAs, setAdjPostAs] = useState('');
   const [adjOp, setAdjOp] = useState<AdjOp>('start');
   const [adjStartDate, setAdjStartDate] = useState('');
   const [adjShiftDays, setAdjShiftDays] = useState(0);
@@ -293,12 +294,13 @@ export default function ContentScheduleTab() {
     if (adjChannel)  list = list.filter(p => p.channel_label === adjChannel);
     if (adjPostType) list = list.filter(p => p.post_type === adjPostType);
     if (adjStatus)   list = list.filter(p => p.status === adjStatus);
+    if (adjPostAs)   list = list.filter(p => p.post_as === adjPostAs);
     if (adjWeekFrom) list = list.filter(p => isoWeek(p.scheduled_date) >= adjWeekFrom);
     if (adjWeekTo)   list = list.filter(p => isoWeek(p.scheduled_date) <= adjWeekTo);
     if (adjDateFrom) list = list.filter(p => p.scheduled_date >= adjDateFrom);
     if (adjDateTo)   list = list.filter(p => p.scheduled_date <= adjDateTo);
     return list.sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
-  }, [posts, adjBrand, adjChannel, adjPostType, adjStatus, adjWeekFrom, adjWeekTo, adjDateFrom, adjDateTo]);
+  }, [posts, adjBrand, adjChannel, adjPostType, adjStatus, adjPostAs, adjWeekFrom, adjWeekTo, adjDateFrom, adjDateTo]);
 
   // ── Adjustment preview ─────────────────────────────────────────
 
@@ -1000,6 +1002,24 @@ export default function ContentScheduleTab() {
             <AdjSelect label="Channel" value={adjChannel} onChange={setAdjChannel} options={channelOptions} />
             <AdjSelect label="Type" value={adjPostType} onChange={setAdjPostType} options={postTypeOptions} />
             <AdjSelect label="Status" value={adjStatus} onChange={setAdjStatus} options={STATUS_OPTIONS} />
+            <div>
+              <label
+                className="text-[10px] font-bold tracking-wider block mb-1"
+                style={{ color: EV_MUTED }}
+              >
+                Post as
+              </label>
+              <select
+                value={adjPostAs}
+                onChange={e => setAdjPostAs(e.target.value)}
+                className="py-[5px] px-[6px] text-[11px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 100 }}
+              >
+                <option value="">All</option>
+                <option value="personal">You</option>
+                <option value="company">Company</option>
+              </select>
+            </div>
             <AdjSelect label="Week from" value={adjWeekFrom} onChange={setAdjWeekFrom} options={weekOptions} />
             <AdjSelect label="Week to" value={adjWeekTo} onChange={setAdjWeekTo} options={weekOptions} />
             <div>
@@ -1033,9 +1053,54 @@ export default function ContentScheduleTab() {
               />
             </div>
           </div>
-          <p className="text-[12px] font-semibold mb-4" style={{ color: EV_NAVY }}>
+          <p className="text-[12px] font-semibold mb-2" style={{ color: EV_NAVY }}>
             {adjSlice.length} post{adjSlice.length !== 1 ? 's' : ''} match
           </p>
+
+          {/* ── Set Post as for matched slice ─────────────────────── */}
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>
+              Set Post as:
+            </span>
+            <button
+              onClick={async () => {
+                if (adjSlice.length === 0) return;
+                setApplying(true);
+                const { error: err } = await bulkUpdatePostAs(adjSlice.map(p => p.id), 'personal');
+                setApplying(false);
+                if (err) { toast.error(`Update failed: ${err}`); return; }
+                toast.success(`${adjSlice.length} post${adjSlice.length !== 1 ? 's' : ''} set to You`);
+              }}
+              disabled={applying || adjSlice.length === 0}
+              className="py-[5px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border"
+              style={{
+                borderColor: EV_LINE,
+                backgroundColor: (applying || adjSlice.length === 0) ? EV_LIGHT : '#fff',
+                color: (applying || adjSlice.length === 0) ? EV_MUTED : EV_NAVY,
+              }}
+            >
+              {'\u2192'} You
+            </button>
+            <button
+              onClick={async () => {
+                if (adjSlice.length === 0) return;
+                setApplying(true);
+                const { error: err } = await bulkUpdatePostAs(adjSlice.map(p => p.id), 'company');
+                setApplying(false);
+                if (err) { toast.error(`Update failed: ${err}`); return; }
+                toast.success(`${adjSlice.length} post${adjSlice.length !== 1 ? 's' : ''} set to Company`);
+              }}
+              disabled={applying || adjSlice.length === 0}
+              className="py-[5px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border"
+              style={{
+                borderColor: EV_LINE,
+                backgroundColor: (applying || adjSlice.length === 0) ? EV_LIGHT : '#fff',
+                color: (applying || adjSlice.length === 0) ? EV_MUTED : EV_NAVY,
+              }}
+            >
+              {'\u2192'} Company
+            </button>
+          </div>
 
           {/* ── Operation ─────────────────────────────────────────── */}
           <p
@@ -1463,6 +1528,12 @@ export default function ContentScheduleTab() {
                       className="py-2 px-3 text-[10px] font-bold tracking-wider"
                       style={{ color: EV_MUTED }}
                     >
+                      Post as
+                    </th>
+                    <th
+                      className="py-2 px-3 text-[10px] font-bold tracking-wider"
+                      style={{ color: EV_MUTED }}
+                    >
                       Notes
                     </th>
                     <th className="py-2 px-3 w-10" />
@@ -1507,6 +1578,22 @@ export default function ContentScheduleTab() {
                             />
                             {p.status}
                           </span>
+                        </td>
+                        <td className="py-2.5 px-3" onClick={e => e.stopPropagation()}>
+                          <select
+                            value={p.post_as}
+                            onChange={async (e) => {
+                              const val = e.target.value as 'personal' | 'company';
+                              const { error: err } = await bulkUpdatePostAs([p.id], val);
+                              if (err) toast.error(`Update failed: ${err}`);
+                            }}
+                            disabled={applying || loading}
+                            className="py-[3px] px-[5px] text-[11px] font-medium border rounded outline-none cursor-pointer"
+                            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+                          >
+                            <option value="personal">You</option>
+                            <option value="company">Company</option>
+                          </select>
                         </td>
                         <td
                           className="py-2.5 px-3 text-[11px] max-w-[200px] truncate"

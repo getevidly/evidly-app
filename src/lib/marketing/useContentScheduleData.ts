@@ -26,6 +26,7 @@ export interface ContentPostRow {
   cta: string | null;
   post_type: string | null;
   brief: string | null;
+  post_as: string;
 }
 
 export interface AddPostInput {
@@ -170,6 +171,34 @@ export function useContentScheduleData() {
     return { error: null };
   };
 
+  // ── Bulk update post_as ────────────────────────────────────────
+
+  const bulkUpdatePostAs = async (
+    ids: string[],
+    value: 'personal' | 'company',
+  ): Promise<{ error: string | null }> => {
+    if (ids.length === 0) return { error: 'No posts to update' };
+    const batchSize = 50;
+    for (let i = 0; i < ids.length; i += batchSize) {
+      const batch = ids.slice(i, i + batchSize);
+      const results = await Promise.all(
+        batch.map(id =>
+          supabase
+            .from('content_schedule')
+            .update({
+              post_as: value,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', id),
+        ),
+      );
+      const failed = results.find(r => r.error);
+      if (failed?.error) return { error: failed.error.message };
+    }
+    await refresh();
+    return { error: null };
+  };
+
   // ── Save baseline ────────────────────────────────────────────
 
   const saveBaseline = async (): Promise<{ count: number }> => {
@@ -265,7 +294,7 @@ export function useContentScheduleData() {
 
   return {
     posts, loading, error, refresh,
-    addPost, updatePost, deletePost, bulkUpdateDates,
+    addPost, updatePost, deletePost, bulkUpdateDates, bulkUpdatePostAs,
     saveBaseline, restoreBaseline, fetchBaselineInfo,
   };
 }
