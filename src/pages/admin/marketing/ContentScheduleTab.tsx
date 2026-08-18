@@ -521,44 +521,6 @@ export default function ContentScheduleTab() {
     setShowAdjustPanel(false);
   };
 
-  // ── Quick action: reset schedule, weekly per channel ────────
-
-  const handleResetSchedule = async () => {
-    if (posts.length === 0) { toast.error('No posts loaded.'); return; }
-    if (!confirm('Reset all posts to start today, weekly per channel? This overwrites every scheduled date.')) return;
-    setApplying(true);
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const week0 = nextWeekday(todayStr, 1);
-
-    // Group by channel_label
-    const byChannel: Record<string, typeof posts> = {};
-    for (const p of posts) {
-      const ch = p.channel_label || '(none)';
-      if (!byChannel[ch]) byChannel[ch] = [];
-      byChannel[ch].push(p);
-    }
-
-    // Within each channel, sort by created_at asc (tiebreak by id)
-    const updates: { id: string; scheduled_date: string }[] = [];
-    for (const ch of Object.keys(byChannel)) {
-      const sorted = byChannel[ch].sort((a, b) =>
-        a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id),
-      );
-      for (let i = 0; i < sorted.length; i++) {
-        updates.push({
-          id: sorted[i].id,
-          scheduled_date: nextWeekday(addDaysToDate(week0, i * 7), 1),
-        });
-      }
-    }
-
-    const { error: err } = await bulkUpdateDates(updates);
-    setApplying(false);
-    if (err) { toast.error(`Update failed: ${err}`); return; }
-    toast.success(`${updates.length} post${updates.length !== 1 ? 's' : ''} reset to weekly schedule`);
-    setShowAdjustPanel(false);
-  };
-
   // ── Sort header helper ────────────────────────────────────────
 
   const SortHeader = ({ label, col }: { label: string; col: SortKey }) => (
@@ -938,30 +900,6 @@ export default function ContentScheduleTab() {
           <h3 className="text-sm font-bold mb-4" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
             Date Adjustment
           </h3>
-
-          {/* ── Quick actions ──────────────────────────────────────── */}
-          <p
-            className="text-[10px] font-bold tracking-wider mb-2"
-            style={{ color: EV_MUTED }}
-          >
-            Quick actions
-          </p>
-          <div className="mb-4">
-            <button
-              onClick={handleResetSchedule}
-              disabled={applying || posts.length === 0}
-              className="py-[7px] px-5 text-[12px] font-semibold rounded-md cursor-pointer border-none"
-              style={{
-                backgroundColor: (applying || posts.length === 0) ? EV_LIGHT : EV_NAVY,
-                color: (applying || posts.length === 0) ? EV_MUTED : '#fff',
-              }}
-            >
-              {applying ? 'Applying\u2026' : 'Reset schedule \u00b7 start today, weekly per channel'}
-            </button>
-            <p className="text-[11px] mt-1" style={{ color: EV_MUTED }}>
-              Re-lays every channel from today, one post per week, weekends skipped. Order follows when each post was created.
-            </p>
-          </div>
 
           {/* ── Select a slice ───────────────────────────────────────── */}
           <p
