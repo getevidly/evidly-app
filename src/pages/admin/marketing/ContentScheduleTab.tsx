@@ -85,6 +85,28 @@ function fmtTime12(time: string): string {
   return `${h}:${mStr} ${suffix}`;
 }
 
+// ── Display-status helper (read-only label transform) ───────────
+
+/** Derive a display label + colors from stored status + scheduled datetime.
+ *  The row's real status is never mutated — this is render-only. */
+function displayStatus(row: ContentPostRow): { label: string; dotColor: string; labelColor: string } {
+  const time = row.scheduled_time || '23:59';
+  const postDt = new Date(`${row.scheduled_date}T${time}`);
+  const isPast = postDt < new Date();
+
+  if (isPast && row.status === 'scheduled') {
+    return { label: 'Published', dotColor: '#22C55E', labelColor: '#16A34A' };
+  }
+  if (isPast && (row.status === 'planned' || row.status === 'drafted')) {
+    return { label: 'Overdue', dotColor: EV_EMBER, labelColor: EV_EMBER };
+  }
+  return {
+    label: row.status,
+    dotColor: STATUS_DOT[row.status] || STATUS_DOT.planned,
+    labelColor: EV_MUTED,
+  };
+}
+
 // ── Date-adjustment helpers ──────────────────────────────────────
 
 function isoWeek(dateStr: string): string {
@@ -1541,7 +1563,7 @@ export default function ContentScheduleTab() {
                       >
                         <span
                           className="inline-block w-[5px] h-[5px] rounded-full flex-shrink-0"
-                          style={{ backgroundColor: STATUS_DOT[p.status] || STATUS_DOT.planned }}
+                          style={{ backgroundColor: displayStatus(p).dotColor }}
                         />
                         <span
                           className="text-[10px] font-medium truncate"
@@ -1644,7 +1666,7 @@ export default function ContentScheduleTab() {
                 </thead>
                 <tbody>
                   {displayed.map(p => {
-                    const dotColor = STATUS_DOT[p.status] || STATUS_DOT.planned;
+                    const ds = displayStatus(p);
                     return (
                       <tr
                         key={p.id}
@@ -1678,13 +1700,13 @@ export default function ContentScheduleTab() {
                         <td className="py-2.5 px-3">
                           <span
                             className="inline-flex items-center gap-1.5 text-[11px] font-semibold capitalize"
-                            style={{ color: EV_MUTED }}
+                            style={{ color: ds.labelColor }}
                           >
                             <span
                               className="inline-block w-[7px] h-[7px] rounded-full flex-shrink-0"
-                              style={{ backgroundColor: dotColor }}
+                              style={{ backgroundColor: ds.dotColor }}
                             />
-                            {p.status}
+                            {ds.label}
                           </span>
                         </td>
                         <td className="py-2.5 px-3" onClick={e => e.stopPropagation()}>
