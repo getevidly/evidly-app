@@ -3,15 +3,19 @@
  *
  * Renders a table of existing cadence rows with inline editing,
  * and a form to add new channels. No delete — deactivate via toggle.
+ *
+ * per_week rows get a "Schedule ▾" toggle that opens a weekly-target
+ * drawer backed by channel_cadence_weeks.
  */
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Check } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import {
-  EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER, EV_LIGHT,
+  EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER, EV_LIGHT, EV_EMBER,
   EV_DANGER, EV_SUCCESS, DISPLAY, BODY,
 } from './marketingTokens';
 import { toast } from 'sonner';
+import { mondayOf, SCHEDULE_WEEKS } from '../../../lib/marketing/weeklyTarget';
 
 interface CadenceRow {
   id: string;
@@ -23,6 +27,13 @@ interface CadenceRow {
   target_count: number | null;
   owner: string | null;
   is_active: boolean;
+}
+
+interface WeekOverrideRow {
+  id: string;
+  channel_id: string;
+  week_start: string;
+  target_count: number;
 }
 
 const STAGE_OPTIONS = [
@@ -50,6 +61,209 @@ const INP = "w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-non
 const inpStyle = { borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY };
 const LBL = "block text-[10px] tracking-wider font-bold mb-1";
 
+// ── Helpers for the week grid ──────────────────────────────────────────────
+function addDays(d: Date, n: number): Date {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+function fmtWeekLabel(isoMonday: string, todayMonday: string): string {
+  const d = new Date(isoMonday + 'T12:00:00');
+  const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (isoMonday === todayMonday) return `Week of ${label} · this week`;
+  // Check if next week
+  const nextMon = addDays(new Date(todayMonday + 'T12:00:00'), 7);
+  const nextMonStr = nextMon.getFullYear() + '-' +
+    String(nextMon.getMonth() + 1).padStart(2, '0') + '-' +
+    String(nextMon.getDate()).padStart(2, '0');
+  if (isoMonday === nextMonStr) return `Week of ${label} · next week`;
+  return `Week of ${label}`;
+}
+
+/** Build array of Monday ISO strings for the next SCHEDULE_WEEKS weeks. */
+function buildWeekStarts(today: Date): string[] {
+  const mon = mondayOf(today);
+  const base = new Date(mon + 'T12:00:00');
+  const weeks: string[] = [];
+  for (let i = 0; i < SCHEDULE_WEEKS; i++) {
+    const d = addDays(base, i * 7);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    weeks.push(`${y}-${m}-${dd}`);
+  }
+  return weeks;
+}
+
+// ── Weekly Drawer ──────────────────────────────────────────────────────────
+interface WeeklyDrawerProps {
+  row: CadenceRow;
+  baseline: number | null;
+  onBaselineChange: (v: number | null) => void;
+  onClose: () => void;
+}
+
+function WeeklyDrawer({ row, baseline, onBaselineChange, onClose }: WeeklyDrawerProps) {
+  const todayMonday = mondayOf(new Date());
+  const weekStarts = buildWeekStarts(new Date());
+
+  // Local state: week_start → value (string for input, '' = cleared/baseline)
+  const [cells, setCells] = useState<Record<string, string>>({});
+  // Track which week_starts had existing DB rows (to know what to DELETE)
+  const [existingKeys, setExistingKeys] = useState<Set<string>>(new Set());
+  const [loadingOverrides, setLoadingOverrides] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Load existing overrides on mount
+  useEffect(() => {
+    setLoadingOverrides(true);
+    supabase
+      .from('channel_cadence_weeks')
+      .select('*')
+      .eq('channel_id', row.id)
+      .gte('week_start', todayMonday)
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error('Failed to load weekly overrides');
+          setLoadingOverrides(false);
+          return;
+        }
+        const loaded: Record<string, string> = {};
+        const keys = new Set<string>();
+        for (const r of (data as WeekOverrideRow[]) || []) {
+          loaded[r.week_start] = String(r.target_count);
+          keys.add(r.week_start);
+        }
+        setCells(loaded);
+        setExistingKeys(keys);
+        setLoadingOverrides(false);
+      });
+  }, [row.id, todayMonday]);
+
+  const handleSave = async () => {
+    setSaving(true);
+
+    // Split into upserts vs deletes
+    const toUpsert: { channel_id: string; week_start: string; target_count: number }[] = [];
+    const toDelete: string[] = [];
+
+    for (const ws of weekStarts) {
+      const val = cells[ws]?.trim();
+      if (val !== undefined && val !== '') {
+        const n = parseInt(val, 10);
+        if (!isNaN(n) && n >= 0) {
+          toUpsert.push({ channel_id: row.id, week_start: ws, target_count: n });
+        }
+      } else if (existingKeys.has(ws)) {
+        // User cleared a cell that had a DB row — delete it
+        toDelete.push(ws);
+      }
+    }
+
+    // Upsert
+    if (toUpsert.length > 0) {
+      const { error } = await supabase
+        .from('channel_cadence_weeks')
+        .upsert(toUpsert, { onConflict: 'channel_id,week_start' });
+      if (error) { toast.error(error.message); setSaving(false); return; }
+    }
+
+    // Delete cleared cells
+    if (toDelete.length > 0) {
+      const { error } = await supabase
+        .from('channel_cadence_weeks')
+        .delete()
+        .eq('channel_id', row.id)
+        .in('week_start', toDelete);
+      if (error) { toast.error(error.message); setSaving(false); return; }
+    }
+
+    toast.success('Schedule saved');
+    setSaving(false);
+    onClose();
+  };
+
+  return (
+    <div className="px-6 py-4 space-y-4" style={{ backgroundColor: EV_LIGHT }}>
+      {/* Baseline */}
+      <div className="flex items-center gap-3">
+        <label className="text-[12px] font-bold" style={{ color: EV_NAVY, fontFamily: BODY }}>
+          Baseline Weekly Target
+        </label>
+        <input
+          type="number"
+          min={0}
+          value={baseline ?? ''}
+          onChange={e => onBaselineChange(e.target.value ? parseInt(e.target.value) : null)}
+          className="w-20 py-1 px-2 text-[12px] border rounded-md outline-none"
+          style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+        />
+      </div>
+
+      {/* Week grid */}
+      {loadingOverrides ? (
+        <div className="text-[12px] py-2" style={{ color: EV_MUTED }}>Loading...</div>
+      ) : (
+        <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(SCHEDULE_WEEKS, 4)}, 1fr)` }}>
+          {weekStarts.map(ws => {
+            const val = cells[ws] ?? '';
+            const hasOverride = val !== '';
+            return (
+              <div key={ws} className="border rounded-lg p-3" style={{
+                borderColor: hasOverride ? EV_EMBER : EV_LINE,
+                backgroundColor: EV_PAPER,
+              }}>
+                <div className="text-[11px] font-semibold mb-2" style={{ color: EV_NAVY, fontFamily: BODY }}>
+                  {fmtWeekLabel(ws, todayMonday)}
+                </div>
+                <input
+                  type="number"
+                  min={0}
+                  value={val}
+                  placeholder={baseline != null ? String(baseline) : '—'}
+                  onChange={e => setCells(prev => ({ ...prev, [ws]: e.target.value }))}
+                  className="w-full py-1.5 px-2 text-[13px] border rounded-md outline-none"
+                  style={{
+                    borderColor: EV_LINE,
+                    color: hasOverride ? EV_NAVY : EV_MUTED,
+                    fontFamily: BODY,
+                  }}
+                />
+                {!hasOverride && baseline != null && (
+                  <div className="text-[10px] mt-1" style={{ color: EV_MUTED }}>
+                    baseline · {baseline}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[13px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
+          style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
+        >
+          <Check size={12} /> {saving ? 'Saving...' : 'Save Schedule'}
+        </button>
+        <button
+          onClick={onClose}
+          className="py-[7px] px-4 text-[13px] font-semibold rounded-md border cursor-pointer"
+          style={{ borderColor: EV_LINE, color: EV_MUTED, fontFamily: BODY }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
 export default function ChannelCadences() {
   const [rows, setRows] = useState<CadenceRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,6 +272,9 @@ export default function ChannelCadences() {
   // Inline editing state: maps row id → edited fields
   const [edits, setEdits] = useState<Record<string, Partial<CadenceRow>>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
+
+  // Weekly drawer: which row id is open (null = none)
+  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
 
   // Add form state
   const [showForm, setShowForm] = useState(false);
@@ -186,72 +403,103 @@ export default function ChannelCadences() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map(r => (
-                  <tr key={r.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
-                    <td className="py-2.5 px-4 text-[13px] font-semibold" style={{ color: EV_NAVY }}>{r.label}</td>
-                    <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED }}>{r.source_value || '\u2014'}</td>
-                    <td className="py-2.5 px-4">
-                      <select
-                        value={getEdit(r.id, 'stage', r.stage) as string}
-                        onChange={e => setEdit(r.id, 'stage', e.target.value)}
-                        className="py-1 px-2 text-[12px] border rounded-md outline-none bg-white"
-                        style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-                      >
-                        {STAGE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                      </select>
-                    </td>
-                    <td className="py-2.5 px-4">
-                      <select
-                        value={getEdit(r.id, 'cadence_type', r.cadence_type) as string}
-                        onChange={e => setEdit(r.id, 'cadence_type', e.target.value)}
-                        className="py-1 px-2 text-[12px] border rounded-md outline-none bg-white"
-                        style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-                      >
-                        {CADENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                      </select>
-                    </td>
-                    <td className="py-2.5 px-4">
-                      <input
-                        type="number"
-                        min={0}
-                        value={(getEdit(r.id, 'target_count', r.target_count) as number | null) ?? ''}
-                        onChange={e => setEdit(r.id, 'target_count', e.target.value ? parseInt(e.target.value) : null)}
-                        className="w-16 py-1 px-2 text-[12px] border rounded-md outline-none"
-                        style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-                      />
-                    </td>
-                    <td className="py-2.5 px-4">
-                      <input
-                        type="text"
-                        value={(getEdit(r.id, 'owner', r.owner) as string | null) ?? ''}
-                        onChange={e => setEdit(r.id, 'owner', e.target.value || null)}
-                        className="w-24 py-1 px-2 text-[12px] border rounded-md outline-none"
-                        style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-                        placeholder="Owner"
-                      />
-                    </td>
-                    <td className="py-2.5 px-4 text-center">
-                      <input
-                        type="checkbox"
-                        checked={getEdit(r.id, 'is_active', r.is_active) as boolean}
-                        onChange={e => setEdit(r.id, 'is_active', e.target.checked)}
-                        className="cursor-pointer"
-                      />
-                    </td>
-                    <td className="py-2.5 px-4">
-                      {hasEdits(r.id) && (
-                        <button
-                          onClick={() => saveRow(r)}
-                          disabled={savingId === r.id}
-                          className="inline-flex items-center gap-1 py-1 px-2 text-[11px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
-                          style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
-                        >
-                          <Check size={11} /> {savingId === r.id ? 'Saving' : 'Save'}
-                        </button>
+                {rows.map(r => {
+                  const effectiveCadence = (getEdit(r.id, 'cadence_type', r.cadence_type) as string);
+                  const isPerWeek = effectiveCadence === 'per_week';
+                  const drawerOpen = openDrawerId === r.id;
+
+                  return (
+                    <>
+                      <tr key={r.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
+                        <td className="py-2.5 px-4 text-[13px] font-semibold" style={{ color: EV_NAVY }}>{r.label}</td>
+                        <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED }}>{r.source_value || '\u2014'}</td>
+                        <td className="py-2.5 px-4">
+                          <select
+                            value={getEdit(r.id, 'stage', r.stage) as string}
+                            onChange={e => setEdit(r.id, 'stage', e.target.value)}
+                            className="py-1 px-2 text-[12px] border rounded-md outline-none bg-white"
+                            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+                          >
+                            {STAGE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                          </select>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <select
+                            value={effectiveCadence}
+                            onChange={e => setEdit(r.id, 'cadence_type', e.target.value)}
+                            className="py-1 px-2 text-[12px] border rounded-md outline-none bg-white"
+                            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+                          >
+                            {CADENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                          </select>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              min={0}
+                              value={(getEdit(r.id, 'target_count', r.target_count) as number | null) ?? ''}
+                              onChange={e => setEdit(r.id, 'target_count', e.target.value ? parseInt(e.target.value) : null)}
+                              className="w-16 py-1 px-2 text-[12px] border rounded-md outline-none"
+                              style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+                            />
+                            {isPerWeek && (
+                              <button
+                                onClick={() => setOpenDrawerId(drawerOpen ? null : r.id)}
+                                className="text-[11px] font-semibold border-none bg-transparent cursor-pointer whitespace-nowrap"
+                                style={{ color: EV_EMBER, fontFamily: BODY }}
+                              >
+                                Schedule {drawerOpen ? '▴' : '▾'}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <input
+                            type="text"
+                            value={(getEdit(r.id, 'owner', r.owner) as string | null) ?? ''}
+                            onChange={e => setEdit(r.id, 'owner', e.target.value || null)}
+                            className="w-24 py-1 px-2 text-[12px] border rounded-md outline-none"
+                            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+                            placeholder="Owner"
+                          />
+                        </td>
+                        <td className="py-2.5 px-4 text-center">
+                          <input
+                            type="checkbox"
+                            checked={getEdit(r.id, 'is_active', r.is_active) as boolean}
+                            onChange={e => setEdit(r.id, 'is_active', e.target.checked)}
+                            className="cursor-pointer"
+                          />
+                        </td>
+                        <td className="py-2.5 px-4">
+                          {hasEdits(r.id) && (
+                            <button
+                              onClick={() => saveRow(r)}
+                              disabled={savingId === r.id}
+                              className="inline-flex items-center gap-1 py-1 px-2 text-[11px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
+                              style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
+                            >
+                              <Check size={11} /> {savingId === r.id ? 'Saving' : 'Save'}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                      {isPerWeek && drawerOpen && (
+                        <tr key={`${r.id}-drawer`}>
+                          <td colSpan={8} className="p-0 border-b" style={{ borderColor: EV_LINE }}>
+                            <WeeklyDrawer
+                              row={r}
+                              baseline={(getEdit(r.id, 'target_count', r.target_count) as number | null)}
+                              onBaselineChange={v => setEdit(r.id, 'target_count', v)}
+                              onClose={() => setOpenDrawerId(null)}
+                            />
+                          </td>
+                        </tr>
                       )}
-                    </td>
-                  </tr>
-                ))}
+                    </>
+                  );
+                })}
               </tbody>
             </table>
           </div>
