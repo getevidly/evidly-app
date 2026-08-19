@@ -65,6 +65,7 @@ const EMPTY_FORM: AddPostInput = {
   post_type: '',
   media_type: 'none',
   media_url: '',
+  scheduled_time: '',
 };
 
 // ── Calendar helpers ─────────────────────────────────────────────
@@ -73,6 +74,16 @@ function daysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDat
 function firstDayOfWeek(y: number, m: number) { return new Date(y, m, 1).getDay(); }
 function pad2(n: number) { return String(n).padStart(2, '0'); }
 function fmtDate(y: number, m: number, d: number) { return `${y}-${pad2(m + 1)}-${pad2(d)}`; }
+
+/** Format a Postgres time string ("HH:MM" or "HH:MM:SS") as "h:mm AM/PM". */
+function fmtTime12(time: string): string {
+  const [hStr, mStr] = time.split(':');
+  let h = parseInt(hStr, 10);
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return `${h}:${mStr} ${suffix}`;
+}
 
 // ── Date-adjustment helpers ──────────────────────────────────────
 
@@ -396,6 +407,7 @@ export default function ContentScheduleTab() {
       post_type: post.post_type || '',
       media_type: post.media_type || 'none',
       media_url: post.media_url || '',
+      scheduled_time: post.scheduled_time || '',
     });
     setShowForm(true);
   };
@@ -495,6 +507,7 @@ export default function ContentScheduleTab() {
           post_type: updated.post_type || '',
           media_type: updated.media_type || 'none',
           media_url: updated.media_url || '',
+          scheduled_time: updated.scheduled_time || '',
         });
       }
     }
@@ -780,6 +793,20 @@ export default function ContentScheduleTab() {
                 type="date"
                 value={form.scheduled_date}
                 onChange={e => setForm(prev => ({ ...prev, scheduled_date: e.target.value }))}
+                className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
+                style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+              />
+            </div>
+
+            {/* Time */}
+            <div>
+              <label className="text-[11px] font-semibold block mb-1" style={{ color: EV_MUTED }}>
+                Time
+              </label>
+              <input
+                type="time"
+                value={form.scheduled_time}
+                onChange={e => setForm(prev => ({ ...prev, scheduled_time: e.target.value }))}
                 className="w-full py-[7px] px-[10px] text-[13px] border rounded-md outline-none"
                 style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
               />
@@ -1522,6 +1549,14 @@ export default function ContentScheduleTab() {
                         >
                           {p.title}
                         </span>
+                        {p.scheduled_time && (
+                          <span
+                            className="text-[9px] flex-shrink-0"
+                            style={{ color: EV_MUTED }}
+                          >
+                            {fmtTime12(p.scheduled_time)}
+                          </span>
+                        )}
                         {p.media_type !== 'none' && (
                           <span
                             className="flex-shrink-0"
@@ -1630,7 +1665,12 @@ export default function ContentScheduleTab() {
                           className="py-2.5 px-3 text-[12px]"
                           style={{ color: EV_MUTED, fontFamily: 'ui-monospace, monospace' }}
                         >
-                          {p.scheduled_date}
+                          <div>{p.scheduled_date}</div>
+                          {p.scheduled_time && (
+                            <div className="text-[11px]" style={{ fontFamily: BODY }}>
+                              {fmtTime12(p.scheduled_time)}
+                            </div>
+                          )}
                         </td>
                         <td className="py-2.5 px-3 text-[12px]" style={{ color: EV_MUTED }}>
                           {p.owner || '\u2014'}
