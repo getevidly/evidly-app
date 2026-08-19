@@ -11,6 +11,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { countContentPublished } from '../../../lib/marketing/countContentPublished';
+import { mondayOf, targetForWeek } from '../../../lib/marketing/weeklyTarget';
 import {
   EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER, EV_SUCCESS, DISPLAY, BODY,
 } from './marketingTokens';
@@ -87,22 +88,44 @@ export default function AdherenceCards({ today }: { today: string }) {
 
       if (!c1Missing && !cancelled) {
         const rows = (cadences || []) as {
+          id: string;
           source_value: string | null;
           content_channel: string | null;
           cadence_type: string;
           target_count: number | null;
         }[];
 
+        // Load per-week overrides for this week
+        const thisWeek = mondayOf(new Date(today + 'T12:00:00Z'));
+        const overrideMap: Record<string, number> = {};
+        {
+          const { data: owRows } = await supabase
+            .from('channel_cadence_weeks')
+            .select('channel_id, target_count')
+            .eq('week_start', thisWeek);
+          if (cancelled) return;
+          for (const o of (owRows || []) as { channel_id: string; target_count: number }[]) {
+            overrideMap[o.channel_id] = o.target_count;
+          }
+        }
+
         for (const c of rows) {
-          if (c.cadence_type === 'none' || !c.target_count) continue;
+          // Resolve effective target for per_week (override this week, else baseline)
+          let effTarget = c.target_count;
+          if (c.cadence_type === 'per_week') {
+            const pwOv: Record<string, number> = c.id in overrideMap ? { [thisWeek]: overrideMap[c.id] } : {};
+            effTarget = targetForWeek(c.target_count, pwOv, thisWeek);
+          }
+
+          if (c.cadence_type === 'none' || !effTarget) continue;
           // Must have either source_value or content_channel to be trackable
           if (!c.source_value && !c.content_channel) continue;
 
           let target = 0;
           if (c.cadence_type === 'per_weekday') {
-            target = c.target_count * weekdaysElapsed;
+            target = c.target_count! * weekdaysElapsed;
           } else if (c.cadence_type === 'per_week') {
-            target = c.target_count;
+            target = effTarget;
           }
           if (target === 0) continue;
 

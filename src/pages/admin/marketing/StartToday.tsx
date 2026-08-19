@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { countContentPublished } from '../../../lib/marketing/countContentPublished';
+import { mondayOf, targetForWeek } from '../../../lib/marketing/weeklyTarget';
 import {
   EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER,
   EV_SUCCESS, DISPLAY, BODY,
@@ -90,8 +91,29 @@ export default function StartToday({ today }: { today: string }) {
       const rows = (cadences as CadenceRow[]) || [];
       const results: ChannelProgress[] = [];
 
+      // Load per-week overrides for this week
+      const thisWeek = mondayOf(new Date(today + 'T12:00:00Z'));
+      const overrideMap: Record<string, number> = {};
+      {
+        const { data: owRows } = await supabase
+          .from('channel_cadence_weeks')
+          .select('channel_id, target_count')
+          .eq('week_start', thisWeek);
+        if (cancelled) return;
+        for (const o of (owRows || []) as { channel_id: string; target_count: number }[]) {
+          overrideMap[o.channel_id] = o.target_count;
+        }
+      }
+
       for (const c of rows) {
-        if (c.cadence_type === 'none' || !c.target_count) {
+        // Resolve effective target for per_week (override this week, else baseline)
+        let effTarget = c.target_count;
+        if (c.cadence_type === 'per_week') {
+          const pwOv: Record<string, number> = c.id in overrideMap ? { [thisWeek]: overrideMap[c.id] } : {};
+          effTarget = targetForWeek(c.target_count, pwOv, thisWeek);
+        }
+
+        if (c.cadence_type === 'none' || !effTarget) {
           results.push({ cadence: c, actual: null, target: 0, displayText: 'Not set' });
           continue;
         }
@@ -113,8 +135,8 @@ export default function StartToday({ today }: { today: string }) {
             const actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr);
             if (cancelled) return;
             results.push({
-              cadence: c, actual, target: c.target_count,
-              displayText: `${actual} of ${c.target_count} this week`,
+              cadence: c, actual, target: effTarget!,
+              displayText: `${actual} of ${effTarget} this week`,
             });
           }
           continue;
@@ -152,8 +174,8 @@ export default function StartToday({ today }: { today: string }) {
           if (cancelled) return;
           const actual = count ?? 0;
           results.push({
-            cadence: c, actual, target: c.target_count,
-            displayText: `${actual} of ${c.target_count} this week`,
+            cadence: c, actual, target: effTarget!,
+            displayText: `${actual} of ${effTarget} this week`,
           });
         }
       }
