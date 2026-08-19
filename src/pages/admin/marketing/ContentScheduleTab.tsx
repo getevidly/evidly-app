@@ -147,6 +147,37 @@ function weekdayName(dateStr: string): string {
 type AdjOp = 'start' | 'shift' | 'cadence';
 type AdjWeekend = 'skip_fwd' | 'skip_back' | 'allow';
 
+// ── Adjustment filter select (module-scope for stable React reconciliation) ──
+
+function AdjSelect({ label, value, onChange, options }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: readonly string[];
+}) {
+  return (
+    <div>
+      <label
+        className="text-[10px] font-bold tracking-wider block mb-1"
+        style={{ color: EV_MUTED }}
+      >
+        {label}
+      </label>
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        className="py-[5px] px-[6px] text-[11px] border rounded-md outline-none"
+        style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 100 }}
+      >
+        <option value="">All</option>
+        {options.map(o => (
+          <option key={o} value={o}>{o}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 // ── Component ────────────────────────────────────────────────────
 
 export default function ContentScheduleTab() {
@@ -628,35 +659,6 @@ export default function ContentScheduleTab() {
         )}
       </span>
     </th>
-  );
-
-  // ── Adjustment filter select helper ───────────────────────────
-
-  const AdjSelect = ({ label, value, onChange, options }: {
-    label: string;
-    value: string;
-    onChange: (v: string) => void;
-    options: readonly string[];
-  }) => (
-    <div>
-      <label
-        className="text-[10px] font-bold tracking-wider block mb-1"
-        style={{ color: EV_MUTED }}
-      >
-        {label}
-      </label>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="py-[5px] px-[6px] text-[11px] border rounded-md outline-none"
-        style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 100 }}
-      >
-        <option value="">All</option>
-        {options.map(o => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
-    </div>
   );
 
   // ── Calendar grid data ────────────────────────────────────────
