@@ -66,10 +66,10 @@ export default function TodayTab() {
 
   return (
     <div className="space-y-6">
-      {/* Start today */}
+      {/* Adherence cards */}
       <div>
-        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Start today</h3>
-        <StartToday today={today} />
+        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>The number you are graded on</h3>
+        <AdherenceCards today={today} />
       </div>
 
       {/* Follow up today */}
@@ -159,10 +159,10 @@ export default function TodayTab() {
         </div>
       )}
 
-      {/* Adherence cards */}
+      {/* Start today */}
       <div>
-        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>The number you are graded on</h3>
-        <AdherenceCards today={today} />
+        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Start today</h3>
+        <StartToday today={today} />
       </div>
 
       {/* Channel cadences */}
