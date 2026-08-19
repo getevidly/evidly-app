@@ -6,6 +6,7 @@
  */
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { countContentPublished } from '../../../lib/marketing/countContentPublished';
 import {
   EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER,
   EV_SUCCESS, DISPLAY, BODY,
@@ -16,6 +17,7 @@ interface CadenceRow {
   channel_key: string;
   label: string;
   source_value: string | null;
+  content_channel: string | null;
   stage: string;
   cadence_type: string;
   target_count: number | null;
@@ -94,6 +96,30 @@ export default function StartToday({ today }: { today: string }) {
           continue;
         }
 
+        // Content-tracked channel: count published posts from content_schedule
+        if (c.content_channel) {
+          if (c.cadence_type === 'per_weekday') {
+            if (isWeekend) {
+              results.push({ cadence: c, actual: 0, target: 0, displayText: '0 of 0 today' });
+              continue;
+            }
+            const actual = await countContentPublished(c.content_channel, today, tomorrowStr);
+            if (cancelled) return;
+            results.push({
+              cadence: c, actual, target: c.target_count,
+              displayText: `${actual} of ${c.target_count} today`,
+            });
+          } else if (c.cadence_type === 'per_week') {
+            const actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr);
+            if (cancelled) return;
+            results.push({
+              cadence: c, actual, target: c.target_count,
+              displayText: `${actual} of ${c.target_count} this week`,
+            });
+          }
+          continue;
+        }
+
         if (!c.source_value) {
           results.push({ cadence: c, actual: null, target: c.target_count, displayText: 'Not tracked' });
           continue;
@@ -140,11 +166,11 @@ export default function StartToday({ today }: { today: string }) {
     return () => { cancelled = true; };
   }, [today, tomorrowStr, mondayStr, nextMondayStr, isWeekend]);
 
-  // Header sum: only per_weekday channels with a source_value
+  // Header sum: only per_weekday channels that are actively tracked
   const { sumActual, sumTarget } = useMemo(() => {
     let a = 0, t = 0;
     for (const ch of channels) {
-      if (ch.cadence.cadence_type === 'per_weekday' && ch.cadence.source_value && ch.actual !== null) {
+      if (ch.cadence.cadence_type === 'per_weekday' && (ch.cadence.source_value || ch.cadence.content_channel) && ch.actual !== null) {
         a += ch.actual;
         t += ch.target;
       }

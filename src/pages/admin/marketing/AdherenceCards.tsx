@@ -10,6 +10,7 @@
  */
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { countContentPublished } from '../../../lib/marketing/countContentPublished';
 import {
   EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER, EV_SUCCESS, DISPLAY, BODY,
 } from './marketingTokens';
@@ -87,12 +88,15 @@ export default function AdherenceCards({ today }: { today: string }) {
       if (!c1Missing && !cancelled) {
         const rows = (cadences || []) as {
           source_value: string | null;
+          content_channel: string | null;
           cadence_type: string;
           target_count: number | null;
         }[];
 
         for (const c of rows) {
-          if (c.cadence_type === 'none' || !c.target_count || !c.source_value) continue;
+          if (c.cadence_type === 'none' || !c.target_count) continue;
+          // Must have either source_value or content_channel to be trackable
+          if (!c.source_value && !c.content_channel) continue;
 
           let target = 0;
           if (c.cadence_type === 'per_weekday') {
@@ -102,15 +106,20 @@ export default function AdherenceCards({ today }: { today: string }) {
           }
           if (target === 0) continue;
 
-          const { count } = await supabase
-            .from('sales_pipeline')
-            .select('id', { count: 'exact', head: true })
-            .eq('source', c.source_value)
-            .gte('created_at', `${mondayStr}T00:00:00Z`)
-            .lt('created_at', `${nextMondayStr}T00:00:00Z`);
+          let actual = 0;
+          if (c.content_channel) {
+            actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr);
+          } else {
+            const { count } = await supabase
+              .from('sales_pipeline')
+              .select('id', { count: 'exact', head: true })
+              .eq('source', c.source_value!)
+              .gte('created_at', `${mondayStr}T00:00:00Z`)
+              .lt('created_at', `${nextMondayStr}T00:00:00Z`);
+            actual = count ?? 0;
+          }
           if (cancelled) return;
 
-          const actual = count ?? 0;
           sumRawActual += actual;
           sumCapped += Math.min(actual, target);
           sumTargets += target;
