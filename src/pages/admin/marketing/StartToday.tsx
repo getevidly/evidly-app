@@ -19,6 +19,7 @@ interface CadenceRow {
   label: string;
   source_value: string | null;
   content_channel: string | null;
+  content_brands: string | null;
   stage: string;
   cadence_type: string;
   target_count: number | null;
@@ -125,14 +126,14 @@ export default function StartToday({ today }: { today: string }) {
               results.push({ cadence: c, actual: 0, target: 0, displayText: '0 of 0 today' });
               continue;
             }
-            const actual = await countContentPublished(c.content_channel, today, tomorrowStr);
+            const actual = await countContentPublished(c.content_channel, today, tomorrowStr, c.content_brands);
             if (cancelled) return;
             results.push({
               cadence: c, actual, target: c.target_count,
               displayText: `${actual} of ${c.target_count} today`,
             });
           } else if (c.cadence_type === 'per_week') {
-            const actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr);
+            const actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr, c.content_brands);
             if (cancelled) return;
             results.push({
               cadence: c, actual, target: effTarget!,

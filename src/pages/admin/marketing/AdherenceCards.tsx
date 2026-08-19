@@ -91,6 +91,7 @@ export default function AdherenceCards({ today }: { today: string }) {
           id: string;
           source_value: string | null;
           content_channel: string | null;
+          content_brands: string | null;
           cadence_type: string;
           target_count: number | null;
         }[];
@@ -131,7 +132,7 @@ export default function AdherenceCards({ today }: { today: string }) {
 
           let actual = 0;
           if (c.content_channel) {
-            actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr);
+            actual = await countContentPublished(c.content_channel, mondayStr, nextMondayStr, c.content_brands);
           } else {
             const { count } = await supabase
               .from('sales_pipeline')
