@@ -295,16 +295,16 @@ export default function TodayTab() {
         </div>
       )}
 
-      {/* Start today */}
-      <div>
-        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Start today</h3>
-        <StartToday today={today} />
-      </div>
-
       {/* Channel cadences */}
       <div>
         <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Channel cadences</h3>
         <ChannelCadences />
+      </div>
+
+      {/* Start today */}
+      <div>
+        <h3 className="text-sm font-bold mb-3" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>Start today</h3>
+        <StartToday today={today} />
       </div>
     </div>
   );
