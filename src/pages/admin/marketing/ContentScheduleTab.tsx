@@ -107,6 +107,18 @@ function displayStatus(row: ContentPostRow): { label: string; dotColor: string; 
   };
 }
 
+/** True when the row renders as "Published" — already went out, must not be date-shifted.
+ *  Uses the same datetime logic as displayStatus:
+ *    datetime = scheduled_date + (scheduled_time || '23:59')
+ *  Returns true when (past && status === 'scheduled') OR status === 'published'.
+ *  Overdue rows (past but planned/drafted) return false — they stay eligible. */
+function isAlreadyPosted(row: ContentPostRow): boolean {
+  if (row.status === 'published') return true;
+  const time = row.scheduled_time || '23:59';
+  const postDt = new Date(`${row.scheduled_date}T${time}`);
+  return postDt < new Date() && row.status === 'scheduled';
+}
+
 // ── Date-adjustment helpers ──────────────────────────────────────
 
 function isoWeek(dateStr: string): string {
@@ -369,12 +381,20 @@ export default function ContentScheduleTab() {
     return list.sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date));
   }, [posts, adjBrand, adjChannel, adjPostType, adjStatus, adjPostAs, adjWeekFrom, adjWeekTo, adjDateFrom, adjDateTo]);
 
-  // ── Adjustment preview ─────────────────────────────────────────
+  // ── Eligible subset (adjSlice minus already-posted rows) ────────
+
+  const adjEligible = useMemo(
+    () => adjSlice.filter(p => !isAlreadyPosted(p)),
+    [adjSlice],
+  );
+  const adjPostedCount = adjSlice.length - adjEligible.length;
+
+  // ── Adjustment preview (operates on eligible rows only) ────────
 
   const adjPreview = useMemo(() => {
-    if (adjSlice.length === 0) return null;
+    if (adjEligible.length === 0) return null;
 
-    const sorted = [...adjSlice];
+    const sorted = [...adjEligible];
     let updates: { id: string; oldDate: string; newDate: string }[] = [];
 
     const applyWeekend = (d: string) =>
@@ -411,7 +431,7 @@ export default function ContentScheduleTab() {
       last: updates[updates.length - 1],
       updates,
     };
-  }, [adjSlice, adjOp, adjStartDate, adjShiftDays, adjCadenceDays, adjWeekend]);
+  }, [adjEligible, adjOp, adjStartDate, adjShiftDays, adjCadenceDays, adjWeekend]);
 
   // ── Sort toggle ───────────────────────────────────────────────
 
@@ -1146,7 +1166,11 @@ export default function ContentScheduleTab() {
             </div>
           </div>
           <p className="text-[12px] font-semibold mb-2" style={{ color: EV_NAVY }}>
-            {adjSlice.length} post{adjSlice.length !== 1 ? 's' : ''} match
+            {adjSlice.length} match
+            {adjPostedCount > 0 && (
+              <span style={{ color: EV_MUTED }}> · {adjPostedCount} already posted (won't move)</span>
+            )}
+            {' · '}{adjEligible.length} will move
           </p>
 
           {/* ── Set Post as for matched slice ─────────────────────── */}
