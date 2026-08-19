@@ -276,6 +276,9 @@ export default function ChannelCadences() {
   // Weekly drawer: which row id is open (null = none)
   const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
 
+  // Archive visibility
+  const [showArchived, setShowArchived] = useState(false);
+
   // Add form state
   const [showForm, setShowForm] = useState(false);
   const [formKey, setFormKey] = useState('');
@@ -370,6 +373,20 @@ export default function ChannelCadences() {
     fetchRows();
   };
 
+  const toggleActive = async (row: CadenceRow) => {
+    const next = !row.is_active;
+    const { error } = await supabase
+      .from('channel_cadences')
+      .update({ is_active: next, updated_at: new Date().toISOString() })
+      .eq('id', row.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(next ? `${row.label} unarchived` : `${row.label} archived`);
+    fetchRows();
+  };
+
+  const visibleRows = showArchived ? rows : rows.filter(r => r.is_active);
+  const archivedCount = rows.filter(r => !r.is_active).length;
+
   if (loading) {
     return <div className="p-6 text-center text-[13px]" style={{ color: EV_MUTED }}>Loading...</div>;
   }
@@ -385,17 +402,17 @@ export default function ChannelCadences() {
 
   return (
     <div className="space-y-3">
-      {rows.length === 0 && !showForm ? (
+      {visibleRows.length === 0 && !showForm ? (
         <div className="border rounded-lg p-8 text-center" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
           <div className="text-[13px]" style={{ color: EV_MUTED }}>No channels set.</div>
         </div>
-      ) : rows.length > 0 ? (
+      ) : visibleRows.length > 0 ? (
         <div className="border rounded-lg" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b" style={{ borderColor: EV_LINE }}>
-                  {['Label', 'Source value', 'Stage', 'Cadence', 'Target', 'Owner', 'Active', ''].map(h => (
+                  {['Label', 'Source value', 'Stage', 'Cadence', 'Target', 'Owner', ''].map(h => (
                     <th key={h} className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>
                       {h}
                     </th>
@@ -403,14 +420,14 @@ export default function ChannelCadences() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map(r => {
+                {visibleRows.map(r => {
                   const effectiveCadence = (getEdit(r.id, 'cadence_type', r.cadence_type) as string);
                   const isPerWeek = effectiveCadence === 'per_week';
                   const drawerOpen = openDrawerId === r.id;
 
                   return (
                     <>
-                      <tr key={r.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
+                      <tr key={r.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE, opacity: r.is_active ? 1 : 0.45 }}>
                         <td className="py-2.5 px-4 text-[13px] font-semibold" style={{ color: EV_NAVY }}>{r.label}</td>
                         <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED }}>{r.source_value || '\u2014'}</td>
                         <td className="py-2.5 px-4">
@@ -464,30 +481,31 @@ export default function ChannelCadences() {
                             placeholder="Owner"
                           />
                         </td>
-                        <td className="py-2.5 px-4 text-center">
-                          <input
-                            type="checkbox"
-                            checked={getEdit(r.id, 'is_active', r.is_active) as boolean}
-                            onChange={e => setEdit(r.id, 'is_active', e.target.checked)}
-                            className="cursor-pointer"
-                          />
-                        </td>
                         <td className="py-2.5 px-4">
-                          {hasEdits(r.id) && (
+                          <div className="flex items-center gap-2">
+                            {hasEdits(r.id) && (
+                              <button
+                                onClick={() => saveRow(r)}
+                                disabled={savingId === r.id}
+                                className="inline-flex items-center gap-1 py-1 px-2 text-[11px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
+                                style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
+                              >
+                                <Check size={11} /> {savingId === r.id ? 'Saving' : 'Save'}
+                              </button>
+                            )}
                             <button
-                              onClick={() => saveRow(r)}
-                              disabled={savingId === r.id}
-                              className="inline-flex items-center gap-1 py-1 px-2 text-[11px] font-bold rounded-md border-none cursor-pointer disabled:opacity-50"
-                              style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
+                              onClick={() => toggleActive(r)}
+                              className="py-1 px-2 text-[11px] font-semibold rounded-md border-none cursor-pointer"
+                              style={{ color: EV_MUTED, fontFamily: BODY, backgroundColor: 'transparent' }}
                             >
-                              <Check size={11} /> {savingId === r.id ? 'Saving' : 'Save'}
+                              {r.is_active ? 'Archive' : 'Unarchive'}
                             </button>
-                          )}
+                          </div>
                         </td>
                       </tr>
                       {isPerWeek && drawerOpen && (
                         <tr key={`${r.id}-drawer`}>
-                          <td colSpan={8} className="p-0 border-b" style={{ borderColor: EV_LINE }}>
+                          <td colSpan={7} className="p-0 border-b" style={{ borderColor: EV_LINE }}>
                             <WeeklyDrawer
                               row={r}
                               baseline={(getEdit(r.id, 'target_count', r.target_count) as number | null)}
@@ -505,6 +523,17 @@ export default function ChannelCadences() {
           </div>
         </div>
       ) : null}
+
+      {/* Show archived toggle */}
+      {archivedCount > 0 && (
+        <button
+          onClick={() => setShowArchived(v => !v)}
+          className="text-[12px] font-semibold border-none bg-transparent cursor-pointer"
+          style={{ color: EV_MUTED, fontFamily: BODY }}
+        >
+          {showArchived ? 'Hide Archived' : `Show Archived (${archivedCount})`}
+        </button>
+      )}
 
       {/* Add form */}
       {showForm ? (
