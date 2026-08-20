@@ -10,6 +10,8 @@ function parseCityStateZip(raw: string): { city: string; zip: string } {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+const TIME_BUDGET_MS = 45_000;
+
 interface TaskSummary {
   taskId: string;
   search_kind: string;
@@ -20,11 +22,13 @@ interface TaskSummary {
   violationsWritten: number;
   truncated: boolean;
   tasksSpawned: number;
+  resumed?: boolean;
+  cursor?: number;
   error?: string;
   warning?: string;
 }
 
-// ── Per-task processing — identical logic to the original single-task version ──
+// ── Per-task processing — identical logic, now with facility-level budget ──
 async function processOneTask(
   // deno-lint-ignore no-explicit-any
   task: any,
@@ -33,6 +37,7 @@ async function processOneTask(
   cookieHeader: string,
   supabase: SupabaseClient,
   BASE: string,
+  startTime: number,
 ): Promise<TaskSummary> {
   const summary: TaskSummary = {
     taskId: task.id,
@@ -129,8 +134,11 @@ async function processOneTask(
     summary.warning = "name_prefix truncated at 50 — needs deeper subdivision";
   }
 
-  // ── Step 5: Process each facility ──────────────────────────────
-  for (const fac of facResults) {
+  // ── Step 5: Process facilities, starting at cursor ─────────────
+  const startCursor = task.cursor || 0;
+
+  for (let i = startCursor; i < facResults.length; i++) {
+    const fac = facResults[i];
     const facKey = fac.FacilityId ?? fac.facilityId ?? fac.Id ?? fac.id;
     if (!facKey) continue;
 
@@ -269,6 +277,19 @@ async function processOneTask(
         }
       }
     }
+
+    // ── Budget check after each facility ──────────────────────────
+    if (Date.now() - startTime > TIME_BUDGET_MS) {
+      const nextCursor = i + 1;
+      await supabase.from("inspection_crawl_tasks").update({
+        status: "pending",
+        claimed_at: null,
+        cursor: nextCursor,
+      }).eq("id", task.id);
+      summary.resumed = true;
+      summary.cursor = nextCursor;
+      return summary;
+    }
   }
 
   // ── Step 6: Mark task done ──────────────────────────────────────
@@ -277,6 +298,7 @@ async function processOneTask(
     completed_at: new Date().toISOString(),
     facilities_found: facResults.length,
     truncated: summary.truncated,
+    cursor: 0,
   }).eq("id", task.id);
 
   return summary;
@@ -286,7 +308,6 @@ async function processOneTask(
 Deno.serve(async (_req: Request) => {
   const BASE = "https://eco.vcrma.org";
   const startTime = Date.now();
-  const TIME_BUDGET_MS = 90_000;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -403,6 +424,7 @@ Deno.serve(async (_req: Request) => {
   let totalInspectionsWritten = 0;
   let totalViolationsWritten = 0;
   let tasksErrored = 0;
+  let tasksResumed = 0;
 
   while (Date.now() - startTime < TIME_BUDGET_MS) {
     // ── Claim one task ─────────────────────────────────────────────
@@ -415,7 +437,6 @@ Deno.serve(async (_req: Request) => {
       .limit(1);
 
     if (taskErr) {
-      // DB error on claim query — break, report what we have
       taskSummaries.push({
         taskId: "n/a", search_kind: "n/a", search_value: "n/a",
         facilitiesFound: 0, facilitiesWritten: 0, inspectionsWritten: 0,
@@ -454,7 +475,7 @@ Deno.serve(async (_req: Request) => {
 
     // ── Process the task ───────────────────────────────────────────
     try {
-      const result = await processOneTask(task, sourceId, guid, cookieHeader, supabase, BASE);
+      const result = await processOneTask(task, sourceId, guid, cookieHeader, supabase, BASE, startTime);
 
       taskSummaries.push(result);
 
@@ -465,8 +486,12 @@ Deno.serve(async (_req: Request) => {
         totalInspectionsWritten += result.inspectionsWritten;
         totalViolationsWritten += result.violationsWritten;
       }
+
+      if (result.resumed) {
+        tasksResumed++;
+        break; // Over budget — exit the task loop
+      }
     } catch (err) {
-      // Unexpected error — mark task as error, continue to next
       const errMsg = String(err);
       try {
         await supabase.from("inspection_crawl_tasks").update({
@@ -496,6 +521,7 @@ Deno.serve(async (_req: Request) => {
 
   return Response.json({
     tasksProcessed: taskSummaries.length,
+    tasksResumed,
     tasks: taskSummaries,
     totalFacilitiesWritten,
     totalInspectionsWritten,
