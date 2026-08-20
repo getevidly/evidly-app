@@ -18,6 +18,7 @@ interface TaskSummary {
   search_value: string;
   facilitiesFound: number;
   facilitiesWritten: number;
+  facilitiesSkipped: number;
   inspectionsWritten: number;
   violationsWritten: number;
   truncated: boolean;
@@ -45,6 +46,7 @@ async function processOneTask(
     search_value: task.search_value,
     facilitiesFound: 0,
     facilitiesWritten: 0,
+    facilitiesSkipped: 0,
     inspectionsWritten: 0,
     violationsWritten: 0,
     truncated: false,
@@ -141,6 +143,23 @@ async function processOneTask(
     const fac = facResults[i];
     const facKey = fac.FacilityId ?? fac.facilityId ?? fac.Id ?? fac.id;
     if (!facKey) continue;
+
+    // Skip if this facility was crawled within the last 7 days
+    const { data: existingFac } = await supabase
+      .from("facilities")
+      .select("last_crawled_at")
+      .eq("source_id", sourceId)
+      .eq("source_facility_key", facKey)
+      .maybeSingle();
+
+    if (existingFac?.last_crawled_at) {
+      const crawledAt = new Date(existingFac.last_crawled_at).getTime();
+      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      if (crawledAt > sevenDaysAgo) {
+        summary.facilitiesSkipped++;
+        continue;
+      }
+    }
 
     const parsed = parseCityStateZip(fac.CityStateZip || "");
 
@@ -277,6 +296,12 @@ async function processOneTask(
         }
       }
     }
+
+    // Mark facility as crawled
+    await supabase
+      .from("facilities")
+      .update({ last_crawled_at: new Date().toISOString() })
+      .eq("id", facilityRowId);
 
     // ── Budget check after each facility ──────────────────────────
     if (Date.now() - startTime > TIME_BUDGET_MS) {
@@ -421,6 +446,7 @@ Deno.serve(async (_req: Request) => {
   // ── Time-budgeted task loop ────────────────────────────────────────
   const taskSummaries: TaskSummary[] = [];
   let totalFacilitiesWritten = 0;
+  let totalFacilitiesSkipped = 0;
   let totalInspectionsWritten = 0;
   let totalViolationsWritten = 0;
   let tasksErrored = 0;
@@ -439,9 +465,9 @@ Deno.serve(async (_req: Request) => {
     if (taskErr) {
       taskSummaries.push({
         taskId: "n/a", search_kind: "n/a", search_value: "n/a",
-        facilitiesFound: 0, facilitiesWritten: 0, inspectionsWritten: 0,
-        violationsWritten: 0, truncated: false, tasksSpawned: 0,
-        error: "task query failed: " + JSON.stringify(taskErr),
+        facilitiesFound: 0, facilitiesWritten: 0, facilitiesSkipped: 0,
+        inspectionsWritten: 0, violationsWritten: 0, truncated: false,
+        tasksSpawned: 0, error: "task query failed: " + JSON.stringify(taskErr),
       });
       tasksErrored++;
       break;
@@ -465,9 +491,9 @@ Deno.serve(async (_req: Request) => {
     if (claimErr) {
       taskSummaries.push({
         taskId: task.id, search_kind: task.search_kind, search_value: task.search_value,
-        facilitiesFound: 0, facilitiesWritten: 0, inspectionsWritten: 0,
-        violationsWritten: 0, truncated: false, tasksSpawned: 0,
-        error: "claim failed: " + JSON.stringify(claimErr),
+        facilitiesFound: 0, facilitiesWritten: 0, facilitiesSkipped: 0,
+        inspectionsWritten: 0, violationsWritten: 0, truncated: false,
+        tasksSpawned: 0, error: "claim failed: " + JSON.stringify(claimErr),
       });
       tasksErrored++;
       continue;
@@ -483,6 +509,7 @@ Deno.serve(async (_req: Request) => {
         tasksErrored++;
       } else {
         totalFacilitiesWritten += result.facilitiesWritten;
+        totalFacilitiesSkipped += result.facilitiesSkipped;
         totalInspectionsWritten += result.inspectionsWritten;
         totalViolationsWritten += result.violationsWritten;
       }
@@ -501,9 +528,9 @@ Deno.serve(async (_req: Request) => {
 
       taskSummaries.push({
         taskId: task.id, search_kind: task.search_kind, search_value: task.search_value,
-        facilitiesFound: 0, facilitiesWritten: 0, inspectionsWritten: 0,
-        violationsWritten: 0, truncated: false, tasksSpawned: 0,
-        error: errMsg,
+        facilitiesFound: 0, facilitiesWritten: 0, facilitiesSkipped: 0,
+        inspectionsWritten: 0, violationsWritten: 0, truncated: false,
+        tasksSpawned: 0, error: errMsg,
       });
       tasksErrored++;
       continue;
@@ -524,6 +551,7 @@ Deno.serve(async (_req: Request) => {
     tasksResumed,
     tasks: taskSummaries,
     totalFacilitiesWritten,
+    totalFacilitiesSkipped,
     totalInspectionsWritten,
     totalViolationsWritten,
     tasksErrored,
