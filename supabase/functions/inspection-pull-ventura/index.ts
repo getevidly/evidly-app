@@ -1,3 +1,13 @@
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+function parseCityStateZip(raw: string): { city: string; zip: string } {
+  const parts = raw.trim().split(/\s+/);
+  if (parts.length < 3) return { city: parts[0] || "", zip: "" };
+  const zip = parts[parts.length - 1];
+  const city = parts.slice(0, parts.length - 2).join(" ");
+  return { city, zip };
+}
+
 Deno.serve(async (_req: Request) => {
   const BASE = "https://eco.vcrma.org";
 
@@ -230,22 +240,180 @@ Deno.serve(async (_req: Request) => {
     const inspectionCount = inspArr.length;
     const firstInspection = inspArr[0] ?? null;
 
-    // ── Step 6: Return full probe result ─────────────────────────────
+    // ── Step 5b: Fetch inspections for remaining programs ────────────
+    // deno-lint-ignore no-explicit-any
+    const allProgramInspections: Array<{ progId: string; inspections: any[] }> = [
+      { progId: programId, inspections: inspArr },
+    ];
+
+    for (let i = 1; i < progArr.length; i++) {
+      const prog = progArr[i];
+      const pId = prog.ProgramId ?? prog.programId ?? prog.Id ?? prog.id;
+      const url = BASE + "/api/pressAgentClient/inspections?PressAgentOid=" + guid + "&ProgramId=" + pId;
+      const resp = await fetch(url, {
+        headers: { Cookie: cookieHeader, Accept: "application/json" },
+      });
+      try {
+        const data = await resp.json();
+        allProgramInspections.push({
+          progId: pId,
+          inspections: Array.isArray(data) ? data : [],
+        });
+      } catch {
+        allProgramInspections.push({ progId: pId, inspections: [] });
+      }
+    }
+
+    // ── Step 7: Write to database ────────────────────────────────────
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    // Look up source_id
+    const { data: jRow, error: jErr } = await supabase
+      .from("jurisdictions")
+      .select("id")
+      .eq("slug", "ventura-ca")
+      .single();
+
+    if (jErr || !jRow) {
+      return Response.json({
+        error: "source_id lookup returned no row (jurisdiction ventura-ca)",
+        detail: jErr,
+      });
+    }
+
+    const { data: srcRow, error: srcErr } = await supabase
+      .from("inspection_sources")
+      .select("id")
+      .eq("jurisdiction_id", jRow.id)
+      .single();
+
+    if (srcErr || !srcRow) {
+      return Response.json({
+        error: "source_id lookup returned no row",
+        detail: srcErr,
+      });
+    }
+
+    const sourceId = srcRow.id;
+
+    // Parse city / zip from CityStateZip
+    const parsed = parseCityStateZip(firstFacility.CityStateZip || "");
+
+    // Upsert facility
+    const { data: facRow, error: facErr } = await supabase
+      .from("facilities")
+      .upsert(
+        {
+          source_id: sourceId,
+          source_facility_key: facilityId,
+          name: (firstFacility.FacilityName || "").trim(),
+          address: (firstFacility.Address || "").trim(),
+          city: parsed.city,
+          zip: parsed.zip,
+          identity_status: "unresolved",
+        },
+        { onConflict: "source_id,source_facility_key" },
+      )
+      .select("id")
+      .single();
+
+    if (facErr) {
+      return Response.json({ error: "facility upsert failed", detail: facErr });
+    }
+
+    const facilityRowId = facRow.id;
+    let inspectionsWritten = 0;
+    let violationsWritten = 0;
+
+    // Upsert inspections + violations for every program
+    for (const pi of allProgramInspections) {
+      for (const insp of pi.inspections) {
+        const inspOid = insp.Oid;
+        if (!inspOid) continue;
+
+        const { data: inspRow, error: inspErr } = await supabase
+          .from("inspections")
+          .upsert(
+            {
+              source_id: sourceId,
+              source_inspection_key: inspOid,
+              facility_id: facilityRowId,
+              source_facility_key: facilityId,
+              program_id: pi.progId,
+              inspection_date: insp.activity_date ? insp.activity_date.split("T")[0] : null,
+              inspection_type: insp.service || null,
+              score: insp.score ?? null,
+              raw_payload: insp,
+            },
+            { onConflict: "source_id,source_inspection_key" },
+          )
+          .select("id")
+          .single();
+
+        if (inspErr) {
+          return Response.json({
+            error: "inspection upsert failed",
+            detail: inspErr,
+            inspOid,
+          });
+        }
+
+        inspectionsWritten++;
+
+        const violations = Array.isArray(insp.violations) ? insp.violations : [];
+        for (const vio of violations) {
+          const vioOid = vio.Oid;
+          if (!vioOid) continue;
+
+          const { error: vioErr } = await supabase
+            .from("violations")
+            .upsert(
+              {
+                inspection_id: inspRow.id,
+                source_violation_key: vioOid,
+                source_code: vio.violation_code || null,
+                description: vio.violation_description || null,
+                severity_raw: vio.violation_degree || null,
+                corrected_on_site: false,
+                raw_payload: vio,
+              },
+              { onConflict: "inspection_id,source_violation_key" },
+            );
+
+          if (vioErr) {
+            return Response.json({
+              error: "violation upsert failed",
+              detail: vioErr,
+              vioOid,
+            });
+          }
+
+          violationsWritten++;
+        }
+      }
+    }
+
+    // ── Return results ───────────────────────────────────────────────
     return Response.json({
+      facilitiesWritten: 1,
+      inspectionsWritten,
+      violationsWritten,
+      parsedCity: parsed.city,
+      parsedZip: parsed.zip,
       guid,
       patternMatched,
-      ecoSessFound,
-      facilityCount,
-      firstFacility,
+      facilityId,
+      facilityName: (firstFacility.FacilityName || "").trim(),
       programCount,
-      firstProgram,
-      inspectionCount,
-      firstInspection,
+      programs: progArr.map((p: Record<string, unknown>) => p.ProgramId || p.programId || p.Id),
     });
   } catch (err) {
     return Response.json(
       { error: String(err), stack: (err as Error).stack },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
