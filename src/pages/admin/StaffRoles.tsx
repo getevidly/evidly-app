@@ -60,25 +60,20 @@ const PERM_SHORT_LABELS: Record<PermKey, string> = {
   perm_staff_manage: 'Staff Mgmt',
 };
 
-const PERM_DOT_COLORS: Record<PermKey, string> = {
-  perm_billing: 'bg-emerald-600',
-  perm_security: 'bg-red-600',
-  perm_emulate: 'bg-violet-600',
-  perm_configure: 'bg-blue-600',
-  perm_support_tickets: 'bg-amber-600',
-  perm_sales_pipeline: 'bg-emerald-600',
-  perm_crawl_manage: 'bg-orange-600',
-  perm_remote_connect: 'bg-cyan-600',
-  perm_intelligence: 'bg-violet-600',
-  perm_staff_manage: 'bg-red-600',
+/* ── Role badge styling (inline — ember palette) ── */
+const ROLE_BADGE_STYLES: Record<string, React.CSSProperties> = {
+  super_admin: { background: '#1E2D4D', color: '#F4EFE6' },
+  admin:       { background: '#B24A2E', color: '#fff' },
+  support:     { background: '#EDE8DC', color: '#5E574A', boxShadow: 'inset 0 0 0 1px #E0D9C8' },
+  sales:       { background: '#F6E5DE', color: '#8E3A24', boxShadow: 'inset 0 0 0 1px rgba(178,74,46,.28)' },
 };
 
-/* ── Role badge styling ── */
-const ROLE_BADGE_BG: Record<string, string> = {
-  super_admin: 'bg-gradient-to-br from-navy to-gold',
-  admin: 'bg-navy',
-  support: 'bg-blue-600',
-  sales: 'bg-emerald-600',
+/* Avatar bg by role */
+const AVATAR_BG: Record<string, string> = {
+  super_admin: '#1E2D4D',
+  admin:       '#1E2D4D',
+  support:     '#1E2D4D',
+  sales:       '#B24A2E',
 };
 
 const ROLE_DISPLAY: Record<string, string> = {
@@ -245,31 +240,50 @@ export default function StaffRoles() {
     setShowAddModal(false);
   };
 
-  /* ── Render role badge ── */
+  /* ── Render role badge (ember palette) ── */
   const renderRoleBadge = (role: string) => {
-    const bgClass = ROLE_BADGE_BG[role] || 'bg-gray-500';
+    const style = ROLE_BADGE_STYLES[role] || { background: '#ccc', color: '#555' };
     return (
-      <span className={`inline-block px-[10px] py-[3px] rounded text-[11px] font-bold text-white ${bgClass}`}>
+      <span
+        className="inline-block rounded-full text-[12px] font-semibold whitespace-nowrap"
+        style={{ ...style, padding: '5px 12px' }}
+      >
         {ROLE_DISPLAY[role] || role}
       </span>
     );
   };
 
-  /* ── Render permission dots ── */
-  const renderPermDots = (row: StaffRow) => (
-    <div className="flex gap-1 flex-wrap">
-      {PERM_KEYS.map(k => {
-        const active = !!(row as any)[k];
-        return (
+  /* ── Render permission chips (ember palette) ── */
+  const renderPermissions = (row: StaffRow) => {
+    const enabled = PERM_KEYS.filter(k => !!(row as any)[k]);
+    if (enabled.length === 0) return <span className="text-[12px] italic" style={{ color: '#B0A89A' }}>—</span>;
+    if (enabled.length === PERM_KEYS.length) {
+      return (
+        <span
+          className="inline-block text-[11.5px] font-medium"
+          style={{ background: '#F6E5DE', color: '#8E3A24', border: '1px solid rgba(178,74,46,.25)', borderRadius: 7, padding: '3px 10px' }}
+        >
+          Full access
+        </span>
+      );
+    }
+    const show = enabled.slice(0, 3);
+    const rest = enabled.length - 3;
+    return (
+      <div className="flex gap-1 flex-wrap items-center">
+        {show.map(k => (
           <span
             key={k}
-            title={`${PERM_LABELS[k]}: ${active ? 'Enabled' : 'Disabled'}`}
-            className={`w-2 h-2 rounded-full inline-block cursor-help ${active ? PERM_DOT_COLORS[k] : 'bg-gray-300'}`}
-          />
-        );
-      })}
-    </div>
-  );
+            className="inline-block text-[11.5px] font-medium whitespace-nowrap"
+            style={{ background: '#F1ECE0', color: '#5E574A', border: '1px solid #E6DFCE', borderRadius: 7, padding: '2px 8px' }}
+          >
+            {PERM_LABELS[k]}
+          </span>
+        ))}
+        {rest > 0 && <span className="text-[11px]" style={{ color: '#B0A89A' }}>+{rest}</span>}
+      </div>
+    );
+  };
 
   const getEventTimestamp = (e: EventRow) => e.event_time || '';
 
@@ -285,8 +299,8 @@ export default function StaffRoles() {
         </p>
       </div>
 
-      {/* ── Tab bar ── */}
-      <div className="flex gap-0.5 bg-gray-100 rounded-lg p-[3px] w-fit">
+      {/* ── Tab bar (ember underline) ── */}
+      <div className="flex gap-0" style={{ borderBottom: '1px solid #E6DFCE' }}>
         {([
           { id: 'staff' as Tab, label: 'Staff Members' },
           { id: 'roles' as Tab, label: 'Role Definitions' },
@@ -295,11 +309,10 @@ export default function StaffRoles() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-[18px] py-2 rounded-md border-none text-[13px] font-semibold cursor-pointer ${
-              tab === t.id
-                ? 'bg-white text-navy shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
-                : 'bg-transparent text-gray-400'
-            }`}
+            className="px-[18px] py-2.5 border-none bg-transparent text-[13px] font-semibold cursor-pointer -mb-px"
+            style={tab === t.id
+              ? { color: '#1E2D4D', borderBottom: '2px solid #B24A2E' }
+              : { color: '#B0A89A', borderBottom: '2px solid transparent' }}
           >
             {t.label}
           </button>
@@ -312,16 +325,18 @@ export default function StaffRoles() {
           {/* Header row */}
           <div className="flex justify-between items-center">
             <h2 className="text-base font-bold text-navy">EvidLY Staff Accounts</h2>
-            <Button
-              variant="gold"
-              size="sm"
+            <button
               onClick={() => {
                 applyRoleDefaults(formRole);
                 setShowAddModal(true);
               }}
+              className="px-5 py-2 rounded-full border-none text-white text-[13px] font-semibold cursor-pointer transition-colors"
+              style={{ background: '#B24A2E' }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#8E3A24')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#B24A2E')}
             >
               + Add Staff Member
-            </Button>
+            </button>
           </div>
 
           {/* Staff table */}
@@ -336,28 +351,54 @@ export default function StaffRoles() {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-[13px]">
                   <thead>
-                    <tr className="border-b border-border_ui-warm">
+                    <tr style={{ borderBottom: '1px solid #E6DFCE', background: '#FCFBF7' }}>
                       {['Name', 'Email', 'Role', 'Permissions', 'Last Login'].map(h => (
-                        <th key={h} className="text-left px-[14px] py-[10px] text-slate_ui font-semibold text-[11px] uppercase">{h}</th>
+                        <th
+                          key={h}
+                          className="text-left px-[14px] py-[10px] text-[11px] uppercase font-bold"
+                          style={{ color: '#B0A89A', letterSpacing: '.11em', ...(h === 'Last Login' ? { textAlign: 'right' as const } : {}) }}
+                        >
+                          {h}
+                        </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {staff.map(s => (
-                      <tr
-                        key={s.id}
-                        onClick={() => setSelectedStaff(s)}
-                        className="border-b border-border_ui-warm cursor-pointer hover:bg-gray-50"
-                      >
-                        <td className="px-[14px] py-[10px] text-navy font-semibold">{s.full_name || '—'}</td>
-                        <td className="px-[14px] py-[10px] text-slate_ui text-xs">{s.email}</td>
-                        <td className="px-[14px] py-[10px]">{renderRoleBadge(s.evidly_staff_role)}</td>
-                        <td className="px-[14px] py-[10px]">{renderPermDots(s)}</td>
-                        <td className="px-[14px] py-[10px] text-slate_ui text-xs">
-                          {s.last_login_at ? new Date(s.last_login_at).toLocaleDateString() : 'Never'}
-                        </td>
-                      </tr>
-                    ))}
+                    {staff.map(s => {
+                      const initials = (s.full_name || s.email.split('@')[0])
+                        .split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() || '').join('');
+                      const avatarBg = AVATAR_BG[s.evidly_staff_role] || '#1E2D4D';
+                      return (
+                        <tr
+                          key={s.id}
+                          onClick={() => setSelectedStaff(s)}
+                          className="cursor-pointer"
+                          style={{ borderBottom: '1px solid #EDE8DC' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = '#FBF8F1')}
+                          onMouseLeave={e => (e.currentTarget.style.background = '')}
+                        >
+                          <td className="px-[14px] py-[10px]">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="shrink-0 rounded-full flex items-center justify-center text-[13px] font-semibold"
+                                style={{ width: 36, height: 36, background: avatarBg, color: '#F4EFE6' }}
+                              >
+                                {initials}
+                              </div>
+                              <span className="font-semibold" style={{ color: '#1E2D4D' }}>{s.full_name || '—'}</span>
+                            </div>
+                          </td>
+                          <td className="px-[14px] py-[10px] text-xs" style={{ color: '#8A8279' }}>{s.email}</td>
+                          <td className="px-[14px] py-[10px]">{renderRoleBadge(s.evidly_staff_role)}</td>
+                          <td className="px-[14px] py-[10px]">{renderPermissions(s)}</td>
+                          <td className="px-[14px] py-[10px] text-xs text-right" style={{ color: '#B0A89A' }}>
+                            {s.last_login_at
+                              ? new Date(s.last_login_at).toLocaleDateString()
+                              : <span className="italic">Never</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -422,7 +463,7 @@ export default function StaffRoles() {
                         type="checkbox"
                         checked={formPerms[k]}
                         onChange={e => setFormPerms(prev => ({ ...prev, [k]: e.target.checked }))}
-                        className="accent-gold"
+                        className="accent-[#B24A2E]"
                       />
                       {PERM_LABELS[k]}
                     </label>
