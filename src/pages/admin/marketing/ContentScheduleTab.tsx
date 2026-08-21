@@ -13,7 +13,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import {
   Plus, Trash2, ChevronUp, ChevronDown,
   ChevronLeft, ChevronRight, CalendarDays, List,
-  SlidersHorizontal, Wand2,
+  SlidersHorizontal, Wand2, Search,
   Image as ImageIcon, Video, Paperclip,
 } from 'lucide-react';
 import {
@@ -40,6 +40,17 @@ const STATUS_DOT: Record<string, string> = {
   drafted:   '#F59E0B',
   scheduled: '#3B82F6',
   published: '#22C55E',
+};
+
+const CHANNEL_DOT: Record<string, string> = {
+  Articles:  '#6366F1',
+  Blog:      '#10B981',
+  Email:     '#F97316',
+  Facebook:  '#1877F2',
+  Instagram: '#E1306C',
+  LinkedIn:  '#0A66C2',
+  X:         '#14171A',
+  YouTube:   '#FF0000',
 };
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -222,6 +233,8 @@ export default function ContentScheduleTab() {
   const [fStatus, setFStatus] = useState('');
   const [fDateFrom, setFDateFrom] = useState('');
   const [fDateTo, setFDateTo] = useState('');
+  const [fSearch, setFSearch] = useState('');
+  const [fBrand, setFBrand] = useState('');
 
   // Date-adjustment panel state
   const [showAdjustPanel, setShowAdjustPanel] = useState(false);
@@ -333,16 +346,38 @@ export default function ContentScheduleTab() {
     return Array.from(set).sort();
   }, [posts]);
 
-  // ── Filtered + sorted list (view filters) ─────────────────────
+  // ── Base-filtered set (everything except status — for pill counts) ──
+
+  const baseFiltered = useMemo(() => {
+    let list = [...posts];
+    if (fChannel) list = list.filter(p => p.channel_label === fChannel);
+    if (fBrand) list = list.filter(p => p.brand === fBrand);
+    if (fOwner) list = list.filter(p => p.owner === fOwner);
+    if (fDateFrom) list = list.filter(p => p.scheduled_date >= fDateFrom);
+    if (fDateTo) list = list.filter(p => p.scheduled_date <= fDateTo);
+    if (fSearch) {
+      const q = fSearch.toLowerCase();
+      list = list.filter(p =>
+        (p.title || '').toLowerCase().includes(q) ||
+        (p.body || '').toLowerCase().includes(q),
+      );
+    }
+    return list;
+  }, [posts, fChannel, fBrand, fOwner, fDateFrom, fDateTo, fSearch]);
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of baseFiltered) {
+      counts[p.status] = (counts[p.status] || 0) + 1;
+    }
+    return counts;
+  }, [baseFiltered]);
+
+  // ── Filtered + sorted list (all filters including status) ─────
 
   const displayed = useMemo(() => {
-    let list = [...posts];
-
-    if (fChannel) list = list.filter(p => p.channel_label === fChannel);
-    if (fOwner)   list = list.filter(p => p.owner === fOwner);
-    if (fStatus)  list = list.filter(p => p.status === fStatus);
-    if (fDateFrom) list = list.filter(p => p.scheduled_date >= fDateFrom);
-    if (fDateTo)   list = list.filter(p => p.scheduled_date <= fDateTo);
+    let list = [...baseFiltered];
+    if (fStatus) list = list.filter(p => p.status === fStatus);
 
     list.sort((a, b) => {
       const av = (a[sortKey] || '') as string;
@@ -352,7 +387,7 @@ export default function ContentScheduleTab() {
     });
 
     return list;
-  }, [posts, fChannel, fOwner, fStatus, fDateFrom, fDateTo, sortKey, sortDir]);
+  }, [baseFiltered, fStatus, sortKey, sortDir]);
 
   // ── Posts grouped by date (for calendar) ────────────────────────
 
@@ -715,73 +750,215 @@ export default function ContentScheduleTab() {
 
   return (
     <div style={{ fontFamily: BODY }}>
-      {/* ── Header + View toggle + buttons ──────────────────────────── */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <p className="text-[11px] font-medium" style={{ color: EV_MUTED }}>
-            {posts.length} post{posts.length !== 1 ? 's' : ''} scheduled
-          </p>
-          <div
-            className="inline-flex rounded-md overflow-hidden border"
-            style={{ borderColor: EV_LINE }}
-          >
+      {/* ── Three-row header ──────────────────────────────────────── */}
+      <div className="mb-5 space-y-2">
+        {/* ROW 1 — View toggle + Status pills + Action buttons */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div
+              className="inline-flex rounded-md overflow-hidden border"
+              style={{ borderColor: EV_LINE }}
+            >
+              <button
+                onClick={() => setViewMode('calendar')}
+                className="inline-flex items-center gap-1 py-[5px] px-3 text-[11px] font-semibold cursor-pointer border-none"
+                style={{
+                  backgroundColor: viewMode === 'calendar' ? EV_NAVY : '#fff',
+                  color: viewMode === 'calendar' ? '#fff' : EV_MUTED,
+                }}
+              >
+                <CalendarDays size={12} /> Calendar
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className="inline-flex items-center gap-1 py-[5px] px-3 text-[11px] font-semibold cursor-pointer border-none"
+                style={{
+                  backgroundColor: viewMode === 'list' ? EV_NAVY : '#fff',
+                  color: viewMode === 'list' ? '#fff' : EV_MUTED,
+                  borderLeft: `1px solid ${EV_LINE}`,
+                }}
+              >
+                <List size={12} /> List
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setFStatus('')}
+                className="py-[4px] px-3 text-[11px] font-semibold rounded-full cursor-pointer border"
+                style={{
+                  borderColor: !fStatus ? EV_NAVY : EV_LINE,
+                  backgroundColor: !fStatus ? EV_NAVY : '#fff',
+                  color: !fStatus ? '#fff' : EV_MUTED,
+                }}
+              >
+                All ({baseFiltered.length})
+              </button>
+              {STATUS_OPTIONS.map(s => (
+                <button
+                  key={s}
+                  onClick={() => setFStatus(fStatus === s ? '' : s)}
+                  className="inline-flex items-center gap-1.5 py-[4px] px-3 text-[11px] font-semibold rounded-full cursor-pointer border capitalize"
+                  style={{
+                    borderColor: fStatus === s ? STATUS_DOT[s] : EV_LINE,
+                    backgroundColor: fStatus === s ? `${STATUS_DOT[s]}18` : '#fff',
+                    color: fStatus === s ? STATUS_DOT[s] : EV_MUTED,
+                  }}
+                >
+                  <span
+                    className="inline-block w-[6px] h-[6px] rounded-full"
+                    style={{ backgroundColor: STATUS_DOT[s] }}
+                  />
+                  {s} ({statusCounts[s] || 0})
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setViewMode('calendar')}
-              className="inline-flex items-center gap-1 py-[5px] px-3 text-[11px] font-semibold cursor-pointer border-none"
+              onClick={() => setShowAdjustPanel(v => !v)}
+              className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
               style={{
-                backgroundColor: viewMode === 'calendar' ? EV_NAVY : '#fff',
-                color: viewMode === 'calendar' ? '#fff' : EV_MUTED,
+                borderColor: showAdjustPanel ? EV_NAVY : EV_LINE,
+                backgroundColor: showAdjustPanel ? EV_NAVY : '#fff',
+                color: showAdjustPanel ? '#fff' : EV_NAVY,
+                fontFamily: BODY,
               }}
             >
-              <CalendarDays size={12} /> Calendar
+              <SlidersHorizontal size={14} /> Adjust Dates
             </button>
             <button
-              onClick={() => setViewMode('list')}
-              className="inline-flex items-center gap-1 py-[5px] px-3 text-[11px] font-semibold cursor-pointer border-none"
+              onClick={handleBatchDraft}
+              disabled={batchEligible.length === 0 || batchDrafting}
+              className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
               style={{
-                backgroundColor: viewMode === 'list' ? EV_NAVY : '#fff',
-                color: viewMode === 'list' ? '#fff' : EV_MUTED,
-                borderLeft: `1px solid ${EV_LINE}`,
+                borderColor: batchEligible.length === 0 || batchDrafting ? EV_LINE : '#93C5FD',
+                backgroundColor: batchDrafting ? EV_LIGHT : batchEligible.length === 0 ? '#fff' : '#DBEAFE',
+                color: batchEligible.length === 0 || batchDrafting ? EV_MUTED : '#1D4ED8',
+                fontFamily: BODY,
               }}
             >
-              <List size={12} /> List
+              <Wand2 size={14} />
+              {batchDrafting ? batchProgress || 'Drafting\u2026' : `Draft filtered from brief${batchEligible.length > 0 ? ` (${batchEligible.length})` : ''}`}
+            </button>
+            <button
+              onClick={() => { setEditingId(null); setForm({ ...EMPTY_FORM }); setShowForm(!showForm); }}
+              className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border-none"
+              style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
+            >
+              <Plus size={14} /> Add Post
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowAdjustPanel(v => !v)}
-            className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
-            style={{
-              borderColor: showAdjustPanel ? EV_NAVY : EV_LINE,
-              backgroundColor: showAdjustPanel ? EV_NAVY : '#fff',
-              color: showAdjustPanel ? '#fff' : EV_NAVY,
-              fontFamily: BODY,
-            }}
-          >
-            <SlidersHorizontal size={14} /> Adjust Dates
-          </button>
-          <button
-            onClick={handleBatchDraft}
-            disabled={batchEligible.length === 0 || batchDrafting}
-            className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border"
-            style={{
-              borderColor: batchEligible.length === 0 || batchDrafting ? EV_LINE : '#93C5FD',
-              backgroundColor: batchDrafting ? EV_LIGHT : batchEligible.length === 0 ? '#fff' : '#DBEAFE',
-              color: batchEligible.length === 0 || batchDrafting ? EV_MUTED : '#1D4ED8',
-              fontFamily: BODY,
-            }}
-          >
-            <Wand2 size={14} />
-            {batchDrafting ? batchProgress || 'Drafting\u2026' : `Draft filtered from brief${batchEligible.length > 0 ? ` (${batchEligible.length})` : ''}`}
-          </button>
-          <button
-            onClick={() => { setEditingId(null); setForm({ ...EMPTY_FORM }); setShowForm(!showForm); }}
-            className="inline-flex items-center gap-1.5 py-[7px] px-4 text-[12px] font-semibold rounded-md cursor-pointer border-none"
-            style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
-          >
-            <Plus size={14} /> Add Post
-          </button>
+
+        {/* ROW 2 — Channel legend */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {channelOptions.map(ch => (
+            <button
+              key={ch}
+              onClick={() => setFChannel(fChannel === ch ? '' : ch)}
+              className="inline-flex items-center gap-1.5 py-[3px] px-2.5 text-[11px] font-medium rounded-md cursor-pointer border"
+              style={{
+                borderColor: fChannel === ch ? (CHANNEL_DOT[ch] || EV_MUTED) : 'transparent',
+                backgroundColor: fChannel === ch ? `${CHANNEL_DOT[ch] || EV_MUTED}14` : 'transparent',
+                color: fChannel === ch ? (CHANNEL_DOT[ch] || EV_MUTED) : EV_MUTED,
+              }}
+            >
+              <span
+                className="inline-block w-[7px] h-[7px] rounded-full"
+                style={{ backgroundColor: CHANNEL_DOT[ch] || EV_MUTED }}
+              />
+              {ch}
+            </button>
+          ))}
+        </div>
+
+        {/* ROW 3 — Search, dates, brand, owner, post count */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative">
+            <Search
+              size={13}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ color: EV_MUTED }}
+            />
+            <input
+              type="text"
+              value={fSearch}
+              onChange={e => setFSearch(e.target.value)}
+              placeholder="Search title or body…"
+              className="py-[6px] pl-8 pr-3 text-[12px] border rounded-md outline-none"
+              style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 200 }}
+            />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold tracking-wider block mb-0.5" style={{ color: EV_MUTED }}>
+              From
+            </label>
+            <input
+              type="date"
+              value={fDateFrom}
+              onChange={e => setFDateFrom(e.target.value)}
+              className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+              style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+            />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold tracking-wider block mb-0.5" style={{ color: EV_MUTED }}>
+              To
+            </label>
+            <input
+              type="date"
+              value={fDateTo}
+              onChange={e => setFDateTo(e.target.value)}
+              className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+              style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
+            />
+          </div>
+          <div>
+            <label className="text-[10px] font-bold tracking-wider block mb-0.5" style={{ color: EV_MUTED }}>
+              Brand
+            </label>
+            <select
+              value={fBrand}
+              onChange={e => setFBrand(e.target.value)}
+              className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+              style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 140 }}
+            >
+              <option value="">All brands</option>
+              {brandOptions.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-[10px] font-bold tracking-wider block mb-0.5" style={{ color: EV_MUTED }}>
+              Owner
+            </label>
+            <select
+              value={fOwner}
+              onChange={e => setFOwner(e.target.value)}
+              className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
+              style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 110 }}
+            >
+              <option value="">All owners</option>
+              {ownerOptions.map(o => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </div>
+          {(fChannel || fStatus || fDateFrom || fDateTo || fSearch || fBrand || fOwner) && (
+            <button
+              onClick={() => { setFChannel(''); setFStatus(''); setFDateFrom(''); setFDateTo(''); setFSearch(''); setFBrand(''); setFOwner(''); }}
+              className="py-[6px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+              style={{ backgroundColor: EV_LIGHT, color: EV_MUTED }}
+            >
+              Clear all
+            </button>
+          )}
+          <p className="ml-auto text-[11px] font-medium" style={{ color: EV_MUTED }}>
+            {displayed.length} post{displayed.length !== 1 ? 's' : ''} scheduled
+          </p>
         </div>
       </div>
 
@@ -1368,102 +1545,6 @@ export default function ContentScheduleTab() {
         </div>
       )}
 
-      {/* ── Filters ──────────────────────────────────────────────── */}
-      <div className="flex items-end gap-3 flex-wrap mb-4">
-        {/* Channel filter */}
-        <div>
-          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
-            Channel
-          </label>
-          <select
-            value={fChannel}
-            onChange={e => setFChannel(e.target.value)}
-            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 120 }}
-          >
-            <option value="">All</option>
-            {channelOptions.map(ch => (
-              <option key={ch} value={ch}>{ch}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Owner filter */}
-        <div>
-          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
-            Owner
-          </label>
-          <select
-            value={fOwner}
-            onChange={e => setFOwner(e.target.value)}
-            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 120 }}
-          >
-            <option value="">All</option>
-            {ownerOptions.map(o => (
-              <option key={o} value={o}>{o}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Status filter */}
-        <div>
-          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
-            Status
-          </label>
-          <select
-            value={fStatus}
-            onChange={e => setFStatus(e.target.value)}
-            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff', minWidth: 120 }}
-          >
-            <option value="">All</option>
-            {STATUS_OPTIONS.map(s => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Date from */}
-        <div>
-          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
-            From
-          </label>
-          <input
-            type="date"
-            value={fDateFrom}
-            onChange={e => setFDateFrom(e.target.value)}
-            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
-          />
-        </div>
-
-        {/* Date to */}
-        <div>
-          <label className="text-[10px] font-bold tracking-wider block mb-1" style={{ color: EV_MUTED }}>
-            To
-          </label>
-          <input
-            type="date"
-            value={fDateTo}
-            onChange={e => setFDateTo(e.target.value)}
-            className="py-[6px] px-[8px] text-[12px] border rounded-md outline-none"
-            style={{ borderColor: EV_LINE, color: EV_NAVY, backgroundColor: '#fff' }}
-          />
-        </div>
-
-        {/* Clear filters */}
-        {(fChannel || fOwner || fStatus || fDateFrom || fDateTo) && (
-          <button
-            onClick={() => { setFChannel(''); setFOwner(''); setFStatus(''); setFDateFrom(''); setFDateTo(''); }}
-            className="py-[6px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border-none"
-            style={{ backgroundColor: EV_LIGHT, color: EV_MUTED }}
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
       {/* ── Calendar view ──────────────────────────────────────────── */}
       {viewMode === 'calendar' && (
         <div
@@ -1807,28 +1888,6 @@ export default function ContentScheduleTab() {
         </>
       )}
 
-      {/* ── Status legend ────────────────────────────────────────── */}
-      <div className="flex items-center gap-4 flex-wrap mt-4">
-        <span
-          className="text-[10px] font-bold tracking-wider"
-          style={{ color: EV_MUTED }}
-        >
-          Status:
-        </span>
-        {STATUS_OPTIONS.map(s => (
-          <span
-            key={s}
-            className="inline-flex items-center gap-1 text-[11px]"
-            style={{ color: EV_MUTED }}
-          >
-            <span
-              className="inline-block w-[7px] h-[7px] rounded-full"
-              style={{ backgroundColor: STATUS_DOT[s] }}
-            />
-            {s}
-          </span>
-        ))}
-      </div>
     </div>
   );
 }
