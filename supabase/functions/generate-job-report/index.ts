@@ -330,7 +330,7 @@ Deno.serve(async (req: Request) => {
 // ── HTML Report Builder ───────────────────────────────────
 function buildReportHtml(content: any, reportType: ReportType): string {
   const brandNavy = "#1E2D4D";
-  const brandGold = "#A08C5A";
+  const brandGold = "#B24A2E";
 
   const severityColors: Record<string, string> = {
     critical: "#DC2626",

@@ -32,8 +32,8 @@ const RUST = '#B26A43';    // fire pillar (was #B85D22)
 const BLUE = '#3E6B8A';    // food pillar
 
 /* BRAND — accents only. Never a chart fill. */
-const GOLD      = '#A08C5A';   // brand-mark accents
-const GOLD_TEXT = '#8A6412';   // gold as TEXT — #A08C5A is 2.92:1 and fails AA
+const GOLD      = '#B24A2E';   // brand-mark accents
+const GOLD_TEXT = '#8A6412';   // gold as TEXT — #B24A2E is 2.92:1 and fails AA
 const WORDMARK  = '#A17C3B';   // the LY. Nothing else.
 
 
@@ -88,7 +88,7 @@ const K = {
 /* ---- COLOR SYSTEM -------------------------------------------------------
    STATE owns color. PILLAR owns category. They never borrow from each other.
    Red is reserved: out of range · overdue · expired. Nothing else may use it.
-   Gold #A08C5A stays a brand-mark accent and is never a chart fill.        */
+   Gold #B24A2E stays a brand-mark accent and is never a chart fill.        */
 const TONE = {
   sage:  { fill: '#7FA98B', tint: '#E3ECE1', text: '#3E5E4B', dot: '#547A62' },  // handled
   amber: { fill: '#D8A93A', tint: '#F7EDD3', text: '#8A6412', dot: '#D8A93A' },  // coming due
@@ -348,7 +348,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
       <nav style={s('background:#fff;border-bottom:1px solid #EEE7D9;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:58px;')}>
         <div style={s('display:flex;align-items:center;gap:10px;')}>
           <span style={s('width:24px;height:24px;border-radius:7px;background:#1C2A3A;display:inline-flex;align-items:center;justify-content:center;color:#CFE3D7;font-size:12px;')}>◆</span>
-          <span style={s("font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;")}><span style={s('color:#A08C5A;')}>E</span><span style={s('color:#1C2A3A;')}>vid</span><span style={s('color:#A08C5A;')}>LY</span></span>
+          <span style={s("font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;")}><span style={s('color:#B24A2E;')}>E</span><span style={s('color:#1C2A3A;')}>vid</span><span style={s('color:#B24A2E;')}>LY</span></span>
           <span style={s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6E675A;margin-left:8px;")}>DASHBOARD</span>
         </div>
         <div style={s('display:flex;align-items:center;gap:12px;')}>
@@ -425,7 +425,7 @@ function EvidLYDashboard({ pulse = true, alertTone = 'Advisory',
         </div>
 
         {/* ------------------------------------------------- what's at risk */}
-        <div style={s('background:#fff;border:1px solid #EEE7D9;border-top:2px solid #A08C5A;border-radius:16px;padding:22px 26px;box-shadow:0 1px 2px rgba(28,42,58,.03),0 18px 40px -36px rgba(28,42,58,.5);')}>
+        <div style={s('background:#fff;border:1px solid #EEE7D9;border-top:2px solid #B24A2E;border-radius:16px;padding:22px 26px;box-shadow:0 1px 2px rgba(28,42,58,.03),0 18px 40px -36px rgba(28,42,58,.5);')}>
           <div style={s('display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;')}>
             <span style={s("font-family:'Spectral',serif;font-size:19px;font-weight:600;color:#1C2A3A;")}>What's at risk</span>
             <span style={{ ...s("font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;"), color: gateOpen ? TONE.sage.text : '#6E675A' }}>
@@ -991,7 +991,7 @@ export default function SignupScreenMockup() {
 
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(178,74,46,0.15)' }}>
                     <Zap size={15} style={{ color: '#D8A93A' }} fill="#D8A93A" />
                   </div>
                   <div>
@@ -1000,7 +1000,7 @@ export default function SignupScreenMockup() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(178,74,46,0.15)' }}>
                     <Flame size={15} style={{ color: '#E8763A' }} fill="#E8763A" />
                   </div>
                   <div>
@@ -1009,7 +1009,7 @@ export default function SignupScreenMockup() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(178,74,46,0.15)' }}>
                     <Utensils size={15} style={{ color: '#5B8AAD' }} />
                   </div>
                   <div>

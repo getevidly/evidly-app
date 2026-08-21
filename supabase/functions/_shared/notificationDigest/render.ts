@@ -1,7 +1,7 @@
 /**
  * renderDigestEmail — Builds the HTML + plain-text daily digest email.
  *
- * Brand-aligned: navy header (#1E2D4D), gold accent (#A08C5A), cream body.
+ * Brand-aligned: navy header (#1E2D4D), gold accent (#B24A2E), cream body.
  * Footer links to /settings/notifications for opt-out.
  */
 

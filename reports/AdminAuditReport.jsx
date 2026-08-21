@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 /* ─── palette ─── */
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const CREAM = '#FAF7F0';
 const GREEN = '#166534';
 const RED = '#991B1B';

@@ -17,7 +17,7 @@ import { useState } from "react";
 
 const C = {
   navy: "#1E2D4D", cream: "#FAF7F0", ink: "#21242B", slate: "#5B6472",
-  line: "#E3DDD0", gold: "#A08C5A",
+  line: "#E3DDD0", gold: "#B24A2E",
   food: "#2F6F4F", fire: "#9E3B2F",
   white: "#FFFFFF", pass: "#2F6F4F", fail: "#9E3B2F", warn: "#8A6D1F",
   rev: "#3D5A80", cost: "#7A5C3D", ops: "#4A6B57", wf: "#5C4A78", liab: "#8A3B4F",
