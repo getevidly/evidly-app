@@ -5,7 +5,7 @@ import { FlagDocumentModal } from './FlagDocumentModal';
 import { VersionHistoryPanel } from './VersionHistoryPanel';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 const STATUS_BADGES: Record<string, { label: string; bg: string; color: string }> = {
   pending_review: { label: 'Pending Review', bg: '#EFF6FF', color: '#2563EB' },

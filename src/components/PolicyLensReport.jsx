@@ -4,7 +4,7 @@
 // shows for both editions (owner hands report to agent who needs the reference).
 
 const NAVY = "#1E2D4D";
-const GOLD = "#A08C5A";
+const GOLD = "#B24A2E";
 const CREAM = "#FAF7F0";
 const TEAL = "#0F766E";
 const CORAL = "#C2553A";

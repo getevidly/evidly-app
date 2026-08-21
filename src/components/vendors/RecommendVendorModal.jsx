@@ -115,7 +115,7 @@ export function RecommendVendorModal({ isOpen, onClose, prefilledVendor, onRecom
               className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: '#FEF3C7' }}
             >
-              <Star className="w-5 h-5" style={{ color: '#A08C5A' }} />
+              <Star className="w-5 h-5" style={{ color: '#B24A2E' }} />
             </div>
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1E2D4D', margin: 0 }}>

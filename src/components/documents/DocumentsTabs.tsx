@@ -41,7 +41,7 @@ export function DocumentsTabs({ activeTab, onTabChange, counts, pendingCounts, r
                 onClick={() => onTabChange(t.id)}
                 className="relative whitespace-nowrap px-4 py-3.5 text-[13px] cursor-pointer bg-transparent border-none flex items-center gap-1 flex-wrap max-[480px]:flex-col max-[480px]:items-start"
                 style={{
-                  borderBottom: active ? '3px solid #A08C5A' : '3px solid transparent',
+                  borderBottom: active ? '3px solid #B24A2E' : '3px solid transparent',
                   fontWeight: active ? 700 : 500,
                   color: active ? '#1E2D4D' : '#8A93A6',
                 }}

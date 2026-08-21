@@ -6,8 +6,8 @@ export function FounderCounter() {
   if (loading) {
     return (
       <div style={{
-        background: 'linear-gradient(135deg, rgba(160,140,90,0.1), rgba(160,140,90,0.05))',
-        border: '1px solid rgba(160,140,90,0.3)',
+        background: 'linear-gradient(135deg, rgba(178,74,46,0.1), rgba(178,74,46,0.05))',
+        border: '1px solid rgba(178,74,46,0.3)',
         borderRadius: 12,
         padding: '12px 16px',
         textAlign: 'center',
@@ -15,7 +15,7 @@ export function FounderCounter() {
         <div style={{
           width: 180,
           height: 16,
-          background: 'rgba(160,140,90,0.15)',
+          background: 'rgba(178,74,46,0.15)',
           borderRadius: 8,
           margin: '0 auto',
         }} />
@@ -26,8 +26,8 @@ export function FounderCounter() {
   if (spotsRemaining <= 0) {
     return (
       <div style={{
-        background: 'linear-gradient(135deg, rgba(160,140,90,0.1), rgba(160,140,90,0.05))',
-        border: '1px solid rgba(160,140,90,0.3)',
+        background: 'linear-gradient(135deg, rgba(178,74,46,0.1), rgba(178,74,46,0.05))',
+        border: '1px solid rgba(178,74,46,0.3)',
         borderRadius: 12,
         padding: '12px 16px',
         textAlign: 'center',
@@ -41,8 +41,8 @@ export function FounderCounter() {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(160,140,90,0.1), rgba(160,140,90,0.05))',
-      border: '1px solid rgba(160,140,90,0.3)',
+      background: 'linear-gradient(135deg, rgba(178,74,46,0.1), rgba(178,74,46,0.05))',
+      border: '1px solid rgba(178,74,46,0.3)',
       borderRadius: 12,
       padding: '12px 16px',
       textAlign: 'center',

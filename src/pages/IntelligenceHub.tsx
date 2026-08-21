@@ -730,7 +730,7 @@ function InsightDetailView({
 
 // ── VIEW C: Source Status ────────────────────────────────────────
 
-const REFINED_GOLD = '#A08C5A';
+const REFINED_GOLD = '#B24A2E';
 const MIDNIGHT_NAVY = '#1E2D4D';
 
 function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount, pipelineStats }: {

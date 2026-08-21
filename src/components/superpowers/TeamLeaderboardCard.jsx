@@ -2,9 +2,9 @@
 import { Medal, Users, ClipboardList, Thermometer, Wrench } from 'lucide-react';
 
 const MEDAL_STYLES = {
-  1: { bg: 'bg-[#A08C5A]', text: 'text-white', label: '1st' },
+  1: { bg: 'bg-[#B24A2E]', text: 'text-white', label: '1st' },
   2: { bg: 'bg-[#6B7F96]', text: 'text-white', label: '2nd' },
-  3: { bg: 'bg-[#A08C5A]/60', text: 'text-white', label: '3rd' },
+  3: { bg: 'bg-[#B24A2E]/60', text: 'text-white', label: '3rd' },
 };
 
 export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) {
@@ -68,7 +68,7 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
             <div
               key={entry.userId}
               className={`grid grid-cols-[40px_1fr_50px_50px_50px_60px] gap-2 px-3 py-3 items-center ${
-                isCurrentUser ? 'bg-[#A08C5A]/5' : ''
+                isCurrentUser ? 'bg-[#B24A2E]/5' : ''
               }`}
             >
               <div>
@@ -83,7 +83,7 @@ export function TeamLeaderboardCard({ entries, isKitchenStaff, currentUserId }) 
               <div>
                 <p className={`text-sm ${isCurrentUser ? 'font-semibold text-[#0B1628]' : 'text-[#0B1628]'}`}>
                   {entry.name}
-                  {isCurrentUser && <span className="text-xs text-[#A08C5A] ml-1">(You)</span>}
+                  {isCurrentUser && <span className="text-xs text-[#B24A2E] ml-1">(You)</span>}
                 </p>
               </div>
               <span className="text-xs text-center text-[#3D5068]">{entry.checklistScore}</span>

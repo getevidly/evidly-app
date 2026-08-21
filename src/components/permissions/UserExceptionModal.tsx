@@ -180,7 +180,7 @@ export function UserExceptionModal({
                       {existingExceptions.some(e => e.userId === member.id) && (
                         <span
                           className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                          style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
+                          style={{ backgroundColor: 'rgba(178,74,46, 0.15)', color: '#B24A2E' }}
                         >
                           HAS OVERRIDES
                         </span>
@@ -250,7 +250,7 @@ export function UserExceptionModal({
                   Role default
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#A08C5A' }} />
+                  <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#B24A2E' }} />
                   Custom override
                 </span>
                 <span className="flex items-center gap-1">
@@ -328,7 +328,7 @@ function UserExceptionCategoryCard({
           {overrideCount > 0 && (
             <span
               className="text-xs font-semibold px-1.5 py-0.5 rounded-full"
-              style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
+              style={{ backgroundColor: 'rgba(178,74,46, 0.15)', color: '#B24A2E' }}
             >
               {overrideCount} override{overrideCount > 1 ? 's' : ''}
             </span>
@@ -355,18 +355,18 @@ function UserExceptionCategoryCard({
                 className="flex items-center justify-between px-4 py-2.5 border-b last:border-b-0"
                 style={{
                   borderColor: 'var(--border-subtle, #E8EDF5)',
-                  backgroundColor: isOverridden ? 'rgba(160, 140, 90, 0.06)' : undefined,
+                  backgroundColor: isOverridden ? 'rgba(178,74,46, 0.06)' : undefined,
                 }}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-xs truncate" style={{ color: isOverridden ? '#A08C5A' : '#3D5068' }}>
+                  <span className="text-xs truncate" style={{ color: isOverridden ? '#B24A2E' : '#3D5068' }}>
                     {perm.label}
                   </span>
                   {isProtected && <Shield className="w-3 h-3 text-amber-500 flex-shrink-0" />}
                   {isOverridden && (
                     <span
                       className="text-[11px] font-bold px-1 py-0 rounded"
-                      style={{ backgroundColor: 'rgba(160, 140, 90, 0.2)', color: '#A08C5A' }}
+                      style={{ backgroundColor: 'rgba(178,74,46, 0.2)', color: '#B24A2E' }}
                     >
                       CUSTOM
                     </span>
@@ -386,7 +386,7 @@ function UserExceptionCategoryCard({
                   `}
                   style={{
                     backgroundColor: effectiveValue
-                      ? isOverridden ? '#A08C5A' : '#1E2D4D'
+                      ? isOverridden ? '#B24A2E' : '#1E2D4D'
                       : '#D1D9E6',
                   }}
                 >

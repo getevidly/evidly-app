@@ -4,8 +4,8 @@ import { Trophy, Store, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 const GRADE_STYLES = {
   A: { bg: 'bg-[#166534]', text: 'text-white' },
   B: { bg: 'bg-[#166534]/80', text: 'text-white' },
-  C: { bg: 'bg-[#A08C5A]', text: 'text-white' },
-  D: { bg: 'bg-[#A08C5A]/70', text: 'text-white' },
+  C: { bg: 'bg-[#B24A2E]', text: 'text-white' },
+  D: { bg: 'bg-[#B24A2E]/70', text: 'text-white' },
   F: { bg: 'bg-[#991B1B]', text: 'text-white' },
 };
 
@@ -85,7 +85,7 @@ export function VendorPerformanceCard({ scores }) {
                       <span className="text-xs text-[#6B7F96] w-16 truncate">{cat.label}</span>
                       <div className="flex-1 h-1.5 bg-[#EEF1F7] rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${pct >= 80 ? 'bg-[#166534]' : pct >= 50 ? 'bg-[#A08C5A]' : 'bg-[#991B1B]'}`}
+                          className={`h-full rounded-full ${pct >= 80 ? 'bg-[#166534]' : pct >= 50 ? 'bg-[#B24A2E]' : 'bg-[#991B1B]'}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>

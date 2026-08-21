@@ -89,7 +89,7 @@ export const VideoCapture: React.FC<Props> = ({ onVideoReady }) => {
       background: '#EEF1F7', border: '1px solid #D1D9E6',
       borderRadius: '8px', padding: '14px', marginBottom: '12px',
     }}>
-      <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 10px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+      <p style={{ color: '#B24A2E', fontSize: '11px', fontWeight: 700, margin: '0 0 10px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
         {'📹'} Attach Video (Optional {'—'} Max 30 seconds)
       </p>
 

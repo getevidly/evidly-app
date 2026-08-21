@@ -61,7 +61,7 @@ export function BriefCard({ variant, briefing, showItems = true, showConsult = f
   if (!briefing && regenFailed) {
     return (
       <div className="brief-lite" style={{ background: '#FFF', border: '1px solid #E7E1D5', borderRadius: 12, padding: 16 }}>
-        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', color: '#A08C5A', margin: 0 }}>{eyebrow.label}</p>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', color: '#B24A2E', margin: 0 }}>{eyebrow.label}</p>
         <p style={{ fontSize: 13, color: '#8A93A6', margin: '10px 0 0' }}>Couldn't load — try refreshing.</p>
       </div>
     );
@@ -85,7 +85,7 @@ export function BriefCard({ variant, briefing, showItems = true, showConsult = f
 
   return (
     <div className="brief-lite" style={{ background: t.bg, border: `1px solid ${t.border}`, borderRadius: 12, padding: 16 }}>
-      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', color: '#A08C5A', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', color: '#B24A2E', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
         <Icon size={12} /> {eyebrow.label}
       </p>
       {authorityLine && <p style={{ fontSize: 10.5, color: '#8A93A6', lineHeight: 1.45, margin: '3px 0 0' }}>{authorityLine}</p>}

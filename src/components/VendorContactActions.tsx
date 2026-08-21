@@ -95,7 +95,7 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
             <textarea
               value={smsMessage}
               onChange={(e) => setSmsMessage(e.target.value)}
-              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
               rows={4}
               maxLength={160}
             />
@@ -127,12 +127,12 @@ export function VendorContactActions({ vendorName, contactName, email, phone }: 
               value={emailSubject}
               onChange={(e) => setEmailSubject(e.target.value)}
               placeholder="Subject"
-              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm mb-3 focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm mb-3 focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
             />
             <textarea
               value={emailBody}
               onChange={(e) => setEmailBody(e.target.value)}
-              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
               rows={6}
             />
             <div className="flex gap-2 justify-end mt-4">

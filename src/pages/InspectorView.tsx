@@ -418,16 +418,16 @@ export function InspectorView() {
           {talkTrack.length > 0 && (
             <div className="bg-gradient-to-br from-[#1E2D4D] to-[#141E33] rounded-xl shadow-sm p-5 text-white">
               <div className="flex items-center gap-2 mb-3">
-                <MessageSquare className="h-4 w-4 text-[#A08C5A]" />
+                <MessageSquare className="h-4 w-4 text-[#B24A2E]" />
                 <h3 className="text-sm font-bold uppercase tracking-wide">
                   Operator Talk-Track
                 </h3>
-                <Lightbulb className="h-3.5 w-3.5 text-[#A08C5A] ml-1" />
+                <Lightbulb className="h-3.5 w-3.5 text-[#B24A2E] ml-1" />
               </div>
               <ul className="space-y-2">
                 {talkTrack.map((item, i) => (
                   <li key={i} className="text-sm flex items-start gap-2 text-white/90">
-                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#A08C5A] flex-shrink-0" />
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#B24A2E] flex-shrink-0" />
                     {item}
                   </li>
                 ))}

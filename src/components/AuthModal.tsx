@@ -62,12 +62,12 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
         <div style={{ padding:'32px 32px 16px',textAlign:'center' }}>
           <div style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',marginBottom:'16px' }}>
             <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width:'32px',height:'36px' }}>
-              <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
+              <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#B24A2E"/>
               <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-              <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M22 32L26 36L34 26" stroke="#B24A2E" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <span style={{ fontFamily:'Syne, system-ui, sans-serif',fontWeight:800,fontSize:'20px' }}>
-              <span style={{ color:'#A08C5A' }}>Evid</span><span style={{ color:'#1E2D4D' }}>LY</span>
+              <span style={{ color:'#B24A2E' }}>Evid</span><span style={{ color:'#1E2D4D' }}>LY</span>
             </span>
           </div>
           <h2 style={{ fontSize:'24px',fontWeight:'bold',color:'#111',margin:'0' }}>{mode === 'login' ? 'Welcome back' : 'Create your account'}</h2>

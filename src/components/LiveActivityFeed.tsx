@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Thermometer, CheckSquare, FileText, Upload, AlertCircle, User } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
@@ -17,7 +17,7 @@ const iconMap = {
   temp: { icon: Thermometer, color: '#3b82f6', bg: '#eff6ff' },
   checklist: { icon: CheckSquare, color: '#22c55e', bg: '#f0fdf4' },
   document: { icon: FileText, color: '#8b5cf6', bg: '#f5f3ff' },
-  upload: { icon: Upload, color: '#A08C5A', bg: '#fefce8' },
+  upload: { icon: Upload, color: '#B24A2E', bg: '#fefce8' },
   alert: { icon: AlertCircle, color: '#ef4444', bg: '#fef2f2' },
 };
 

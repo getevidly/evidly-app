@@ -99,8 +99,8 @@ export const AnomalyDetector: React.FC<Props> = ({ data }) => {
                   <span style={{ fontSize: '10px', color: '#3D5068', fontFamily: 'system-ui', marginLeft: 'auto' }}>{a.location}</span>
                 </div>
                 <p style={{ color: '#3D5068', fontSize: '11px', margin: '0 0 6px', lineHeight: 1.5, fontFamily: 'system-ui' }}>{a.description}</p>
-                <div style={{ background: '#EEF1F7', borderRadius: '4px', padding: '6px 10px', borderLeft: '2px solid #A08C5A' }}>
-                  <p style={{ color: '#A08C5A', fontSize: '10px', fontWeight: 700, margin: '0 0 2px', fontFamily: 'system-ui' }}>Recommendation</p>
+                <div style={{ background: '#EEF1F7', borderRadius: '4px', padding: '6px 10px', borderLeft: '2px solid #B24A2E' }}>
+                  <p style={{ color: '#B24A2E', fontSize: '10px', fontWeight: 700, margin: '0 0 2px', fontFamily: 'system-ui' }}>Recommendation</p>
                   <p style={{ color: '#3D5068', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>{a.recommendation}</p>
                 </div>
               </div>

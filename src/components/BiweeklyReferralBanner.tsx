@@ -95,8 +95,8 @@ export function BiweeklyReferralBanner() {
         maxHeight: '70vh',
         overflowY: 'auto' as const,
         background: 'linear-gradient(135deg, #0f2040, #162a48)',
-        border: '1px solid rgba(160,140,90,0.4)',
-        borderLeft: '3px solid #A08C5A',
+        border: '1px solid rgba(178,74,46,0.4)',
+        borderLeft: '3px solid #B24A2E',
         borderRadius: '14px',
         padding: '18px 20px',
         zIndex: 1030,
@@ -131,7 +131,7 @@ export function BiweeklyReferralBanner() {
             Get a free month of EvidLY
           </div>
           <div style={{
-            fontSize: '10px', color: '#A08C5A', fontWeight: 700,
+            fontSize: '10px', color: '#B24A2E', fontWeight: 700,
             textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '2px',
           }}>
             Referral Program
@@ -154,7 +154,7 @@ export function BiweeklyReferralBanner() {
         onClick={handleReferralClick}
         style={{
           width: '100%',
-          background: '#A08C5A',
+          background: '#B24A2E',
           border: 'none',
           borderRadius: '8px',
           padding: '10px',

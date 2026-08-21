@@ -1593,7 +1593,7 @@ export function TempLogs() {
                   value={foodCategory}
                   onChange={(e) => { setFoodCategory(e.target.value); setReceivingTemp(''); }}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="">Select category...</option>
                   {Object.entries(CATEGORY_TEMP_CONFIG).map(([key, cfg]) => (
@@ -1636,7 +1636,7 @@ export function TempLogs() {
                     value={itemDescription}
                     onChange={(e) => setItemDescription(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="e.g., Ground Beef, Chicken Breast"
                   />
                 </div>
@@ -1669,7 +1669,7 @@ export function TempLogs() {
                             ? 'border-[#c2731a] focus:ring-amber-200 bg-amber-50'
                             : tempStatus === 'crit'
                             ? 'border-[#b3261e] focus:ring-red-200 bg-red-50'
-                            : 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
+                            : 'border-[#1E2D4D]/15 focus:ring-[#B24A2E]'
                         }`}
                         placeholder="Enter temp"
                       />
@@ -1736,7 +1736,7 @@ export function TempLogs() {
                         <select
                           value={ccpActionTaken}
                           onChange={(e) => setCcpActionTaken(e.target.value)}
-                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         >
                           <option value="">Select action...</option>
                           <option value="Rejected Delivery">Rejected Delivery</option>
@@ -1760,7 +1760,7 @@ export function TempLogs() {
                           value={ccpNotes}
                           onChange={(e) => { setCcpNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('ccpNotes'); return s; }); }}
                           rows={3}
-                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           placeholder="Describe the corrective action taken..."
                         />
                         {aiFields.has('ccpNotes') && <AIGeneratedIndicator />}
@@ -1773,7 +1773,7 @@ export function TempLogs() {
                           step="0.1"
                           value={ccpReMeasuredTemp}
                           onChange={(e) => setCcpReMeasuredTemp(e.target.value)}
-                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           placeholder="°F"
                         />
                       </div>
@@ -1841,7 +1841,7 @@ export function TempLogs() {
                   value={receivedBy}
                   onChange={(e) => setReceivedBy(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="">Select employee...</option>
                   {users.map((user) => (
@@ -1877,9 +1877,9 @@ export function TempLogs() {
                     disabled={receivingItems.length === 0 || notesAiLoading}
                     className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40"
                     style={{
-                      backgroundColor: 'rgba(160,140,90,0.1)',
-                      color: '#A08C5A',
-                      border: '1px solid rgba(160,140,90,0.25)',
+                      backgroundColor: 'rgba(178,74,46,0.1)',
+                      color: '#B24A2E',
+                      border: '1px solid rgba(178,74,46,0.25)',
                     }}
                   >
                     {notesAiLoading ? 'Drafting...' : notesDraft ? 'Regenerate' : 'AI Assist'}
@@ -1889,11 +1889,11 @@ export function TempLogs() {
                   value={receivingNotes}
                   onChange={(e) => { setReceivingNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('receivingNotes'); return s; }); }}
                   rows={3}
-                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   placeholder="Additional notes..."
                 />
                 {aiFields.has('receivingNotes') && (
-                  <p className="mt-1 text-[10px]" style={{ color: '#A08C5A' }}>
+                  <p className="mt-1 text-[10px]" style={{ color: '#B24A2E' }}>
                     Drafted from your form data · review before saving
                   </p>
                 )}
@@ -2155,7 +2155,7 @@ export function TempLogs() {
               </div>
 
               {/* Supported Sensors CTA */}
-              <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#A08C5A]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
+              <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#B24A2E]/5 rounded-xl border border-[#1E2D4D]/10 p-5">
                 <h3 className="text-sm font-semibold text-[#1E2D4D] mb-2">Supported IoT Sensors</h3>
                 <p className="text-xs text-[#1E2D4D]/70 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
                 <div className="flex flex-wrap gap-2">
@@ -2244,7 +2244,7 @@ export function TempLogs() {
                       ? 'border-green-500 focus:ring-green-200 bg-green-50'
                       : temperature && !isWithinRange
                       ? 'border-red-500 focus:ring-red-200 bg-red-50'
-                      : 'border-[#1E2D4D]/15 focus:ring-[#A08C5A]'
+                      : 'border-[#1E2D4D]/15 focus:ring-[#B24A2E]'
                   }`}
                   placeholder="00.0"
                 />
@@ -2300,7 +2300,7 @@ export function TempLogs() {
                         onChange={(e) => { setCorrectiveAction(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
                         required
                         rows={3}
-                        className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         placeholder="Describe the corrective action taken..."
                       />
                       {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
@@ -2325,7 +2325,7 @@ export function TempLogs() {
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="">Select employee...</option>
                   {users.map((user) => (
@@ -2368,7 +2368,7 @@ export function TempLogs() {
                 value={selectedUser}
                 onChange={(e) => setSelectedUser(e.target.value)}
                 required
-                className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-4 py-3 border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 <option value="">Select employee...</option>
                 {users.map((user) => (
@@ -2411,7 +2411,7 @@ export function TempLogs() {
                             value={entry.temperature}
                             onChange={(e) => handleBatchTempChange(entry.equipment_id, e.target.value)}
                             placeholder="Temp"
-                            className="w-28 sm:w-32 px-3 sm:px-4 py-2 min-h-[44px] text-2xl font-bold tracking-tight text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                            className="w-28 sm:w-32 px-3 sm:px-4 py-2 min-h-[44px] text-2xl font-bold tracking-tight text-center border-2 border-[#1E2D4D]/15 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           />
                           {entry.temperature && (
                             <span className={`font-bold text-lg ${isValid ? 'text-green-600' : 'text-red-600'}`}>

@@ -3,7 +3,7 @@ import { Target, AlertTriangle, ShieldAlert, Info } from 'lucide-react';
 
 const SEVERITY_STYLES = {
   critical: { bg: 'bg-[#991B1B]/10', text: 'text-[#991B1B]', label: 'Critical' },
-  major: { bg: 'bg-[#A08C5A]/10', text: 'text-[#A08C5A]', label: 'Major' },
+  major: { bg: 'bg-[#B24A2E]/10', text: 'text-[#B24A2E]', label: 'Major' },
   minor: { bg: 'bg-[#166534]/10', text: 'text-[#166534]', label: 'Minor' },
 };
 
@@ -61,7 +61,7 @@ export function ViolationRadarCard({ risks }) {
                   <div
                     className={`h-full rounded-full transition-all ${
                       risk.probability >= 70 ? 'bg-[#991B1B]' :
-                      risk.probability >= 40 ? 'bg-[#A08C5A]' :
+                      risk.probability >= 40 ? 'bg-[#B24A2E]' :
                       'bg-[#166534]'
                     }`}
                     style={{ width: `${risk.probability}%` }}

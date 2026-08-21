@@ -851,7 +851,7 @@ export function CorrectiveActions() {
                         {recurringActionIds.has(item.id) && isOpen && (
                           <span
                             className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            style={{ color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}
+                            style={{ color: '#B24A2E', backgroundColor: 'rgba(178,74,46,0.15)' }}
                           >
                             Recurring
                           </span>
@@ -859,7 +859,7 @@ export function CorrectiveActions() {
                         {recurringActionIds.has(item.id) && !isOpen && (
                           <span
                             className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            style={{ color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}
+                            style={{ color: '#B24A2E', backgroundColor: 'rgba(178,74,46,0.15)' }}
                           >
                             Same root cause
                           </span>
@@ -918,7 +918,7 @@ export function CorrectiveActions() {
                 <button
                   onClick={handleAiDraft}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                  style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}
+                  style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #B24A2E' }}
                 >
                   <Sparkles className="h-4 w-4" />
                   AI Draft
@@ -1040,7 +1040,7 @@ export function CorrectiveActions() {
 
                   {aiDraftApplied && (
                     <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ background: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
-                      <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                      <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#B24A2E' }} />
                       <span>AI-generated draft — review and edit before saving</span>
                     </div>
                   )}

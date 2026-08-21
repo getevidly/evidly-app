@@ -530,13 +530,13 @@ export function Team() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search members..."
-                className="pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               />
             </div>
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">All Roles</option>
               <option value="admin">Owner</option>
@@ -547,7 +547,7 @@ export function Team() {
               <select
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 <option value="all">All Locations</option>
                 {memberLocations.map(loc => (
@@ -741,7 +741,7 @@ export function Team() {
                       const member = filteredMembers.find(m => m.id === e.target.value);
                       setTempForm(f => ({ ...f, userId: e.target.value, userName: member?.full_name || '' }));
                     }}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     <option value="">Select member...</option>
                     {filteredMembers.map(m => (
@@ -757,7 +757,7 @@ export function Team() {
                       const loc = accessibleLocations.find(l => l.locationId === e.target.value);
                       setTempForm(f => ({ ...f, locationId: e.target.value, locationName: loc?.locationName || '' }));
                     }}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     <option value="">Select location...</option>
                     {accessibleLocations.map(loc => (
@@ -771,7 +771,7 @@ export function Team() {
                     type="date"
                     value={tempForm.startDate}
                     onChange={(e) => setTempForm(f => ({ ...f, startDate: e.target.value }))}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   />
                 </div>
                 <div className="min-w-0 sm:min-w-[130px]">
@@ -780,7 +780,7 @@ export function Team() {
                     type="date"
                     value={tempForm.endDate}
                     onChange={(e) => setTempForm(f => ({ ...f, endDate: e.target.value }))}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   />
                 </div>
                 <button
@@ -889,7 +889,7 @@ export function Team() {
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${trainingPct}%`,
-                                  backgroundColor: trainingPct === 100 ? '#16a34a' : trainingPct >= 75 ? '#A08C5A' : '#ef4444',
+                                  backgroundColor: trainingPct === 100 ? '#16a34a' : trainingPct >= 75 ? '#B24A2E' : '#ef4444',
                                 }}
                               />
                             </div>
@@ -1139,7 +1139,7 @@ export function Team() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                  <Award className="h-5 w-5 text-[#A08C5A]" />
+                  <Award className="h-5 w-5 text-[#B24A2E]" />
                   Certifications
                 </h4>
               </div>

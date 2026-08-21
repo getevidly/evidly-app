@@ -257,7 +257,7 @@ export function TemperatureAnalyticsTab({
                 <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v: number) => `${v}%`} />
-                <ReferenceLine y={95} stroke="#A08C5A" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#A08C5A', fontSize: 10 }} />
+                <ReferenceLine y={95} stroke="#B24A2E" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#B24A2E', fontSize: 10 }} />
                 <Line type="monotone" dataKey="rate" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
@@ -307,7 +307,7 @@ export function TemperatureAnalyticsTab({
                 <XAxis dataKey="time" tick={{ fontSize: 10 }} />
                 <YAxis tick={{ fontSize: 10 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#A08C5A" opacity={0.7} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#B24A2E" opacity={0.7} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

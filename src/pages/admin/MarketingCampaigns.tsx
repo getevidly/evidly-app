@@ -18,7 +18,7 @@ import Button from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 type Tab = 'dashboard' | 'campaigns' | 'attribution';
 

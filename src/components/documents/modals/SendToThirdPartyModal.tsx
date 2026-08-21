@@ -361,7 +361,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
             <div
               key={n}
               className="flex-1 h-[3px] rounded-sm"
-              style={{ backgroundColor: n <= step ? '#A08C5A' : 'rgba(255,255,255,0.2)' }}
+              style={{ backgroundColor: n <= step ? '#B24A2E' : 'rgba(255,255,255,0.2)' }}
             />
           ))}
         </div>
@@ -383,7 +383,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
                       key={r.id}
                       type="button"
                       onClick={() => selectRecentRecipient(r)}
-                      className="px-3 py-1.5 rounded-full text-[12px] font-semibold text-[#1E2D4D] border border-[#E2DDD4] hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
+                      className="px-3 py-1.5 rounded-full text-[12px] font-semibold text-[#1E2D4D] border border-[#E2DDD4] hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors"
                     >
                       {r.name}{r.organization_label ? ` \u00B7 ${r.organization_label}` : ''}
                     </button>
@@ -404,7 +404,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
                   className="text-left px-3.5 py-3 rounded-md text-[13px] font-semibold text-[#1E2D4D] cursor-pointer"
                   style={{
                     background: recipientType === r.v ? '#FAF7F0' : '#FFF',
-                    border: `2px solid ${recipientType === r.v ? '#A08C5A' : '#E2DDD4'}`,
+                    border: `2px solid ${recipientType === r.v ? '#B24A2E' : '#E2DDD4'}`,
                   }}
                 >
                   {r.l}
@@ -421,7 +421,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
                 <button
                   type="button"
                   onClick={() => setShowCustomForm(true)}
-                  className="w-full text-left px-3.5 py-3 rounded-md border-2 border-dashed border-[#E2DDD4] text-[13px] font-semibold text-[#1E2D4D] hover:border-[#A08C5A] transition-colors"
+                  className="w-full text-left px-3.5 py-3 rounded-md border-2 border-dashed border-[#E2DDD4] text-[13px] font-semibold text-[#1E2D4D] hover:border-[#B24A2E] transition-colors"
                 >
                   <Plus size={14} className="inline mr-2" />
                   Custom recipient
@@ -496,7 +496,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
                   className="text-left px-3.5 py-2.5 rounded-md text-[13px] font-semibold text-[#1E2D4D] cursor-pointer"
                   style={{
                     background: purpose === p ? '#FAF7F0' : '#FFF',
-                    border: `2px solid ${purpose === p ? '#A08C5A' : '#E2DDD4'}`,
+                    border: `2px solid ${purpose === p ? '#B24A2E' : '#E2DDD4'}`,
                   }}
                 >
                   {p}
@@ -567,7 +567,7 @@ export function SendToThirdPartyModal({ onClose }: SendToThirdPartyModalProps) {
             <button
               type="button"
               onClick={() => setShowInlineUpload(true)}
-              className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-[#E2DDD4] rounded-md text-[13px] font-semibold text-[#1E2D4D] hover:border-[#A08C5A] transition-colors"
+              className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-[#E2DDD4] rounded-md text-[13px] font-semibold text-[#1E2D4D] hover:border-[#B24A2E] transition-colors"
             >
               <Upload size={14} />
               Upload a new document to include

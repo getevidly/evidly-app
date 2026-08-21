@@ -35,15 +35,15 @@ export function IoTSensorLanding() {
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#B24A2E' }}>LY</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">IoT Sensor Hub</h1>
           <p className="text-lg text-[#1E2D4D]/70 max-w-xl mx-auto">
             Your sensors. Our intelligence. Zero manual logging.
           </p>
-          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #A08C5A' }}>
-            <Lock className="h-4 w-4" style={{ color: '#A08C5A' }} />
-            <span className="text-sm font-semibold" style={{ color: '#A08C5A' }}>Coming Soon</span>
+          <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full" style={{ backgroundColor: '#fdf8e8', border: '1px solid #B24A2E' }}>
+            <Lock className="h-4 w-4" style={{ color: '#B24A2E' }} />
+            <span className="text-sm font-semibold" style={{ color: '#B24A2E' }}>Coming Soon</span>
           </div>
         </div>
 
@@ -166,7 +166,7 @@ Content-Type: application/json
         {/* Footer */}
         <div className="text-center text-sm text-[#1E2D4D]/30">
           <a href="/" className="hover:text-[#1E2D4D]/70 transition-colors">
-            Powered by <span className="font-semibold text-[#1E2D4D]/50">Evid</span><span className="font-semibold" style={{ color: '#A08C5A' }}>LY</span>
+            Powered by <span className="font-semibold text-[#1E2D4D]/50">Evid</span><span className="font-semibold" style={{ color: '#B24A2E' }}>LY</span>
           </a>
         </div>
       </div>

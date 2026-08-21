@@ -3,7 +3,7 @@ import { Sparkles, AlertTriangle, Info, CheckCircle, ClipboardList, Thermometer,
 
 const FLAG_STYLES = {
   warning: { icon: AlertTriangle, bg: 'bg-[#991B1B]/10', text: 'text-[#991B1B]' },
-  info: { icon: Info, bg: 'bg-[#A08C5A]/10', text: 'text-[#A08C5A]' },
+  info: { icon: Info, bg: 'bg-[#B24A2E]/10', text: 'text-[#B24A2E]' },
   success: { icon: CheckCircle, bg: 'bg-[#166534]/10', text: 'text-[#166534]' },
 };
 
@@ -12,9 +12,9 @@ export function ShiftSummaryCard({ summary }) {
     return (
       <div className="bg-white rounded-xl border border-[#D1D9E6] p-5 mb-4">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="h-4 w-4 text-[#A08C5A]" />
+          <Sparkles className="h-4 w-4 text-[#B24A2E]" />
           <h3 className="text-sm font-semibold text-[#0B1628]">Shift Intelligence</h3>
-          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[11px] font-medium rounded">AI</span>
+          <span className="px-1.5 py-0.5 bg-[#B24A2E]/10 text-[#B24A2E] text-[11px] font-medium rounded">AI</span>
         </div>
         <p className="text-xs text-[#6B7F96] text-center py-4">No shift data available for summary</p>
       </div>
@@ -27,9 +27,9 @@ export function ShiftSummaryCard({ summary }) {
     <div className="bg-white rounded-xl border border-[#D1D9E6] p-5 mb-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-[#A08C5A]" />
+          <Sparkles className="h-4 w-4 text-[#B24A2E]" />
           <h3 className="text-sm font-semibold text-[#0B1628]">Shift Intelligence</h3>
-          <span className="px-1.5 py-0.5 bg-[#A08C5A]/10 text-[#A08C5A] text-[11px] font-medium rounded">AI Summary</span>
+          <span className="px-1.5 py-0.5 bg-[#B24A2E]/10 text-[#B24A2E] text-[11px] font-medium rounded">AI Summary</span>
         </div>
         <span className="text-xs text-[#6B7F96]">{shiftLabel}</span>
       </div>
@@ -78,7 +78,7 @@ export function ShiftSummaryCard({ summary }) {
         <ul className="space-y-1">
           {handoffNotes.map((note, i) => (
             <li key={i} className="text-xs text-[#3D5068] flex items-start gap-1.5">
-              <span className="text-[#A08C5A] mt-0.5">•</span>
+              <span className="text-[#B24A2E] mt-0.5">•</span>
               {note}
             </li>
           ))}

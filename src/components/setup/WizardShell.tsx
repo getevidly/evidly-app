@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const CREAM = '#F8F4ED';
 const STEP_INACTIVE_BG = '#F1EFE8';
 const STEP_INACTIVE_TEXT = '#888780';

@@ -11,7 +11,7 @@ import { supabase } from '../lib/supabase';
 import { Shield, AlertTriangle } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const TEXT_SEC = '#6B7F96';
 
 export function MFAChallenge() {

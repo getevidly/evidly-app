@@ -9,7 +9,7 @@ import type { MilestoneConfig } from '../../lib/ambassadorSystem';
 import { Modal } from '../ui/Modal';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 interface MilestoneCelebrationModalProps {
   milestone: MilestoneConfig | null;

@@ -14,7 +14,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useContentVerification } from '../../hooks/useContentVerification';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';
 const BORDER = '#E5E0D8';

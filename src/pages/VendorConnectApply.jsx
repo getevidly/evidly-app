@@ -143,7 +143,7 @@ export function VendorConnectApply() {
             <span className="text-lg">🔒</span>
             <span className="text-xs font-bold text-white tracking-widest uppercase">EvidLY</span>
           </div>
-          <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#A08C5A' }}>
+          <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#B24A2E' }}>
             VENDOR CONNECT — BY INVITATION ONLY
           </p>
           <h1 className="text-xl font-bold text-white">Apply to Vendor Connect</h1>
@@ -176,7 +176,7 @@ export function VendorConnectApply() {
                   <input
                     type="text" required value={companyName}
                     onChange={e => setCompanyName(e.target.value)}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export function VendorConnectApply() {
                   <input
                     type="text" required value={contactName}
                     onChange={e => setContactName(e.target.value)}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -192,7 +192,7 @@ export function VendorConnectApply() {
                   <input
                     type="email" required value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -200,7 +200,7 @@ export function VendorConnectApply() {
                   <input
                     type="tel" value={phone}
                     onChange={e => setPhone(e.target.value)}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -215,11 +215,11 @@ export function VendorConnectApply() {
                     key={svc.id} type="button"
                     onClick={() => toggleService(svc.id)}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-colors ${
-                      selectedServices.includes(svc.id) ? 'border-[#A08C5A] bg-amber-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
+                      selectedServices.includes(svc.id) ? 'border-[#B24A2E] bg-amber-50/50' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                     }`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedServices.includes(svc.id) ? 'border-[#A08C5A] bg-[#A08C5A]' : 'border-[#1E2D4D]/15'
+                      selectedServices.includes(svc.id) ? 'border-[#B24A2E] bg-[#B24A2E]' : 'border-[#1E2D4D]/15'
                     }`}>
                       {selectedServices.includes(svc.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                     </div>
@@ -239,7 +239,7 @@ export function VendorConnectApply() {
                     onClick={() => toggleCounty(county)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                       selectedCounties.includes(county)
-                        ? 'border-[#A08C5A] bg-amber-50 text-[#A08C5A]'
+                        ? 'border-[#B24A2E] bg-amber-50 text-[#B24A2E]'
                         : 'border-[#1E2D4D]/10 text-[#1E2D4D]/70 hover:border-[#1E2D4D]/15'
                     }`}
                   >
@@ -281,7 +281,7 @@ export function VendorConnectApply() {
                   <input
                     type="number" min="0" value={yearsInBusiness}
                     onChange={e => setYearsInBusiness(e.target.value)}
-                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                    className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                   />
                 </div>
                 <div className="flex items-center gap-3 pt-5">
@@ -289,7 +289,7 @@ export function VendorConnectApply() {
                     type="button"
                     onClick={() => setIkecaCertified(!ikecaCertified)}
                     className={`relative w-10 h-5 rounded-full transition-colors ${
-                      ikecaCertified ? 'bg-[#A08C5A]' : 'bg-[#1E2D4D]/15'
+                      ikecaCertified ? 'bg-[#B24A2E]' : 'bg-[#1E2D4D]/15'
                     }`}
                   >
                     <span
@@ -306,7 +306,7 @@ export function VendorConnectApply() {
                 <select
                   value={referredBy}
                   onChange={e => setReferredBy(e.target.value)}
-                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                 >
                   <option value="">Select...</option>
                   {REFERRAL_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
@@ -322,7 +322,7 @@ export function VendorConnectApply() {
                 value={whyApply}
                 onChange={e => setWhyApply(e.target.value)}
                 placeholder="Tell us about your business and why you'd be a great Vendor Connect partner..."
-                className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
               />
             </div>
 

@@ -248,7 +248,7 @@ export function BillingPage() {
                 <h3 className="text-lg font-bold mt-0.5" style={{ color: colors.white }}>Founder</h3>
                 {founderExpiryLabel && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded text-[10px] font-bold uppercase tracking-wider"
-                    style={{ backgroundColor: 'rgba(160,140,90,0.3)', color: '#D4C88A' }}>
+                    style={{ backgroundColor: 'rgba(178,74,46,0.3)', color: '#D4C88A' }}>
                     <Lock className="h-2.5 w-2.5" /> Founder Locked <span style={{ textTransform: 'none' }}>through {founderExpiryLabel}</span>
                   </span>
                 )}
@@ -640,8 +640,8 @@ function FounderUpgradeAlert({ seatsTaken, seatsMax, spotsRemaining, onUpgrade }
 
   return (
     <div className="rounded-xl p-4" style={{
-      background: 'linear-gradient(135deg, rgba(160,140,90,0.08) 0%, rgba(160,140,90,0.03) 100%)',
-      border: '1px solid rgba(160,140,90,0.2)',
+      background: 'linear-gradient(135deg, rgba(178,74,46,0.08) 0%, rgba(178,74,46,0.03) 100%)',
+      border: '1px solid rgba(178,74,46,0.2)',
     }}>
       <div className="flex items-start gap-3">
         <TrendingUp className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: urgencyColor }} />

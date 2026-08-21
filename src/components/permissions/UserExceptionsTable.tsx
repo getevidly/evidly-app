@@ -83,14 +83,14 @@ export function UserExceptionsTable({
       <div className="px-6 py-5 border-b" style={{ borderColor: 'var(--border)' }}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <UserCog className="w-5 h-5" style={{ color: '#A08C5A' }} />
+            <UserCog className="w-5 h-5" style={{ color: '#B24A2E' }} />
             <h3 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               User Exceptions
             </h3>
             {exceptions.length > 0 && (
               <span
                 className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
+                style={{ backgroundColor: 'rgba(178,74,46, 0.15)', color: '#B24A2E' }}
               >
                 {grouped.length} user{grouped.length !== 1 ? 's' : ''}
               </span>
@@ -189,7 +189,7 @@ export function UserExceptionsTable({
                   <td className="px-6 py-4">
                     <span
                       className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full"
-                      style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
+                      style={{ backgroundColor: 'rgba(178,74,46, 0.15)', color: '#B24A2E' }}
                     >
                       {group.overrides.length} custom
                     </span>

@@ -1520,7 +1520,7 @@ export function IncidentLog() {
                 )}
                 {resTime && (
                   <div className="flex items-center gap-2 text-sm text-[#1E2D4D]/70">
-                    <Clock className="h-4 w-4 text-[#A08C5A]" />
+                    <Clock className="h-4 w-4 text-[#B24A2E]" />
                     {t('incidents.resolvedIn')} <span className="font-semibold text-[#1E2D4D]">{resTime}</span>
                   </div>
                 )}
@@ -1593,7 +1593,7 @@ export function IncidentLog() {
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAddComment()}
-                    className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="flex-1 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder={t('incidents.addComment')}
                   />
                   <button
@@ -1774,7 +1774,7 @@ export function IncidentLog() {
                     value={actionText}
                     onChange={e => { setActionText(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('actionText'); return s; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="Describe the corrective action taken..."
                   />
                   {aiFields.has('actionText') && <AIGeneratedIndicator />}
@@ -1784,7 +1784,7 @@ export function IncidentLog() {
                   <select
                     value={estimatedCompletion}
                     onChange={e => setEstimatedCompletion(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     <option value="">Select estimate...</option>
                     <option value="30 minutes">{t('incidents.time30min')}</option>
@@ -1844,7 +1844,7 @@ export function IncidentLog() {
                     value={resolutionSummary}
                     onChange={e => { setResolutionSummary(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('resolutionSummary'); return s; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="Summarize how the incident was resolved..."
                   />
                   {aiFields.has('resolutionSummary') && <AIGeneratedIndicator />}
@@ -1854,7 +1854,7 @@ export function IncidentLog() {
                   <select
                     value={rootCause}
                     onChange={e => setRootCause(e.target.value as RootCause)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     {ROOT_CAUSES.map(rc => (
                       <option key={rc.value} value={rc.value}>{rootCauseLabels[rc.label] || rc.label}</option>
@@ -1875,7 +1875,7 @@ export function IncidentLog() {
                       type="checkbox"
                       checked={managerPhotoOverride}
                       onChange={(e) => setManagerPhotoOverride(e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-[#1E2D4D]/15 text-[#A08C5A] focus:ring-[#A08C5A]"
+                      className="h-3.5 w-3.5 rounded border-[#1E2D4D]/15 text-[#B24A2E] focus:ring-[#B24A2E]"
                     />
                     {t('incidents.managerOverride')}
                   </label>
@@ -1946,7 +1946,7 @@ export function IncidentLog() {
           <button
             onClick={handleAiDraft}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-            style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}
+            style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #B24A2E' }}
           >
             <Sparkles className="h-4 w-4" />
             AI Draft
@@ -2083,7 +2083,7 @@ export function IncidentLog() {
 
             {aiDraftApplied && (
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ background: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
-                <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#B24A2E' }} />
                 <span>AI-generated draft — review and edit before saving</span>
               </div>
             )}
@@ -2098,7 +2098,7 @@ export function IncidentLog() {
                   const inferred = TYPE_CATEGORY_MAP[t];
                   if (inferred) setNewCategory(inferred);
                 }}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 {INCIDENT_TYPES.map(tp => (
                   <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>
@@ -2114,7 +2114,7 @@ export function IncidentLog() {
                 value={newCategory}
                 onChange={e => setNewCategory(e.target.value as IncidentCategory)}
                 disabled={!!TYPE_CATEGORY_MAP[newType]}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] disabled:bg-gray-50 disabled:text-[#1E2D4D]/50"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] disabled:bg-gray-50 disabled:text-[#1E2D4D]/50"
               >
                 {CATEGORY_OPTIONS.map(c => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -2151,7 +2151,7 @@ export function IncidentLog() {
               <select
                 value={newLocation}
                 onChange={e => setNewLocation(e.target.value)}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 {locationOptions.map(l => (
                   <option key={l} value={l}>{l}</option>
@@ -2166,7 +2166,7 @@ export function IncidentLog() {
               <GhostInput
                 value={newTitle}
                 onChange={e => setNewTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 placeholder={t('incidents.titlePlaceholder')}
                 fieldLabel="Incident Title"
                 formContext={{ incidentType: newType || '', severity: newSeverity || '' }}
@@ -2190,7 +2190,7 @@ export function IncidentLog() {
                 value={newDescription}
                 onChange={e => { setNewDescription(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newDescription'); return s; }); }}
                 rows={3}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 placeholder={t('incidents.descriptionPlaceholder')}
               />
               {aiFields.has('newDescription') && <AIGeneratedIndicator />}
@@ -2301,42 +2301,42 @@ export function IncidentLog() {
         {incidents.length > 0 && <div data-demo-allow className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
           <div className="flex flex-wrap gap-3 items-center">
             <Filter className="h-4 w-4 text-[#1E2D4D]/30" />
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">{t('incidents.allStatus')}</option>
               {Object.entries(STATUS_CONFIG).map(([key, val]) => (
                 <option key={key} value={key}>{statusLabels[val.label] || val.label}</option>
               ))}
             </select>
-            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">{t('incidents.allSeverity')}</option>
               {SEVERITIES.map(s => <option key={s.value} value={s.value}>{severityLabels[s.label] || s.label}</option>)}
             </select>
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">{t('incidents.allTypes')}</option>
               {INCIDENT_TYPES.map(tp => <option key={tp.value} value={tp.value}>{typeLabels[tp.label] || tp.label}</option>)}
             </select>
-            <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">All Categories</option>
               {CATEGORY_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
-            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">{t('common.allLocations')}</option>
               {locationOptions.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
-            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">{t('incidents.allAssignees')}</option>
               {isDemoMode
                 ? TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)
                 : orgMembers.map(m => <option key={m.id} value={m.id}>{m.full_name || m.email || 'Unknown'}</option>)
               }
             </select>
-            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="all">{t('incidents.allTime')}</option>
               <option value="24h">{t('incidents.last24Hours')}</option>
               <option value="7d">{t('incidents.last7Days')}</option>
               <option value="30d">{t('incidents.last30Days')}</option>
             </select>
-            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
               <option value="newest">{t('incidents.newestFirst')}</option>
               <option value="oldest">{t('incidents.oldestFirst')}</option>
               <option value="severity">{t('incidents.bySeverity')}</option>
@@ -2435,12 +2435,12 @@ export function IncidentLog() {
                           </span>
                         )}
                         {isRecurring && !isClosed && (
-                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#B24A2E', backgroundColor: 'rgba(178,74,46,0.15)' }}>
                             Recurring
                           </span>
                         )}
                         {isRecurring && isClosed && (
-                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}>
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#B24A2E', backgroundColor: 'rgba(178,74,46,0.15)' }}>
                             Same root cause
                           </span>
                         )}

@@ -19,7 +19,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Button from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 
-// Tailwind equivalents: NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold,
+// Tailwind equivalents: NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#B24A2E → text-gold/bg-gold,
 // TEXT_SEC=#6B7F96 → text-slate_ui, TEXT_MUTED=#9CA3AF → text-gray-400, BORDER=#E5E0D8 → border-border_ui
 
 interface QueueSignal {
@@ -1212,7 +1212,7 @@ export default function IntelligenceAdmin() {
                   <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9CA3AF' }} tickFormatter={(v: string) => v.slice(5)} />
                   <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} tickFormatter={(v: number) => `$${v.toFixed(3)}`} width={60} />
                   <Tooltip formatter={(v: number) => [`$${v.toFixed(5)}`, 'Spend']} labelFormatter={(l: string) => `Date: ${l}`} />
-                  <Bar dataKey="spend" fill="#A08C5A" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="spend" fill="#B24A2E" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}

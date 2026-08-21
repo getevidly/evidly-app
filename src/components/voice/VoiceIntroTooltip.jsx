@@ -10,7 +10,7 @@ export function VoiceIntroTooltip({ onDismiss }) {
 
   return (
     <div className="absolute -top-20 left-1/2 -translate-x-1/2 z-50 w-52">
-      <div className="bg-[#A08C5A] text-white text-xs p-3 rounded-xl text-center shadow-lg">
+      <div className="bg-[#B24A2E] text-white text-xs p-3 rounded-xl text-center shadow-lg">
         <div className="font-semibold mb-1">Hands-free mode</div>
         <div>Hold the mic &middot; speak a command &middot; EvidLY handles the rest</div>
       </div>
@@ -20,7 +20,7 @@ export function VoiceIntroTooltip({ onDismiss }) {
           style={{
             borderLeft: '8px solid transparent',
             borderRight: '8px solid transparent',
-            borderTop: '8px solid #A08C5A',
+            borderTop: '8px solid #B24A2E',
           }}
         />
       </div>

@@ -357,7 +357,7 @@ export function EmulationProvider({ children }: { children: ReactNode }) {
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: 700,
-                  background: '#A08C5A',
+                  background: '#B24A2E',
                   border: 'none',
                   color: '#ffffff',
                   cursor: 'pointer',

@@ -434,7 +434,7 @@ export default function ServiceThreadListPage() {
                     }}
                   >
                     {t.isCppGold ? (
-                      <ShieldCheck className="w-4.5 h-4.5" style={{ color: '#A08C5A' }} />
+                      <ShieldCheck className="w-4.5 h-4.5" style={{ color: '#B24A2E' }} />
                     ) : (
                       <MessageCircle className="w-4.5 h-4.5 text-[#1E2D4D]/40" />
                     )}

@@ -640,7 +640,7 @@ export default function FoodSafetyAnalysis() {
                     <YAxis tick={{ fontSize: 11, fill: 'rgba(30,45,77,0.6)' }} allowDecimals={false} />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="openCAs" stroke="#A08C5A" strokeWidth={2} dot={{ r: 3 }} name="Open corrective actions" />
+                    <Line type="monotone" dataKey="openCAs" stroke="#B24A2E" strokeWidth={2} dot={{ r: 3 }} name="Open corrective actions" />
                     <Line type="monotone" dataKey="overdueChecklists" stroke="#1E2D4D" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="Overdue checklists" />
                   </LineChart>
                 </ResponsiveContainer>

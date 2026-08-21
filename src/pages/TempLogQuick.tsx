@@ -123,7 +123,7 @@ export function TempLogQuick() {
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 w-full max-w-sm overflow-hidden modal-content-enter">
         <div className="px-6 py-5" style={{ backgroundColor: '#1E2D4D' }}>
           <div className="flex items-center gap-3">
-            <Thermometer className="h-8 w-8 text-[#A08C5A]" />
+            <Thermometer className="h-8 w-8 text-[#B24A2E]" />
             <div>
               <h1 className="text-lg font-bold text-white">Log Temperature</h1>
               <p className="text-xs text-[#1E2D4D]/30">Quick entry via QR code</p>
@@ -137,7 +137,7 @@ export function TempLogQuick() {
             <select
               value={selectedEquipment}
               onChange={e => setSelectedEquipment(e.target.value)}
-              className="w-full px-3 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
+              className="w-full px-3 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] bg-white"
             >
               <option value="">Select equipment...</option>
               {equipment.map(eq => (
@@ -165,7 +165,7 @@ export function TempLogQuick() {
               onChange={e => setTemperature(e.target.value)}
               onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Enter temperature..."
-              className={`w-full px-3 py-3 border rounded-xl text-base font-semibold tracking-tight focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
+              className={`w-full px-3 py-3 border rounded-xl text-base font-semibold tracking-tight focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D] ${
                 isInRange === false ? 'border-red-300 bg-red-50' : 'border-[#1E2D4D]/15'
               }`}
               autoFocus={!!preselectedId}
@@ -191,7 +191,7 @@ export function TempLogQuick() {
               onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}
               placeholder="Any observations..."
               rows={2}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
             />
             {aiFields.has('notes') && <AIGeneratedIndicator />}
           </div>

@@ -90,7 +90,7 @@ export function VendorConnect() {
         <div className="rounded-xl p-6" style={{ background: '#1E2D4D' }}>
           <div
             className="text-xs font-semibold uppercase tracking-widest mb-2"
-            style={{ color: '#A08C5A' }}
+            style={{ color: '#B24A2E' }}
           >
             VENDOR CONNECT — BY INVITATION ONLY
           </div>
@@ -112,13 +112,13 @@ export function VendorConnect() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search partners..."
-              className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+              className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
             />
           </div>
           <select
             value={serviceFilter}
             onChange={e => setServiceFilter(e.target.value)}
-            className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A]"
+            className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E]"
           >
             {SERVICE_FILTERS.map(f => (
               <option key={f.value} value={f.value}>{f.label}</option>
@@ -127,7 +127,7 @@ export function VendorConnect() {
           <select
             value={countyFilter}
             onChange={e => setCountyFilter(e.target.value)}
-            className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#A08C5A]"
+            className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[#B24A2E]"
           >
             <option value="all">All Counties</option>
             {counties.map(c => (
@@ -155,7 +155,7 @@ export function VendorConnect() {
               <button
                 onClick={() => navigate('/vendor-connect/apply')}
                 className="font-semibold underline"
-                style={{ color: '#A08C5A' }}
+                style={{ color: '#B24A2E' }}
               >
                 Apply to join
               </button>
@@ -231,7 +231,7 @@ export function VendorConnect() {
                         <MapPin className="w-3 h-3" />
                         <span>{partner.primary_county} County</span>
                         {spotInfo && (
-                          <span className="ml-2 text-xs font-medium" style={{ color: '#A08C5A' }}>
+                          <span className="ml-2 text-xs font-medium" style={{ color: '#B24A2E' }}>
                             {spotInfo.remaining} of {spotInfo.max} spots remaining
                           </span>
                         )}

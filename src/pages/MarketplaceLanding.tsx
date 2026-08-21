@@ -30,7 +30,7 @@ export function MarketplaceLanding() {
           </div>
           <div className="flex items-center justify-center gap-2 mb-1">
             <span className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Evid</span>
-            <span className="text-2xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>LY</span>
+            <span className="text-2xl font-bold tracking-tight" style={{ color: '#B24A2E' }}>LY</span>
           </div>
           <p className="text-sm font-medium text-[#1E2D4D]/50 mb-6">Certified Provider Network</p>
           <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-3">Join the EvidLY Certified Provider Network</h1>
@@ -112,8 +112,8 @@ export function MarketplaceLanding() {
               },
               {
                 icon: Award,
-                iconColor: '#A08C5A',
-                accent: '#A08C5A',
+                iconColor: '#B24A2E',
+                accent: '#B24A2E',
                 tier: 'Preferred',
                 features: ['Top 10% vendors for 6+ months', 'Top search placement', 'Featured in AI recommendations', 'EvidLY Preferred badge', 'Co-marketing opportunities'],
               },

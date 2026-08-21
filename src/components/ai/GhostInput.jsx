@@ -49,7 +49,7 @@ export function GhostInput({
         onKeyDown={handleKeyDown}
         placeholder={suggestion || placeholder}
         className={`w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm
-                    focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent
+                    focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent
                     ${className ?? ''}`}
         {...props}
       />
@@ -62,7 +62,7 @@ export function GhostInput({
         <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
           <span
             className="inline-block w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"
-            style={{ color: '#A08C5A' }}
+            style={{ color: '#B24A2E' }}
           />
         </span>
       )}

@@ -207,16 +207,16 @@ export function MobileTabBar() {
                         key={item.id}
                         onClick={() => handleNavigation(item.path)}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg min-h-[72px] transition-all duration-150 ${
-                          active ? 'bg-[#A08C5A]/10' : 'hover:bg-[#1E2D4D]/5'
+                          active ? 'bg-[#B24A2E]/10' : 'hover:bg-[#1E2D4D]/5'
                         }`}
-                        style={active ? { boxShadow: 'inset 0 -2px 0 #A08C5A' } : undefined}
+                        style={active ? { boxShadow: 'inset 0 -2px 0 #B24A2E' } : undefined}
                       >
                         <Icon
-                          className={`h-5 w-5 mb-1.5 ${active ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'}`}
+                          className={`h-5 w-5 mb-1.5 ${active ? 'text-[#B24A2E]' : 'text-[#1E2D4D]/30'}`}
                         />
                         <span
                           className={`text-xs font-medium text-center leading-tight ${
-                            active ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/50'
+                            active ? 'text-[#B24A2E]' : 'text-[#1E2D4D]/50'
                           }`}
                         >
                           {item.label}
@@ -244,7 +244,7 @@ export function MobileTabBar() {
       {isVoiceRole && !isKeyboardOpen && (
         <div className="fixed bottom-[136px] left-1/2 -translate-x-1/2 z-50 lg:hidden flex flex-col items-center">
           <VoiceButton orgId={orgId} locationId={locationId} size="lg" />
-          <span className="text-xs text-[#A08C5A] mt-1 font-medium">Voice</span>
+          <span className="text-xs text-[#B24A2E] mt-1 font-medium">Voice</span>
         </div>
       )}
 
@@ -259,15 +259,15 @@ export function MobileTabBar() {
                 key={tab.path}
                 onClick={() => handleNavigation(tab.path)}
                 className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-[#FAF7F0] ${
-                  active ? 'bg-[#A08C5A]/10' : ''
+                  active ? 'bg-[#B24A2E]/10' : ''
                 }`}
-                style={active ? { boxShadow: 'inset 0 2px 0 #A08C5A' } : undefined}
+                style={active ? { boxShadow: 'inset 0 2px 0 #B24A2E' } : undefined}
               >
                 <Icon
-                  className={`h-5 w-5 ${active ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'}`}
+                  className={`h-5 w-5 ${active ? 'text-[#B24A2E]' : 'text-[#1E2D4D]/30'}`}
                 />
                 <span
-                  className={`text-xs mt-0.5 ${active ? 'text-[#A08C5A] font-semibold' : 'text-[#1E2D4D]/50'}`}
+                  className={`text-xs mt-0.5 ${active ? 'text-[#B24A2E] font-semibold' : 'text-[#1E2D4D]/50'}`}
                 >
                   {tab.label}
                 </span>
@@ -279,12 +279,12 @@ export function MobileTabBar() {
             <button
               onClick={() => setShowMoreMenu(!showMoreMenu)}
               className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-colors duration-150 active:bg-[#FAF7F0] ${
-                showMoreMenu ? 'bg-[#A08C5A]/10' : ''
+                showMoreMenu ? 'bg-[#B24A2E]/10' : ''
               }`}
-              style={showMoreMenu ? { boxShadow: 'inset 0 2px 0 #A08C5A' } : undefined}
+              style={showMoreMenu ? { boxShadow: 'inset 0 2px 0 #B24A2E' } : undefined}
             >
-              <MoreHorizontal className={`h-5 w-5 ${showMoreMenu ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'}`} />
-              <span className={`text-xs mt-0.5 ${showMoreMenu ? 'text-[#A08C5A] font-semibold' : 'text-[#1E2D4D]/50'}`}>More</span>
+              <MoreHorizontal className={`h-5 w-5 ${showMoreMenu ? 'text-[#B24A2E]' : 'text-[#1E2D4D]/30'}`} />
+              <span className={`text-xs mt-0.5 ${showMoreMenu ? 'text-[#B24A2E] font-semibold' : 'text-[#1E2D4D]/50'}`}>More</span>
             </button>
           )}
         </div>

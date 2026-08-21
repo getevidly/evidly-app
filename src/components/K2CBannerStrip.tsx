@@ -9,7 +9,7 @@ export default function K2CBannerStrip() {
         <Link
           to="/kitchen-to-community"
           className="ml-2 font-semibold hover:underline inline-flex items-center gap-0.5"
-          style={{ color: '#A08C5A' }}
+          style={{ color: '#B24A2E' }}
         >
           Learn more &rarr;
         </Link>

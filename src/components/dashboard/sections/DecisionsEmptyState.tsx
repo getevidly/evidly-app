@@ -249,7 +249,7 @@ export function DecisionsEmptyState({ variant }: DecisionsEmptyStateProps) {
             <>
               <p style={{ margin: '0 0 12px', color: 'rgba(250,247,240,0.65)' }}>
                 In the past week,{' '}
-                <span style={{ color: 'var(--gold-light, #C4AE7A)', fontWeight: 500 }}>
+                <span style={{ color: 'var(--gold-light, #C96A4B)', fontWeight: 500 }}>
                   {resolvedWeekCount}
                 </span>{' '}
                 routine item{resolvedWeekCount === 1 ? '' : 's'} without escalating.

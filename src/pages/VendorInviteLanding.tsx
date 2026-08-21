@@ -11,7 +11,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Shield, Calendar, FileText, BarChart3 } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 const BIZ_SUFFIXES = new Set(['LLC', 'INC', 'LP', 'LLP', 'CO', 'CORP', 'LTD']);
 

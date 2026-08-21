@@ -48,10 +48,10 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
       <span className={`font-bold ${textSize}`} style={{ color: '#1E2D4D' }}>{rating.toFixed(1)}</span>
       <div className="flex items-center">
         {Array.from({ length: fullStars }).map((_, i) => (
-          <Star key={`f-${i}`} className={starSize} fill="#A08C5A" stroke="#A08C5A" />
+          <Star key={`f-${i}`} className={starSize} fill="#B24A2E" stroke="#B24A2E" />
         ))}
         {hasHalf && (
-          <Star key="half" className={`${starSize} text-[#1E2D4D]/30`} fill="#A08C5A" stroke="#A08C5A" style={{ clipPath: 'inset(0 50% 0 0)' }} />
+          <Star key="half" className={`${starSize} text-[#1E2D4D]/30`} fill="#B24A2E" stroke="#B24A2E" style={{ clipPath: 'inset(0 50% 0 0)' }} />
         )}
         {Array.from({ length: emptyStars }).map((_, i) => (
           <Star key={`e-${i}`} className={`${starSize} text-[#1E2D4D]/30`} />
@@ -278,7 +278,7 @@ function ProductionVendorProfile() {
               className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
-              style={activeTab === tab.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
+              style={activeTab === tab.id ? { borderColor: '#B24A2E', color: '#1E2D4D' } : undefined}
             >
               {tab.label}
             </button>
@@ -353,9 +353,9 @@ function ProductionVendorProfile() {
                   return (
                     <div key={starLevel} className="flex items-center gap-2 text-sm">
                       <span className="w-3 text-[#1E2D4D]/70 text-right">{starLevel}</span>
-                      <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
+                      <Star className="h-3.5 w-3.5" fill="#B24A2E" stroke="#B24A2E" />
                       <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#B24A2E' }} />
                       </div>
                       <span className="w-5 text-[#1E2D4D]/50 text-xs">{count}</span>
                     </div>
@@ -607,7 +607,7 @@ export function VendorProfile() {
                   ? 'border-b-2 font-semibold'
                   : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
               }`}
-              style={activeTab === tab.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
+              style={activeTab === tab.id ? { borderColor: '#B24A2E', color: '#1E2D4D' } : undefined}
             >
               {tab.label}
             </button>
@@ -819,9 +819,9 @@ export function VendorProfile() {
                   return (
                     <div key={starLevel} className="flex items-center gap-2 text-sm">
                       <span className="w-3 text-[#1E2D4D]/70 text-right">{starLevel}</span>
-                      <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
+                      <Star className="h-3.5 w-3.5" fill="#B24A2E" stroke="#B24A2E" />
                       <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#B24A2E' }} />
                       </div>
                       <span className="w-5 text-[#1E2D4D]/50 text-xs">{count}</span>
                     </div>
@@ -940,7 +940,7 @@ export function VendorProfile() {
             <select
               value={requestForm.serviceType}
               onChange={e => setRequestForm(prev => ({ ...prev, serviceType: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] mb-4"
             >
               <option value="">Select a service...</option>
               {vendor.serviceOfferings.map(s => (
@@ -953,7 +953,7 @@ export function VendorProfile() {
             <select
               value={requestForm.location}
               onChange={e => setRequestForm(prev => ({ ...prev, location: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] mb-4"
             >
               <option value="">Select a location...</option>
               {locations.map(l => (
@@ -968,7 +968,7 @@ export function VendorProfile() {
               value={requestForm.preferredDates}
               onChange={e => setRequestForm(prev => ({ ...prev, preferredDates: e.target.value }))}
               placeholder="e.g., Next week, March 1-5"
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] mb-4"
             />
 
             {/* Description */}
@@ -986,7 +986,7 @@ export function VendorProfile() {
               onChange={e => { setRequestForm(prev => ({ ...prev, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('requestDescription'); return s; }); }}
               placeholder="Describe your needs..."
               rows={3}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-4"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] mb-4"
             />
             {aiFields.has('requestDescription') && <AIGeneratedIndicator />}
 
@@ -995,7 +995,7 @@ export function VendorProfile() {
             <select
               value={requestForm.urgency}
               onChange={e => setRequestForm(prev => ({ ...prev, urgency: e.target.value }))}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] mb-6"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] mb-6"
             >
               <option value="Low">Low</option>
               <option value="Normal">Normal</option>

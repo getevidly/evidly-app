@@ -166,7 +166,7 @@ export default function PolicyLensQueue() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B24A2E]" />
       </div>
     );
   }
@@ -229,13 +229,13 @@ export default function PolicyLensQueue() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search carrier, policy, business…"
-            className="w-full pl-8 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]"
+            className="w-full pl-8 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]"
           />
         </div>
         <select
           value={flagFilter}
           onChange={e => setFlagFilter(e.target.value)}
-          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]"
+          className="text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]"
         >
           <option value="all">All severities</option>
           <option value="high">High</option>

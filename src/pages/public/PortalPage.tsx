@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const CREAM = '#FAF7F0';
 const TEXT_SEC = '#6B7F96';
 const TEXT_MUTED = '#9CA3AF';

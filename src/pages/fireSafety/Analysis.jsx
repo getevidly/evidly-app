@@ -506,7 +506,7 @@ export default function FireSafetyAnalysis() {
                 <YAxis tick={{ fontSize: 11, fill: 'rgba(30,45,77,0.5)' }} allowDecimals={false} />
                 <Tooltip contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
-                <Line type="monotone" dataKey="openFindings" stroke="#A08C5A" strokeWidth={2} dot={false} name="Open fire-safety findings (weekly count)" />
+                <Line type="monotone" dataKey="openFindings" stroke="#B24A2E" strokeWidth={2} dot={false} name="Open fire-safety findings (weekly count)" />
               </LineChart>
             </ResponsiveContainer>
           </div>

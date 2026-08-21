@@ -145,7 +145,7 @@ export function VendorPartnerDashboard() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 ${
                   isActive
-                    ? 'border-[#A08C5A] text-[#1E2D4D]'
+                    ? 'border-[#B24A2E] text-[#1E2D4D]'
                     : 'border-transparent text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
               >
@@ -180,7 +180,7 @@ export function VendorPartnerDashboard() {
                         <MapPin className="w-3 h-3" />
                         {partnerProfile.primary_county} County
                         {partnerProfile.is_founding_partner && (
-                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#A08C5A', color: 'white' }}>
+                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#B24A2E', color: 'white' }}>
                             Founding Partner
                           </span>
                         )}
@@ -282,7 +282,7 @@ export function VendorPartnerDashboard() {
                               <button
                                 onClick={() => updateLeadStatus(lead.id, 'quoted')}
                                 className="px-3 py-1.5 text-xs font-medium rounded-lg text-white"
-                                style={{ background: '#A08C5A' }}
+                                style={{ background: '#B24A2E' }}
                               >
                                 Mark Quoted
                               </button>

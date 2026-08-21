@@ -531,7 +531,7 @@ function PricingSection() {
             highlight: false,
           },
         ].map(tier => (
-          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1E2D4D] text-white border-2 border-[#A08C5A]' : 'bg-white border border-[#1E2D4D]/10'}`}>
+          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1E2D4D] text-white border-2 border-[#B24A2E]' : 'bg-white border border-[#1E2D4D]/10'}`}>
             <div className="text-sm font-semibold mb-1">{tier.name}</div>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-2xl font-bold tracking-tight">{tier.price}</span>
@@ -540,14 +540,14 @@ function PricingSection() {
             <ul className="space-y-2 mt-4">
               {tier.features.map(f => (
                 <li key={f} className="flex items-start gap-2 text-xs">
-                  <Check className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${tier.highlight ? 'text-[#A08C5A]' : 'text-green-500'}`} />
+                  <Check className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${tier.highlight ? 'text-[#B24A2E]' : 'text-green-500'}`} />
                   <span className={tier.highlight ? 'text-white/90' : 'text-[#1E2D4D]/70'}>{f}</span>
                 </li>
               ))}
             </ul>
             <button
               onClick={() => toast.info(`Demo: ${tier.name} plan signup preview`)}
-              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#A08C5A] text-[#1E2D4D] hover:bg-[#c4a030]' : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'}`}
+              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#B24A2E] text-[#1E2D4D] hover:bg-[#c4a030]' : 'bg-[#FAF7F0] text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'}`}
             >
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
             </button>
@@ -586,7 +586,7 @@ export function DeveloperPortal() {
         </button>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-[#1E2D4D] rounded-lg">
-            <Code2 className="h-5 w-5 text-[#A08C5A]" />
+            <Code2 className="h-5 w-5 text-[#B24A2E]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Developer Portal</h1>

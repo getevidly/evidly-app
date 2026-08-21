@@ -37,7 +37,7 @@ export function VendorRow({ vendor, isRecommended, onRecommend }) {
             </p>
             {isRecommended ? (
               <span title="Recommendation sent to Partner Recruitment">
-                <Star size={14} fill="#A08C5A" style={{ color: '#A08C5A', flexShrink: 0 }} />
+                <Star size={14} fill="#B24A2E" style={{ color: '#B24A2E', flexShrink: 0 }} />
               </span>
             ) : (
               <span
@@ -48,7 +48,7 @@ export function VendorRow({ vendor, isRecommended, onRecommend }) {
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onRecommend?.(vendor); } }}
                 className="hover:opacity-70 transition-opacity"
               >
-                <Star size={14} style={{ color: '#A08C5A', flexShrink: 0 }} />
+                <Star size={14} style={{ color: '#B24A2E', flexShrink: 0 }} />
               </span>
             )}
           </div>

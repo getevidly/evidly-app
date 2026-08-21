@@ -56,8 +56,8 @@ export const TrendEngine: React.FC<Props> = ({ data }) => {
           {Object.entries(metricLabels).map(([key, m]) => (
             <button key={key} onClick={() => setMetric(key as any)}
               style={{
-                background: metric === key ? '#A08C5A' : '#EEF1F7',
-                border: `1px solid ${metric === key ? '#A08C5A' : '#D1D9E6'}`,
+                background: metric === key ? '#B24A2E' : '#EEF1F7',
+                border: `1px solid ${metric === key ? '#B24A2E' : '#D1D9E6'}`,
                 borderRadius: '4px', padding: '3px 8px', fontSize: '10px',
                 color: metric === key ? '#ffffff' : '#3D5068', fontWeight: 600,
                 cursor: 'pointer', fontFamily: 'system-ui',

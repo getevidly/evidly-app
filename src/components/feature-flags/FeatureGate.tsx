@@ -28,7 +28,7 @@ import { supabase } from '../../lib/supabase';
 import { SkeletonCard } from '../ui/Skeleton';
 
 // ── Colors ──
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const NAVY = '#1E2D4D';
 const BLUE = '#2563EB';
 const PURPLE = '#7C3AED';

@@ -308,7 +308,7 @@ export default function ServicesPage() {
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
             >
               {showAllLocationsOption() && <option value="all">All Locations</option>}
               {accessibleLocs.map((loc) => (
@@ -318,7 +318,7 @@ export default function ServicesPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
             >
               <option value="all">All Categories</option>
               {VENDOR_CATEGORIES.map((cat) => (
@@ -508,7 +508,7 @@ export default function ServicesPage() {
                   <select
                     value={logForm.locationId}
                     onChange={(e) => setLogForm({ ...logForm, locationId: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="">Select location...</option>
                     {accessibleLocs.map((loc) => (
@@ -530,7 +530,7 @@ export default function ServicesPage() {
                       }
                       setLogForm({ ...logForm, categoryId: catId, serviceId: '', vendorName: '' });
                     }}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="">Select category...</option>
                     {VENDOR_CATEGORIES.map((cat) => {
@@ -552,7 +552,7 @@ export default function ServicesPage() {
                     <select
                       value={logForm.serviceId}
                       onChange={(e) => setLogForm({ ...logForm, serviceId: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     >
                       <option value="">Select service...</option>
                       {selectedCategoryServices.map((svc) => (
@@ -571,7 +571,7 @@ export default function ServicesPage() {
                     <select
                       value={logForm.vendorName}
                       onChange={(e) => setLogForm({ ...logForm, vendorName: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     >
                       <option value="">Select vendor...</option>
                       {selectedCategoryVendors.map((v) => (
@@ -588,7 +588,7 @@ export default function ServicesPage() {
                     type="date"
                     value={logForm.serviceDate}
                     onChange={(e) => setLogForm({ ...logForm, serviceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
@@ -600,7 +600,7 @@ export default function ServicesPage() {
                     value={logForm.technicianName}
                     onChange={(e) => setLogForm({ ...logForm, technicianName: e.target.value })}
                     placeholder="e.g., John Smith"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
@@ -611,7 +611,7 @@ export default function ServicesPage() {
                     type="date"
                     value={logForm.nextServiceDate}
                     onChange={(e) => setLogForm({ ...logForm, nextServiceDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   />
                 </div>
 
@@ -631,7 +631,7 @@ export default function ServicesPage() {
                     onChange={(e) => { setLogForm({ ...logForm, notes: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
                     placeholder="Service details, observations, follow-up items..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                   />
                   {aiFields.has('notes') && <AIGeneratedIndicator />}
                 </div>

@@ -138,7 +138,7 @@ export function FileUpload({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? 'border-[#A08C5A] bg-[#A08C5A]/5'
+            ? 'border-[#B24A2E] bg-[#B24A2E]/5'
             : 'border-[#1E2D4D]/15 hover:border-[#1E2D4D]/20'
         }`}
       >

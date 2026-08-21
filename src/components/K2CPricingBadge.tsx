@@ -5,9 +5,9 @@ export default function K2CPricingBadge() {
   return (
     <div
       className="max-w-3xl mx-auto mt-8 rounded-xl px-5 py-4 flex items-center gap-4"
-      style={{ backgroundColor: '#FDF6E3', border: '1px solid rgba(160,140,90,0.3)' }}
+      style={{ backgroundColor: '#FDF6E3', border: '1px solid rgba(178,74,46,0.3)' }}
     >
-      <HandHeart className="w-8 h-8 flex-shrink-0" style={{ color: '#A08C5A' }} />
+      <HandHeart className="w-8 h-8 flex-shrink-0" style={{ color: '#B24A2E' }} />
       <div>
         <p className="text-sm font-semibold" style={{ color: '#1E2D4D' }}>
           Kitchen to Community
@@ -17,7 +17,7 @@ export default function K2CPricingBadge() {
           <Link
             to="/kitchen-to-community"
             className="font-semibold hover:underline"
-            style={{ color: '#A08C5A' }}
+            style={{ color: '#B24A2E' }}
           >
             Learn more &rarr;
           </Link>

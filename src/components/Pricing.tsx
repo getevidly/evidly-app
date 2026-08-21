@@ -81,7 +81,7 @@ export default function Pricing() {
             Not convinced? Get a <strong>100% refund of your subscription fees</strong> — no questions asked.
           </p>
           <div className="flex items-center justify-center gap-6 mt-4 text-sm text-[#1E2D4D]/70">
-            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#A08C5A]" />45-day money-back</span>
+            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#B24A2E]" />45-day money-back</span>
             <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />Founder price lock</span>
           </div>
         </div>
@@ -89,9 +89,9 @@ export default function Pricing() {
         <div className="grid md:grid-cols-3 gap-4 max-w-6xl mx-auto">
           {/* Founder Single Card */}
           <div className="relative">
-            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#A08C5A] shadow-sm shadow-[#A08C5A]/20 h-full flex flex-col">
+            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#B24A2E] shadow-sm shadow-[#B24A2E]/20 h-full flex flex-col">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex gap-2">
-                <span className="px-4 py-2 bg-[#A08C5A] text-[#1E2D4D] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
+                <span className="px-4 py-2 bg-[#B24A2E] text-[#1E2D4D] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
                   Best Value
                 </span>
                 <span className="px-4 py-2 bg-[#16a34a] text-white text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
@@ -153,7 +153,7 @@ export default function Pricing() {
               <ul className="space-y-3 mb-8 flex-grow">
                 {founderSingle.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-[#1E2D4D]/80">
-                    <Check className="w-5 h-5 text-[#A08C5A] flex-shrink-0 mt-0.5" strokeWidth={3} />
+                    <Check className="w-5 h-5 text-[#B24A2E] flex-shrink-0 mt-0.5" strokeWidth={3} />
                     <span>{feature}</span>
                   </li>
                 ))}

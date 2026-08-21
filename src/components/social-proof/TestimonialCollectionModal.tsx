@@ -12,7 +12,7 @@ import { submitTestimonial } from '../../lib/testimonialSystem';
 import { useDemo } from '../../contexts/DemoContext';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const SESSION_KEY = 'evidly_testimonial_prompted';
 
 interface TestimonialCollectionModalProps {

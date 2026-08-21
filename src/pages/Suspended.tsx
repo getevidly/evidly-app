@@ -7,7 +7,7 @@
 import { supabase } from '../lib/supabase';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 export function Suspended() {
   const handleSignOut = async () => {

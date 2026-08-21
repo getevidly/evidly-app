@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { X, Bell } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 
-const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
+const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2';
 
 export function NotificationPrefs({ onClose }) {
   const [prefs, setPrefs] = useState({

@@ -44,7 +44,7 @@ export function TapToFillButton({
       disabled={isGenerating}
       className="md:hidden w-full mt-1 py-3 flex items-center justify-center gap-2
                  rounded-lg text-sm active:scale-95 transition-transform disabled:opacity-50"
-      style={{ border: '1px solid rgba(160, 140, 90, 0.4)', color: '#A08C5A' }}
+      style={{ border: '1px solid rgba(178,74,46, 0.4)', color: '#B24A2E' }}
     >
       {isGenerating ? (
         <>

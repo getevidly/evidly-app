@@ -39,7 +39,7 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SHIFTS = ['morning', 'afternoon', 'evening', 'closing'];
 
 
-const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2';
+const inputClass = 'w-full text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2';
 const labelClass = 'block text-xs font-semibold text-[var(--text-secondary)] mb-1';
 
 export function TaskDefinitionForm({ definition, onSave, onClose }) {
@@ -230,7 +230,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                 type="button"
                 onClick={handleAiDraft}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}
+                style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #B24A2E' }}
               >
                 <Sparkles className="h-4 w-4" />
                 AI Draft
@@ -336,7 +336,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                         </div>
                         <p className="text-xs text-[var(--text-tertiary)] line-clamp-1 mb-1.5">{tpl.description}</p>
                         {tpl.regulation_reference && (
-                          <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #A08C5A' }}>
+                          <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #B24A2E' }}>
                             {tpl.regulation_reference}
                           </span>
                         )}
@@ -357,7 +357,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
           >
             {aiDraftApplied && (
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ background: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
-                <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#B24A2E' }} />
                 <span>AI-generated draft — review and edit before saving</span>
               </div>
             )}
@@ -516,7 +516,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                   <div key={idx} className="flex items-center gap-2">
                     <input
                       type="number"
-                      className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 w-20 flex-shrink-0"
+                      className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 w-20 flex-shrink-0"
                       value={level.delay_minutes}
                       onChange={(e) => updateEscalationLevel(idx, 'delay_minutes', e.target.value)}
                       min={1}
@@ -524,7 +524,7 @@ export function TaskDefinitionForm({ definition, onSave, onClose }) {
                     />
                     <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap flex-shrink-0">min →</span>
                     <select
-                      className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 flex-1 min-w-0"
+                      className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 flex-1 min-w-0"
                       value={level.notify_user_id}
                       onChange={(e) => updateEscalationLevel(idx, 'notify_user_id', e.target.value)}
                     >

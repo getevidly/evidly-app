@@ -222,7 +222,7 @@ export function DemoTour() {
                       key={i}
                       className="absolute w-2 h-2 rounded-full"
                       style={{
-                        backgroundColor: i % 2 === 0 ? '#A08C5A' : '#1E2D4D',
+                        backgroundColor: i % 2 === 0 ? '#B24A2E' : '#1E2D4D',
                         top: `${15 + Math.random() * 70}%`,
                         left: `${10 + Math.random() * 80}%`,
                         animation: `sparkle ${1 + Math.random()}s ease-in-out ${Math.random() * 0.5}s infinite`,
@@ -272,7 +272,7 @@ export function DemoTour() {
         <div className="absolute inset-0 bg-black/50" />
         {step?.target && (
           <div
-            className="absolute border-2 border-[#A08C5A] rounded-lg"
+            className="absolute border-2 border-[#B24A2E] rounded-lg"
             style={{
               top: highlightRect.top,
               left: highlightRect.left,
@@ -310,7 +310,7 @@ export function DemoTour() {
                   key={i}
                   className={`w-2 h-2 rounded-full transition-all ${
                     i === tourStep ? 'bg-[#1E2D4D] w-4' :
-                    i < tourStep ? 'bg-[#A08C5A]' : 'bg-[#1E2D4D]/15'
+                    i < tourStep ? 'bg-[#B24A2E]' : 'bg-[#1E2D4D]/15'
                   }`}
                 />
               ))}

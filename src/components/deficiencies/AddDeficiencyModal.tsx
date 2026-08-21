@@ -79,7 +79,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as DefCategory)}
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             >
               <option value="">Select category...</option>
@@ -97,7 +97,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               <select
                 value={locationId}
                 onChange={(e) => setLocationId(e.target.value)}
-                className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
               >
                 <option value="">Select location...</option>
@@ -113,7 +113,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               <select
                 value={severity}
                 onChange={(e) => setSeverity(e.target.value as DefSeverity)}
-                className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
               >
                 {SEVERITIES.map((s) => (
@@ -132,7 +132,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="e.g. NFPA96-T12.4"
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -146,7 +146,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Short description of the deficiency"
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -160,7 +160,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Full compliance code description and finding details..."
-              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -174,7 +174,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               value={locationDescription}
               onChange={(e) => setLocationDescription(e.target.value)}
               placeholder="e.g. Main hood system, fryer bank"
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -191,7 +191,7 @@ export function AddDeficiencyModal({ onClose, onSubmit }: AddDeficiencyModalProp
               placeholder="0.00"
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628', fontSize: 16 }}
             />
           </div>

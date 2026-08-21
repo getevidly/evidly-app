@@ -76,7 +76,7 @@ export function InspectionUploadProcessing({
                   <Check className="w-3.5 h-3.5" style={{ color: '#059669' }} />
                 </div>
               ) : step.status === 'active' ? (
-                <div className="w-6 h-6 rounded-full flex items-center justify-center animate-pulse" style={{ backgroundColor: '#A08C5A' }}>
+                <div className="w-6 h-6 rounded-full flex items-center justify-center animate-pulse" style={{ backgroundColor: '#B24A2E' }}>
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                 </div>
               ) : (

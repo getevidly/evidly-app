@@ -243,7 +243,7 @@ export function HelpSupport() {
                 padding: '12px 20px', fontSize: '14px', fontWeight: 600, border: 'none',
                 backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap', minHeight: '44px',
                 color: activeTab === tab.id ? '#1E2D4D' : '#6b7280',
-                borderBottom: activeTab === tab.id ? '2px solid #A08C5A' : '2px solid transparent',
+                borderBottom: activeTab === tab.id ? '2px solid #B24A2E' : '2px solid transparent',
                 marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '6px',
               }}
             >
@@ -393,7 +393,7 @@ export function HelpSupport() {
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>{'✅'}</div>
           <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1E2D4D', margin: '0 0 8px 0', ...F }}>Ticket Submitted!</h2>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0', ...F }}>Your ticket number is</p>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#A08C5A', marginBottom: '24px', ...F }}>{ticketNumber}</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#B24A2E', marginBottom: '24px', ...F }}>{ticketNumber}</div>
           <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '24px', ...F }}>We typically respond within 4 business hours. Check the "My Tickets" tab for updates.</p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={resetTicketForm} style={{ ...btnPrimary, minHeight: '44px' }}>Submit Another</button>

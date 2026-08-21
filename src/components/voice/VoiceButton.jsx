@@ -136,7 +136,7 @@ export function VoiceButton({ orgId, locationId, size = 'lg' }) {
         className={`${btnSize} rounded-full flex items-center justify-center
                     transition-all duration-200 active:scale-95
                     ${isListening
-                      ? 'bg-[#A08C5A] shadow-lg ring-4 ring-[#A08C5A]/30'
+                      ? 'bg-[#B24A2E] shadow-lg ring-4 ring-[#B24A2E]/30'
                       : 'bg-[#1E2D4D] hover:bg-[#2a3d6b]'
                     }`}
         aria-label="Voice command"
@@ -152,14 +152,14 @@ export function VoiceButton({ orgId, locationId, size = 'lg' }) {
 
         {/* Pulse ring when listening */}
         {isListening && (
-          <span className="absolute inset-0 rounded-full bg-[#A08C5A]/20 animate-ping" />
+          <span className="absolute inset-0 rounded-full bg-[#B24A2E]/20 animate-ping" />
         )}
       </button>
 
       {/* Listening label */}
       {isListening && (
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
-                        bg-[#A08C5A] text-white text-xs font-medium px-3 py-1 rounded-full">
+                        bg-[#B24A2E] text-white text-xs font-medium px-3 py-1 rounded-full">
           Listening...
         </div>
       )}

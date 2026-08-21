@@ -148,7 +148,7 @@ export default function RequestDetail() {
         </Link>
         <p
           className="uppercase tracking-wider mb-1"
-          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#A08C5A' }}
+          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#B24A2E' }}
         >
           Request detail
         </p>
@@ -204,7 +204,7 @@ export default function RequestDetail() {
                   className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5"
                   style={{ backgroundColor: '#F4EFE0' }}
                 >
-                  <Eye size={12} style={{ color: '#A08C5A' }} />
+                  <Eye size={12} style={{ color: '#B24A2E' }} />
                 </div>
                 <div>
                   <p style={{ fontSize: '12px', fontWeight: 500, color: '#1E2D4D' }}>

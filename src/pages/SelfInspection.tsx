@@ -752,7 +752,7 @@ export function SelfInspection() {
             <div className="grid gap-3 sm:grid-cols-2">
               <button
                 onClick={() => startAudit('primary')}
-                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors text-left"
+                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#B24A2E] hover:bg-[#c49a2b] transition-colors text-left"
               >
                 <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                 Start CalCode Track
@@ -762,7 +762,7 @@ export function SelfInspection() {
               </button>
               <button
                 onClick={() => startAudit('federal')}
-                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors text-left"
+                className="px-5 py-3 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#B24A2E] hover:bg-[#c49a2b] transition-colors text-left"
               >
                 <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                 Start FDA Food Code Track
@@ -775,7 +775,7 @@ export function SelfInspection() {
               <div className="flex gap-3">
                 <button
                   onClick={resumeAudit}
-                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#A08C5A] hover:bg-[#eef4f8] transition-colors"
+                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#B24A2E] hover:bg-[#eef4f8] transition-colors"
                 >
                   <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                   Resume Inspection
@@ -794,7 +794,7 @@ export function SelfInspection() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => startAudit('primary')}
-              className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors"
+              className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] bg-[#B24A2E] hover:bg-[#c49a2b] transition-colors"
             >
               <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
               Start Inspection
@@ -803,7 +803,7 @@ export function SelfInspection() {
               <>
                 <button
                   onClick={resumeAudit}
-                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#A08C5A] hover:bg-[#eef4f8] transition-colors"
+                  className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1E2D4D] border-2 border-[#B24A2E] hover:bg-[#eef4f8] transition-colors"
                 >
                   <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
                   Resume Inspection
@@ -865,7 +865,7 @@ export function SelfInspection() {
           <div className="h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${sectionPct}%`, backgroundColor: '#A08C5A' }}
+              style={{ width: `${sectionPct}%`, backgroundColor: '#B24A2E' }}
             />
           </div>
         </div>
@@ -988,7 +988,7 @@ export function SelfInspection() {
                       onChange={(e) => { setItemNotes(currentSection, ii, e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`notes-${item.id}`); return n; }); }}
                       placeholder="Describe the issue..."
                       rows={2}
-                      className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
+                      className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
                     />
                     {aiFields.has(`notes-${item.id}`) && <AIGeneratedIndicator />}
                   </div>
@@ -1050,7 +1050,7 @@ export function SelfInspection() {
           ) : (
             <button
               onClick={finishAudit}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#B24A2E] hover:bg-[#c49a2b] transition-colors"
               style={{ minHeight: 44 }}
             >
               Finish Inspection
@@ -1214,7 +1214,7 @@ export function SelfInspection() {
         {failedItems.length > 0 && (
           <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
             <h3 className="text-sm font-bold text-[#1E2D4D] mb-4">
-              <AlertTriangle className="h-4 w-4 inline mr-1.5 -mt-0.5 text-[#A08C5A]" />
+              <AlertTriangle className="h-4 w-4 inline mr-1.5 -mt-0.5 text-[#B24A2E]" />
               Corrective Action Plan
             </h3>
             <div className="space-y-3">
@@ -1293,7 +1293,7 @@ export function SelfInspection() {
           )}
           <button
             onClick={resetAudit}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#A08C5A] hover:bg-[#c49a2b] transition-colors"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1E2D4D] bg-[#B24A2E] hover:bg-[#c49a2b] transition-colors"
             style={{ minHeight: 44 }}
           >
             <RotateCcw className="h-4 w-4" />

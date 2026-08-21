@@ -43,7 +43,7 @@ export function ResolutionModal({ deficiencyCode, deficiencyTitle, onClose, onSu
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
               placeholder="Describe how the deficiency was resolved..."
-              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

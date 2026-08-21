@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button';
 // See CLAUDE.md guided-tour exception.
 
 // ── PRODUCTION COLOR TOKENS ───────────────────────────────────────────────────
-const NAVY="#1E2D4D",GOLD="#A08C5A",BODY="#1E2D4D",MUTED="#6B7F96",SB="#07111F",SBT="#94a3b8",PBG="#F4F6FA";
+const NAVY="#1E2D4D",GOLD="#B24A2E",BODY="#1E2D4D",MUTED="#6B7F96",SB="#07111F",SBT="#94a3b8",PBG="#F4F6FA";
 const STEEL="linear-gradient(135deg,#1E2D4D 0%,#152340 60%,#243560 100%)";
 const RBKG="linear-gradient(135deg,#2D0A00,#6B1A0A,#3D1208)";
 const FF={fontFamily:"system-ui,-apple-system,sans-serif"};
@@ -581,7 +581,7 @@ function Sidebar({role,active,onNav,collapsed}){
   const[exp,setExp]=useState({top:1,food:1,fire:1,comp:1,ins:1,tls:1,adm:1});
   return <div style={{width:collapsed?46:218,background:SB,flexShrink:0,display:"flex",flexDirection:"column",height:"100%",transition:"width 0.2s",overflowY:"auto",overflowX:"hidden"}}>
     <div style={{padding:collapsed?"11px 0":"11px 13px",borderBottom:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",gap:8,justifyContent:collapsed?"center":"flex-start"}}>
-      <div style={{width:28,height:28,borderRadius:6,background:"rgba(160,140,90,0.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:11,fontWeight:900,color:GOLD,...FF}}>E</span></div>
+      <div style={{width:28,height:28,borderRadius:6,background:"rgba(178,74,46,0.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontSize:11,fontWeight:900,color:GOLD,...FF}}>E</span></div>
       {!collapsed&&<span style={{fontSize:13,fontWeight:900,...FF}}><span style={{color:GOLD}}>E</span><span style={{color:"white"}}>vid</span><span style={{color:GOLD}}>LY</span></span>}
     </div>
     <div style={{flex:1,paddingTop:4,paddingBottom:10}}>
@@ -596,7 +596,7 @@ function Sidebar({role,active,onNav,collapsed}){
           </Button>}
           {(open||collapsed)&&vis.map(([pid,plbl,icon])=>{
             const on=active===pid;
-            return <Button key={pid} onClick={()=>onNav(pid)} variant="ghost" size="sm" style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:collapsed?"7px 0":"6px 15px",background:on?"rgba(160,140,90,0.15)":"transparent",borderLeft:on?`3px solid ${GOLD}`:"3px solid transparent",justifyContent:collapsed?"center":"flex-start",height:"auto",minHeight:"auto",borderRadius:0}}>
+            return <Button key={pid} onClick={()=>onNav(pid)} variant="ghost" size="sm" style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:collapsed?"7px 0":"6px 15px",background:on?"rgba(178,74,46,0.15)":"transparent",borderLeft:on?`3px solid ${GOLD}`:"3px solid transparent",justifyContent:collapsed?"center":"flex-start",height:"auto",minHeight:"auto",borderRadius:0}}>
               <span style={{fontSize:13,flexShrink:0}}>{icon}</span>
               {!collapsed&&<span style={{fontSize:11,color:on?"white":SBT,fontWeight:on?600:400,...FF,whiteSpace:"nowrap"}}>{plbl}</span>}
             </Button>;
@@ -605,7 +605,7 @@ function Sidebar({role,active,onNav,collapsed}){
       })}
     </div>
     {!collapsed&&<div style={{padding:"8px 12px",borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",gap:8}}>
-      <div style={{width:24,height:24,borderRadius:"50%",background:"rgba(160,140,90,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:GOLD,flexShrink:0}}>A</div>
+      <div style={{width:24,height:24,borderRadius:"50%",background:"rgba(178,74,46,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:GOLD,flexShrink:0}}>A</div>
       <div style={{flex:1,minWidth:0}}><div style={{fontSize:10,fontWeight:600,color:"white",...FF,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>Arthur Haggerty</div><div style={{fontSize:9,color:"#475569",...FF}}>admin@getevidly.com</div></div>
     </div>}
   </div>;
@@ -636,7 +636,7 @@ function Panel({role,page,onNav,sample,collapsed,mobile,width}){
       {!isStaff&&<Button onClick={()=>setMMenu(s=>!s)} variant="ghost" size="sm" style={{color:"white",fontSize:17,padding:"2px 4px",height:"auto",minHeight:"auto"}}>☰</Button>}
       <span style={{fontSize:13,fontWeight:900,...FF}}><span style={{color:GOLD}}>E</span><span style={{color:"white"}}>vid</span><span style={{color:GOLD}}>LY</span></span>
       {page!=="dashboard"&&<span style={{fontSize:10,color:"rgba(255,255,255,0.5)",...FF}}>{label}</span>}
-      <div style={{marginLeft:"auto",width:24,height:24,borderRadius:"50%",background:"rgba(160,140,90,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:GOLD,...FF}}>A</div>
+      <div style={{marginLeft:"auto",width:24,height:24,borderRadius:"50%",background:"rgba(178,74,46,0.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:GOLD,...FF}}>A</div>
     </div>
     {mMenu&&!isStaff&&<div style={{position:"absolute",zIndex:100,top:0,left:0,right:0,bottom:0,display:"flex"}}>
       <div style={{width:256,background:SB,height:"100%",overflowY:"auto"}}>
@@ -658,7 +658,7 @@ function Panel({role,page,onNav,sample,collapsed,mobile,width}){
   return <div style={{background:"white",borderRadius:10,overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.11)",display:"flex",height:700,position:"relative"}}>
     {!isStaff&&<Sidebar role={role} active={page} onNav={onNav} collapsed={collapsed}/>}
     <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      <div style={{background:"white",borderBottom:"2px solid #A08C5A",padding:"8px 15px",display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
+      <div style={{background:"white",borderBottom:"2px solid #B24A2E",padding:"8px 15px",display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
         <Button onClick={()=>onNav("dashboard")} variant="ghost" size="sm" style={{fontSize:11,color:MUTED,height:"auto",minHeight:"auto",padding:0,...FF}}>Dashboard</Button>
         {page!=="dashboard"&&<><span style={{fontSize:11,color:MUTED}}>›</span><span style={{fontSize:11,fontWeight:700,color:BODY,...FF}}>{label}</span></>}
         <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>

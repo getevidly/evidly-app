@@ -157,7 +157,7 @@ export function Policies() {
                 </span>
               )}
               {active && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#A08C5A] rounded-t" />
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#B24A2E] rounded-t" />
               )}
             </button>
           );

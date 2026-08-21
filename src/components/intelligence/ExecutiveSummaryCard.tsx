@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { Scenario } from './ScenarioEngine';
 
 interface Props {
@@ -155,7 +155,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
   const viewLabels: Record<string, { icon: string; title: string; color: string }> = {
     operations: { icon: '⚙️', title: 'Operations Intelligence Brief', color: '#3b82f6' },
     risk:       { icon: '⚖️', title: 'Risk & Legal Intelligence Brief', color: '#ef4444' },
-    financial:  { icon: '💰', title: 'Financial Intelligence Brief', color: '#A08C5A' },
+    financial:  { icon: '💰', title: 'Financial Intelligence Brief', color: '#B24A2E' },
     people:     { icon: '👥', title: 'People Intelligence Brief', color: '#8b5cf6' },
   };
 
@@ -183,24 +183,24 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
             {v.title}
           </span>
           <span style={{
-            backgroundColor: '#A08C5A20',
-            border: '1px solid #A08C5A40',
+            backgroundColor: '#B24A2E20',
+            border: '1px solid #B24A2E40',
             borderRadius: '4px',
             padding: '2px 6px',
             fontSize: '10px',
-            color: '#A08C5A',
+            color: '#B24A2E',
             fontWeight: 600,
           }}>
             {isDemo ? 'DEMO ANALYSIS' : 'AI GENERATED'}
           </span>
           {activeScenario && (
             <span style={{
-              backgroundColor: '#A08C5A20',
-              border: '1px solid #A08C5A',
+              backgroundColor: '#B24A2E20',
+              border: '1px solid #B24A2E',
               borderRadius: '4px',
               padding: '2px 6px',
               fontSize: '10px',
-              color: '#A08C5A',
+              color: '#B24A2E',
               fontWeight: 700,
             }}>
               {'🎯'} {activeScenario.label}

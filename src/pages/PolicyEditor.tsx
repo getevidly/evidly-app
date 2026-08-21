@@ -289,7 +289,7 @@ export function PolicyEditor() {
                           type="text"
                           value={section.heading}
                           onChange={e => handleSectionChange(index, 'heading', e.target.value)}
-                          className="w-full px-3 py-2 border border-[#E5E0D8] rounded-md text-sm text-[#1E2D4D] focus:outline-none focus:border-[#A08C5A] transition-colors"
+                          className="w-full px-3 py-2 border border-[#E5E0D8] rounded-md text-sm text-[#1E2D4D] focus:outline-none focus:border-[#B24A2E] transition-colors"
                           placeholder="Section heading"
                         />
                       </div>
@@ -397,7 +397,7 @@ function AutoTextarea({ value, onChange, placeholder }: { value: string; onChang
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full px-3 py-2 border border-[#E5E0D8] rounded-md text-sm text-[#1E2D4D] focus:outline-none focus:border-[#A08C5A] transition-colors resize-none overflow-hidden min-h-[80px] leading-relaxed"
+      className="w-full px-3 py-2 border border-[#E5E0D8] rounded-md text-sm text-[#1E2D4D] focus:outline-none focus:border-[#B24A2E] transition-colors resize-none overflow-hidden min-h-[80px] leading-relaxed"
       rows={3}
     />
   );

@@ -162,13 +162,13 @@ export function InactivityProvider({ children }: { children: ReactNode }) {
             <p style={{ color: '#6B7F96', marginBottom: 4, fontSize: 13 }}>
               Your session will expire due to inactivity in
             </p>
-            <div style={{ fontSize: 32, fontWeight: 700, color: '#A08C5A', marginBottom: 16, fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 32, fontWeight: 700, color: '#B24A2E', marginBottom: 16, fontFamily: 'monospace' }}>
               {Math.floor(secondsRemaining / 60)}:{String(secondsRemaining % 60).padStart(2, '0')}
             </div>
             <button
               onClick={handleStaySignedIn}
               style={{
-                background: '#A08C5A', color: 'white', border: 'none',
+                background: '#B24A2E', color: 'white', border: 'none',
                 borderRadius: 6, padding: '10px 24px', cursor: 'pointer',
                 fontSize: 14, fontWeight: 500, width: '100%',
               }}

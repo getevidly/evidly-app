@@ -85,7 +85,7 @@ export function ExtractedItemCard({ item, checked, onToggle, onDiscard, onUpdate
     return (
       <div
         className="rounded-xl border p-4"
-        style={{ borderColor: '#A08C5A', backgroundColor: '#fdfaf4' }}
+        style={{ borderColor: '#B24A2E', backgroundColor: '#fdfaf4' }}
       >
         <div className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

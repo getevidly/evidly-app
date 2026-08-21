@@ -13,9 +13,9 @@ import { useEvidlyPermissions } from '../../hooks/useEvidlyPermissions';
 
 const SIDEBAR_BG = '#0B1628';
 const DIVIDER = '#2d3f5f';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const NAV_INACTIVE = '#94A3B8';
-const NAV_ACTIVE_BG = 'rgba(160,140,90,0.15)';
+const NAV_ACTIVE_BG = 'rgba(178,74,46,0.15)';
 const SECTION_LABEL = '#4B5563';
 const ADMIN_LABEL = '#475569';
 const EMAIL_COLOR = '#475569';

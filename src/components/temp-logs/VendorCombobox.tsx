@@ -112,7 +112,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
           setIsOpen(!isOpen);
           if (!isOpen) setTimeout(() => inputRef.current?.focus(), 50);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 border border-[#1E2D4D]/15 rounded-xl bg-white text-left focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] hover:border-[#1E2D4D]/20 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 border border-[#1E2D4D]/15 rounded-xl bg-white text-left focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] hover:border-[#1E2D4D]/20 transition-colors"
       >
         <span className={value ? 'text-[#1E2D4D]' : 'text-[#1E2D4D]/30'}>
           {value || 'Select vendor...'}
@@ -137,7 +137,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search vendors..."
-                className="w-full pl-9 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                className="w-full pl-9 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                 onKeyDown={e => {
                   if (e.key === 'Escape') { setIsOpen(false); setSearch(''); }
                 }}
@@ -217,7 +217,7 @@ export function VendorCombobox({ value, onChange, locationId, className }: Props
                   value={newVendorName}
                   onChange={e => setNewVendorName(e.target.value)}
                   placeholder="Enter vendor name..."
-                  className="flex-1 px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="flex-1 px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   autoFocus
                   onKeyDown={e => {
                     if (e.key === 'Enter') { e.preventDefault(); handleAddCustom(); }

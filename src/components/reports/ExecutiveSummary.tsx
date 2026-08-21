@@ -84,7 +84,7 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
                   className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded text-xs font-bold"
                   style={{
                     backgroundColor: item.priority === 'HIGH' ? '#fef2f2' : item.priority === 'MEDIUM' ? '#fffbeb' : '#eff6ff',
-                    color: item.priority === 'HIGH' ? '#ef4444' : item.priority === 'MEDIUM' ? '#A08C5A' : NAVY,
+                    color: item.priority === 'HIGH' ? '#ef4444' : item.priority === 'MEDIUM' ? '#B24A2E' : NAVY,
                   }}
                 >
                   {item.priority}

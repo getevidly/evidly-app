@@ -27,7 +27,7 @@ const steps = [
     icon: EvidlyIcon,
     title: 'Score Updates Live',
     description: 'Your compliance score updates in real-time across 3 pillars.',
-    color: '#A08C5A',
+    color: '#B24A2E',
     bg: '#fefce8',
   },
   {

@@ -17,8 +17,8 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const MUTED_GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
+const MUTED_GOLD = '#B24A2E';
 
 // ── Integration catalog (static — matches DB seed) ────────
 
@@ -185,7 +185,7 @@ export function IntegrationHub() {
             {ecosystemStats.map(stat => (
               <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <stat.icon className="h-4 w-4 text-[#A08C5A]" />
+                  <stat.icon className="h-4 w-4 text-[#B24A2E]" />
                   <span className="text-xs text-[#1E2D4D]/30">{stat.label}</span>
                 </div>
                 <div className="text-xl font-bold text-white">{stat.value}</div>
@@ -208,7 +208,7 @@ export function IntegrationHub() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search integrations..."
-              className="pl-9 pr-4 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] w-56"
+              className="pl-9 pr-4 py-2 border border-[#1E2D4D]/10 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] w-56"
             />
           </div>
           <button
@@ -234,7 +234,7 @@ export function IntegrationHub() {
             return (
               <div
                 key={integration.slug}
-                className="bg-white rounded-xl border-2 border-[#1E2D4D]/5 p-4 hover:border-[#A08C5A] hover:shadow-md transition-all cursor-pointer group"
+                className="bg-white rounded-xl border-2 border-[#1E2D4D]/5 p-4 hover:border-[#B24A2E] hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-3">
                   <div className="text-2xl w-10 h-10 flex items-center justify-center rounded-lg bg-[#FAF7F0] group-hover:bg-amber-50 transition-colors">
@@ -393,7 +393,7 @@ export function IntegrationHub() {
                   value={requestName}
                   onChange={e => setRequestName(e.target.value)}
                   placeholder="e.g., Restaurant365, Lightspeed POS"
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 />
               </div>
               <div>
@@ -403,7 +403,7 @@ export function IntegrationHub() {
                   onChange={e => setRequestDescription(e.target.value)}
                   placeholder="Tell us how this integration would help your operation..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-none"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] resize-none"
                 />
               </div>
             </div>

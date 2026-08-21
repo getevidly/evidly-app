@@ -180,7 +180,7 @@ export function TaskInstanceCard({ task, onStart, onComplete, onSkip }) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Add a note..."
-            className="flex-1 text-sm px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+            className="flex-1 text-sm px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
             onKeyDown={(e) => { if (e.key === 'Enter') handleComplete(); }}
           />
           <button

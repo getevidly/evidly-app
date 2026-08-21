@@ -15,7 +15,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 const QUICK_ACCESS = [
   { label: 'Temperature Logs', icon: '🌡', url: '/temp-logs' },

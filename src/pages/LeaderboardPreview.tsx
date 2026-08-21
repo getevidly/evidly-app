@@ -28,9 +28,9 @@ function XPBar({ xp, xpMax, level }: { xp: number; xpMax: number; level: number 
   const pct = Math.round((xp / xpMax) * 100);
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A', minWidth: 38 }}>Lv.{level}</span>
+      <span style={{ fontSize: 11, fontWeight: 700, color: '#B24A2E', minWidth: 38 }}>Lv.{level}</span>
       <div style={{ flex: 1, height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #A08C5A, #A08C5A)', borderRadius: 4, transition: 'width 1s ease' }} />
+        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #B24A2E, #B24A2E)', borderRadius: 4, transition: 'width 1s ease' }} />
       </div>
       <span style={{ fontSize: 10, color: '#6b7280', minWidth: 50, textAlign: 'right' }}>{xp}/{xpMax} XP</span>
     </div>
@@ -55,7 +55,7 @@ export function LeaderboardPreview() {
         color: 'white', padding: '12px 40px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         position: 'sticky', top: 0, zIndex: 100,
-        borderBottom: '3px solid #A08C5A',
+        borderBottom: '3px solid #B24A2E',
         flexWrap: 'wrap', gap: 12,
       }}>
         <div>
@@ -63,7 +63,7 @@ export function LeaderboardPreview() {
           <span style={{ fontSize: 12, opacity: 0.6, marginLeft: 12 }}>Your kitchen could be ranked here. Opt in from your Settings page.</span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <a href="/signup" style={{ background: '#A08C5A', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
+          <a href="/signup" style={{ background: '#B24A2E', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
             Get Founder Pricing {'→'}
           </a>
           <a href="/login" style={{ background: 'transparent', color: 'white', padding: '8px 20px', borderRadius: 8, fontWeight: 600, fontSize: 12, border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}>
@@ -88,10 +88,10 @@ export function LeaderboardPreview() {
         <div style={{
           background: 'linear-gradient(135deg, #1E2D4D 0%, #2E4270 100%)',
           borderRadius: 16, padding: '24px 32px', marginBottom: 28,
-          border: '2px solid #A08C5A', color: 'white',
+          border: '2px solid #B24A2E', color: 'white',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <Star size={24} style={{ color: '#A08C5A' }} />
+            <Star size={24} style={{ color: '#B24A2E' }} />
             <h3 style={{ fontSize: 18, fontWeight: 800 }}>Monthly Rewards Program</h3>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
@@ -139,7 +139,7 @@ export function LeaderboardPreview() {
                 <div key={loc.rank} style={{
                   background: 'white', borderRadius: 16, padding: '24px 16px', textAlign: 'center',
                   boxShadow: isFirst ? '0 8px 32px rgba(30,77,107,0.15)' : '0 2px 8px rgba(0,0,0,0.06)',
-                  border: isFirst ? '2px solid #A08C5A' : '1px solid #e5e7eb',
+                  border: isFirst ? '2px solid #B24A2E' : '1px solid #e5e7eb',
                   minHeight: height,
                   display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                   transform: isFirst ? 'scale(1.05)' : 'scale(1)',
@@ -149,7 +149,7 @@ export function LeaderboardPreview() {
                   <div style={{ fontSize: 28, marginBottom: 4 }}>{loc.avatar}</div>
                   <h4 style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 2 }}>{loc.name}</h4>
                   <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>{loc.org}</p>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: '#A08C5A' }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: '#B24A2E' }}>
                     {calcXP(loc.temp, loc.checklist, loc.streak)} XP
                   </div>
                   <div style={{ display: 'flex', gap: 4, marginTop: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -196,7 +196,7 @@ export function LeaderboardPreview() {
               onMouseEnter={e => { e.currentTarget.style.background = '#f9fafb'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
-              <span style={{ fontSize: 16, fontWeight: 800, color: loc.rank <= 3 ? '#A08C5A' : '#374151' }}>#{loc.rank}</span>
+              <span style={{ fontSize: 16, fontWeight: 800, color: loc.rank <= 3 ? '#B24A2E' : '#374151' }}>#{loc.rank}</span>
               <RankChange change={loc.change} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                 <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
@@ -219,7 +219,7 @@ export function LeaderboardPreview() {
                 {loc.badges.length > 3 && <span style={{ fontSize: 10, color: '#6b7280', fontWeight: 600 }}>+{loc.badges.length - 3}</span>}
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: 18, fontWeight: 800, color: '#A08C5A' }}>{calcXP(loc.temp, loc.checklist, loc.streak)}</span>
+                <span style={{ fontSize: 18, fontWeight: 800, color: '#B24A2E' }}>{calcXP(loc.temp, loc.checklist, loc.streak)}</span>
                 <span style={{ fontSize: 10, color: '#6b7280', marginLeft: 2 }}>XP</span>
               </div>
             </div>
@@ -241,7 +241,7 @@ export function LeaderboardPreview() {
               <div key={item.label} style={{ backgroundColor: '#f9fafb', borderRadius: 12, padding: 16 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>{item.label}</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#A08C5A' }}>{item.weight}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#B24A2E' }}>{item.weight}</span>
                 </div>
                 <p style={{ fontSize: 11, color: '#6b7280', lineHeight: 1.5 }}>{item.desc}</p>
               </div>
@@ -278,7 +278,7 @@ export function LeaderboardPreview() {
           running a compliant kitchen.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/signup" style={{ background: '#A08C5A', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 800, fontSize: 14, textDecoration: 'none' }}>
+          <a href="/signup" style={{ background: '#B24A2E', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 800, fontSize: 14, textDecoration: 'none' }}>
             Get Founder Pricing {'→'}
           </a>
           <a href="https://getevidly.com" style={{ background: 'transparent', color: 'white', padding: '14px 32px', borderRadius: 10, fontWeight: 600, fontSize: 14, border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}>

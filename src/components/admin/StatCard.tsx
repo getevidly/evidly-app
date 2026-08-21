@@ -7,7 +7,7 @@ export interface StatCardProps {
 const VALUE_COLORS: Record<string, string> = {
   default: '#1E2D4D',
   navy: '#1E2D4D',
-  gold: '#A08C5A',
+  gold: '#B24A2E',
   green: '#166534',
   warning: '#C2410C',
   red: '#991B1B',

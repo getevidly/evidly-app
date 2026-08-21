@@ -146,7 +146,7 @@ export const DiagnosisWizard: React.FC = () => {
                   transition: 'all 0.15s ease',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#A08C5A';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#B24A2E';
                   (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(212,175,55,0.15)';
                 }}
                 onMouseLeave={e => {
@@ -321,18 +321,18 @@ export const DiagnosisWizard: React.FC = () => {
           {/* CPP Service Cross-Reference */}
           {result.cppService && (
             <div style={{
-              background: '#EEF1F7', border: '1px solid #A08C5A40',
+              background: '#EEF1F7', border: '1px solid #B24A2E40',
               borderRadius: 10, padding: 14, marginBottom: 12,
               display: 'flex', alignItems: 'center', gap: 12,
             }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A', fontFamily: 'system-ui' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#B24A2E', fontFamily: 'system-ui' }}>
                 {'★'} EvidLY Partner Service:
               </span>
               <span style={{ fontSize: 13, color: 'var(--text-primary, #0B1628)', fontFamily: 'system-ui' }}>{result.cppService}</span>
               <button
                 onClick={() => navigate('/vendors')}
                 style={{
-                  marginLeft: 'auto', background: '#A08C5A', border: 'none',
+                  marginLeft: 'auto', background: '#B24A2E', border: 'none',
                   borderRadius: 6, padding: '5px 12px',
                   color: '#ffffff', fontSize: 11, fontWeight: 700,
                   cursor: 'pointer', fontFamily: 'system-ui',

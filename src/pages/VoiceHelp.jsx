@@ -40,7 +40,7 @@ const COMMANDS = [
   {
     category: 'Shift',
     icon: ArrowRight,
-    color: '#A08C5A',
+    color: '#B24A2E',
     commands: [
       { phrase: 'Shift handoff ready', description: 'Opens the shift handoff flow' },
       { phrase: 'Shift done', description: 'Starts the shift handoff process' },
@@ -71,7 +71,7 @@ export function VoiceHelp() {
       </button>
 
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-[#A08C5A] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full bg-[#B24A2E] flex items-center justify-center">
           <Mic className="w-5 h-5 text-white" />
         </div>
         <div>
@@ -80,7 +80,7 @@ export function VoiceHelp() {
         </div>
       </div>
 
-      <div className="bg-[#A08C5A]/10 border border-[#A08C5A]/20 rounded-xl p-4 mb-6">
+      <div className="bg-[#B24A2E]/10 border border-[#B24A2E]/20 rounded-xl p-4 mb-6">
         <p className="text-sm text-[var(--text-primary)] font-medium mb-1">How it works</p>
         <ol className="text-sm text-[var(--text-secondary)] space-y-1 list-decimal list-inside">
           <li>Press and hold the gold mic button in the bottom nav</li>

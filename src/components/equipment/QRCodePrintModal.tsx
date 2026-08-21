@@ -33,7 +33,7 @@ export function QRCodePrintModal({ equipment, onClose }: QRCodePrintModalProps) 
           <p style="color:#6B7F96;margin-bottom:24px;">${escapeHtml(equipment.locationName)}</p>
           <div id="qr" style="margin:0 auto 16px;"></div>
           <p style="font-family:monospace;color:#6B7F96;font-size:12px;">${equipment.qrCodeId}</p>
-          <p style="color:#A08C5A;font-size:10px;margin-top:24px;">Powered by HoodOps</p>
+          <p style="color:#B24A2E;font-size:10px;margin-top:24px;">Powered by HoodOps</p>
         </div>`
       : layout === 'label'
       ? `<div style="display:inline-block;padding:16px;border:1px solid #ddd;border-radius:8px;font-family:sans-serif;text-align:center;">

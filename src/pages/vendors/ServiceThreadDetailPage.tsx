@@ -307,7 +307,7 @@ export default function ServiceThreadDetailPage() {
         {isCppGold && (
           <span
             className="ml-auto shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
-            style={{ backgroundColor: '#F5EED6', color: '#A08C5A' }}
+            style={{ backgroundColor: '#F5EED6', color: '#B24A2E' }}
           >
             <ShieldCheck className="w-3 h-3" />
             CPP

@@ -19,7 +19,7 @@ import {
 import { SHARE_MESSAGES } from '../../data/ambassadorDemoData';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 interface StandingCardModalProps {
   isOpen: boolean;

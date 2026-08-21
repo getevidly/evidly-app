@@ -542,7 +542,7 @@ export function FacilitySafety() {
                         placeholder={t('pages.facilitySafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
-                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 resize-none"
+                        className="w-full text-sm border border-[#1E2D4D]/10 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 resize-none"
                       />
                       {aiFields.has(`notes_${item.id}`) && <AIGeneratedIndicator />}
                     </div>

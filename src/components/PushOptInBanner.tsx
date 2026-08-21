@@ -46,7 +46,7 @@ export function PushOptInBanner() {
       }}
     >
       <div className="flex items-center gap-3 min-w-0">
-        <Bell size={20} className="shrink-0" style={{ color: '#A08C5A' }} />
+        <Bell size={20} className="shrink-0" style={{ color: '#B24A2E' }} />
         <div className="min-w-0">
           <p style={{ fontSize: 14, fontWeight: 600, margin: '0 0 2px' }}>
             Get instant alerts on your phone
@@ -61,7 +61,7 @@ export function PushOptInBanner() {
           onClick={handleEnable}
           className="rounded-md font-semibold transition-colors"
           style={{
-            background: '#A08C5A',
+            background: '#B24A2E',
             color: '#FAF7F0',
             border: 'none',
             padding: '8px 16px',

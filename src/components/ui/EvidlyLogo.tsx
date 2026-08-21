@@ -1,7 +1,7 @@
 /**
  * LOGO-FIX-6 — EvidLY Wordmark (styled text, no dot icon)
  *
- * "E" in Gold (#A08C5A), "vid" in White (#FFFFFF), "LY" in Gold (#A08C5A).
+ * "E" in Gold (#B24A2E), "vid" in White (#FFFFFF), "LY" in Gold (#B24A2E).
  * Font: Syne, weight 800.
  * Tagline "ANSWERS BEFORE YOU ASK" in gold, 10px, wide tracking.
  */
@@ -29,15 +29,15 @@ export const EvidlyLogo: React.FC<EvidlyLogoProps> = ({
   return (
     <div className={className} aria-label="EvidLY — Answers before you ask">
       <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '24px', letterSpacing: '-0.02em', lineHeight: 1 }}>
-        <span style={{ color: '#A08C5A' }}>E</span>
+        <span style={{ color: '#B24A2E' }}>E</span>
         <span style={{ color: vidColor }}>vid</span>
-        <span style={{ color: '#A08C5A' }}>LY</span>
+        <span style={{ color: '#B24A2E' }}>LY</span>
       </span>
       {showTagline && (
         <div style={{
           fontSize: '10px',
           letterSpacing: '0.15em',
-          color: '#A08C5A',
+          color: '#B24A2E',
           fontWeight: 600,
           marginTop: '2px',
           fontFamily: 'system-ui, sans-serif',

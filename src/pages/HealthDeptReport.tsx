@@ -85,7 +85,7 @@ function CountBadge({ count, color }: { count: number; color: string }) {
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       minWidth: 20, height: 20, borderRadius: 10, fontSize: 11, fontWeight: 700,
       backgroundColor: color === 'red' ? '#fef2f2' : color === 'amber' ? '#fffbeb' : '#f0fdf4',
-      color: color === 'red' ? '#ef4444' : color === 'amber' ? '#A08C5A' : '#22c55e',
+      color: color === 'red' ? '#ef4444' : color === 'amber' ? '#B24A2E' : '#22c55e',
       border: `1px solid ${color === 'red' ? '#fecaca' : color === 'amber' ? '#fef3c7' : '#bbf7d0'}`,
       padding: '0 6px',
     }}>
@@ -299,7 +299,7 @@ export function HealthDeptReport() {
               onClick={() => setActiveView(tab.id as any)}
               className={`flex items-center gap-2 px-5 py-3 min-h-[44px] font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
                 activeView === tab.id
-                  ? 'border-[#A08C5A] text-[#1E2D4D]'
+                  ? 'border-[#B24A2E] text-[#1E2D4D]'
                   : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D] hover:border-[#1E2D4D]/15'
               }`}
             >
@@ -382,14 +382,14 @@ export function HealthDeptReport() {
 
                 {!isPaidTier && (
                   <div style={{ padding: '12px 16px', backgroundColor: '#fffbeb', borderRadius: 8, border: '1px solid #fef3c7', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Lock className="h-5 w-5 text-[#A08C5A]" />
+                    <Lock className="h-5 w-5 text-[#B24A2E]" />
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, color: '#92400e' }}>Free Tier — Limited Report</div>
                       <div style={{ fontSize: 13, color: '#92400e' }}>Upgrade to unlock Food Safety, Employee Certs, Fire Safety, Vendor Docs, and Corrective Actions sections.</div>
                     </div>
                     <button
                       onClick={() => setIsPaidTier(true)}
-                      style={{ marginLeft: 'auto', padding: '6px 16px', backgroundColor: '#A08C5A', color: 'white', borderRadius: 8, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      style={{ marginLeft: 'auto', padding: '6px 16px', backgroundColor: '#B24A2E', color: 'white', borderRadius: 8, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
                     >
                       Upgrade Now
                     </button>
@@ -401,7 +401,7 @@ export function HealthDeptReport() {
               {missingDocs.length > 0 && (
                 <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-6 space-y-4">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-[#A08C5A]" />
+                    <AlertTriangle className="h-5 w-5 text-[#B24A2E]" />
                     <h3 className="font-semibold text-[#1E2D4D]">Missing Documentation Alerts</h3>
                     <CountBadge count={missingDocs.filter(d => d.severity === 'critical').length} color="red" />
                     <CountBadge count={missingDocs.filter(d => d.severity === 'warning').length} color="amber" />
@@ -415,7 +415,7 @@ export function HealthDeptReport() {
                       }}>
                         {doc.severity === 'critical'
                           ? <XCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                          : <AlertCircle className="h-5 w-5 text-[#A08C5A] flex-shrink-0 mt-0.5" />
+                          : <AlertCircle className="h-5 w-5 text-[#B24A2E] flex-shrink-0 mt-0.5" />
                         }
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 600, color: doc.severity === 'critical' ? '#991b1b' : '#92400e' }}>{doc.document}</div>
@@ -469,7 +469,7 @@ export function HealthDeptReport() {
                     type="checkbox"
                     checked={isPaidTier}
                     onChange={e => setIsPaidTier(e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: '#A08C5A' }}
+                    style={{ width: 16, height: 16, accentColor: '#B24A2E' }}
                   />
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>
@@ -630,7 +630,7 @@ export function HealthDeptReport() {
                               <td className="px-4 py-3 text-sm font-medium text-[#1E2D4D]">{item.item}</td>
                               <td className="px-4 py-3 text-center">
                                 {item.status === 'compliant' && <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />}
-                                {item.status === 'needs-attention' && <AlertCircle className="h-5 w-5 text-[#A08C5A] mx-auto" />}
+                                {item.status === 'needs-attention' && <AlertCircle className="h-5 w-5 text-[#B24A2E] mx-auto" />}
                                 {item.status === 'non-compliant' && <XCircle className="h-5 w-5 text-red-500 mx-auto" />}
                               </td>
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{item.details}</td>
@@ -765,7 +765,7 @@ export function HealthDeptReport() {
                               <td className="px-4 py-3 text-sm text-[#1E2D4D]/70">{doc.docType}</td>
                               <td className="px-4 py-3 text-center text-sm text-[#1E2D4D]/70 hidden sm:table-cell">{doc.expiryDate}</td>
                               <td className="px-4 py-3 text-center text-sm font-semibold hidden sm:table-cell" style={{
-                                color: doc.daysUntilExpiry < 0 ? '#ef4444' : doc.daysUntilExpiry <= 30 ? '#A08C5A' : '#22c55e'
+                                color: doc.daysUntilExpiry < 0 ? '#ef4444' : doc.daysUntilExpiry <= 30 ? '#B24A2E' : '#22c55e'
                               }}>
                                 {doc.daysUntilExpiry < 0 ? `${Math.abs(doc.daysUntilExpiry)} overdue` : `${doc.daysUntilExpiry} days`}
                               </td>
@@ -798,7 +798,7 @@ export function HealthDeptReport() {
                       {generatedReport.correctiveActions.map((action) => (
                         <div key={action.id} style={{
                           padding: '12px 16px', borderRadius: 8, border: '1px solid #e5e7eb',
-                          borderLeft: `4px solid ${action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#A08C5A' : '#1E2D4D'}`,
+                          borderLeft: `4px solid ${action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#B24A2E' : '#1E2D4D'}`,
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, flexWrap: 'wrap', gap: 4 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -806,7 +806,7 @@ export function HealthDeptReport() {
                               <span style={{
                                 padding: '1px 8px', borderRadius: 10, fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
                                 backgroundColor: action.priority === 'critical' ? '#fef2f2' : action.priority === 'high' ? '#fff7ed' : action.priority === 'medium' ? '#fffbeb' : '#eff6ff',
-                                color: action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#A08C5A' : '#1E2D4D',
+                                color: action.priority === 'critical' ? '#ef4444' : action.priority === 'high' ? '#f97316' : action.priority === 'medium' ? '#B24A2E' : '#1E2D4D',
                               }}>
                                 {action.priority}
                               </span>
@@ -866,7 +866,7 @@ export function HealthDeptReport() {
                             <Tooltip />
                             <Legend />
                             <Line type="monotone" dataKey="tempCompliance" name="Temp Compliance" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 3 }} />
-                            <Line type="monotone" dataKey="checklistCompletion" name="Checklist Completion" stroke="#A08C5A" strokeWidth={1.5} dot={{ r: 3 }} />
+                            <Line type="monotone" dataKey="checklistCompletion" name="Checklist Completion" stroke="#B24A2E" strokeWidth={1.5} dot={{ r: 3 }} />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
@@ -963,7 +963,7 @@ export function HealthDeptReport() {
                       <div style={{ fontSize: 12, color: '#991b1b' }}>Failing</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#fffbeb', borderRadius: 8, border: '1px solid #fef3c7' }}>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#A08C5A' }}>{reviewCount}</div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: '#B24A2E' }}>{reviewCount}</div>
                       <div style={{ fontSize: 12, color: '#92400e' }}>Needs Review</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#fef2f2', borderRadius: 8, border: '1px solid #fecaca' }}>
@@ -971,7 +971,7 @@ export function HealthDeptReport() {
                       <div style={{ fontSize: 12, color: '#991b1b' }}>Points Lost</div>
                     </div>
                     <div style={{ textAlign: 'center', padding: 12, backgroundColor: '#fffbeb', borderRadius: 8, border: '1px solid #fef3c7' }}>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#A08C5A' }}>-{atRiskPoints}</div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: '#B24A2E' }}>-{atRiskPoints}</div>
                       <div style={{ fontSize: 12, color: '#92400e' }}>At Risk</div>
                     </div>
                   </div>
@@ -1001,7 +1001,7 @@ export function HealthDeptReport() {
                         }}>
                           {item.status === 'pass' && <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />}
                           {item.status === 'fail' && <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
-                          {item.status === 'needs-review' && <AlertCircle className="h-5 w-5 text-[#A08C5A] flex-shrink-0" />}
+                          {item.status === 'needs-review' && <AlertCircle className="h-5 w-5 text-[#B24A2E] flex-shrink-0" />}
                           <div style={{ flex: 1 }}>
                             <div style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{item.item}</div>
                             <div style={{ fontSize: 12, color: '#6b7280' }}>{item.requirement}</div>

@@ -337,7 +337,7 @@ export function Deficiencies() {
             {isRecurring && (
               <span
                 className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                style={{ color: '#A08C5A', backgroundColor: 'rgba(160,140,90,0.15)' }}
+                style={{ color: '#B24A2E', backgroundColor: 'rgba(178,74,46,0.15)' }}
               >
                 Recurring
               </span>

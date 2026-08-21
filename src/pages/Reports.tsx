@@ -274,7 +274,7 @@ export function Reports() {
                   <div
                     key={card.type}
                     className="bg-white rounded-lg border border-[#E5E0D8] overflow-hidden"
-                    style={card.cornerstone ? { borderTop: '3px solid #A08C5A' } : undefined}
+                    style={card.cornerstone ? { borderTop: '3px solid #B24A2E' } : undefined}
                   >
                     <div className="px-5 py-4">
                       <div className="flex items-start justify-between gap-3">

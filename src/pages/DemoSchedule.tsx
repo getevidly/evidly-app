@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { CheckCircle2, Calendar, Shield, Clock } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 // Default Calendly URL — configurable in admin settings
 const DEFAULT_CALENDLY_URL = 'https://calendly.com/founders-getevidly/60min';

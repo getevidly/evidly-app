@@ -67,9 +67,9 @@ function XPBar({ xp, level }: { xp: number; level: number }) {
   const pct = Math.round((xpInLevel / 40) * 100);
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A', minWidth: 38 }}>Lv.{level}</span>
+      <span style={{ fontSize: 11, fontWeight: 700, color: '#B24A2E', minWidth: 38 }}>Lv.{level}</span>
       <div style={{ flex: 1, height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #A08C5A, #A08C5A)', borderRadius: 4, transition: 'width 1s ease' }} />
+        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #B24A2E, #B24A2E)', borderRadius: 4, transition: 'width 1s ease' }} />
       </div>
       <span style={{ fontSize: 10, color: '#6b7280', minWidth: 30, textAlign: 'right' }}>{xp} XP</span>
     </div>
@@ -161,7 +161,7 @@ export function Leaderboard() {
             href="/leaderboard-preview"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: '#A08C5A', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+            style={{ color: '#B24A2E', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
           >
             Preview what it looks like {'→'}
           </a>
@@ -180,7 +180,7 @@ export function Leaderboard() {
           borderRadius: 16, padding: '28px 32px', color: 'white',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <Trophy size={28} style={{ color: '#A08C5A' }} />
+            <Trophy size={28} style={{ color: '#B24A2E' }} />
             <h2 style={{ fontSize: 24, fontWeight: 800 }}>EvidLY Compliance Leaderboard</h2>
           </div>
           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
@@ -194,7 +194,7 @@ export function Leaderboard() {
           boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #e5e7eb',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <Star size={20} style={{ color: '#A08C5A' }} />
+            <Star size={20} style={{ color: '#B24A2E' }} />
             <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>Monthly Rewards</h3>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
@@ -242,7 +242,7 @@ export function Leaderboard() {
                 <div key={loc.id} style={{
                   background: 'white', borderRadius: 16, padding: '24px 16px', textAlign: 'center',
                   boxShadow: isFirst ? '0 8px 32px rgba(30,77,107,0.15)' : '0 2px 8px rgba(0,0,0,0.06)',
-                  border: isFirst ? '2px solid #A08C5A' : '1px solid #e5e7eb',
+                  border: isFirst ? '2px solid #B24A2E' : '1px solid #e5e7eb',
                   minHeight: height,
                   display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                   transform: isFirst ? 'scale(1.05)' : 'scale(1)',
@@ -253,7 +253,7 @@ export function Leaderboard() {
                   </div>
                   <h4 style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 2 }}>{loc.name}</h4>
                   <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>{loc.organization_name}</p>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: '#A08C5A' }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: '#B24A2E' }}>
                     {loc.xp} XP
                   </div>
                   <div style={{ display: 'flex', gap: 4, marginTop: 8, justifyContent: 'center' }}>
@@ -300,7 +300,7 @@ export function Leaderboard() {
                   onMouseEnter={e => { e.currentTarget.style.background = '#f9fafb'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
-                  <span style={{ fontSize: 16, fontWeight: 800, color: loc.rank <= 3 ? '#A08C5A' : '#374151' }}>#{loc.rank}</span>
+                  <span style={{ fontSize: 16, fontWeight: 800, color: loc.rank <= 3 ? '#B24A2E' : '#374151' }}>#{loc.rank}</span>
                   <RankChange change={loc.change} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#1E2D4D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>
@@ -323,7 +323,7 @@ export function Leaderboard() {
                     {loc.badges.length > 3 && <span style={{ fontSize: 10, color: '#6b7280', fontWeight: 600 }}>+{loc.badges.length - 3}</span>}
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: 18, fontWeight: 800, color: '#A08C5A' }}>{loc.xp}</span>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: '#B24A2E' }}>{loc.xp}</span>
                     <span style={{ fontSize: 10, color: '#6b7280', marginLeft: 2 }}>XP</span>
                   </div>
                 </div>
@@ -340,8 +340,8 @@ export function Leaderboard() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { icon: <Flame className="h-7 w-7" style={{ color: '#A08C5A' }} />, title: 'Perfect Week', desc: '100% compliance for 7 consecutive days', earned: true },
-              { icon: <Target className="h-7 w-7" style={{ color: '#A08C5A' }} />, title: '100% Temp Logs', desc: 'All temperature logs current for 30 days', earned: true },
+              { icon: <Flame className="h-7 w-7" style={{ color: '#B24A2E' }} />, title: 'Perfect Week', desc: '100% compliance for 7 consecutive days', earned: true },
+              { icon: <Target className="h-7 w-7" style={{ color: '#B24A2E' }} />, title: '100% Temp Logs', desc: 'All temperature logs current for 30 days', earned: true },
               { icon: <Zap className="h-7 w-7" style={{ color: '#9ca3af' }} />, title: 'Zero Overdue Docs', desc: 'All vendor documents current and valid', earned: false },
               { icon: <Star className="h-7 w-7" style={{ color: '#9ca3af' }} />, title: 'Gold Standard', desc: 'Top ranking maintained for 90 days', earned: false },
             ].map(badge => (
@@ -387,7 +387,7 @@ export function Leaderboard() {
               <div key={item.label} style={{ backgroundColor: '#f9fafb', borderRadius: 12, padding: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 600, color: '#374151' }}>{item.label}</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#A08C5A' }}>{item.weight}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#B24A2E' }}>{item.weight}</span>
                 </div>
                 <p style={{ fontSize: 11, color: '#6b7280', lineHeight: 1.4 }}>{item.desc}</p>
               </div>

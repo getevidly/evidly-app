@@ -56,7 +56,7 @@ function formatTime(d: string) {
 }
 function scoreColor(s: number) {
   if (s >= 90) return '#22c55e';
-  if (s >= 80) return '#A08C5A';
+  if (s >= 80) return '#B24A2E';
   if (s >= 70) return '#f59e0b';
   return '#ef4444';
 }
@@ -156,7 +156,7 @@ function countCriticalItems(node: EnterpriseHierarchyNode): number {
 
 // Regulatory overlay markers for trend chart
 const REGULATORY_MARKERS = [
-  { month: 'Jul 25', label: 'AB 660 (CA)', color: '#A08C5A' },
+  { month: 'Jul 25', label: 'AB 660 (CA)', color: '#B24A2E' },
   { month: 'Nov 25', label: 'FDA Update', color: '#6b21a8' },
 ];
 
@@ -390,7 +390,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
               {[
                 { label: 'Current', value: latestTrend.foodSafety, color: '#1E2D4D' },
                 { label: 'Food Safety', value: latestTrend.foodSafety, color: '#22c55e' },
-                { label: 'Fire Safety', value: latestTrend.facilitySafety, color: '#A08C5A' },
+                { label: 'Fire Safety', value: latestTrend.facilitySafety, color: '#B24A2E' },
               ].map(m => (
                 <div key={m.label} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
@@ -630,7 +630,7 @@ const COMMON_ISSUES: Record<string, { icon: typeof Thermometer; label: string; p
 };
 
 const LEVEL_COLORS: Record<string, string> = {
-  corporate: '#6b21a8', division: '#1E2D4D', region: '#0e7490', district: '#A08C5A', location: '#22c55e',
+  corporate: '#6b21a8', division: '#1E2D4D', region: '#0e7490', district: '#B24A2E', location: '#22c55e',
 };
 
 function TrendBadge({ value }: { value: number }) {
@@ -2011,7 +2011,7 @@ export function EnterpriseDashboard() {
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-lg font-bold text-[#1E2D4D]">Evid</span>
-                <span className="text-lg font-bold" style={{ color: '#A08C5A' }}>LY</span>
+                <span className="text-lg font-bold" style={{ color: '#B24A2E' }}>LY</span>
                 <span className="text-xs font-medium text-[#1E2D4D]/30 ml-1">Enterprise Admin</span>
               </div>
             </div>

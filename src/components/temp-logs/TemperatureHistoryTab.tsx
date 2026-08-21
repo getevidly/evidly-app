@@ -410,7 +410,7 @@ export function TemperatureHistoryTab({
             <select
               value={historyDateRange}
               onChange={(e) => setHistoryDateRange(e.target.value)}
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="today">{t('common.today')}</option>
               <option value="yesterday">{t('common.yesterday')}</option>
@@ -428,7 +428,7 @@ export function TemperatureHistoryTab({
                   type="date"
                   value={customDateFrom}
                   onChange={(e) => setCustomDateFrom(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 />
               </div>
               <div className="flex-1 min-w-0 sm:min-w-[150px]">
@@ -437,7 +437,7 @@ export function TemperatureHistoryTab({
                   type="date"
                   value={customDateTo}
                   onChange={(e) => setCustomDateTo(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 />
               </div>
             </>
@@ -448,7 +448,7 @@ export function TemperatureHistoryTab({
             <select
               value={historyEquipment}
               onChange={(e) => setHistoryEquipment(e.target.value)}
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">{t('tempLogs.allEquipment')}</option>
               {equipment.map(eq => (
@@ -462,7 +462,7 @@ export function TemperatureHistoryTab({
             <select
               value={historyStatus}
               onChange={(e) => setHistoryStatus(e.target.value)}
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">{t('common.all')}</option>
               <option value="pass">{t('tempLogs.inRange')}</option>
@@ -475,7 +475,7 @@ export function TemperatureHistoryTab({
             <select
               value={historyMethod}
               onChange={(e) => setHistoryMethod(e.target.value as 'all' | InputMethod)}
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">All Methods</option>
               <option value="manual">Manual</option>
@@ -489,7 +489,7 @@ export function TemperatureHistoryTab({
             <select
               value={historyShift}
               onChange={(e) => setHistoryShift(e.target.value as 'all' | 'morning' | 'afternoon' | 'evening')}
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">All Shifts</option>
               <option value="morning">Morning</option>

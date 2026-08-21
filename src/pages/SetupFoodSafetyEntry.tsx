@@ -131,7 +131,7 @@ export function SetupFoodSafetyEntry() {
   if (locations === null) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center" style={{ background: CREAM }}>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: '#A08C5A' }} />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: '#B24A2E' }} />
       </div>
     );
   }

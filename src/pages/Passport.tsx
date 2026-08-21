@@ -209,7 +209,7 @@ export default function Passport() {
             onClick={handleDownloadPDF}
             disabled={pdfLoading}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
-            style={{ background: '#A08C5A', color: '#ffffff' }}
+            style={{ background: '#B24A2E', color: '#ffffff' }}
           >
             {pdfLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             {pdfLoading ? 'Generating...' : 'Download PDF'}

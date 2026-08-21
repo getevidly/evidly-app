@@ -72,7 +72,7 @@ export default function MobileInstallBanner() {
           <button
             onClick={handleInstall}
             className="px-4 py-1.5 rounded-lg text-sm font-bold transition-colors min-h-[36px]"
-            style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+            style={{ backgroundColor: '#B24A2E', color: '#1E2D4D' }}
           >
             Install
           </button>

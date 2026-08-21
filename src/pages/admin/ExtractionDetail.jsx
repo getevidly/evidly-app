@@ -24,7 +24,7 @@ import { usePageTitle } from '../../hooks/usePageTitle';
 
 /* ── Brand palette ─────────────────────────────────────────────── */
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const CREAM = '#FAF7F0';
 const TEAL = '#0F766E';
 const CORAL = '#C2553A';
@@ -437,7 +437,7 @@ export default function ExtractionDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B24A2E]" />
       </div>
     );
   }
@@ -445,7 +445,7 @@ export default function ExtractionDetail() {
     return (
       <div className="py-12 text-center">
         <p className="text-sm text-[#1E2D4D]/50">Intake not found.</p>
-        <button onClick={() => navigate('/admin/policy-lens')} className="mt-4 text-sm text-[#A08C5A] underline">
+        <button onClick={() => navigate('/admin/policy-lens')} className="mt-4 text-sm text-[#B24A2E] underline">
           Back to Queue
         </button>
       </div>

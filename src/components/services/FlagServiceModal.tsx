@@ -54,7 +54,7 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             >
               <option value="">Select a category...</option>
@@ -73,7 +73,7 @@ export function FlagServiceModal({ serviceName, vendorName, onClose, onSubmit }:
               onChange={(e) => setReason(e.target.value)}
               rows={4}
               placeholder="Describe the issue with this service record..."
-              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

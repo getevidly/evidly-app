@@ -5,9 +5,9 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const NAVY = '#1E2D4D';
-const MUTED_GOLD = '#A08C5A';
+const MUTED_GOLD = '#B24A2E';
 
 const PLATFORMS = [
   { id: 'zenput', label: 'Zenput / CrunchTime' },

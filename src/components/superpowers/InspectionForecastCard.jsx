@@ -3,7 +3,7 @@ import { Calendar, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 
 const RISK_STYLES = {
   low: { bg: 'bg-[#166534]/10', text: 'text-[#166534]', label: 'Low Risk' },
-  moderate: { bg: 'bg-[#A08C5A]/10', text: 'text-[#A08C5A]', label: 'Moderate Risk' },
+  moderate: { bg: 'bg-[#B24A2E]/10', text: 'text-[#B24A2E]', label: 'Moderate Risk' },
   high: { bg: 'bg-[#991B1B]/10', text: 'text-[#991B1B]', label: 'High Risk' },
 };
 
@@ -80,7 +80,7 @@ export function InspectionForecastCard({ forecast }) {
         <span className="text-xs text-[#6B7F96]">Confidence:</span>
         <div className="flex-1 h-1.5 bg-[#EEF1F7] rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#A08C5A] rounded-full transition-all"
+            className="h-full bg-[#B24A2E] rounded-full transition-all"
             style={{ width: `${forecast.confidence}%` }}
           />
         </div>

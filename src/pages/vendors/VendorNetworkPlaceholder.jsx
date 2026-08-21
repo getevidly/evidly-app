@@ -27,7 +27,7 @@ const SERVICE_ICON_MAP = {
 // ── Tier pill color palettes ────────────────────────────────────────────────
 
 const TIER_PILL_STYLES = {
-  gold:   { bg: '#FAEEDA', text: '#633806', border: '#F0D9A8', activeBg: '#A08C5A', activeBorder: '#A08C5A', hoverBg: '#F5DFBF' },
+  gold:   { bg: '#FAEEDA', text: '#633806', border: '#F0D9A8', activeBg: '#B24A2E', activeBorder: '#B24A2E', hoverBg: '#F5DFBF' },
   silver: { bg: '#F1EFE8', text: '#2C2C2A', border: '#D3D1C7', activeBg: '#5F5E5A', activeBorder: '#5F5E5A', hoverBg: '#E5E3DB' },
   bronze: { bg: '#FAECE7', text: '#4A1B0C', border: '#F0C4B3', activeBg: '#993C1D', activeBorder: '#993C1D', hoverBg: '#F5DDD5' },
 };
@@ -254,7 +254,7 @@ export default function VendorNetworkPlaceholder() {
       <div className="px-4 pt-5 pb-3">
         <p
           className="uppercase tracking-wider mb-1"
-          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#A08C5A' }}
+          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#B24A2E' }}
         >
           Vendor network
         </p>
@@ -520,7 +520,7 @@ export default function VendorNetworkPlaceholder() {
             style={{ border: '1px solid #E2DDD4' }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Star className="w-[18px] h-[18px] flex-shrink-0" style={{ color: '#A08C5A' }} />
+              <Star className="w-[18px] h-[18px] flex-shrink-0" style={{ color: '#B24A2E' }} />
               <p style={{ fontSize: '14px', fontWeight: 500, color: '#1E2D4D' }}>
                 Have a vendor you trust?
               </p>

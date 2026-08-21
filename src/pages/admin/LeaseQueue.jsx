@@ -277,7 +277,7 @@ export default function LeaseQueue() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B24A2E]" />
       </div>
     );
   }
@@ -310,7 +310,7 @@ export default function LeaseQueue() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search kitchen, lease filename…"
-            className="w-full pl-8 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]"
+            className="w-full pl-8 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]"
           />
         </div>
         {search && (
@@ -421,7 +421,7 @@ export default function LeaseQueue() {
                                       ...ed,
                                       [row.id]: { ...ed[row.id], maintenance_party: e.target.value },
                                     }))}
-                                    className="ml-1 text-xs border border-[#1E2D4D]/15 rounded px-1.5 py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#A08C5A]"
+                                    className="ml-1 text-xs border border-[#1E2D4D]/15 rounded px-1.5 py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#B24A2E]"
                                   >
                                     {PARTY_OPTIONS.map(p => (
                                       <option key={p} value={p}>{capitalize(p)}</option>
@@ -436,7 +436,7 @@ export default function LeaseQueue() {
                                       ...ed,
                                       [row.id]: { ...ed[row.id], notification_party: e.target.value },
                                     }))}
-                                    className="ml-1 text-xs border border-[#1E2D4D]/15 rounded px-1.5 py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#A08C5A]"
+                                    className="ml-1 text-xs border border-[#1E2D4D]/15 rounded px-1.5 py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#B24A2E]"
                                   >
                                     {PARTY_OPTIONS.map(p => (
                                       <option key={p} value={p}>{capitalize(p)}</option>
@@ -497,7 +497,7 @@ export default function LeaseQueue() {
                           {/* Actions */}
                           <td className="px-5 py-3 text-right">
                             {isSaving ? (
-                              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-[#A08C5A]" />
+                              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-[#B24A2E]" />
                             ) : isConfirmed ? (
                               <span className="text-[10px] text-[#1E2D4D]/40">
                                 by {row.confirmed_by === user?.id ? 'you' : row.confirmed_by?.slice(0, 8)}

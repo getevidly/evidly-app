@@ -104,7 +104,7 @@ export function CitationModal({ citationId, onClose }: CitationModalProps) {
             href={citation.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-[#A08C5A] hover:text-[#8A7548] transition-colors"
+            className="text-sm font-medium text-[#B24A2E] hover:text-[#8A7548] transition-colors"
           >
             View on leginfo.legislature.ca.gov &rarr;
           </a>

@@ -110,7 +110,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             />
           </div>
 
@@ -139,7 +139,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9()\-\s+]/g, ''))}
               inputMode="tel"
               placeholder="(555) 123-4567"
-              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             />
           </div>
 
@@ -161,7 +161,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     pattern="[0-9]*"
                     placeholder="● ● ● ●"
                     maxLength={4}
-                    className="w-full px-4 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-center text-lg tracking-widest"
+                    className="w-full px-4 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] text-center text-lg tracking-widest"
                   />
                   <button
                     type="button"
@@ -184,7 +184,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     pattern="[0-9]*"
                     placeholder="● ● ● ●"
                     maxLength={4}
-                    className={`w-full px-4 py-2 pr-10 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] text-center text-lg tracking-widest ${
+                    className={`w-full px-4 py-2 pr-10 border rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] text-center text-lg tracking-widest ${
                       pinMismatch ? 'border-red-400' : 'border-[#1E2D4D]/15'
                     }`}
                   />

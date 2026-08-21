@@ -14,7 +14,7 @@ export function TemperatureAIPatternInsights({ analysis, windowDays, onViewData 
   const { loading, error, patterns, tier, readingsCount, aiDisclaimer, refresh } = analysis;
 
   const hasConcerning = patterns.some(p => p.prp === 'reduce' && p.confidence_pct >= 80);
-  const borderColor = hasConcerning ? '#DC2626' : '#A08C5A';
+  const borderColor = hasConcerning ? '#DC2626' : '#B24A2E';
   const bgGradient = hasConcerning
     ? 'linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%)'
     : 'linear-gradient(135deg, #fdf8f0 0%, #fef6e8 100%)';

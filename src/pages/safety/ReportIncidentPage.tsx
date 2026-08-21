@@ -67,7 +67,7 @@ export function ReportIncidentPage() {
 
   // ── Shared styles ──────────────────────────────────────────
   const inputClass =
-    'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30';
+    'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30';
   const inputStyle = { background: CARD_BG, borderColor: CARD_BORDER, color: NAVY };
   const labelClass = 'block text-sm font-medium mb-1.5';
   const labelStyle = { color: NAVY };

@@ -67,7 +67,7 @@ export function K2CWidget({
       {/* Gold accent bar */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-        background: 'linear-gradient(90deg, #A08C5A, #C4AE7A, #A08C5A)',
+        background: 'linear-gradient(90deg, #B24A2E, #C96A4B, #B24A2E)',
       }} />
 
       {/* Header */}
@@ -79,7 +79,7 @@ export function K2CWidget({
           title="Opens Kitchen to Community page in a new tab"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            fontSize: '14px', fontWeight: 700, color: '#A08C5A',
+            fontSize: '14px', fontWeight: 700, color: '#B24A2E',
             textDecoration: 'none', cursor: 'pointer',
           }}
           onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
@@ -111,14 +111,14 @@ export function K2CWidget({
       {/* Referral code */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-        background: 'rgba(160, 140, 90, 0.1)', border: '1px solid rgba(160, 140, 90, 0.3)',
+        background: 'rgba(178,74,46, 0.1)', border: '1px solid rgba(178,74,46, 0.3)',
         borderRadius: '8px', padding: '8px 12px', marginBottom: '14px',
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '10px', color: '#6B7F96', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>
             Your Referral Code
           </div>
-          <div style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, color: '#A08C5A', letterSpacing: '1px' }}>
+          <div style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, color: '#B24A2E', letterSpacing: '1px' }}>
             {referralCode || 'Not generated yet'}
           </div>
         </div>
@@ -127,7 +127,7 @@ export function K2CWidget({
           title="Copy referral link"
           style={{
             background: 'none', border: 'none', cursor: 'pointer', padding: '6px',
-            borderRadius: '6px', color: copied ? '#16a34a' : '#A08C5A',
+            borderRadius: '6px', color: copied ? '#16a34a' : '#B24A2E',
             display: 'flex', alignItems: 'center',
           }}
         >
@@ -140,8 +140,8 @@ export function K2CWidget({
         fontSize: '12px', color: '#3D5068', margin: '0 0 14px',
         lineHeight: '1.5', textAlign: 'center',
       }}>
-        Every kitchen you refer = <strong style={{ color: '#A08C5A' }}>12 meals donated</strong> to No Kid Hungry.
-        Your donations are <strong style={{ color: '#A08C5A' }}>doubled for 3 months</strong> per referral.
+        Every kitchen you refer = <strong style={{ color: '#B24A2E' }}>12 meals donated</strong> to No Kid Hungry.
+        Your donations are <strong style={{ color: '#B24A2E' }}>doubled for 3 months</strong> per referral.
       </p>
 
       {/* CTA Button */}
@@ -152,7 +152,7 @@ export function K2CWidget({
           padding: '12px 0',
           borderRadius: '8px',
           border: 'none',
-          background: 'linear-gradient(135deg, #A08C5A, #C4AE7A)',
+          background: 'linear-gradient(135deg, #B24A2E, #C96A4B)',
           color: '#ffffff',
           fontSize: '14px',
           fontWeight: 700,

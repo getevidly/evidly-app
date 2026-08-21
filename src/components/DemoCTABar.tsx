@@ -24,7 +24,7 @@ export function DemoCTABar() {
           <button
             onClick={() => navigate(isAuthenticatedDemo ? '/pricing' : '/signup')}
             className="px-4 py-2 text-sm font-semibold text-[#1E2D4D] rounded-lg transition-colors hover:opacity-90"
-            style={{ backgroundColor: '#A08C5A' }}
+            style={{ backgroundColor: '#B24A2E' }}
           >
             {isAuthenticatedDemo ? 'Upgrade to Full Account' : 'Get Founder Pricing'}
           </button>

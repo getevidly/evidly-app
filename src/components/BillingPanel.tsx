@@ -171,7 +171,7 @@ export function BillingPanel() {
               {/* Most Popular badge */}
               {isPopular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#A08C5A] text-white shadow-sm">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#B24A2E] text-white shadow-sm">
                     <Crown className="h-3 w-3" />
                     Most Popular
                   </span>

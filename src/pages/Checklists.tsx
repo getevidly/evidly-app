@@ -592,7 +592,7 @@ export function Checklists() {
                 placeholder="°F"
                 value={resp?.responseValue ?? ''}
                 onChange={(e) => handleItemResponse(item.masterItemId, e.target.value, null)}
-                className="w-24 px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                className="w-24 px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
               />
               <span className="text-sm text-[#1E2D4D]/50">°{item.tempUnit ?? 'F'}</span>
               {item.haccpCriticalLimit && (
@@ -639,7 +639,7 @@ export function Checklists() {
             <textarea
               value={resp?.responseValue ?? ''}
               onChange={(e) => handleItemResponse(item.masterItemId, e.target.value, e.target.value.trim().length > 0)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50 resize-y min-h-[60px]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50 resize-y min-h-[60px]"
               placeholder="Enter response..."
               rows={2}
             />
@@ -672,7 +672,7 @@ export function Checklists() {
                   }
                   handleItemResponse(item.masterItemId, val, pass);
                 }}
-                className="w-32 px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                className="w-32 px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
                 placeholder="Enter number..."
               />
               {expected?.min != null && expected?.max != null && (
@@ -698,7 +698,7 @@ export function Checklists() {
               onChange={(e) => handleItemResponse(item.masterItemId, e.target.value, e.target.value.length > 0)}
               min={typeof expected?.min === 'string' ? expected.min : undefined}
               max={typeof expected?.max === 'string' ? expected.max : new Date().toISOString().split('T')[0]}
-              className="px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+              className="px-3 py-2 border border-[#1E2D4D]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
             />
           </div>
         );
@@ -727,7 +727,7 @@ export function Checklists() {
                       const pass = updated.length > 0;
                       handleItemResponse(item.masterItemId, JSON.stringify(updated), pass);
                     }}
-                    className="w-4 h-4 rounded border-[#1E2D4D]/30 text-[#A08C5A] focus:ring-[#A08C5A]/50"
+                    className="w-4 h-4 rounded border-[#1E2D4D]/30 text-[#B24A2E] focus:ring-[#B24A2E]/50"
                   />
                   <span className="text-sm text-[#1E2D4D]">{opt}</span>
                 </label>
@@ -813,7 +813,7 @@ export function Checklists() {
             onClick={() => setActiveView('today')}
             className={`px-4 py-2 font-medium whitespace-nowrap flex items-center ${
               activeView === 'today'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -824,7 +824,7 @@ export function Checklists() {
             onClick={() => setActiveView('library')}
             className={`px-4 py-2 font-medium whitespace-nowrap flex items-center ${
               activeView === 'library'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -835,7 +835,7 @@ export function Checklists() {
             onClick={() => setActiveView('history')}
             className={`px-4 py-2 font-medium whitespace-nowrap flex items-center ${
               activeView === 'history'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -1150,12 +1150,12 @@ export function Checklists() {
                   placeholder="Search checklists..."
                   value={librarySearch}
                   onChange={(e) => setLibrarySearch(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50 w-64"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50 w-64"
                 />
                 <select
                   value={libraryCadence}
                   onChange={(e) => setLibraryCadence(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
                 >
                   <option value="">All cadences</option>
                   <option value="per_shift">Per Shift</option>
@@ -1242,7 +1242,7 @@ export function Checklists() {
                 <select
                   value={historyRange}
                   onChange={(e) => setHistoryRange(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
                 >
                   <option value="7days">Last 7 days</option>
                   <option value="30days">Last 30 days</option>
@@ -1253,11 +1253,11 @@ export function Checklists() {
                 <>
                   <div className="flex flex-col gap-1">
                     <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>From</span>
-                    <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50" />
+                    <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50" />
                   </div>
                   <div className="flex flex-col gap-1">
                     <span className="text-[11px] font-bold uppercase" style={{ color: colors.navy, letterSpacing: '0.04em' }}>To</span>
-                    <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50" />
+                    <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50" />
                   </div>
                 </>
               )}
@@ -1268,7 +1268,7 @@ export function Checklists() {
                 <select
                   value={historyInstanceFilter}
                   onChange={(e) => setHistoryInstanceFilter(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
                 >
                   <option value="">All checklists</option>
                   {(instances ?? []).filter(i => i.isActive).map(inst => (
@@ -1285,7 +1285,7 @@ export function Checklists() {
                 <select
                   value={historyStatusFilter}
                   onChange={(e) => setHistoryStatusFilter(e.target.value)}
-                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#A08C5A]/50"
+                  className="px-3 py-2 border border-[#1E2D4D]/15 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#B24A2E]/50"
                 >
                   <option value="">All statuses</option>
                   <option value="completed">Completed</option>
@@ -1474,7 +1474,7 @@ export function Checklists() {
                 </div>
                 <div className="w-full bg-[#1E2D4D]/8 rounded-full h-3">
                   <div
-                    className="bg-[#A08C5A] h-3 rounded-full transition-all duration-300"
+                    className="bg-[#B24A2E] h-3 rounded-full transition-all duration-300"
                     style={{ width: `${currentProgress}%` }}
                   />
                 </div>

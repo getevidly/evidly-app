@@ -292,7 +292,7 @@ export function K2CInviteModal({
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
               width: '36px', height: '36px', borderRadius: '10px',
-              background: 'linear-gradient(135deg, #A08C5A, #C4AE7A)',
+              background: 'linear-gradient(135deg, #B24A2E, #C96A4B)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Heart size={18} color="#ffffff" />

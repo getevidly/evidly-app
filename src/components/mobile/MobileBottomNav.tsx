@@ -45,7 +45,7 @@ export function MobileBottomNav({ tabs, onMorePress }: MobileBottomNavProps) {
                 {tab.label}
               </span>
               {isActive && (
-                <div className="w-4 h-0.5 rounded-full mt-0.5" style={{ background: '#A08C5A' }} />
+                <div className="w-4 h-0.5 rounded-full mt-0.5" style={{ background: '#B24A2E' }} />
               )}
             </button>
           );

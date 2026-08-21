@@ -9,22 +9,22 @@ const TIERS = {
     label: 'Founding Partner',
     icon: '🛡',
     bg: '#1E2D4D',
-    color: '#A08C5A',
-    border: '#A08C5A',
+    color: '#B24A2E',
+    border: '#B24A2E',
   },
   elite: {
     label: 'Elite Partner',
     icon: '👑',
-    bg: '#A08C5A',
+    bg: '#B24A2E',
     color: 'white',
-    border: '#A08C5A',
+    border: '#B24A2E',
   },
   preferred: {
     label: 'Preferred Partner',
     icon: '★',
     bg: 'white',
-    color: '#A08C5A',
-    border: '#A08C5A',
+    color: '#B24A2E',
+    border: '#B24A2E',
   },
 };
 

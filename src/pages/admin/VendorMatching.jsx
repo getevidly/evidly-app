@@ -166,7 +166,7 @@ export default function VendorMatching() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A]" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B24A2E]" />
       </div>
     );
   }
@@ -198,13 +198,13 @@ export default function VendorMatching() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search vendor name, candidate, org..."
-            className="w-full pl-8 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]"
+            className="w-full pl-8 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]"
+          className="px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]"
         >
           <option value="all">All statuses</option>
           <option value="pending">Pending</option>
@@ -298,13 +298,13 @@ export default function VendorMatching() {
                     {/* Actions */}
                     <td className="px-5 py-3 text-right" onClick={e => e.stopPropagation()}>
                       {isSaving ? (
-                        <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-[#A08C5A]" />
+                        <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-[#B24A2E]" />
                       ) : isPending ? (
                         <div className="flex items-center justify-end gap-1.5">
                           {c.candidate_company_id && (
                             <button
                               onClick={() => handleResolve(c.id, 'confirmed', c.candidate_company_id)}
-                              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded-lg border border-[#A08C5A]/40 text-[#A08C5A] hover:bg-[#FBF3E0] transition-colors"
+                              className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded-lg border border-[#B24A2E]/40 text-[#B24A2E] hover:bg-[#FBF3E0] transition-colors"
                             >
                               <Check size={11} />
                               Confirm
@@ -412,7 +412,7 @@ export default function VendorMatching() {
                 <button
                   onClick={() => handleResolve(selected.id, 'confirmed', selected.candidate_company_id)}
                   disabled={!!saving[selected.id]}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#A08C5A] text-white hover:bg-[#8F7D4F] transition-colors disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#B24A2E] text-white hover:bg-[#8F7D4F] transition-colors disabled:opacity-50"
                 >
                   <Check size={13} />
                   Confirm Match
@@ -456,7 +456,7 @@ export default function VendorMatching() {
                 <select
                   value={mergeCompanyId}
                   onChange={e => setMergeCompanyId(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]"
                 >
                   <option value="">Select a company...</option>
                   {companies.map(co => (

@@ -270,7 +270,7 @@ export default function VendorDetail() {
               onClick={() => setActiveTab(t.id)}
               className="relative whitespace-nowrap px-4 py-3 text-[13px] cursor-pointer bg-transparent border-none"
               style={{
-                borderBottom: activeTab === t.id ? '3px solid #A08C5A' : '3px solid transparent',
+                borderBottom: activeTab === t.id ? '3px solid #B24A2E' : '3px solid transparent',
                 fontWeight: activeTab === t.id ? 700 : 500,
                 color: activeTab === t.id ? '#1E2D4D' : '#8A93A6',
               }}

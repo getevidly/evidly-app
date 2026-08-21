@@ -274,7 +274,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                     {!state.isActive && (
                       <div style={{
                         background: 'linear-gradient(135deg, #EEF1F7, #FFFFFF)',
-                        border: '1px solid #A08C5A', borderRadius: '8px',
+                        border: '1px solid #B24A2E', borderRadius: '8px',
                         padding: '14px 16px',
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       }}>
@@ -287,7 +287,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                         <a
                           href={`tel:${CPP.phone.replace(/\D/g, '')}`}
                           style={{
-                            background: '#A08C5A', border: 'none',
+                            background: '#B24A2E', border: 'none',
                             borderRadius: '6px', padding: '8px 16px',
                             color: '#ffffff', fontSize: '12px', fontWeight: 700,
                             textDecoration: 'none', fontFamily: 'system-ui', whiteSpace: 'nowrap',

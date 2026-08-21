@@ -356,7 +356,7 @@ export function RequestFromVendorModal({
             <div
               key={n}
               className="flex-1 h-[3px] rounded-sm"
-              style={{ backgroundColor: n <= step ? '#A08C5A' : 'rgba(255,255,255,0.2)' }}
+              style={{ backgroundColor: n <= step ? '#B24A2E' : 'rgba(255,255,255,0.2)' }}
             />
           ))}
         </div>
@@ -378,7 +378,7 @@ export function RequestFromVendorModal({
                       key={rv.recipient_name}
                       type="button"
                       onClick={() => selectVendor(rv.vendor_id || '', rv.recipient_name, rv.recipient_email)}
-                      className="px-3 py-1.5 rounded-full text-[12px] font-semibold text-[#1E2D4D] border border-[#E2DDD4] hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
+                      className="px-3 py-1.5 rounded-full text-[12px] font-semibold text-[#1E2D4D] border border-[#E2DDD4] hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors"
                     >
                       {rv.recipient_name}
                     </button>
@@ -399,7 +399,7 @@ export function RequestFromVendorModal({
                       key={v.vendor_id}
                       type="button"
                       onClick={() => selectVendor(v.vendor_id, v.vendor_name, v.email || '')}
-                      className="text-left flex items-center justify-between px-3.5 py-3 rounded-md border border-[#E2DDD4] hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
+                      className="text-left flex items-center justify-between px-3.5 py-3 rounded-md border border-[#E2DDD4] hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors"
                     >
                       <div>
                         <div className="text-[13px] font-semibold text-[#1E2D4D]">{v.vendor_name}</div>
@@ -421,7 +421,7 @@ export function RequestFromVendorModal({
               <button
                 type="button"
                 onClick={() => setShowCustomForm(true)}
-                className="w-full text-left px-3.5 py-3 rounded-md border-2 border-dashed border-[#E2DDD4] text-[13px] font-semibold text-[#1E2D4D] hover:border-[#A08C5A] transition-colors"
+                className="w-full text-left px-3.5 py-3 rounded-md border-2 border-dashed border-[#E2DDD4] text-[13px] font-semibold text-[#1E2D4D] hover:border-[#B24A2E] transition-colors"
               >
                 <User size={14} className="inline mr-2" />
                 Add a new vendor
@@ -449,7 +449,7 @@ export function RequestFromVendorModal({
                 {serviceTypeCode ? (
                   <div className="flex items-center justify-between px-3.5 py-2.5 rounded-md" style={{ backgroundColor: '#FAF7F0', border: '1px solid #E2DDD4' }}>
                     <div className="text-[12px] text-[#1E2D4D]"><span className="text-[#8A93A6]">Service · </span><span className="font-semibold">{serviceName}{locationName ? ` · ${locationName}` : ''}</span></div>
-                    <button type="button" onClick={() => { setServiceTypeCode(null); setLocationId(null); setDocType(''); }} className="text-[11px] font-semibold text-[#A08C5A] hover:underline">Change</button>
+                    <button type="button" onClick={() => { setServiceTypeCode(null); setLocationId(null); setDocType(''); }} className="text-[11px] font-semibold text-[#B24A2E] hover:underline">Change</button>
                   </div>
                 ) : loadingSchedules ? (
                   <div className="text-center py-6 text-[13px] text-[#8A93A6]">Loading services…</div>
@@ -466,10 +466,10 @@ export function RequestFromVendorModal({
                         const label = cat === 'fire_safety' ? 'Fire Safety' : cat === 'food_safety' ? 'Food Safety' : 'Facility Services';
                         return (
                           <div key={cat} className="mb-2.5">
-                            <div className="text-[10px] text-[#A08C5A] font-bold uppercase tracking-wider mb-1.5">{label}</div>
+                            <div className="text-[10px] text-[#B24A2E] font-bold uppercase tracking-wider mb-1.5">{label}</div>
                             <div className="grid gap-2">
                               {group.map((c) => (
-                                <button key={c.code + (c.locationId || '')} type="button" onClick={() => { setServiceTypeCode(c.code); setLocationId(c.locationId); setServiceName(c.serviceName); setLocationName(c.locationName); setDocType(c.serviceName); }} className="text-left flex items-center justify-between px-3.5 py-3 rounded-md border border-[#E2DDD4] hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors">
+                                <button key={c.code + (c.locationId || '')} type="button" onClick={() => { setServiceTypeCode(c.code); setLocationId(c.locationId); setServiceName(c.serviceName); setLocationName(c.locationName); setDocType(c.serviceName); }} className="text-left flex items-center justify-between px-3.5 py-3 rounded-md border border-[#E2DDD4] hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors">
                                   <div>
                                     <div className="text-[13px] font-semibold text-[#1E2D4D]">{c.serviceName}</div>
                                     {c.locationName && <div className="text-[11px] text-[#8A93A6]">{c.locationName}</div>}
@@ -491,7 +491,7 @@ export function RequestFromVendorModal({
                 <div className="text-[11px] text-[#8A93A6] font-bold uppercase tracking-wider mb-2.5">What are you requesting?</div>
                 <div className="grid gap-2 max-h-[340px] overflow-y-auto">
                   {businessDocTypes.map((dt) => (
-                    <button key={dt} type="button" onClick={() => setDocType(dt)} className="text-left px-3.5 py-3 rounded-md text-[13px] font-semibold text-[#1E2D4D] cursor-pointer" style={{ background: docType === dt ? '#FAF7F0' : '#FFF', border: `2px solid ${docType === dt ? '#A08C5A' : '#E2DDD4'}` }}>{dt}</button>
+                    <button key={dt} type="button" onClick={() => setDocType(dt)} className="text-left px-3.5 py-3 rounded-md text-[13px] font-semibold text-[#1E2D4D] cursor-pointer" style={{ background: docType === dt ? '#FAF7F0' : '#FFF', border: `2px solid ${docType === dt ? '#B24A2E' : '#E2DDD4'}` }}>{dt}</button>
                   ))}
                 </div>
               </>

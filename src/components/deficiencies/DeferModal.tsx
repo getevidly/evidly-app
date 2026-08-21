@@ -44,7 +44,7 @@ export function DeferModal({ deficiencyCode, deficiencyTitle, onClose, onSubmit 
               onChange={(e) => setReason(e.target.value)}
               rows={3}
               placeholder="Explain why this deficiency is being deferred..."
-              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>
@@ -57,7 +57,7 @@ export function DeferModal({ deficiencyCode, deficiencyTitle, onClose, onSubmit 
               type="date"
               value={deferUntil}
               onChange={(e) => setDeferUntil(e.target.value)}
-              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

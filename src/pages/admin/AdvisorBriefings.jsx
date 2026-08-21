@@ -237,7 +237,7 @@ export default function AdvisorBriefings() {
         {(orgFilter || postureFilter) && (
           <button
             onClick={() => { setOrgFilter(''); setPostureFilter(''); }}
-            className="text-sm text-[#A08C5A] hover:underline"
+            className="text-sm text-[#B24A2E] hover:underline"
           >
             Clear filters
           </button>

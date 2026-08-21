@@ -74,7 +74,7 @@ export default function AssociationDemoDashboard() {
               { label: 'Total Members', value: config.member_count || members.length, icon: Users, bg: 'bg-blue-50', color: 'text-blue-700' },
               { label: 'Counties Covered', value: Object.keys(countyCoverage).length, icon: MapPin, bg: 'bg-green-50', color: 'text-green-700' },
               { label: 'K2C Monthly', value: `$${config.k2c_monthly || 0}`, icon: Heart, bg: 'bg-red-50', color: 'text-red-700' },
-              { label: 'K2C Meals/mo', value: config.k2c_meals_per_month || 0, icon: TrendingUp, bg: 'bg-[#FAF7F0]', color: 'text-[#A08C5A]' },
+              { label: 'K2C Meals/mo', value: config.k2c_meals_per_month || 0, icon: TrendingUp, bg: 'bg-[#FAF7F0]', color: 'text-[#B24A2E]' },
             ].map(s => (
               <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
                 <s.icon size={20} className={`${s.color} mb-2`} />
@@ -91,7 +91,7 @@ export default function AssociationDemoDashboard() {
               {Object.entries(countyCoverage).map(([county, memberNames]) => (
                 <div key={county} className="border border-[#1E2D4D]/10 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <MapPin size={16} className="text-[#A08C5A]" />
+                    <MapPin size={16} className="text-[#B24A2E]" />
                     <p className="font-medium text-[#1E2D4D]">{county} County</p>
                     <span className="ml-auto text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
                       {memberNames.length} member{memberNames.length !== 1 ? 's' : ''}
@@ -114,7 +114,7 @@ export default function AssociationDemoDashboard() {
               {[
                 { label: 'Onboarded', value: pipeline.onboarded || 0, color: 'text-green-700', bg: 'bg-green-50' },
                 { label: 'In Progress', value: pipeline.in_progress || 0, color: 'text-blue-700', bg: 'bg-blue-50' },
-                { label: 'Invited', value: pipeline.invited || 0, color: 'text-[#A08C5A]', bg: 'bg-[#FAF7F0]' },
+                { label: 'Invited', value: pipeline.invited || 0, color: 'text-[#B24A2E]', bg: 'bg-[#FAF7F0]' },
               ].map(stage => (
                 <div key={stage.label} className={`${stage.bg} rounded-xl p-4 text-center`}>
                   <p className={`text-3xl font-bold tracking-tight ${stage.color}`}>{stage.value}</p>
@@ -126,7 +126,7 @@ export default function AssociationDemoDashboard() {
             <div className="mt-4 h-3 bg-[#1E2D4D]/5 rounded-full overflow-hidden flex">
               <div className="h-full bg-green-500" style={{ width: `${(pipeline.onboarded / (config.member_count || 10)) * 100}%` }} />
               <div className="h-full bg-blue-400" style={{ width: `${(pipeline.in_progress / (config.member_count || 10)) * 100}%` }} />
-              <div className="h-full bg-[#A08C5A]" style={{ width: `${(pipeline.invited / (config.member_count || 10)) * 100}%` }} />
+              <div className="h-full bg-[#B24A2E]" style={{ width: `${(pipeline.invited / (config.member_count || 10)) * 100}%` }} />
             </div>
           </div>
 
@@ -168,11 +168,11 @@ export default function AssociationDemoDashboard() {
                     </div>
                     <div className="w-32 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${score >= 80 ? 'bg-green-500' : score >= 60 ? 'bg-[#A08C5A]' : 'bg-red-500'}`}
+                        className={`h-full rounded-full ${score >= 80 ? 'bg-green-500' : score >= 60 ? 'bg-[#B24A2E]' : 'bg-red-500'}`}
                         style={{ width: `${score}%` }}
                       />
                     </div>
-                    <span className={`text-sm font-medium w-8 text-right ${score >= 80 ? 'text-green-700' : score >= 60 ? 'text-[#A08C5A]' : 'text-red-700'}`}>
+                    <span className={`text-sm font-medium w-8 text-right ${score >= 80 ? 'text-green-700' : score >= 60 ? 'text-[#B24A2E]' : 'text-red-700'}`}>
                       {score}
                     </span>
                   </div>
@@ -182,7 +182,7 @@ export default function AssociationDemoDashboard() {
           </div>
 
           {/* Endorsed Partner Resources placeholder */}
-          <div className="bg-[#FAF7F0] border border-[#A08C5A]/20 rounded-xl p-6">
+          <div className="bg-[#FAF7F0] border border-[#B24A2E]/20 rounded-xl p-6">
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Endorsed Partner Resources</h2>
             <p className="text-sm text-[#1E2D4D]/50 mb-4">
               Co-branded materials and resources for your association members
@@ -194,8 +194,8 @@ export default function AssociationDemoDashboard() {
                 'Member Onboarding Playbook',
                 'K2C Impact Report Template',
               ].map(item => (
-                <div key={item} className="flex items-center gap-2 p-3 bg-white rounded-xl border border-[#A08C5A]/10">
-                  <Building2 size={16} className="text-[#A08C5A]" />
+                <div key={item} className="flex items-center gap-2 p-3 bg-white rounded-xl border border-[#B24A2E]/10">
+                  <Building2 size={16} className="text-[#B24A2E]" />
                   <span className="text-sm text-[#1E2D4D]">{item}</span>
                   <ArrowRight size={14} className="ml-auto text-[#1E2D4D]/30" />
                 </div>

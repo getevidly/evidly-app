@@ -16,7 +16,7 @@ const VARIANTS: Record<TouchpointVariant, { icon: typeof Gift; title: string; me
     title: 'You earned a badge!',
     message: 'Share your Compliance Champion badge and earn a free month when someone signs up.',
     cta: 'Share Badge',
-    color: '#A08C5A',
+    color: '#B24A2E',
   },
   score_improved: {
     icon: Share2,

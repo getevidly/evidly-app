@@ -3,7 +3,7 @@
  * Shows EvidLY wordmark with gold pulse animation.
  */
 
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const NAVY = '#1E2D4D';
 const CREAM = '#FAF7F0';
 

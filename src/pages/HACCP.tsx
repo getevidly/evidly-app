@@ -1346,7 +1346,7 @@ export function HACCP() {
               <select
                 value={exportRange}
                 onChange={(e) => setExportRange(e.target.value as typeof exportRange)}
-                className="border border-[#1E2D4D]/15 rounded-xl px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="border border-[#1E2D4D]/15 rounded-xl px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
@@ -1368,7 +1368,7 @@ export function HACCP() {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               {haccpAccessibleLocs.length > 1 && <option value="all">All Locations</option>}
               {haccpAccessibleLocs.map(loc => (
@@ -1418,7 +1418,7 @@ export function HACCP() {
             onClick={() => { setActiveTab('plans'); setSelectedPlan(null); }}
             className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'plans'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -1428,7 +1428,7 @@ export function HACCP() {
             onClick={() => setActiveTab('monitoring')}
             className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'monitoring'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -1438,7 +1438,7 @@ export function HACCP() {
             onClick={() => setActiveTab('corrective')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'corrective'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -1451,7 +1451,7 @@ export function HACCP() {
             onClick={() => setActiveTab('template')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'template'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -1462,7 +1462,7 @@ export function HACCP() {
             onClick={() => setActiveTab('ai-create')}
             className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'ai-create'
-                ? 'border-b-2 border-[#A08C5A] text-[#1E2D4D]'
+                ? 'border-b-2 border-[#B24A2E] text-[#1E2D4D]'
                 : 'text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
             }`}
           >
@@ -2161,7 +2161,7 @@ export function HACCP() {
                   <h3 className="text-lg font-bold text-[#1E2D4D]">Describe the Food Product</h3>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Product Name *</label>
-                    <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
@@ -2173,20 +2173,20 @@ export function HACCP() {
                         onGenerated={(text) => { setTplProductDesc(text); setAiFields(prev => new Set(prev).add('productDescription')); }}
                       />
                     </div>
-                    <textarea value={tplProductDesc} onChange={(e) => { setTplProductDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('productDescription'); return n; }); }} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplProductDesc} onChange={(e) => { setTplProductDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('productDescription'); return n; }); }} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('productDescription') && <AIGeneratedIndicator />}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Intended Use</label>
-                    <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Distribution Method</label>
-                    <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Target Consumer</label>
-                    <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                 </div>
               )}
@@ -2205,7 +2205,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplRawMaterials(text); setAiFields(prev => new Set(prev).add('rawMaterials')); }}
                       />
                     </div>
-                    <textarea value={tplRawMaterials} onChange={(e) => { setTplRawMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rawMaterials'); return n; }); }} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplRawMaterials} onChange={(e) => { setTplRawMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rawMaterials'); return n; }); }} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('rawMaterials') && <AIGeneratedIndicator />}
                   </div>
                   <div>
@@ -2218,7 +2218,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplProcessingAids(text); setAiFields(prev => new Set(prev).add('processingAids')); }}
                       />
                     </div>
-                    <textarea value={tplProcessingAids} onChange={(e) => { setTplProcessingAids(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('processingAids'); return n; }); }} placeholder="List any processing aids used" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplProcessingAids} onChange={(e) => { setTplProcessingAids(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('processingAids'); return n; }); }} placeholder="List any processing aids used" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('processingAids') && <AIGeneratedIndicator />}
                   </div>
                   <div>
@@ -2231,7 +2231,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplPackagingMaterials(text); setAiFields(prev => new Set(prev).add('packagingMaterials')); }}
                       />
                     </div>
-                    <textarea value={tplPackagingMaterials} onChange={(e) => { setTplPackagingMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('packagingMaterials'); return n; }); }} placeholder="List packaging materials" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplPackagingMaterials} onChange={(e) => { setTplPackagingMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('packagingMaterials'); return n; }); }} placeholder="List packaging materials" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('packagingMaterials') && <AIGeneratedIndicator />}
                   </div>
                 </div>
@@ -2251,7 +2251,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplUseDescription(text); setAiFields(prev => new Set(prev).add('intendedUse')); }}
                       />
                     </div>
-                    <textarea value={tplUseDescription} onChange={(e) => { setTplUseDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('intendedUse'); return n; }); }} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplUseDescription} onChange={(e) => { setTplUseDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('intendedUse'); return n; }); }} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('intendedUse') && <AIGeneratedIndicator />}
                   </div>
                   <div>
@@ -2264,7 +2264,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplTargetPopulation(text); setAiFields(prev => new Set(prev).add('targetPopulation')); }}
                       />
                     </div>
-                    <textarea value={tplTargetPopulation} onChange={(e) => { setTplTargetPopulation(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('targetPopulation'); return n; }); }} placeholder="Identify the target population" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplTargetPopulation} onChange={(e) => { setTplTargetPopulation(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('targetPopulation'); return n; }); }} placeholder="Identify the target population" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('targetPopulation') && <AIGeneratedIndicator />}
                   </div>
                   <div>
@@ -2277,7 +2277,7 @@ export function HACCP() {
                         onGenerated={(text) => { setTplSpecialConsiderations(text); setAiFields(prev => new Set(prev).add('specialConsiderations')); }}
                       />
                     </div>
-                    <textarea value={tplSpecialConsiderations} onChange={(e) => { setTplSpecialConsiderations(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('specialConsiderations'); return n; }); }} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <textarea value={tplSpecialConsiderations} onChange={(e) => { setTplSpecialConsiderations(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('specialConsiderations'); return n; }); }} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                     {aiFields.has('specialConsiderations') && <AIGeneratedIndicator />}
                   </div>
                 </div>
@@ -2291,8 +2291,8 @@ export function HACCP() {
                   <div className="space-y-2">
                     {tplFlowSteps.map((step, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#A08C5A' }}>{idx + 1}</div>
-                        <input type="text" value={step} onChange={(e) => updateFlowStep(idx, e.target.value)} placeholder={`Step ${idx + 1}`} className="flex-1 border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#B24A2E' }}>{idx + 1}</div>
+                        <input type="text" value={step} onChange={(e) => updateFlowStep(idx, e.target.value)} placeholder={`Step ${idx + 1}`} className="flex-1 border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                         {tplFlowSteps.length > 1 && (
                           <button onClick={() => removeFlowStep(idx)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="h-4 w-4" /></button>
                         )}
@@ -2322,7 +2322,7 @@ export function HACCP() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div>
                             <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Hazard Type</label>
-                            <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                            <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                               <option value="">Select type...</option>
                               <option value="Biological">Biological</option>
                               <option value="Chemical">Chemical</option>
@@ -2331,7 +2331,7 @@ export function HACCP() {
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Significance</label>
-                            <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                            <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                               <option value="">Select...</option>
                               <option value="High">High</option>
                               <option value="Medium">Medium</option>
@@ -2348,7 +2348,7 @@ export function HACCP() {
                                 onGenerated={(text) => { updateHazard(idx, 'description', text); setAiFields(prev => new Set(prev).add(`hazardDescription_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={hazard.description} onChange={(e) => { updateHazard(idx, 'description', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`hazardDescription_${idx}`); return n; }); }} placeholder="Describe the specific hazard" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <textarea value={hazard.description} onChange={(e) => { updateHazard(idx, 'description', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`hazardDescription_${idx}`); return n; }); }} placeholder="Describe the specific hazard" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             {aiFields.has(`hazardDescription_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div className="md:col-span-2">
@@ -2361,7 +2361,7 @@ export function HACCP() {
                                 onGenerated={(text) => { updateHazard(idx, 'preventive', text); setAiFields(prev => new Set(prev).add(`preventiveMeasures_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={hazard.preventive} onChange={(e) => { updateHazard(idx, 'preventive', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`preventiveMeasures_${idx}`); return n; }); }} placeholder="Describe preventive measures" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <textarea value={hazard.preventive} onChange={(e) => { updateHazard(idx, 'preventive', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`preventiveMeasures_${idx}`); return n; }); }} placeholder="Describe preventive measures" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             {aiFields.has(`preventiveMeasures_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                         </div>
@@ -2392,20 +2392,20 @@ export function HACCP() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
                               <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">CCP Number</label>
-                              <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                              <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             </div>
                             <div>
                               <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Process Step</label>
-                              <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                              <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             </div>
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Hazard</label>
-                            <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Critical Limit</label>
-                            <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., >= 165F for poultry" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., >= 165F for poultry" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                           </div>
                           <div>
                             <div className="flex items-center justify-between mb-1">
@@ -2417,7 +2417,7 @@ export function HACCP() {
                                 onGenerated={(text) => { updateCCP(idx, 'monitoring', text); setAiFields(prev => new Set(prev).add(`monitoringProcedure_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={ccp.monitoring} onChange={(e) => { updateCCP(idx, 'monitoring', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`monitoringProcedure_${idx}`); return n; }); }} placeholder="What, how, frequency, who" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <textarea value={ccp.monitoring} onChange={(e) => { updateCCP(idx, 'monitoring', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`monitoringProcedure_${idx}`); return n; }); }} placeholder="What, how, frequency, who" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             {aiFields.has(`monitoringProcedure_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
@@ -2430,7 +2430,7 @@ export function HACCP() {
                                 onGenerated={(text) => { updateCCP(idx, 'corrective', text); setAiFields(prev => new Set(prev).add(`correctiveAction_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={ccp.corrective} onChange={(e) => { updateCCP(idx, 'corrective', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`correctiveAction_${idx}`); return n; }); }} placeholder="Actions when limit not met" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <textarea value={ccp.corrective} onChange={(e) => { updateCCP(idx, 'corrective', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`correctiveAction_${idx}`); return n; }); }} placeholder="Actions when limit not met" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             {aiFields.has(`correctiveAction_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
@@ -2443,12 +2443,12 @@ export function HACCP() {
                                 onGenerated={(text) => { updateCCP(idx, 'verification', text); setAiFields(prev => new Set(prev).add(`verification_${idx}`)); }}
                               />
                             </div>
-                            <textarea value={ccp.verification} onChange={(e) => { updateCCP(idx, 'verification', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`verification_${idx}`); return n; }); }} placeholder="Verification activities" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <textarea value={ccp.verification} onChange={(e) => { updateCCP(idx, 'verification', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`verification_${idx}`); return n; }); }} placeholder="Verification activities" rows={2} className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                             {aiFields.has(`verification_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Records</label>
-                            <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                            <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log" className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                           </div>
                         </div>
                       </div>
@@ -2542,8 +2542,8 @@ export function HACCP() {
         {!loading && activeTab === 'ai-create' && (
           <>
             <HACCPAICreate />
-            <div className="mt-4 flex items-start gap-3 px-4 py-3 rounded-xl border" style={{ borderColor: '#A08C5A', backgroundColor: '#fffbeb' }}>
-              <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#A08C5A' }} />
+            <div className="mt-4 flex items-start gap-3 px-4 py-3 rounded-xl border" style={{ borderColor: '#B24A2E', backgroundColor: '#fffbeb' }}>
+              <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#B24A2E' }} />
               <div className="text-xs text-[#1E2D4D]/80 leading-relaxed">
                 <span className="font-semibold" style={{ color: '#92400e' }}>AI-generated</span> — review with a qualified food safety professional before implementation.
                 This is not an official HACCP plan and does not replace FDA/CalCode required documentation.

@@ -42,7 +42,7 @@ export function TemperatureAIInsufficient({ readingsCount, tier, windowDays }: P
           className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: '#FAF7F0', border: '1px solid #E2DDD4' }}
         >
-          <BarChart3 className="w-6 h-6" style={{ color: '#A08C5A' }} />
+          <BarChart3 className="w-6 h-6" style={{ color: '#B24A2E' }} />
         </div>
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-bold" style={{ color: '#1E2D4D' }}>

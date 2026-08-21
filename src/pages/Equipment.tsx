@@ -846,7 +846,7 @@ export function Equipment() {
             <select
               value={locationFilter}
               onChange={e => setLocationFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">{t('pages.equipment.allLocations')}</option>
               {locations.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
@@ -854,7 +854,7 @@ export function Equipment() {
             <select
               value={pillarFilter}
               onChange={e => setPillarFilter(e.target.value as 'all' | 'fire_safety' | 'food_safety')}
-              className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
               <option value="all">{t('pages.equipment.allPillars')}</option>
               <option value="fire_safety">{t('pages.equipment.facilitySafety')}</option>
@@ -913,7 +913,7 @@ export function Equipment() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={t('pages.equipment.searchPlaceholder')}
-              className="w-full pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             />
           </div>
           <div className="flex bg-[#1E2D4D]/5 rounded-lg p-1">
@@ -1693,54 +1693,54 @@ export function Equipment() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.equipmentType')}</label>
-                    <select name="equipment_type" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                    <select name="equipment_type" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                       <option value="">{t('pages.equipment.selectType')}</option>
                       {EQUIPMENT_TYPES.map(eqType => <option key={eqType} value={eqType}>{eqType}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.location')}</label>
-                    <select name="location" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                    <select name="location" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                       {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.make')}</label>
-                    <input name="make" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="make" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.model')}</label>
-                    <input name="model" type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="model" type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.serialNumber')}</label>
-                    <input name="serial_number" type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="serial_number" type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.installationDate')}</label>
-                    <input name="install_date" type="date" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="install_date" type="date" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.purchasePrice')}</label>
-                    <input name="purchase_price" type="number" placeholder="0.00" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="purchase_price" type="number" placeholder="0.00" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.expiryDate')}</label>
-                    <input name="warranty_expiry" type="date" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="warranty_expiry" type="date" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.warrantyProvider')}</label>
-                    <input name="warranty_provider" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="warranty_provider" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.maintenanceInterval')}</label>
-                    <select name="maintenance_interval" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                    <select name="maintenance_interval" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                       {MAINTENANCE_INTERVALS.map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.assignedVendor')}</label>
-                    <select name="linked_vendor" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                    <select name="linked_vendor" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                       <option value="">{t('pages.equipment.selectVendor')}</option>
                       <option value="HVAC Service Vendor">HVAC Service Vendor</option>
                       <option value="Hood Cleaning Vendor">Hood Cleaning Vendor</option>
@@ -1763,19 +1763,19 @@ export function Equipment() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.warrantyTerms')}</label>
-                    <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.warrantyContact')}</label>
-                    <input name="warranty_contact" type="text" placeholder="e.g. 1-800-555-0123" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="warranty_contact" type="text" placeholder="e.g. 1-800-555-0123" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.expectedUsefulLife')}</label>
-                    <input name="useful_life_years" type="number" placeholder="e.g. 10" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="useful_life_years" type="number" placeholder="e.g. 10" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('pages.equipment.replacementCostLabel')}</label>
-                    <input name="replacement_cost" type="number" placeholder="e.g. 12000" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    <input name="replacement_cost" type="number" placeholder="e.g. 12000" className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                   </div>
                 </div>
                 <div>
@@ -1788,7 +1788,7 @@ export function Equipment() {
                       onGenerated={(text) => { setEquipmentNotes(text); setAiFields(prev => new Set(prev).add('equipmentNotes')); }}
                     />
                   </div>
-                  <textarea name="notes" rows={3} placeholder="Additional notes..." value={equipmentNotes} onChange={(e) => { setEquipmentNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('equipmentNotes'); return s; }); }} className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-none" />
+                  <textarea name="notes" rows={3} placeholder="Additional notes..." value={equipmentNotes} onChange={(e) => { setEquipmentNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('equipmentNotes'); return s; }); }} className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] resize-none" />
                   {aiFields.has('equipmentNotes') && <AIGeneratedIndicator />}
                 </div>
                 <div className="flex gap-3 pt-2">

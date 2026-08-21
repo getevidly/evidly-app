@@ -6,7 +6,7 @@ import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 function hexToRgb(hex: string): [number, number, number] {
   const r = parseInt(hex.slice(1, 3), 16);

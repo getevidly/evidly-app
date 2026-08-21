@@ -63,10 +63,10 @@ export const StaffingCorrelation: React.FC<{ data: any }> = ({ data }) => (
 
     {/* Industry benchmark comparison */}
     <div style={{
-      background: '#EEF1F7', border: '1px solid #A08C5A40',
+      background: '#EEF1F7', border: '1px solid #B24A2E40',
       borderRadius: '8px', padding: '12px 16px',
     }}>
-      <p style={{ color: '#A08C5A', fontSize: '12px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>
+      <p style={{ color: '#B24A2E', fontSize: '12px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>
         {'📊'} vs. Industry Average
       </p>
       <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>

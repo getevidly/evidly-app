@@ -140,7 +140,7 @@ export function EquipmentFormModal({ equipment, defaultEquipmentType, onClose, o
             <select
               value={locationId}
               onChange={e => setLocationId(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.locationId ? '#DC2626' : CARD_BORDER, color: NAVY }}
             >
               <option value="">Select location...</option>
@@ -155,7 +155,7 @@ export function EquipmentFormModal({ equipment, defaultEquipmentType, onClose, o
             <select
               value={equipmentType}
               onChange={e => setEquipmentType(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.equipmentType ? '#DC2626' : CARD_BORDER, color: NAVY }}
             >
               <option value="">Select type...</option>
@@ -169,7 +169,7 @@ export function EquipmentFormModal({ equipment, defaultEquipmentType, onClose, o
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g., Main Kitchen Hood #1"
-              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+              className="w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30"
               style={{ borderColor: errors.name ? '#DC2626' : CARD_BORDER, color: NAVY }}
             />
           </Field>

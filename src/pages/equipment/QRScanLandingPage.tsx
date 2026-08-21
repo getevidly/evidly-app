@@ -8,7 +8,7 @@ import { QrCode, Wrench, Calendar, AlertTriangle, MessageSquare, Loader2 } from 
 import { useEquipmentItem } from '../../hooks/api/useEquipment';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';
 
@@ -142,7 +142,7 @@ export function QRScanLandingPage() {
                 onChange={e => setIssueDescription(e.target.value)}
                 rows={3}
                 placeholder="What's wrong with this equipment?"
-                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: BORDER, color: NAVY }}
               />
               <div className="flex gap-2">

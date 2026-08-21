@@ -11,8 +11,8 @@ import { RoleGuard } from '../components/auth/RoleGuard';
 import type { PSESafeguard } from '../data/workforceRiskDemoData';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
-const MUTED_GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
+const MUTED_GOLD = '#B24A2E';
 const TEXT_SEC = '#6B7F96';
 const BORDER = '#D1D9E6';
 

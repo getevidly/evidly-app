@@ -24,7 +24,7 @@ function useScrollReveal() {
 const C = {
   navy:     "#1E2D4D",
   navyL:    "#2A3D62",
-  gold:     "#A08C5A",
+  gold:     "#B24A2E",
   goldD:    "#8A7748",
   white:    "#FFFFFF",
   cream:    "#F8F7F4",
@@ -137,7 +137,7 @@ function Eyebrow({ children, light = false }) {
 // ─────────────────────────────────────────────
 function FounderUrgency() {
   return (
-    <div style={{ background: C.navy, borderRadius: 12, padding: "18px 22px", border: "1px solid rgba(160,140,90,0.25)", position: "relative", overflow: "hidden", marginBottom: 0 }}>
+    <div style={{ background: C.navy, borderRadius: 12, padding: "18px 22px", border: "1px solid rgba(178,74,46,0.25)", position: "relative", overflow: "hidden", marginBottom: 0 }}>
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 10, textAlign: "center", fontFamily: FF_SANS }}>
         Founder Pricing — Limited Availability
@@ -326,7 +326,7 @@ function DashboardMockup() {
           {/* SVG ring gauge */}
           <svg viewBox="0 0 80 80" width={72} height={72} style={{ flexShrink: 0 }}>
             <circle cx="40" cy="40" r="33" fill="none" stroke={W + "0.06)"} strokeWidth="5" />
-            <circle className="score-ring" cx="40" cy="40" r="33" fill="none" stroke={C.gold} strokeWidth="5" strokeLinecap="round" transform="rotate(-90 40 40)" style={{ filter: "drop-shadow(0 0 6px rgba(160,140,90,0.3))" }} />
+            <circle className="score-ring" cx="40" cy="40" r="33" fill="none" stroke={C.gold} strokeWidth="5" strokeLinecap="round" transform="rotate(-90 40 40)" style={{ filter: "drop-shadow(0 0 6px rgba(178,74,46,0.3))" }} />
             <text x="40" y="36" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="20" fontWeight="800" fontFamily="'Syne',system-ui">{91}</text>
             <text x="40" y="52" textAnchor="middle" fill={W + "0.35)"} fontSize="5.5" fontFamily="system-ui">Compliance</text>
           </svg>
@@ -340,7 +340,7 @@ function DashboardMockup() {
             </div>
             <div style={{ marginTop: 6, display: "flex", gap: 4 }}>
               <span style={{ fontSize: "0.5rem", padding: "2px 7px", borderRadius: 4, background: "rgba(22,163,74,0.15)", color: "#4ade80", fontFamily: FF_MONO, fontWeight: 600 }}>Food 94</span>
-              <span style={{ fontSize: "0.5rem", padding: "2px 7px", borderRadius: 4, background: "rgba(160,140,90,0.15)", color: C.gold, fontFamily: FF_MONO, fontWeight: 600 }}>Facility 87</span>
+              <span style={{ fontSize: "0.5rem", padding: "2px 7px", borderRadius: 4, background: "rgba(178,74,46,0.15)", color: C.gold, fontFamily: FF_MONO, fontWeight: 600 }}>Facility 87</span>
             </div>
           </div>
         </div>
@@ -368,7 +368,7 @@ function DashboardMockup() {
               </linearGradient>
             </defs>
             <path d="M0,32 L33,26 L66,28 L100,18 L133,20 L166,12 L200,14 L200,40 L0,40 Z" fill="url(#cg)" />
-            <polyline className="chart-draw" points="0,32 33,26 66,28 100,18 133,20 166,12 200,14" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 4px rgba(160,140,90,0.4))" }} />
+            <polyline className="chart-draw" points="0,32 33,26 66,28 100,18 133,20 166,12 200,14" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 4px rgba(178,74,46,0.4))" }} />
             {[[0,32],[33,26],[66,28],[100,18],[133,20],[166,12],[200,14]].map(([x,y],i) => (
               <circle key={i} cx={x} cy={y} r="2.5" fill={C.gold} stroke="rgba(15,24,42,0.8)" strokeWidth="1" />
             ))}
@@ -385,13 +385,13 @@ function DashboardMockup() {
 function HeroSection({ onTour, onIRR }) {
   return (
     <section className="hero-gradient" style={{ padding: "80px 24px 72px", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 20% 50%, rgba(160,140,90,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(160,140,90,0.04) 0%, transparent 40%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 20% 50%, rgba(178,74,46,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(178,74,46,0.04) 0%, transparent 40%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "56px 56px", pointerEvents: "none" }} />
       <div style={goldRule} />
       <div className="hero-split" style={{ maxWidth: 1080, margin: "0 auto", position: "relative", display: "flex", alignItems: "center", gap: 48 }}>
         {/* Left: text */}
         <div className="hero-text" style={{ flex: "1 1 0%", textAlign: "left", minWidth: 0 }}>
-          <div className="hero-animate" style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 24, fontFamily: FF_MONO }}>
+          <div className="hero-animate" style={{ display: "inline-block", padding: "5px 18px", background: "rgba(178,74,46,0.12)", border: "1px solid rgba(178,74,46,0.25)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 24, fontFamily: FF_MONO }}>
             California's Operations Intelligence Platform
           </div>
           <h1 className="hero-animate hero-animate-d1" style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 800, lineHeight: 1.05, margin: "0 0 22px", color: C.white, fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>
@@ -422,11 +422,11 @@ function HeroSection({ onTour, onIRR }) {
 function IRRAboveFold({ onIRR }) {
   return (
     <section style={{ background: C.navy, padding: "52px 24px", position: "relative", overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 70% 50%, rgba(160,140,90,0.05) 0%, transparent 50%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 70% 50%, rgba(178,74,46,0.05) 0%, transparent 50%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div style={{ maxWidth: 700, margin: "0 auto", position: "relative", display: "flex", alignItems: "center", gap: 36, flexWrap: "wrap", justifyContent: "center" }}>
         <div style={{ flex: "1 1 300px", textAlign: "left" }}>
-          <div style={{ display: "inline-block", padding: "3px 14px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 14, fontFamily: FF_MONO }}>Free · 2 Minutes</div>
+          <div style={{ display: "inline-block", padding: "3px 14px", background: "rgba(178,74,46,0.12)", border: "1px solid rgba(178,74,46,0.25)", borderRadius: 100, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 14, fontFamily: FF_MONO }}>Free · 2 Minutes</div>
           <h2 style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)", fontWeight: 800, color: C.white, margin: "0 0 10px", lineHeight: 1.2, letterSpacing: "-0.02em", fontFamily: FF_HEAD }}>
             See how your operation is running{" "}<span style={{ color: C.gold }}>— right now.</span>
           </h2>
@@ -615,7 +615,7 @@ function CoverageSection() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {pillars.map((p, i) => (
-            <div key={p.label} className={`card-lift reveal reveal-d${i+1}`} style={{ background: C.white, borderRadius: 18, padding: "34px 28px", border: '1px solid rgba(160,140,90,0.3)' }}>
+            <div key={p.label} className={`card-lift reveal reveal-d${i+1}`} style={{ background: C.white, borderRadius: 18, padding: "34px 28px", border: '1px solid rgba(178,74,46,0.3)' }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
                 <span style={{ fontSize: "1.4rem" }}>{p.icon}</span>
                 <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: p.color, margin: 0, fontFamily: FF_HEAD, letterSpacing: "-0.02em" }}>{p.label}</h3>
@@ -696,7 +696,7 @@ function IntelligenceSection({ onTour }) {
     <section style={{ padding: "96px 24px", background: C.white }}>
       <div className="reveal" style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.08)", border: "1px solid rgba(160,140,90,0.2)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.goldD, marginBottom: 16, fontFamily: FF_MONO }}>Operations Intelligence Engine</div>
+          <div style={{ display: "inline-block", padding: "5px 18px", background: "rgba(178,74,46,0.08)", border: "1px solid rgba(178,74,46,0.2)", borderRadius: 100, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.goldD, marginBottom: 16, fontFamily: FF_MONO }}>Operations Intelligence Engine</div>
           <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.navy, margin: "0 0 14px", fontFamily: FF_HEAD, letterSpacing: "-0.03em", lineHeight: 1.15 }}>
             Every signal, from where you are<br /><span style={{ color: C.gold }}>to where you need to be.</span>
           </h2>
@@ -857,11 +857,11 @@ function PricingSection({ onTour, onIRR }) {
 function IRRSection({ onIRR }) {
   return (
     <section id="irr" style={{ padding: "88px 24px", background: `linear-gradient(155deg, #283f6a, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 50% 50%, rgba(160,140,90,0.05) 0%, transparent 60%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 50% 50%, rgba(178,74,46,0.05) 0%, transparent 60%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)", backgroundSize: "56px 56px", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div className="reveal" style={{ maxWidth: 600, margin: "0 auto", position: "relative" }}>
-        <div style={{ display: "inline-block", padding: "5px 18px", background: "rgba(160,140,90,0.12)", border: "1px solid rgba(160,140,90,0.25)", borderRadius: 100, fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 20, fontFamily: FF_MONO }}>Free · 2 Minutes · No Account Required</div>
+        <div style={{ display: "inline-block", padding: "5px 18px", background: "rgba(178,74,46,0.12)", border: "1px solid rgba(178,74,46,0.25)", borderRadius: 100, fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 20, fontFamily: FF_MONO }}>Free · 2 Minutes · No Account Required</div>
         <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.white, margin: "0 0 16px", lineHeight: 1.12, letterSpacing: "-0.03em", fontFamily: FF_HEAD }}>
           Your operation, scored.<br /><span style={{ color: C.gold }}>Every risk, in dollars.</span>
         </h2>
@@ -879,7 +879,7 @@ function IRRSection({ onIRR }) {
 function FinalCTA({ onTour, onIRR }) {
   return (
     <section style={{ padding: "88px 24px", background: `linear-gradient(155deg, #283f6a, ${C.navy})`, textAlign: "center", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 70%, rgba(160,140,90,0.04) 0%, transparent 50%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 30% 70%, rgba(178,74,46,0.04) 0%, transparent 50%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${C.gold},transparent)` }} />
       <div className="reveal" style={{ maxWidth: 580, margin: "0 auto", position: "relative" }}>
         <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, color: C.white, margin: "0 0 14px", fontFamily: FF_HEAD, letterSpacing: "-0.03em" }}>Ready to see it for your operation?</h2>
@@ -975,8 +975,8 @@ export default function LandingPage() {
     <div style={{ fontFamily: FF_SANS, color: C.g8, lineHeight: 1.6, background: C.cream, minHeight: "100vh" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
-        :focus-visible { outline: 2px solid #A08C5A; outline-offset: 2px; }
-        input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #A08C5A; outline-offset: 0; }
+        :focus-visible { outline: 2px solid #B24A2E; outline-offset: 2px; }
+        input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #B24A2E; outline-offset: 0; }
 
         /* Scroll reveal */
         .reveal {
@@ -1042,7 +1042,7 @@ export default function LandingPage() {
         .gold-line::after {
           content: '';
           position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
-          background: #A08C5A;
+          background: #B24A2E;
           transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
         }
         .gold-line:hover::after { width: 100%; }

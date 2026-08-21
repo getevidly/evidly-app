@@ -1,7 +1,7 @@
 /**
  * marketingTokens — local design tokens for the Marketing console.
  *
- * Ember #B24A2E is the accent (gold #A08C5A is retired as of July 2026).
+ * Ember #B24A2E is the accent (gold #B24A2E is retired as of July 2026).
  * These are scoped to the marketing shell — they do NOT touch
  * src/design/tokens.ts, designSystem.ts, tailwind.config.js, or
  * BrandingContext (32 other admin pages still use gold).

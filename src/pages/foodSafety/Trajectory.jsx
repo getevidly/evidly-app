@@ -415,7 +415,7 @@ export default function FoodSafetyTrajectory() {
                   <XAxis dataKey="date" tick={{ fontSize: 11, fill: 'rgba(30,45,77,0.6)' }} interval="preserveStartEnd" />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'rgba(30,45,77,0.6)' }} unit="%" />
                   <Tooltip formatter={(val) => [`${val}%`, 'Completion']} />
-                  <Line type="monotone" dataKey="value" stroke="#A08C5A" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="value" stroke="#B24A2E" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (

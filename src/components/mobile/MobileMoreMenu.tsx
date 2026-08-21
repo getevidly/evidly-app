@@ -44,7 +44,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
         style={{ background: '#1E2D4D' }}
       >
         <div>
-          <p className="text-xs font-bold uppercase tracking-[1.2px]" style={{ color: '#A08C5A' }}>
+          <p className="text-xs font-bold uppercase tracking-[1.2px]" style={{ color: '#B24A2E' }}>
             EVIDLY
           </p>
           <p className="text-white font-semibold text-[16px] mt-1">
@@ -115,7 +115,7 @@ export function MobileMoreMenu({ isOpen, onClose }: MobileMoreMenuProps) {
                 <span className="text-lg w-7 text-center">{item.icon}</span>
                 <span className="flex-1 text-left text-[14px] text-[#1E2D4D]">{item.label}</span>
                 {item.badge && (
-                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded bg-[#A08C5A]/15 text-[#1E2D4D]">
+                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded bg-[#B24A2E]/15 text-[#1E2D4D]">
                     {item.badge}
                   </span>
                 )}

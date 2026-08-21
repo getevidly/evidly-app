@@ -274,7 +274,7 @@ export function AdminRegulatoryChanges() {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#fdf8e8' }}>
-            <Scale className="h-5 w-5" style={{ color: '#A08C5A' }} />
+            <Scale className="h-5 w-5" style={{ color: '#B24A2E' }} />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E2D4D]">Regulatory Change Management</h1>
@@ -296,7 +296,7 @@ export function AdminRegulatoryChanges() {
       {/* Loading */}
       {!isDemoMode && loading && (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 border-2 border-[#1E2D4D]/15 border-t-[#A08C5A] rounded-full animate-spin" />
+          <div className="h-8 w-8 border-2 border-[#1E2D4D]/15 border-t-[#B24A2E] rounded-full animate-spin" />
         </div>
       )}
 
@@ -323,7 +323,7 @@ export function AdminRegulatoryChanges() {
               <select
                 value={newSource}
                 onChange={e => setNewSource(e.target.value)}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 <option value="">Select source...</option>
                 {isDemoMode ? (
@@ -342,7 +342,7 @@ export function AdminRegulatoryChanges() {
               <select
                 value={newChangeType}
                 onChange={e => setNewChangeType(e.target.value)}
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
                 <option value="amendment">Amendment</option>
                 <option value="new_edition">New Edition</option>
@@ -370,7 +370,7 @@ export function AdminRegulatoryChanges() {
               onChange={e => { setNewRawText(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('newRawText'); return n; }); }}
               placeholder="Paste the regulatory text here. Claude will generate a plain-English summary for customers."
               rows={6}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-y"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] resize-y"
             />
             {aiFields.has('newRawText') && <AIGeneratedIndicator />}
           </div>
@@ -382,7 +382,7 @@ export function AdminRegulatoryChanges() {
               value={newSourceUrl}
               onChange={e => setNewSourceUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             />
           </div>
 
@@ -391,7 +391,7 @@ export function AdminRegulatoryChanges() {
               onClick={handleAnalyze}
               disabled={analyzing}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
-              style={{ backgroundColor: '#A08C5A' }}
+              style={{ backgroundColor: '#B24A2E' }}
             >
               {analyzing ? (
                 <>
@@ -494,7 +494,7 @@ export function AdminRegulatoryChanges() {
                                   value={editSummary}
                                   onChange={e => { setEditSummary(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editSummary'); return n; }); }}
                                   rows={3}
-                                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-y"
+                                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] resize-y"
                                 />
                                 {aiFields.has('editSummary') && <AIGeneratedIndicator />}
                               </div>
@@ -512,7 +512,7 @@ export function AdminRegulatoryChanges() {
                                   value={editImpact}
                                   onChange={e => { setEditImpact(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editImpact'); return n; }); }}
                                   rows={3}
-                                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] resize-y"
+                                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] resize-y"
                                 />
                                 {aiFields.has('editImpact') && <AIGeneratedIndicator />}
                               </div>

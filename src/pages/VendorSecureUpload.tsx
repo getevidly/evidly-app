@@ -102,7 +102,7 @@ export function VendorSecureUpload() {
             <EvidlyIcon size={32} />
             <span className="text-2xl font-bold tracking-tight">
               <span className="text-[#1E2D4D]">Evid</span>
-              <span className="text-[#A08C5A]">LY</span>
+              <span className="text-[#B24A2E]">LY</span>
             </span>
           </div>
           <h1 className="text-xl font-bold text-[#1E2D4D]">Secure Document Upload</h1>
@@ -177,7 +177,7 @@ export function VendorSecureUpload() {
               value={notes}
               onChange={(e) => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Any additional details about this document..."
-              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 resize-none"
+              className="w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 resize-none"
               rows={3}
             />
             {aiFields.has('notes') && <AIGeneratedIndicator />}

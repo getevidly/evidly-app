@@ -280,7 +280,7 @@ export function ChecklistCompletionDetail() {
                       href={item.photo_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-[#A08C5A] hover:underline"
+                      className="inline-flex items-center gap-1 text-xs text-[#B24A2E] hover:underline"
                     >
                       <Camera className="w-3 h-3" /> View photo
                     </a>

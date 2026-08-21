@@ -154,7 +154,7 @@ export function InviteAccept() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08C5A] mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#B24A2E] mx-auto"></div>
           <p className="mt-4 text-[#1E2D4D]/70">Loading invitation...</p>
         </div>
       </div>
@@ -187,8 +187,8 @@ export function InviteAccept() {
         <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-8">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
-              <div className="p-3 bg-[#A08C5A]/10 rounded-full">
-                <UserPlus className="w-8 h-8 text-[#A08C5A]" />
+              <div className="p-3 bg-[#B24A2E]/10 rounded-full">
+                <UserPlus className="w-8 h-8 text-[#B24A2E]" />
               </div>
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D]">Join Your Team</h2>
@@ -214,7 +214,7 @@ export function InviteAccept() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#B24A2E] focus:border-[#B24A2E]"
               />
             </div>
 
@@ -242,7 +242,7 @@ export function InviteAccept() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#B24A2E] focus:border-[#B24A2E]"
                 />
                 <button
                   type="button"
@@ -297,7 +297,7 @@ export function InviteAccept() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#A08C5A] focus:border-[#A08C5A]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-md shadow-sm focus:outline-none focus:ring-[#B24A2E] focus:border-[#B24A2E]"
                 />
                 <button
                   type="button"
@@ -340,7 +340,7 @@ export function InviteAccept() {
             <button
               type="submit"
               disabled={submitting || !allRequirementsMet || !passwordsMatch || !captchaToken}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1E2D4D] hover:bg-[#162340] focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? 'Creating Account...' : 'Accept Invitation & Join Team'}
             </button>

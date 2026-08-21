@@ -714,7 +714,7 @@ export function AdminClientOnboarding() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#A08C5A]" />
+                <Building2 className="w-5 h-5 text-[#B24A2E]" />
                 Organization Details
               </h3>
 
@@ -728,7 +728,7 @@ export function AdminClientOnboarding() {
                   required
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   placeholder={isTribal ? 'Table Mountain Casino Resort' : 'Main Street Restaurant Group'}
                 />
               </div>
@@ -742,7 +742,7 @@ export function AdminClientOnboarding() {
                     id="industryType"
                     value={industryType}
                     onChange={(e) => setIndustryType(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     <option value="Restaurant">Restaurant</option>
                     <option value="Hotel">Hotel</option>
@@ -762,7 +762,7 @@ export function AdminClientOnboarding() {
                       id="industrySubtype"
                       value={industrySubtype}
                       onChange={(e) => setIndustrySubtype(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     >
                       <option value="restaurant-full">Full-Service</option>
                       <option value="restaurant-quick">Quick-Service</option>
@@ -784,7 +784,7 @@ export function AdminClientOnboarding() {
                       required
                       value={selectedTribe}
                       onChange={(e) => setSelectedTribe(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     >
                       <option value="">Select tribe...</option>
                       {TRIBAL_OPTIONS.map(t => (
@@ -807,7 +807,7 @@ export function AdminClientOnboarding() {
                   type="tel"
                   value={businessPhone}
                   onChange={(e) => setBusinessPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -821,7 +821,7 @@ export function AdminClientOnboarding() {
                     id="accessVia"
                     value={accessVia}
                     onChange={(e) => setAccessVia(e.target.value as 'cpp_client' | 'signed_on_directly')}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     <option value="signed_on_directly">Signed on directly</option>
                     <option value="cpp_client">CPP client</option>
@@ -835,7 +835,7 @@ export function AdminClientOnboarding() {
                     id="billing"
                     value={billing}
                     onChange={(e) => setBilling(e.target.value as 'not_paying' | 'in_trial' | 'paying')}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   >
                     <option value="not_paying">Not paying</option>
                     <option value="in_trial">In trial</option>
@@ -848,20 +848,20 @@ export function AdminClientOnboarding() {
             {/* ── Insurance (org level) ── */}
             <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                <ShieldAlert className="w-5 h-5 text-[#A08C5A]" />
+                <ShieldAlert className="w-5 h-5 text-[#B24A2E]" />
                 Insurance <span className="text-xs font-normal text-[#1E2D4D]/50 ml-1">Optional</span>
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Broker / Agency</label>
                   <input type="text" value={insBrokerAgency} onChange={(e) => setInsBrokerAgency(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="ABC Insurance Agency" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Broker Contact</label>
                   <input type="text" value={insBrokerContact} onChange={(e) => setInsBrokerContact(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="Jane Doe" />
                 </div>
               </div>
@@ -869,26 +869,26 @@ export function AdminClientOnboarding() {
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Carrier</label>
                   <input type="text" value={insCarrier} onChange={(e) => setInsCarrier(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="State Farm" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Policy Renewal</label>
                   <input type="date" value={insRenewal} onChange={(e) => setInsRenewal(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Insurance Email</label>
                   <input type="email" value={insEmail} onChange={(e) => setInsEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="broker@example.com" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Insurance Phone</label>
                   <input type="tel" value={insPhone} onChange={(e) => setInsPhone(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="(555) 123-4567" />
                 </div>
               </div>
@@ -897,7 +897,7 @@ export function AdminClientOnboarding() {
             {/* ── Locations (repeatable, at least 1 required) ── */}
             <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-[#A08C5A]" />
+                <MapPin className="w-5 h-5 text-[#B24A2E]" />
                 Locations
                 <span className="text-xs font-normal text-[#1E2D4D]/50 ml-1">At least 1 required</span>
               </h3>
@@ -922,7 +922,7 @@ export function AdminClientOnboarding() {
                     </label>
                     <input type="text" value={loc.name}
                       onChange={(e) => updateLocation(loc.id, 'name', e.target.value)}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                       placeholder={isTribal ? 'Main Buffet' : 'Downtown Location'} />
                   </div>
 
@@ -931,14 +931,14 @@ export function AdminClientOnboarding() {
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Street Address *</label>
                       <input type="text" required value={loc.street}
                         onChange={(e) => updateLocation(loc.id, 'street', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         placeholder="123 Main Street" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Suite/Unit</label>
                       <input type="text" value={loc.suite}
                         onChange={(e) => updateLocation(loc.id, 'suite', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         placeholder="Suite 200" />
                     </div>
                   </div>
@@ -948,14 +948,14 @@ export function AdminClientOnboarding() {
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">City *</label>
                       <input type="text" required value={loc.city}
                         onChange={(e) => updateLocation(loc.id, 'city', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         placeholder="Fresno" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">State *</label>
                       <select required value={loc.state}
                         onChange={(e) => updateLocation(loc.id, 'state', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                         <option value="">Select...</option>
                         {Object.entries(US_STATES).map(([abbr, name]) => (
                           <option key={abbr} value={abbr}>{name}</option>
@@ -966,7 +966,7 @@ export function AdminClientOnboarding() {
                       <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">ZIP *</label>
                       <input type="text" required value={loc.zip}
                         onChange={(e) => updateLocation(loc.id, 'zip', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         placeholder="93650" />
                     </div>
                   </div>
@@ -990,28 +990,28 @@ export function AdminClientOnboarding() {
                         <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Company</label>
                         <input type="text" value={loc.pmCompany}
                           onChange={(e) => updateLocation(loc.id, 'pmCompany', e.target.value)}
-                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           placeholder="Acme Property Mgmt" />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Contact</label>
                         <input type="text" value={loc.pmContact}
                           onChange={(e) => updateLocation(loc.id, 'pmContact', e.target.value)}
-                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           placeholder="John Smith" />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Email</label>
                         <input type="email" value={loc.pmEmail}
                           onChange={(e) => updateLocation(loc.id, 'pmEmail', e.target.value)}
-                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           placeholder="pm@example.com" />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Phone</label>
                         <input type="tel" value={loc.pmPhone}
                           onChange={(e) => updateLocation(loc.id, 'pmPhone', e.target.value)}
-                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           placeholder="(555) 123-4567" />
                       </div>
                     </div>
@@ -1019,14 +1019,14 @@ export function AdminClientOnboarding() {
                       <label className="block text-xs font-medium text-[#1E2D4D]/70 mb-1">Lease Renewal</label>
                       <input type="date" value={loc.pmLeaseRenewal}
                         onChange={(e) => updateLocation(loc.id, 'pmLeaseRenewal', e.target.value)}
-                        className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                        className="w-full px-3 py-1.5 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                     </div>
                   </div>
                 </div>
               ))}
 
               <button type="button" onClick={addLocation}
-                className="w-full py-2.5 border-2 border-dashed border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/60 hover:border-[#A08C5A] hover:text-[#A08C5A] transition-colors flex items-center justify-center gap-2">
+                className="w-full py-2.5 border-2 border-dashed border-[#1E2D4D]/15 rounded-xl text-sm font-medium text-[#1E2D4D]/60 hover:border-[#B24A2E] hover:text-[#B24A2E] transition-colors flex items-center justify-center gap-2">
                 <Plus className="w-4 h-4" />
                 Add Location
               </button>
@@ -1054,7 +1054,7 @@ export function AdminClientOnboarding() {
             {/* ── Primary Contact / Owner ── */}
             <div className="bg-[#FAF7F0] rounded-xl p-6 space-y-4">
               <h3 className="font-semibold text-[#1E2D4D] flex items-center gap-2">
-                <Users className="w-5 h-5 text-[#A08C5A]" />
+                <Users className="w-5 h-5 text-[#B24A2E]" />
                 Primary Contact / Owner
               </h3>
 
@@ -1068,7 +1068,7 @@ export function AdminClientOnboarding() {
                   required
                   value={ownerName}
                   onChange={(e) => setOwnerName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                   placeholder="John Smith"
                 />
               </div>
@@ -1085,7 +1085,7 @@ export function AdminClientOnboarding() {
                     required
                     value={ownerEmail}
                     onChange={(e) => setOwnerEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -1099,7 +1099,7 @@ export function AdminClientOnboarding() {
                     type="tel"
                     value={ownerMobile}
                     onChange={(e) => setOwnerMobile(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                     placeholder="(555) 987-6543"
                   />
                 </div>

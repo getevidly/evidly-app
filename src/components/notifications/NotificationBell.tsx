@@ -20,7 +20,7 @@ export function NotificationBell({ onClick }: NotificationBellProps) {
       onClick={onClick}
       className="relative p-2 rounded-md transition-colors duration-150"
       style={{ color: '#1E2D4D' }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
       title="Notifications"
     >

@@ -311,8 +311,8 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
     <Modal isOpen={isOpen} onClose={handleClose} size={isBulk ? 'lg' : 'md'} className="border border-[#1E2D4D]/10">
         <div className="flex items-center justify-between p-6 border-b border-[#1E2D4D]/10 sticky top-0 bg-white rounded-t-xl z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#A08C5A]/10 rounded-lg">
-              {isBulk ? <Users className="w-6 h-6 text-[#A08C5A]" /> : <UserPlus className="w-6 h-6 text-[#A08C5A]" />}
+            <div className="p-2 bg-[#B24A2E]/10 rounded-lg">
+              {isBulk ? <Users className="w-6 h-6 text-[#B24A2E]" /> : <UserPlus className="w-6 h-6 text-[#B24A2E]" />}
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#1E2D4D]">
@@ -356,7 +356,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                   onChange={(e) => setBulkEmails(e.target.value)}
                   placeholder={"john@example.com, jane@example.com\nor one per line"}
                   rows={4}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                 />
                 {bulkEmailCount > 0 && (
                   <p className="text-xs text-[#1E2D4D]/50 mt-1">{bulkEmailCount} email{bulkEmailCount !== 1 ? 's' : ''} detected</p>
@@ -375,7 +375,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                           type="checkbox"
                           checked={selectedLocations.includes(loc.locationId)}
                           onChange={() => toggleLocation(loc.locationId)}
-                          className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                          className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                         />
                         <span className="text-sm text-[#1E2D4D]/80">{loc.locationName}</span>
                       </label>
@@ -397,7 +397,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g., Maria Garcia"
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                 />
               </div>
 
@@ -415,7 +415,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="email@example.com"
-                      className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -432,7 +432,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="(555) 000-0000"
-                      className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -452,7 +452,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
                           type="checkbox"
                           checked={selectedLocations.includes(loc.locationId)}
                           onChange={() => toggleLocation(loc.locationId)}
-                          className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                          className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                         />
                         <span className="text-sm text-[#1E2D4D]/80">{loc.locationName}</span>
                       </label>
@@ -472,7 +472,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
               id="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
             >
               {ROLE_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>

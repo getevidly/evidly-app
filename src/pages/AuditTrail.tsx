@@ -852,7 +852,7 @@ export function AuditTrail() {
                 <select
                   value={dateRange}
                   onChange={e => setDateRange(e.target.value as DateRange)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="7">Last 7 days</option>
                   <option value="30">Last 30 days</option>
@@ -871,7 +871,7 @@ export function AuditTrail() {
                 <select
                   value={locationFilter}
                   onChange={e => setLocationFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="all">All Locations</option>
                   {(isDemoMode ? LOCATIONS : []).map(l => <option key={l} value={l}>{l}</option>)}
@@ -1006,7 +1006,7 @@ export function AuditTrail() {
                 {/* Hash badge */}
                 <div className="mt-4 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
                   <div className="flex items-center gap-2">
-                    <Hash className="h-4 w-4 text-[#A08C5A]" />
+                    <Hash className="h-4 w-4 text-[#B24A2E]" />
                     <span className="text-xs text-blue-200 uppercase tracking-wide">SHA-256 Integrity Hash</span>
                   </div>
                   <p className="font-mono text-xs mt-1 break-all text-blue-100">{reportHash || 'Computing...'}</p>

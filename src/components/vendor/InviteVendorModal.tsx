@@ -164,7 +164,7 @@ export function InviteVendorModal({
                 value={form.email}
                 onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
                 placeholder="vendor@example.com"
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
@@ -176,7 +176,7 @@ export function InviteVendorModal({
                 value={form.vendorName}
                 onChange={(e) => setForm(prev => ({ ...prev, vendorName: e.target.value }))}
                 placeholder="e.g., Acme Hood Cleaning"
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
             </div>
 
@@ -213,7 +213,7 @@ export function InviteVendorModal({
                               : [...prev.locationIds, loc.locationId],
                           }));
                         }}
-                        className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                        className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                       />
                       <span className="text-sm text-[#1E2D4D]/80">{loc.locationName}</span>
                     </label>

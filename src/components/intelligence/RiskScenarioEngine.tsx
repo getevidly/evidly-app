@@ -158,7 +158,7 @@ export const RiskScenarioEngine: React.FC = () => {
                 onClick={() => { setSelectedId(selectedId === s.id ? null : s.id); setInputs({}); }}
                 style={{
                   background: selectedId === s.id ? '#EEF1F7' : '#F4F6FA',
-                  border: `1px solid ${selectedId === s.id ? '#A08C5A' : '#D1D9E6'}`,
+                  border: `1px solid ${selectedId === s.id ? '#B24A2E' : '#D1D9E6'}`,
                   borderRadius: '8px', padding: '12px', cursor: 'pointer',
                   textAlign: 'left',
                 }}
@@ -177,7 +177,7 @@ export const RiskScenarioEngine: React.FC = () => {
       {/* Selected scenario input form */}
       {selected && (
         <div style={{
-          background: '#EEF1F7', border: '1px solid #A08C5A40',
+          background: '#EEF1F7', border: '1px solid #B24A2E40',
           borderRadius: '10px', padding: '16px', marginTop: '12px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
@@ -243,7 +243,7 @@ export const RiskScenarioEngine: React.FC = () => {
           <button
             onClick={runScenario}
             style={{
-              background: '#A08C5A', border: 'none', borderRadius: '6px',
+              background: '#B24A2E', border: 'none', borderRadius: '6px',
               padding: '10px 20px', color: '#ffffff', fontSize: '12px',
               fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui',
             }}

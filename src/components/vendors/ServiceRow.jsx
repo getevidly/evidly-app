@@ -32,7 +32,7 @@ export function ServiceRow({ service }) {
             {service.category} · {service.cadence}
             {service.vendorName && ` · ${service.vendorName}`}
             {service.citation && (
-              <span style={{ color: '#A08C5A' }}> · {service.citation}</span>
+              <span style={{ color: '#B24A2E' }}> · {service.citation}</span>
             )}
           </p>
 

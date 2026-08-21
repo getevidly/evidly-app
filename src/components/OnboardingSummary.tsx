@@ -66,7 +66,7 @@ export function OnboardingSummary({ onClose }: { onClose?: () => void }) {
           <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
             <div
               className="h-2 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, backgroundColor: progress === 100 ? '#22c55e' : '#A08C5A' }}
+              style={{ width: `${progress}%`, backgroundColor: progress === 100 ? '#22c55e' : '#B24A2E' }}
             />
           </div>
         </div>

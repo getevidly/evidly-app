@@ -254,7 +254,7 @@ function PillButton({ label, selected, onClick, colorScheme = 'gold' }: {
 }) {
   const styles = colorScheme === 'red'
     ? { border: selected ? '#991B1B' : '#D1D9E6', bg: selected ? 'rgba(153,27,27,0.08)' : '#fff', text: selected ? '#991B1B' : '#3D5068' }
-    : { border: selected ? '#A08C5A' : '#D1D9E6', bg: selected ? 'rgba(160,140,90,0.12)' : '#fff', text: selected ? '#7A6C3A' : '#3D5068' };
+    : { border: selected ? '#B24A2E' : '#D1D9E6', bg: selected ? 'rgba(178,74,46,0.12)' : '#fff', text: selected ? '#7A6C3A' : '#3D5068' };
 
   return (
     <button
@@ -278,7 +278,7 @@ function WizardProgress({ currentStep, totalSteps }: { currentStep: number; tota
           key={i}
           className="h-1.5 rounded-full flex-1 transition-colors"
           style={{
-            backgroundColor: i < currentStep ? '#A08C5A' : i === currentStep ? '#1E2D4D' : '#E5E7EB',
+            backgroundColor: i < currentStep ? '#B24A2E' : i === currentStep ? '#1E2D4D' : '#E5E7EB',
           }}
         />
       ))}
@@ -578,8 +578,8 @@ export function HACCPAICreate() {
         {/* Header */}
         <div className="bg-white rounded-xl p-6 border border-[#1E2D4D]/10">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(160,140,90,0.15)' }}>
-              <Sparkles className="h-5 w-5" style={{ color: '#A08C5A' }} />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(178,74,46,0.15)' }}>
+              <Sparkles className="h-5 w-5" style={{ color: '#B24A2E' }} />
             </div>
             <div>
               <h2 className="text-lg font-bold text-[#1E2D4D]">Build your HACCP plan</h2>
@@ -607,7 +607,7 @@ export function HACCPAICreate() {
             fieldLabel="Kitchen Name"
             formContext={{ kitchenType: intake.kitchenType }}
             entityType="haccp"
-            className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+            className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
           />
         </div>
 
@@ -622,8 +622,8 @@ export function HACCPAICreate() {
                 onClick={() => setIntake(prev => ({ ...prev, kitchenType: type }))}
                 className="px-3 py-2 rounded-xl border text-sm font-medium transition-colors text-left"
                 style={{
-                  borderColor: intake.kitchenType === type ? '#A08C5A' : '#D1D9E6',
-                  backgroundColor: intake.kitchenType === type ? 'rgba(160,140,90,0.1)' : '#fff',
+                  borderColor: intake.kitchenType === type ? '#B24A2E' : '#D1D9E6',
+                  backgroundColor: intake.kitchenType === type ? 'rgba(178,74,46,0.1)' : '#fff',
                   color: intake.kitchenType === type ? '#7A6C3A' : '#3D5068',
                 }}
               >
@@ -663,7 +663,7 @@ export function HACCPAICreate() {
             onChange={e => setIntake(prev => ({ ...prev, equipment: e.target.value }))}
             placeholder="e.g., 2 commercial grills, 1 deep fryer, walk-in cooler, walk-in freezer, 3 reach-in refrigerators, steam table..."
             rows={3}
-            className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+            className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
           />
           <SuggestionPill
             fieldLabel="Equipment"
@@ -694,8 +694,8 @@ export function HACCPAICreate() {
                 onClick={() => setIntake(prev => ({ ...prev, servingPopulation: pop }))}
                 className="px-3 py-2 rounded-xl border text-sm font-medium transition-colors text-left"
                 style={{
-                  borderColor: intake.servingPopulation === pop ? '#A08C5A' : '#D1D9E6',
-                  backgroundColor: intake.servingPopulation === pop ? 'rgba(160,140,90,0.1)' : '#fff',
+                  borderColor: intake.servingPopulation === pop ? '#B24A2E' : '#D1D9E6',
+                  backgroundColor: intake.servingPopulation === pop ? 'rgba(178,74,46,0.1)' : '#fff',
                   color: intake.servingPopulation === pop ? '#7A6C3A' : '#3D5068',
                 }}
               >
@@ -723,7 +723,7 @@ export function HACCPAICreate() {
             onChange={e => setIntake(prev => ({ ...prev, additionalNotes: e.target.value }))}
             placeholder="Any specific concerns, unique processes, or regulatory requirements..."
             rows={2}
-            className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+            className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
           />
           <SuggestionPill
             fieldLabel="Additional Notes"
@@ -778,7 +778,7 @@ export function HACCPAICreate() {
               </h2>
               <p className="text-xs text-[#1E2D4D]/50 mt-1">{principle.definition}</p>
             </div>
-            <span className="text-2xl font-bold tracking-tight shrink-0" style={{ color: '#A08C5A' }}>{principle.number}</span>
+            <span className="text-2xl font-bold tracking-tight shrink-0" style={{ color: '#B24A2E' }}>{principle.number}</span>
           </div>
 
           {/* AI Suggestion button */}
@@ -788,9 +788,9 @@ export function HACCPAICreate() {
             disabled={loadingSuggestion}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed text-sm font-medium transition-colors mb-5"
             style={{
-              borderColor: '#A08C5A',
-              color: '#A08C5A',
-              backgroundColor: 'rgba(160,140,90,0.04)',
+              borderColor: '#B24A2E',
+              color: '#B24A2E',
+              backgroundColor: 'rgba(178,74,46,0.04)',
             }}
           >
             {loadingSuggestion ? (
@@ -810,7 +810,7 @@ export function HACCPAICreate() {
                   onChange={e => updatePrincipleField(principle.number, field.key, e.target.value)}
                   placeholder={field.placeholder}
                   rows={field.key.includes('ccp_') && field.key.includes('_step') ? 1 : 3}
-                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                 />
               </div>
             ))}
@@ -844,7 +844,7 @@ export function HACCPAICreate() {
               type="button"
               onClick={handleGenerate}
               className="inline-flex items-center px-5 py-2 rounded-lg text-white text-sm font-semibold transition-colors"
-              style={{ backgroundColor: '#A08C5A' }}
+              style={{ backgroundColor: '#B24A2E' }}
             >
               <Sparkles className="h-4 w-4 mr-2" />
               Generate Full HACCP Plan
@@ -864,7 +864,7 @@ export function HACCPAICreate() {
       <div className="space-y-4">
         <div className="bg-white rounded-xl p-6 border border-[#1E2D4D]/10">
           <div className="flex items-center gap-3 mb-4">
-            <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#A08C5A' }} />
+            <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#B24A2E' }} />
             <div>
               <h2 className="text-lg font-bold text-[#1E2D4D]">Generating Your HACCP Plan</h2>
               <p className="text-xs text-[#1E2D4D]/50">{intake.kitchenType} \u2014 {intake.menuCategories.length} menu categories, {intake.cookingMethods.length} cooking methods</p>
@@ -914,7 +914,7 @@ export function HACCPAICreate() {
               type="button"
               onClick={handleExportPDF}
               className="inline-flex items-center px-3 py-2 rounded-xl border text-sm font-medium transition-colors hover:bg-[#FAF7F0]"
-              style={{ borderColor: '#A08C5A', color: '#A08C5A' }}
+              style={{ borderColor: '#B24A2E', color: '#B24A2E' }}
             >
               <Download className="h-4 w-4 mr-1.5" />
               Export PDF

@@ -83,7 +83,7 @@ export default function PillarToggle() {
             bgColor = '#1E2D4D';
             textColor = '#FAF7F0';
           } else if (isHovered) {
-            bgColor = '#A08C5A';
+            bgColor = '#B24A2E';
             textColor = '#FAF7F0';
           }
 

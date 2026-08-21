@@ -81,7 +81,7 @@ const SECTION_MAP: Record<string, string> = {
 
 const SEP_COLOR = '#D1D5DB';
 const LINK_COLOR = '#6B7280';
-const CURRENT_COLOR = '#A08C5A';
+const CURRENT_COLOR = '#B24A2E';
 
 export default function AdminBreadcrumb({ crumbs = [] }: AdminBreadcrumbProps) {
   const navigate = useNavigate();

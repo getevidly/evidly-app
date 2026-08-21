@@ -18,9 +18,9 @@ export default {
           muted:   '#163a5f',
         },
         gold: {
-          DEFAULT: '#A08C5A',
-          light:   '#C4AE7A',
-          dark:    '#7A6840',
+          DEFAULT: '#B24A2E',
+          light:   '#C96A4B',
+          dark:    '#8E3A24',
         },
         cream: {
           DEFAULT: '#FAF7F0',
@@ -42,7 +42,7 @@ export default {
         'card-sm': '0 1px 3px rgba(30,45,77,0.06), 0 1px 2px rgba(30,45,77,0.04)',
         'card-md': '0 4px 12px rgba(30,45,77,0.08), 0 2px 4px rgba(30,45,77,0.04)',
         'card-lg': '0 12px 36px rgba(30,45,77,0.12), 0 4px 12px rgba(30,45,77,0.06)',
-        'gold-glow': '0 0 0 3px rgba(160, 140, 90, 0.25)',
+        'gold-glow': '0 0 0 3px rgba(178, 74, 46, 0.25)',
       },
     },
   },

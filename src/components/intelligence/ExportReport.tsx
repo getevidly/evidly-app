@@ -81,7 +81,7 @@ export const ExportReport: React.FC<Props> = ({ data }) => {
   return (
     <button onClick={handleExport}
       style={{
-        background: '#A08C5A', border: 'none', borderRadius: '8px',
+        background: '#B24A2E', border: 'none', borderRadius: '8px',
         padding: '8px 16px', color: '#ffffff', fontSize: '12px',
         fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui',
         display: 'flex', alignItems: 'center', gap: '6px',

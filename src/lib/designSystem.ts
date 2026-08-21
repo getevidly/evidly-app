@@ -14,9 +14,9 @@ export const colors = {
   navyDark: '#0B1628',
   navyHover: '#162340',
   navyLight: '#283f6a',
-  gold: '#A08C5A',
-  goldLight: '#C4AE7A',
-  goldGlow: 'rgba(160, 140, 90, 0.15)',
+  gold: '#B24A2E',
+  goldLight: '#C96A4B',
+  goldGlow: 'rgba(178,74,46, 0.15)',
   fireOrange: '#EA580C',
   fireOrangeLight: '#FB923C',
   fireOrangeSoft: 'rgba(234, 88, 12, 0.12)',
@@ -51,7 +51,7 @@ export const shadows = {
   md: '0 4px 12px rgba(30,45,77,0.08), 0 2px 4px rgba(30,45,77,0.04)',
   lg: '0 12px 36px rgba(30,45,77,0.12), 0 4px 12px rgba(30,45,77,0.06)',
   xl: '0 20px 48px rgba(30,45,77,0.15), 0 8px 16px rgba(30,45,77,0.08)',
-  goldGlow: '0 0 0 3px rgba(160, 140, 90, 0.25)',
+  goldGlow: '0 0 0 3px rgba(178,74,46, 0.25)',
 } as const;
 
 // ─── Border Radius ─────────────────────────────────────────────

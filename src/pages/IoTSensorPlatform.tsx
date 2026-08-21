@@ -11,9 +11,9 @@ import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const NAVY = '#1E2D4D';
-const MUTED_GOLD = '#A08C5A';
+const MUTED_GOLD = '#B24A2E';
 const CREAM = '#FAF7F0';
 
 /* ── Section 2: Value Summary Card ─────────────────────── */

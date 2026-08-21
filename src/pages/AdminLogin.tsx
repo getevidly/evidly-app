@@ -64,22 +64,22 @@ export function AdminLogin() {
               <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
                 <rect width="48" height="48" rx="10.5" fill="#1E2D4D"/>
                 <circle cx="24" cy="24" r="3" fill="white"/>
-                <circle cx="24" cy="13" r="3" fill="#A08C5A"/>
-                <circle cx="34.5" cy="19" r="3" fill="#A08C5A"/>
-                <circle cx="30.5" cy="31" r="3" fill="#A08C5A"/>
-                <circle cx="17.5" cy="31" r="3" fill="#A08C5A"/>
-                <circle cx="13.5" cy="19" r="3" fill="#A08C5A"/>
+                <circle cx="24" cy="13" r="3" fill="#B24A2E"/>
+                <circle cx="34.5" cy="19" r="3" fill="#B24A2E"/>
+                <circle cx="30.5" cy="31" r="3" fill="#B24A2E"/>
+                <circle cx="17.5" cy="31" r="3" fill="#B24A2E"/>
+                <circle cx="13.5" cy="19" r="3" fill="#B24A2E"/>
               </svg>
               <span className="ml-3 text-3xl font-bold tracking-tight">
-                <span style={{ color: '#A08C5A' }}>E</span>
+                <span style={{ color: '#B24A2E' }}>E</span>
                 <span style={{ color: '#1E2D4D' }}>vid</span>
-                <span style={{ color: '#A08C5A' }}>LY</span>
+                <span style={{ color: '#B24A2E' }}>LY</span>
               </span>
             </div>
-            <div style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#A08C5A', fontWeight: 600, marginTop: '4px' }}>
+            <div style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#B24A2E', fontWeight: 600, marginTop: '4px' }}>
               LEAD WITH CONFIDENCE
             </div>
-            <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}>
+            <span className="mt-3 inline-block px-3 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: '#B24A2E', color: '#1E2D4D' }}>
               Admin Access
             </span>
           </div>
@@ -109,7 +109,7 @@ export function AdminLogin() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus:outline-none focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                className="mt-1 block w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus:outline-none focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
               />
             </div>
 
@@ -126,7 +126,7 @@ export function AdminLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus:outline-none focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="block w-full px-3 py-2 pr-10 border border-[#1E2D4D]/15 rounded-xl shadow-sm focus:outline-none focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
                 <button
                   type="button"
@@ -151,7 +151,7 @@ export function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus:ring-offset-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
               style={{ backgroundColor: '#1E2D4D' }}
             >
               {loading ? 'Signing in...' : 'Sign in'}

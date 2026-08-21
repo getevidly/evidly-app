@@ -377,7 +377,7 @@ export default function SupportTickets() {
           html: `<p>Hi ${csatResolvedTicket.contact_name || 'there'},</p>
 <p>Your support ticket <strong>${csatResolvedTicket.ticket_number}</strong> — "${csatResolvedTicket.subject}" — has been resolved.</p>
 <p>We'd love your feedback. Please take a moment to rate your experience:</p>
-<p><a href="${surveyUrl}" style="display:inline-block;padding:12px 24px;background:#A08C5A;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">Rate Your Experience</a></p>
+<p><a href="${surveyUrl}" style="display:inline-block;padding:12px 24px;background:#B24A2E;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">Rate Your Experience</a></p>
 <p style="color:#6B7F96;font-size:12px;">Or copy this link: ${surveyUrl}</p>`,
         },
       });

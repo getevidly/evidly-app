@@ -34,7 +34,7 @@ import {
 // ── Brand ──────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#163a52';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 // ── Service type display names ─────────────────────────────
 const SERVICE_OPTIONS = [
@@ -217,7 +217,7 @@ export function VendorSetup() {
   };
 
   // ── Render helpers ───────────────────────────────────────
-  const inputClass = 'w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent';
+  const inputClass = 'w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent';
   const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
   const renderStep1 = () => (
@@ -244,7 +244,7 @@ export function VendorSetup() {
                 type="checkbox"
                 checked={selectedServices.includes(svc.id)}
                 onChange={() => toggleService(svc.id)}
-                className="rounded text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="rounded text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
               />
               <span className="text-sm text-[#1E2D4D]/80">{svc.label}</span>
             </label>
@@ -284,7 +284,7 @@ export function VendorSetup() {
         <div className="flex gap-4">
           {(['yes', 'no', 'pending'] as const).map(v => (
             <label key={v} className="flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="ikeca" checked={ikecaCertified === v} onChange={() => setIkecaCertified(v)} className="text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2" />
+              <input type="radio" name="ikeca" checked={ikecaCertified === v} onChange={() => setIkecaCertified(v)} className="text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2" />
               <span className="text-sm text-[#1E2D4D]/80 capitalize">{v}</span>
             </label>
           ))}
@@ -431,7 +431,7 @@ export function VendorSetup() {
           <div key={sd.serviceId} className="flex items-center justify-between gap-3">
             <span className="text-sm text-[#1E2D4D]/80 flex-1">{sd.serviceName}</span>
             <select
-              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="px-3 py-1.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
               value={sd.frequency}
               onChange={e => {
                 const u = [...serviceDefaults];
@@ -454,7 +454,7 @@ export function VendorSetup() {
       <div className="bg-[#FAF7F0] rounded-xl p-4 space-y-3">
         <label className="text-sm font-semibold text-[#1E2D4D]">Preferred Service Window</label>
         <select
-          className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+          className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
           value={preferredWindow}
           onChange={e => setPreferredWindow(e.target.value)}
         >
@@ -476,7 +476,7 @@ export function VendorSetup() {
                 onChange={() => setReportRequirements(prev =>
                   prev.includes(opt.id) ? prev.filter(r => r !== opt.id) : [...prev, opt.id],
                 )}
-                className="rounded text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="rounded text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
               />
               <span className="text-sm text-[#1E2D4D]/80">{opt.label}</span>
             </label>
@@ -530,7 +530,7 @@ export function VendorSetup() {
             <div>
               <label className={labelClass}>Role</label>
               <select
-                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                 value={member.role}
                 onChange={e => {
                   const u = [...teamMembers];

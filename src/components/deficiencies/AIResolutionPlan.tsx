@@ -2,7 +2,7 @@ import { Sparkles, Check, RefreshCw } from 'lucide-react';
 import type { DeficiencyResolutionPlan, ResolutionPlanStep } from '../../hooks/deficiencies/useDeficiencyResolutionPlan';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 const ACTION_LABELS: Record<string, string> = {
   log_result: 'Log result →',

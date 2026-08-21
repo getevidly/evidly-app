@@ -226,21 +226,21 @@ export function VendorScheduleResponse() {
           <div className="p-6">
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <Wrench className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <Wrench className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#B24A2E' }} />
                 <div>
                   <p className="text-xs text-[#1E2D4D]/50 font-medium">Service</p>
                   <p className="text-sm font-semibold text-[#1E2D4D]">{data.service_name || data.service_type}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#B24A2E' }} />
                 <div>
                   <p className="text-xs text-[#1E2D4D]/50 font-medium">Location</p>
                   <p className="text-sm font-semibold text-[#1E2D4D]">{data.location_name || 'Not specified'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Building2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                <Building2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#B24A2E' }} />
                 <div>
                   <p className="text-xs text-[#1E2D4D]/50 font-medium">Client</p>
                   <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export function VendorScheduleResponse() {
               </div>
               {data.notes && (
                 <div className="flex items-start gap-3">
-                  <Send className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                  <Send className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#B24A2E' }} />
                   <div>
                     <p className="text-xs text-[#1E2D4D]/50 font-medium">Notes</p>
                     <p className="text-sm text-[#1E2D4D]/80">{data.notes}</p>
@@ -394,7 +394,7 @@ export function VendorScheduleResponse() {
                   onChange={(e) => setAltSlot1(e.target.value)}
                   required
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -404,7 +404,7 @@ export function VendorScheduleResponse() {
                   value={altSlot2}
                   onChange={(e) => setAltSlot2(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -414,7 +414,7 @@ export function VendorScheduleResponse() {
                   value={altSlot3}
                   onChange={(e) => setAltSlot3(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div>
@@ -424,7 +424,7 @@ export function VendorScheduleResponse() {
                   onChange={(e) => setAltNotes(e.target.value)}
                   rows={3}
                   placeholder="Any scheduling constraints or notes..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -462,7 +462,7 @@ export function VendorScheduleResponse() {
                   onChange={(e) => setDeclineNotes(e.target.value)}
                   rows={3}
                   placeholder="Any reason for declining..."
-                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
+                  className="w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-[#1E2D4D]"
                 />
               </div>
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">

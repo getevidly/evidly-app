@@ -203,7 +203,7 @@ export function ReportSettings() {
             <div
               key={report.type}
               className={`border rounded-xl p-4 transition-all ${
-                isActive ? 'border-[#A08C5A] bg-cream' : 'border-[#1E2D4D]/10 bg-white'
+                isActive ? 'border-[#B24A2E] bg-cream' : 'border-[#1E2D4D]/10 bg-white'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -211,13 +211,13 @@ export function ReportSettings() {
                   type="checkbox"
                   checked={isActive}
                   onChange={() => toggleReport(report.type, report.frequency)}
-                  className="mt-1 h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] rounded"
+                  className="mt-1 h-4 w-4 text-[#B24A2E] focus:ring-[#B24A2E] rounded"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold text-[#1E2D4D]">{report.name}</h4>
                     {report.recommended && (
-                      <span className="text-xs bg-[#A08C5A] text-[#1E2D4D] px-2 py-0.5 rounded font-semibold">
+                      <span className="text-xs bg-[#B24A2E] text-[#1E2D4D] px-2 py-0.5 rounded font-semibold">
                         Recommended
                       </span>
                     )}
@@ -266,7 +266,7 @@ export function ReportSettings() {
                           <select
                             value={sub?.delivery_day || 1}
                             onChange={(e) => updateSubscription(report.type, 'delivery_day', parseInt(e.target.value))}
-                            className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                            className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           >
                             {DAYS_OF_WEEK.map((day) => (
                               <option key={day.value} value={day.value}>
@@ -287,7 +287,7 @@ export function ReportSettings() {
                             type="time"
                             value={sub?.delivery_time || '07:00'}
                             onChange={(e) => updateSubscription(report.type, 'delivery_time', e.target.value)}
-                            className="w-full pl-10 pr-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                            className="w-full pl-10 pr-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                           />
                         </div>
                       </div>

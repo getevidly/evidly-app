@@ -339,7 +339,7 @@ export function SmartUploadModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4D]/10">
           <div className="flex items-center gap-2">
-            <Sparkles size={20} style={{ color: '#A08C5A' }} />
+            <Sparkles size={20} style={{ color: '#B24A2E' }} />
             <h2 className="text-lg font-semibold tracking-tight" style={{ color: '#1E2D4D' }}>
               {presetDocLabel ? `Upload: ${presetDocLabel}` : 'Smart Document Upload'}
             </h2>
@@ -509,7 +509,7 @@ function FileClassificationCard({
               className="h-full rounded-full animate-pulse"
               style={{
                 width: '60%',
-                background: 'linear-gradient(90deg, #1E2D4D, #A08C5A)',
+                background: 'linear-gradient(90deg, #1E2D4D, #B24A2E)',
               }}
             />
           </div>
@@ -642,7 +642,7 @@ function FileClassificationCard({
                   Document Type
                 </label>
                 <select
-                  className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
+                  className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 bg-white"
                   value={entry.overrides.documentType}
                   onChange={(e) => {
                     onUpdateOverride('documentType', e.target.value);
@@ -681,7 +681,7 @@ function FileClassificationCard({
                   compliance category
                 </label>
                 <select
-                  className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 bg-white"
+                  className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 bg-white"
                   value={entry.overrides.pillar}
                   onChange={(e) => onUpdateOverride('pillar', e.target.value)}
                 >
@@ -702,7 +702,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="text"
-                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                 placeholder="e.g. Acme Hood Cleaning"
                 value={entry.overrides.vendorName}
                 onChange={(e) => onUpdateOverride('vendorName', e.target.value)}
@@ -716,7 +716,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="date"
-                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                 value={entry.overrides.serviceDate}
                 onChange={(e) => onUpdateOverride('serviceDate', e.target.value)}
               />
@@ -729,7 +729,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="date"
-                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                 value={entry.overrides.expiryDate}
                 onChange={(e) => onUpdateOverride('expiryDate', e.target.value)}
               />
@@ -742,7 +742,7 @@ function FileClassificationCard({
               </label>
               <input
                 type="text"
-                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                className="w-full border border-[#1E2D4D]/15 rounded-md px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                 placeholder="Optional notes..."
                 value={entry.overrides.notes}
                 onChange={(e) => onUpdateOverride('notes', e.target.value)}

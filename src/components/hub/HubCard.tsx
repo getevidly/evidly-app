@@ -24,7 +24,7 @@ export function HubCard({ item }: HubCardProps) {
         borderColor: 'var(--border, #D1D9E6)',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#A08C5A';
+        e.currentTarget.style.borderColor = '#B24A2E';
         e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
       }}
       onMouseLeave={e => {
@@ -36,7 +36,7 @@ export function HubCard({ item }: HubCardProps) {
       {item.badge && (
         <span
           className="absolute top-3 right-3 text-xs font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide"
-          style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#A08C5A' }}
+          style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#B24A2E' }}
         >
           {item.badge}
         </span>

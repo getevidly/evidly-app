@@ -318,7 +318,7 @@ export function EnterpriseExecutive() {
         <footer className="text-center py-4 border-t border-[#1E2D4D]/5 bg-white mt-6">
           <p className="text-xs text-[#1E2D4D]/30">
             {tenant.poweredByText.replace('EvidLY', '').trim()}{' '}
-            <span style={{ color: '#A08C5A', fontWeight: 600 }}>EvidLY</span>
+            <span style={{ color: '#B24A2E', fontWeight: 600 }}>EvidLY</span>
           </p>
           <p className="text-xs text-[#1E2D4D]/30 mt-0.5">
             compliance.cleaningprosplus.com — EvidLY Demo Org

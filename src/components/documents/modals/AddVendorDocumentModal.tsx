@@ -110,7 +110,7 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVen
         <button
           type="button"
           onClick={() => { onClose(); onUploadSelf(); }}
-          className="w-full flex items-start gap-3 text-left px-4 py-3.5 border border-[#E2DDD4] rounded-lg hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
+          className="w-full flex items-start gap-3 text-left px-4 py-3.5 border border-[#E2DDD4] rounded-lg hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors"
         >
           <Upload size={18} className="text-[#1E2D4D] mt-0.5 flex-shrink-0" />
           <div>
@@ -123,7 +123,7 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVen
         <button
           type="button"
           onClick={() => { onClose(); onRequestFromVendor(); }}
-          className="w-full flex items-start gap-3 text-left px-4 py-3.5 border border-[#E2DDD4] rounded-lg hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
+          className="w-full flex items-start gap-3 text-left px-4 py-3.5 border border-[#E2DDD4] rounded-lg hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors"
         >
           <Send size={18} className="text-[#1E2D4D] mt-0.5 flex-shrink-0" />
           <div>
@@ -138,7 +138,7 @@ export function AddVendorDocumentModal({ onClose, onUploadSelf, onRequestFromVen
             <button
               type="button"
               onClick={() => setExpandedC(!expandedC)}
-              className="w-full flex items-start gap-3 text-left px-4 py-3.5 hover:border-[#A08C5A] hover:bg-[#FAF7F0]/50 transition-colors"
+              className="w-full flex items-start gap-3 text-left px-4 py-3.5 hover:border-[#B24A2E] hover:bg-[#FAF7F0]/50 transition-colors"
             >
               <Users size={18} className="text-[#1E2D4D] mt-0.5 flex-shrink-0" />
               <div className="flex-1">

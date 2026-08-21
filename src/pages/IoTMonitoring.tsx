@@ -130,7 +130,7 @@ export default function IoTMonitoring() {
           <select
             value={locationFilter}
             onChange={(e) => setLocationFilter(e.target.value)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
           >
             <option value="all">All Locations</option>
             {locations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
@@ -156,7 +156,7 @@ export default function IoTMonitoring() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-2.5 font-medium whitespace-nowrap flex items-center gap-1.5 text-sm border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-[#A08C5A] text-[#1E2D4D]'
+                    ? 'border-[#B24A2E] text-[#1E2D4D]'
                     : 'border-transparent text-[#1E2D4D]/70 hover:text-[#1E2D4D]'
                 }`}
               >

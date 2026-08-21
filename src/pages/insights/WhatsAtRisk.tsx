@@ -104,7 +104,7 @@ export function WhatsAtRisk() {
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '20px 16px 60px' }}>
-      <Link to="/dashboard" style={{ fontSize: 12, color: '#A08C5A', textDecoration: 'none' }}>&lsaquo; Dashboard</Link>
+      <Link to="/dashboard" style={{ fontSize: 12, color: '#B24A2E', textDecoration: 'none' }}>&lsaquo; Dashboard</Link>
       <div style={{ marginTop: 12 }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1E2D4D', margin: 0 }}>What's at Risk</h1>
         <p style={{ fontSize: 13, color: '#8A93A6', margin: '3px 0 0' }}>What's on the line behind the required work</p>

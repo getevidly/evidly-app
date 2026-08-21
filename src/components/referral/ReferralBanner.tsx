@@ -40,7 +40,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
         position: 'absolute',
         top: 0, left: 0, right: 0,
         height: '3px',
-        background: 'linear-gradient(90deg, #A08C5A, #C4AE7A, #A08C5A)',
+        background: 'linear-gradient(90deg, #B24A2E, #C96A4B, #B24A2E)',
       }} />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
@@ -52,7 +52,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
               fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
               fontSize: '16px',
               fontWeight: 700,
-              color: '#A08C5A',
+              color: '#B24A2E',
             }}>
               Kitchen to Community
             </span>
@@ -64,7 +64,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
             margin: '0 0 4px',
             fontWeight: 500,
           }}>
-            Every kitchen you refer = <strong style={{ color: '#A08C5A' }}>12 meals donated</strong> to No Kid Hungry.
+            Every kitchen you refer = <strong style={{ color: '#B24A2E' }}>12 meals donated</strong> to No Kid Hungry.
           </p>
           <p style={{
             fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
@@ -72,8 +72,8 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
             color: 'var(--text-secondary, #3D5068)',
             margin: 0,
           }}>
-            You've generated <strong style={{ color: '#A08C5A' }}>{mealsGenerated} meals</strong> so far.
-            Each referral <strong style={{ color: '#A08C5A' }}>doubles your donation</strong> for 3 months.
+            You've generated <strong style={{ color: '#B24A2E' }}>{mealsGenerated} meals</strong> so far.
+            Each referral <strong style={{ color: '#B24A2E' }}>doubles your donation</strong> for 3 months.
           </p>
         </div>
 
@@ -81,8 +81,8 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
           {/* Code display */}
           <div style={{
-            background: 'rgba(160, 140, 90, 0.15)',
-            border: '1px solid #A08C5A',
+            background: 'rgba(178,74,46, 0.15)',
+            border: '1px solid #B24A2E',
             borderRadius: '6px',
             padding: '6px 12px',
             display: 'flex',
@@ -92,7 +92,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
             <span style={{
               fontFamily: 'monospace',
               fontSize: '13px',
-              color: '#A08C5A',
+              color: '#B24A2E',
               fontWeight: 700,
               letterSpacing: '1px',
             }}>
@@ -103,7 +103,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
           <button
             onClick={handleCopy}
             style={{
-              backgroundColor: copied ? '#166534' : '#A08C5A',
+              backgroundColor: copied ? '#166534' : '#B24A2E',
               color: '#ffffff',
               fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
               fontSize: '13px',

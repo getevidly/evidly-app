@@ -279,7 +279,7 @@ function BreadcrumbNav({ items }: { items: BreadcrumbItem[] }) {
           {item.href ? (
             <Link
               to={item.href}
-              className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#A08C5A] hover:underline underline-offset-4 decoration-[#A08C5A]/40 transition-colors"
+              className="flex items-center gap-1 text-sm text-[#1E2D4D]/50 hover:text-[#B24A2E] hover:underline underline-offset-4 decoration-[#B24A2E]/40 transition-colors"
             >
               {i === 0 && <Home className="w-4 h-4" />}
               {item.label}

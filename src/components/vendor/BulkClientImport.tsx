@@ -8,7 +8,7 @@ import { Modal } from '../ui/Modal';
 // ── Brand colors ───────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#163a52';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 // ── Email regex ────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -40,7 +40,7 @@ export function K2CReferralTracker({ onInviteClick }: K2CReferralTrackerProps) {
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <Heart size={18} color="#A08C5A" />
+        <Heart size={18} color="#B24A2E" />
         <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#0B1628' }}>
           K2C Referral Tracker
         </h3>
@@ -55,7 +55,7 @@ export function K2CReferralTracker({ onInviteClick }: K2CReferralTrackerProps) {
           { label: 'Total', value: totalReferrals, color: '#0B1628' },
           { label: 'Signed Up', value: signedUp, color: '#16a34a' },
           { label: 'Pending', value: pending, color: '#d97706' },
-          { label: 'Meals', value: demoReferral.mealsGenerated + totalMeals, color: '#A08C5A' },
+          { label: 'Meals', value: demoReferral.mealsGenerated + totalMeals, color: '#B24A2E' },
         ].map(s => (
           <div key={s.label} style={{
             textAlign: 'center', padding: '10px 8px', borderRadius: '8px',

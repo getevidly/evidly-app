@@ -3,7 +3,7 @@
 
 import { jsPDF } from 'jspdf';
 
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const NAVY = '#1E2D4D';
 const GRAY = '#6B7F96';
 const LIGHT_GRAY = '#E5E7EB';

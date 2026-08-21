@@ -64,7 +64,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
       {loading ? (
         <span
           className="text-xs flex items-center gap-1 px-2 py-1 min-h-[28px]"
-          style={{ color: '#A08C5A' }}
+          style={{ color: '#B24A2E' }}
         >
           <span className="animate-spin inline-block w-3 h-3 border border-current border-t-transparent rounded-full" />
           Drafting...
@@ -75,7 +75,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
             type="button"
             onClick={() => generate('replace')}
             className="px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition min-h-[28px]"
-            style={{ color: '#A08C5A' }}
+            style={{ color: '#B24A2E' }}
           >
             Replace
           </button>
@@ -84,7 +84,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
             type="button"
             onClick={() => generate('append')}
             className="px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition min-h-[28px]"
-            style={{ color: '#A08C5A' }}
+            style={{ color: '#B24A2E' }}
           >
             Append
           </button>
@@ -101,7 +101,7 @@ export function AIAssistButton({ fieldLabel, context, currentValue, onGenerated 
           type="button"
           onClick={handleClick}
           className="text-xs flex items-center gap-1 px-2 py-1 rounded hover:bg-[#1E2D4D]/5 transition min-h-[28px]"
-          style={{ color: '#A08C5A' }}
+          style={{ color: '#B24A2E' }}
           title={`AI will draft ${fieldLabel.toLowerCase()} based on the information you've entered`}
         >
           &#10024; AI Assist

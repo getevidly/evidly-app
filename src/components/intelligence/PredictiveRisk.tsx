@@ -37,8 +37,8 @@ export const PredictiveRisk: React.FC<Props> = ({ predictions }) => (
         </p>
       </div>
       <span style={{
-        background: '#A08C5A20', border: '1px solid #A08C5A40', borderRadius: '4px',
-        padding: '2px 6px', fontSize: '10px', color: '#A08C5A', fontWeight: 600, fontFamily: 'system-ui', marginLeft: 'auto',
+        background: '#B24A2E20', border: '1px solid #B24A2E40', borderRadius: '4px',
+        padding: '2px 6px', fontSize: '10px', color: '#B24A2E', fontWeight: 600, fontFamily: 'system-ui', marginLeft: 'auto',
       }}>
         AI MODEL
       </span>

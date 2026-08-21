@@ -465,7 +465,7 @@ export function PhotoEvidencePage() {
                 placeholder="Search photos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] w-full sm:w-56"
+                className="pl-9 pr-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] w-full sm:w-56"
               />
             </div>
           </div>
@@ -484,7 +484,7 @@ export function PhotoEvidencePage() {
                 <select
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value as LocationName | 'all')}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
                 >
                   <option value="all">All Locations</option>
                   {LOCATIONS.map(loc => (
@@ -500,7 +500,7 @@ export function PhotoEvidencePage() {
                 <select
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value as RecordType | 'all')}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
                 >
                   <option value="all">All Types</option>
                   {RECORD_TYPES.map(rt => (
@@ -516,7 +516,7 @@ export function PhotoEvidencePage() {
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value as DateRange)}
-                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
+                  className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D]"
                 >
                   {DATE_RANGES.map(dr => (
                     <option key={dr.value} value={dr.value}>{dr.label}</option>

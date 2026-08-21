@@ -351,7 +351,7 @@ export function AdminIntelligenceQueue() {
 
                         {/* Demo eligible flag */}
                         {insight.is_demo_eligible && (
-                          <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#A08C5A', border: '1px solid #fde68a' }}>
+                          <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md" style={{ backgroundColor: '#fffbeb', color: '#B24A2E', border: '1px solid #fde68a' }}>
                             Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}
                           </span>
                         )}
@@ -511,7 +511,7 @@ export function AdminIntelligenceQueue() {
                             type="checkbox"
                             checked={demoEligible}
                             onChange={e => setDemoEligible(e.target.checked)}
-                            className="rounded border-[#1E2D4D]/15 text-[#A08C5A] focus:ring-[#A08C5A]"
+                            className="rounded border-[#1E2D4D]/15 text-[#B24A2E] focus:ring-[#B24A2E]"
                           />
                           Demo
                         </label>
@@ -562,7 +562,7 @@ export function AdminIntelligenceQueue() {
                           <span className="ml-1">by {insight.reviewed_by}</span>
                         )}
                         {insight.is_demo_eligible && (
-                          <span className="ml-1 text-[#A08C5A] font-medium">+ Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}</span>
+                          <span className="ml-1 text-[#B24A2E] font-medium">+ Demo{insight.demo_priority > 0 ? ` (${insight.demo_priority})` : ''}</span>
                         )}
                       </div>
                     )}

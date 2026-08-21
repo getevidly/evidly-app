@@ -43,7 +43,7 @@ export const TONE = {
 export const PILLAR = {
   fire:   { bar: '#B26A43', tint: '#F4E5DA', text: '#8A4A28' },
   food:   { bar: '#3E6B8A', tint: '#E2ECF2', text: '#2C5570' },
-  vendor: { bar: '#A08C5A' },
+  vendor: { bar: '#B24A2E' },
 } as const;
 
 export const BRAND = {

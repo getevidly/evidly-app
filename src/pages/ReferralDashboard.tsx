@@ -172,7 +172,7 @@ export function ReferralDashboard() {
         {/* Header */}
         <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-6 text-white">
           <div className="flex items-center gap-3 mb-2">
-            <Gift className="h-8 w-8 text-[#A08C5A]" />
+            <Gift className="h-8 w-8 text-[#B24A2E]" />
             <h2 className="text-2xl font-bold tracking-tight">{t('referral.referralProgram')}</h2>
           </div>
           <p className="text-[#1E2D4D]/30 mb-4">{t('referral.headerSubtitle')}</p>
@@ -180,7 +180,7 @@ export function ReferralDashboard() {
             <button
               onClick={() => handleGenerateCode('champion_badge')}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-              style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+              style={{ backgroundColor: '#B24A2E', color: '#1E2D4D' }}
             >
               <Share2 className="h-4 w-4" /> {t('referral.shareYourBadge')}
             </button>
@@ -265,7 +265,7 @@ export function ReferralDashboard() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard label={t('referral.totalReferrals')} value={stats.totalReferrals} icon={Share2} color="#1E2D4D" sub={`${stats.converted} ${t('referral.converted')}`} />
-              <StatCard label={t('referral.rewardsEarned')} value={`$${stats.totalRewardsEarned}`} icon={Gift} color="#A08C5A" sub={`${stats.monthsFreeEarned} ${t('referral.monthFree')}`} />
+              <StatCard label={t('referral.rewardsEarned')} value={`$${stats.totalRewardsEarned}`} icon={Gift} color="#B24A2E" sub={`${stats.monthsFreeEarned} ${t('referral.monthFree')}`} />
               <StatCard label={t('referral.k2cDonated')} value={`$${stats.k2cTotalDonated}`} icon={Heart} color="#ef4444" sub={`${new Set(k2cDonations.map((d: any) => d.charityName)).size} ${t('referral.charities')}`} />
               <StatCard label={t('referral.networkRank')} value={stats.networkRank ? `#${stats.networkRank}` : '--'} icon={Trophy} color="#22c55e" sub={`${stats.referralPoints} ${t('referral.pts')}`} />
             </div>
@@ -335,7 +335,7 @@ export function ReferralDashboard() {
                 title={t('referral.complianceChampion')}
                 description={t('referral.complianceChampionDesc')}
                 stat={`${badges.length} ${t('referral.badgesEarned')}`}
-                color="#A08C5A"
+                color="#B24A2E"
                 onClick={() => setActiveTab('badges')}
               />
               <MechanicCard
@@ -371,7 +371,7 @@ export function ReferralDashboard() {
                 onClick={() => setActiveTab('vendor')}
               />
               <div className="bg-gradient-to-br from-[#eef4f8] to-white rounded-xl border border-[#b8d4e8] p-5 flex flex-col items-center justify-center text-center">
-                <Sparkles className="h-8 w-8 mb-2" style={{ color: '#A08C5A' }} />
+                <Sparkles className="h-8 w-8 mb-2" style={{ color: '#B24A2E' }} />
                 <p className="text-sm font-medium text-[#1E2D4D]/80 mb-1">{t('referral.yourReferralLink')}</p>
                 <button
                   onClick={() => handleGenerateCode('champion_badge')}
@@ -444,7 +444,7 @@ export function ReferralDashboard() {
               )}
               {network.map((org, index) => {
                 const isTop3 = index < 3;
-                const rankColors = ['#A08C5A', '#9ca3af', '#92400e'];
+                const rankColors = ['#B24A2E', '#9ca3af', '#92400e'];
                 return (
                   <div
                     key={org.id}
@@ -474,7 +474,7 @@ export function ReferralDashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold" style={{ color: '#A08C5A' }}>{org.referralPoints.toLocaleString()}</div>
+                      <div className="text-lg font-bold" style={{ color: '#B24A2E' }}>{org.referralPoints.toLocaleString()}</div>
                       <div className="text-xs text-[#1E2D4D]/30">{t('referral.points')}</div>
                     </div>
                   </div>

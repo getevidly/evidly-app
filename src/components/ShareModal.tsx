@@ -109,7 +109,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     type="text"
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     placeholder="Enter recipient name"
                   />
                 </div>
@@ -122,7 +122,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     type="email"
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     placeholder="recipient@example.com"
                     required
                   />
@@ -135,7 +135,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   <select
                     value={recipientType}
                     onChange={(e) => setRecipientType(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                   >
                     <option value="health-inspector">Health Inspector</option>
                     <option value="insurance">Insurance Company</option>
@@ -159,7 +159,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                             type="checkbox"
                             checked={selectedDocs.includes(doc)}
                             onChange={() => handleToggleDocument(doc)}
-                            className="h-4 w-4 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 border-[#1E2D4D]/15 rounded"
+                            className="h-4 w-4 text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 border-[#1E2D4D]/15 rounded"
                           />
                           <div className="flex items-center gap-2 flex-1">
                             <FileText className="h-4 w-4 text-[#1E2D4D]/30" />
@@ -181,7 +181,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   </div>
                   <button
                     onClick={() => setIncludeCompliance(!includeCompliance)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:ring-offset-2 ${
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:ring-offset-2 ${
                       includeCompliance ? 'bg-[#1E2D4D]' : 'bg-[#1E2D4D]/8'
                     }`}
                   >
@@ -209,7 +209,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                     value={message}
                     onChange={(e) => { setMessage(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('message'); return n; }); }}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                     placeholder="Add a personal message..."
                   />
                   {aiFields.has('message') && <AIGeneratedIndicator />}

@@ -203,7 +203,7 @@ export function DemoWizard() {
         <div className="text-center mb-6">
           <span className="text-3xl font-bold tracking-tight">
             <span className="text-[#1E2D4D]">Evid</span>
-            <span className="text-[#A08C5A]">LY</span>
+            <span className="text-[#B24A2E]">LY</span>
           </span>
           <p className="text-[#1E2D4D] font-semibold mt-1">Interactive Demo</p>
         </div>
@@ -212,14 +212,14 @@ export function DemoWizard() {
           {steps.map((s, i) => (
             <div key={i} className="flex items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                i < step ? 'bg-[#A08C5A] text-white' :
+                i < step ? 'bg-[#B24A2E] text-white' :
                 i === step ? 'bg-[#1E2D4D] text-white' :
                 'bg-[#1E2D4D]/10 text-[#1E2D4D]/30'
               }`}>
                 {i < step ? '✓' : i + 1}
               </div>
               {i < steps.length - 1 && (
-                <div className={`w-8 h-0.5 ${i < step ? 'bg-[#A08C5A]' : 'bg-[#1E2D4D]/8'}`} />
+                <div className={`w-8 h-0.5 ${i < step ? 'bg-[#B24A2E]' : 'bg-[#1E2D4D]/8'}`} />
               )}
             </div>
           ))}
@@ -235,21 +235,21 @@ export function DemoWizard() {
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Your Name</label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1E2D4D]/30" />
-                    <input type="text" value={lead.name} onChange={e => setLead({ ...lead, name: e.target.value })} placeholder="John Smith" className="block w-full pl-10 pr-3 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="text" value={lead.name} onChange={e => setLead({ ...lead, name: e.target.value })} placeholder="John Smith" className="block w-full pl-10 pr-3 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Email</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1E2D4D]/30" />
-                    <input type="email" value={lead.email} onChange={e => setLead({ ...lead, email: e.target.value })} placeholder="john@company.com" className="block w-full pl-10 pr-3 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="email" value={lead.email} onChange={e => setLead({ ...lead, email: e.target.value })} placeholder="john@company.com" className="block w-full pl-10 pr-3 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Phone</label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1E2D4D]/30" />
-                    <input type="tel" value={lead.phone} onChange={e => setLead({ ...lead, phone: formatPhone(e.target.value) })} placeholder="(555) 555-5555" className="block w-full pl-10 pr-3 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                    <input type="tel" value={lead.phone} onChange={e => setLead({ ...lead, phone: formatPhone(e.target.value) })} placeholder="(555) 555-5555" className="block w-full pl-10 pr-3 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                   </div>
                 </div>
               </div>
@@ -263,13 +263,13 @@ export function DemoWizard() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Organization Name</label>
-                  <input type="text" value={lead.orgName} onChange={e => setLead({ ...lead, orgName: e.target.value })} placeholder="e.g. Your Restaurant Group" className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                  <input type="text" value={lead.orgName} onChange={e => setLead({ ...lead, orgName: e.target.value })} placeholder="e.g. Your Restaurant Group" className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-3">Industry</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {INDUSTRIES.map(ind => (
-                      <button key={ind.code} onClick={() => setLead({ ...lead, industry: ind.code, subtype: '' })} className={`p-4 rounded-xl border-2 text-center transition-all ${lead.industry === ind.code ? 'border-[#A08C5A] bg-[#A08C5A]/5' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'}`}>
+                      <button key={ind.code} onClick={() => setLead({ ...lead, industry: ind.code, subtype: '' })} className={`p-4 rounded-xl border-2 text-center transition-all ${lead.industry === ind.code ? 'border-[#B24A2E] bg-[#B24A2E]/5' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'}`}>
                         <div className="text-2xl mb-1">{ind.icon}</div>
                         <div className="text-sm font-medium">{ind.label}</div>
                       </button>
@@ -279,7 +279,7 @@ export function DemoWizard() {
                 {selectedIndustry && (
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">{selectedIndustry.label} Type</label>
-                    <select value={lead.subtype} onChange={e => setLead({ ...lead, subtype: e.target.value })} className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent">
+                    <select value={lead.subtype} onChange={e => setLead({ ...lead, subtype: e.target.value })} className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent">
                       <option value="">Select type...</option>
                       {selectedIndustry.subtypes.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
@@ -304,12 +304,12 @@ export function DemoWizard() {
               <p className="text-[#1E2D4D]/50 mb-6">How many locations do you operate?</p>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <button onClick={() => setLead({ ...lead, locationType: 'single', locationCount: 1 })} className={`flex-1 p-6 rounded-xl border-2 text-center transition-all ${lead.locationType === 'single' ? 'border-[#A08C5A] bg-[#A08C5A]/5' : 'border-[#1E2D4D]/10'}`}>
+                  <button onClick={() => setLead({ ...lead, locationType: 'single', locationCount: 1 })} className={`flex-1 p-6 rounded-xl border-2 text-center transition-all ${lead.locationType === 'single' ? 'border-[#B24A2E] bg-[#B24A2E]/5' : 'border-[#1E2D4D]/10'}`}>
                     <MapPin className="h-8 w-8 mx-auto mb-2 text-[#1E2D4D]" />
                     <div className="font-semibold">Single Location</div>
                     <div className="text-sm text-[#1E2D4D]/50 mt-1">1 kitchen</div>
                   </button>
-                  <button onClick={() => setLead({ ...lead, locationType: 'multi', locationCount: 3 })} className={`flex-1 p-6 rounded-xl border-2 text-center transition-all ${lead.locationType === 'multi' ? 'border-[#A08C5A] bg-[#A08C5A]/5' : 'border-[#1E2D4D]/10'}`}>
+                  <button onClick={() => setLead({ ...lead, locationType: 'multi', locationCount: 3 })} className={`flex-1 p-6 rounded-xl border-2 text-center transition-all ${lead.locationType === 'multi' ? 'border-[#B24A2E] bg-[#B24A2E]/5' : 'border-[#1E2D4D]/10'}`}>
                     <Building2 className="h-8 w-8 mx-auto mb-2 text-[#1E2D4D]" />
                     <div className="font-semibold">Multi-Location</div>
                     <div className="text-sm text-[#1E2D4D]/50 mt-1">2+ kitchens</div>
@@ -318,7 +318,7 @@ export function DemoWizard() {
                 {lead.locationType === 'multi' && (
                   <div>
                     <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">How many locations?</label>
-                    <select value={lead.locationCount} onChange={e => setLead({ ...lead, locationCount: parseInt(e.target.value) })} className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+                    <select value={lead.locationCount} onChange={e => setLead({ ...lead, locationCount: parseInt(e.target.value) })} className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
                       {[2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>{n} locations</option>)}
                       <option value={15}>11-20 locations</option>
                       <option value={25}>21-50 locations</option>
@@ -328,7 +328,7 @@ export function DemoWizard() {
                 )}
                 <div>
                   <label className="block text-sm font-medium text-[#1E2D4D]/80 mb-1">Name your {lead.locationType === 'multi' ? 'first ' : ''}location</label>
-                  <input type="text" value={lead.locationName} onChange={e => setLead({ ...lead, locationName: e.target.value })} placeholder="e.g. Location 1, Main Campus" className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent" />
+                  <input type="text" value={lead.locationName} onChange={e => setLead({ ...lead, locationName: e.target.value })} placeholder="e.g. Location 1, Main Campus" className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent" />
                 </div>
               </div>
             </div>
@@ -345,7 +345,7 @@ export function DemoWizard() {
                   <div className="flex flex-wrap gap-3">
                     {DAY_LABELS.map((day, idx) => (
                       <label key={day} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${
-                        wizardDays[idx] ? 'border-[#A08C5A] bg-[#A08C5A]/5' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
+                        wizardDays[idx] ? 'border-[#B24A2E] bg-[#B24A2E]/5' : 'border-[#1E2D4D]/10 hover:border-[#1E2D4D]/15'
                       }`}>
                         <input
                           type="checkbox"
@@ -355,7 +355,7 @@ export function DemoWizard() {
                             newDays[idx] = !newDays[idx];
                             setWizardDays(newDays);
                           }}
-                          className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
+                          className="h-4 w-4 text-[#B24A2E] focus:ring-[#B24A2E] border-[#1E2D4D]/15 rounded"
                         />
                         <span className="text-sm font-medium">{day}</span>
                       </label>
@@ -370,7 +370,7 @@ export function DemoWizard() {
                     <select
                       value={wizardOpenTime}
                       onChange={(e) => setWizardOpenTime(e.target.value)}
-                      className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                      className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                     >
                       {generateOpeningTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
@@ -380,7 +380,7 @@ export function DemoWizard() {
                     <select
                       value={wizardCloseTime}
                       onChange={(e) => setWizardCloseTime(e.target.value)}
-                      className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent"
+                      className="block w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent"
                     >
                       {generateClosingTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
@@ -401,7 +401,7 @@ export function DemoWizard() {
                       type="checkbox"
                       checked={showShifts}
                       onChange={(e) => setShowShifts(e.target.checked)}
-                      className="h-4 w-4 text-[#A08C5A] focus:ring-[#A08C5A] border-[#1E2D4D]/15 rounded"
+                      className="h-4 w-4 text-[#B24A2E] focus:ring-[#B24A2E] border-[#1E2D4D]/15 rounded"
                     />
                     <span className="text-sm font-medium text-[#1E2D4D]/80">Configure shifts (optional)</span>
                   </label>
@@ -413,7 +413,7 @@ export function DemoWizard() {
                           type="text"
                           value={wizardShift1Name}
                           onChange={(e) => setWizardShift1Name(e.target.value)}
-                          className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-semibold w-32 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-semibold w-32 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         />
                         <span className="text-sm text-[#1E2D4D]/50">{formatTime24to12(wizardOpenTime)} – {formatTime24to12(wizardShift1End)}</span>
                       </div>
@@ -422,7 +422,7 @@ export function DemoWizard() {
                         <select
                           value={wizardShift1End}
                           onChange={(e) => setWizardShift1End(e.target.value)}
-                          className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         >
                           {Array.from({ length: 12 }, (_, i) => i + 10).map(h => {
                             const val = `${String(h).padStart(2, '0')}:00`;
@@ -435,7 +435,7 @@ export function DemoWizard() {
                           type="text"
                           value={wizardShift2Name}
                           onChange={(e) => setWizardShift2Name(e.target.value)}
-                          className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-semibold w-32 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                          className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm font-semibold w-32 focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                         />
                         <span className="text-sm text-[#1E2D4D]/50">{formatTime24to12(wizardShift1End)} – {formatTime24to12(wizardCloseTime)}</span>
                       </div>
@@ -450,7 +450,7 @@ export function DemoWizard() {
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Log your first temperatures</h2>
               <p className="text-[#1E2D4D]/50 mb-2">This is what your kitchen staff will do daily. Tap an equipment item and enter a reading.</p>
-              <p className="text-sm text-[#A08C5A] font-medium mb-6">Log at least 2 readings to continue</p>
+              <p className="text-sm text-[#B24A2E] font-medium mb-6">Log at least 2 readings to continue</p>
               <div className="space-y-3">
                 {TEMP_EQUIPMENT.map((eq, i) => (
                   <div key={i} className={`rounded-xl border-2 p-4 transition-all ${tempLogs[eq.name] ? 'border-green-300 bg-green-50' : 'border-[#1E2D4D]/10'}`}>
@@ -463,7 +463,7 @@ export function DemoWizard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <input type="number" placeholder="°F" value={tempLogs[eq.name] || ''} onChange={e => setTempLogs({ ...tempLogs, [eq.name]: e.target.value })} className="w-20 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-center focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]" />
+                        <input type="number" placeholder="°F" value={tempLogs[eq.name] || ''} onChange={e => setTempLogs({ ...tempLogs, [eq.name]: e.target.value })} className="w-20 px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-center focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]" />
                         {tempLogs[eq.name] && <CheckCircle className="h-6 w-6 text-green-500" />}
                       </div>
                     </div>
@@ -480,7 +480,7 @@ export function DemoWizard() {
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-2">Complete a checklist</h2>
               <p className="text-[#1E2D4D]/50 mb-2">Opening checklists ensure nothing gets missed. Check off items like your team would.</p>
-              <p className="text-sm text-[#A08C5A] font-medium mb-6">Complete at least 3 items to continue</p>
+              <p className="text-sm text-[#B24A2E] font-medium mb-6">Complete at least 3 items to continue</p>
               <div className="rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
                 <div className="bg-[#1E2D4D] text-white px-4 py-3 flex justify-between items-center">
                   <span className="font-semibold">Opening Checklist - {lead.locationName || 'Your Location'}</span>
@@ -506,7 +506,7 @@ export function DemoWizard() {
 
           {step === 6 && (
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-[#A08C5A] to-[#b8941e] rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#B24A2E] to-[#b8941e] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="h-10 w-10 text-white" />
               </div>
               <h2 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-3">Your demo is ready, {lead.name.split(' ')[0]}!</h2>
@@ -542,7 +542,7 @@ export function DemoWizard() {
               <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200 max-w-md mx-auto">
                 <p className="text-sm font-semibold text-[#0B1628] mb-1">Want a personalized compliance risk assessment?</p>
                 <p className="text-xs text-[#1E2D4D]/50 mb-3">Answer a few questions and get a free gap report with risk scores and estimated business impact.</p>
-                <a href="https://getevidly.com/assessment" className="inline-flex items-center gap-2 px-4 py-2 bg-[#A08C5A] text-white text-sm font-semibold rounded-lg hover:bg-[#8a7649] transition-colors">
+                <a href="https://getevidly.com/assessment" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B24A2E] text-white text-sm font-semibold rounded-lg hover:bg-[#8a7649] transition-colors">
                   Get Your Free Assessment
                   <ArrowRight className="h-4 w-4" />
                 </a>
@@ -595,7 +595,7 @@ export function DemoWizard() {
                 value={staffUser}
                 onChange={e => { setStaffUser(e.target.value); setStaffError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleStaffLogin()}
-                className="block w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                className="block w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
               <input
                 type="password"
@@ -603,7 +603,7 @@ export function DemoWizard() {
                 value={staffPass}
                 onChange={e => { setStaffPass(e.target.value); setStaffError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleStaffLogin()}
-                className="block w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                className="block w-full px-3 py-2 text-sm border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
               />
               {staffError && <p className="text-xs text-red-500">{staffError}</p>}
               <div className="flex items-center gap-2">

@@ -17,7 +17,7 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
     <div className="rounded-xl overflow-hidden mt-4" style={{ backgroundColor: '#0A3D6B' }}>
       <div className="px-5 sm:px-6 py-5">
         <div className="flex items-center gap-2 mb-2">
-          <Rocket className="h-5 w-5 text-[#A08C5A]" />
+          <Rocket className="h-5 w-5 text-[#B24A2E]" />
           <h3 className="text-lg font-bold text-white">Like what you see?</h3>
         </div>
 
@@ -32,7 +32,7 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
               navigate('/signup');
             }}
             className="px-5 py-2.5 rounded-lg font-bold text-sm transition-colors hover:brightness-110"
-            style={{ backgroundColor: '#A08C5A', color: '#0A3D6B' }}
+            style={{ backgroundColor: '#B24A2E', color: '#0A3D6B' }}
           >
             Lock in Founder Pricing — $99/month
           </button>
@@ -48,11 +48,11 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
 
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           <span className="flex items-center gap-1 text-xs text-[#1E2D4D]/30">
-            <Check className="h-3.5 w-3.5 text-[#A08C5A]" />
+            <Check className="h-3.5 w-3.5 text-[#B24A2E]" />
             First 250 customers only
           </span>
           <span className="flex items-center gap-1 text-xs text-[#1E2D4D]/30">
-            <Check className="h-3.5 w-3.5 text-[#A08C5A]" />
+            <Check className="h-3.5 w-3.5 text-[#B24A2E]" />
             Price locked for 36 months
           </span>
         </div>

@@ -144,7 +144,7 @@ export default function CommandCenter() {
   const healthy = liveFeeds === totalFeeds;
   const degraded = liveFeeds > 0 && liveFeeds < totalFeeds;
 
-  const systemStatus = neverRun  ? { label: 'Not Configured', color: '#A08C5A' }
+  const systemStatus = neverRun  ? { label: 'Not Configured', color: '#B24A2E' }
                      : allDown   ? { label: 'Critical',        color: '#DC2626' }
                      : degraded  ? { label: 'Degraded',        color: '#D97706' }
                      :             { label: 'Healthy',         color: '#16A34A' };

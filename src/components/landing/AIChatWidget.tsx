@@ -259,7 +259,7 @@ export default function AIChatWidget() {
                   onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
                   className="px-3 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50 transition-colors"
-                  style={{ backgroundColor: '#A08C5A' }}
+                  style={{ backgroundColor: '#B24A2E' }}
                 >
                   <Send className="w-4 h-4" />
                 </button>

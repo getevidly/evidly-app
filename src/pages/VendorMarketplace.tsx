@@ -85,8 +85,8 @@ function StarRating({ rating, count }: { rating: number; count?: number }) {
         <Star
           key={i}
           className="h-3.5 w-3.5"
-          fill={i <= Math.round(rating) ? '#A08C5A' : 'none'}
-          stroke={i <= Math.round(rating) ? '#A08C5A' : 'currentColor'}
+          fill={i <= Math.round(rating) ? '#B24A2E' : 'none'}
+          stroke={i <= Math.round(rating) ? '#B24A2E' : 'currentColor'}
           strokeWidth={i <= Math.round(rating) ? undefined : 1.5}
           style={i > Math.round(rating) ? { color: '#d1d5db' } : undefined}
         />
@@ -124,7 +124,7 @@ const categoryBgColors: Record<string, string> = {
 const tierBorderColor: Record<MarketplaceTier, string> = {
   verified: '#22c55e',
   certified: '#3D5068',
-  preferred: '#A08C5A',
+  preferred: '#B24A2E',
 };
 
 /* ------------------------------------------------------------------ */
@@ -335,7 +335,7 @@ function ProductionMarketplace() {
                 className={`flex items-center gap-2 px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
                   activeSection === sec.id ? 'border-b-2 font-semibold' : 'text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80'
                 }`}
-                style={activeSection === sec.id ? { borderColor: '#A08C5A', color: '#1E2D4D' } : undefined}
+                style={activeSection === sec.id ? { borderColor: '#B24A2E', color: '#1E2D4D' } : undefined}
               >
                 <Icon className="h-4 w-4" />
                 {sec.label}
@@ -355,7 +355,7 @@ function ProductionMarketplace() {
                 placeholder="Search vendors..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white rounded-xl pl-10 pr-4 py-3 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 border border-[#1E2D4D]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                className="w-full bg-white rounded-xl pl-10 pr-4 py-3 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 border border-[#1E2D4D]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
               />
             </div>
 
@@ -440,7 +440,7 @@ function ProductionMarketplace() {
                     value={inviteForm.companyName}
                     onChange={e => setInviteForm(prev => ({ ...prev, companyName: e.target.value }))}
                     placeholder="e.g., Hood Cleaning Vendor"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
                 <div>
@@ -450,7 +450,7 @@ function ProductionMarketplace() {
                     value={inviteForm.contactName}
                     onChange={e => setInviteForm(prev => ({ ...prev, contactName: e.target.value }))}
                     placeholder="Primary contact"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
                 <div>
@@ -460,7 +460,7 @@ function ProductionMarketplace() {
                     value={inviteForm.email}
                     onChange={e => setInviteForm(prev => ({ ...prev, email: e.target.value }))}
                     placeholder="vendor@example.com"
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -471,7 +471,7 @@ function ProductionMarketplace() {
                       value={inviteForm.phone}
                       onChange={e => setInviteForm(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="(555) 123-4567"
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                     />
                   </div>
                   <div>
@@ -481,7 +481,7 @@ function ProductionMarketplace() {
                       value={inviteForm.website}
                       onChange={e => setInviteForm(prev => ({ ...prev, website: e.target.value }))}
                       placeholder="https://..."
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                     />
                   </div>
                 </div>
@@ -490,7 +490,7 @@ function ProductionMarketplace() {
                   <select
                     value={inviteForm.serviceCategory}
                     onChange={e => setInviteForm(prev => ({ ...prev, serviceCategory: e.target.value }))}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                   >
                     <option value="">Select category...</option>
                     <option value="Fire Safety">Fire Safety</option>
@@ -506,7 +506,7 @@ function ProductionMarketplace() {
                     onChange={e => setInviteForm(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Brief description of services offered..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
                   />
                 </div>
               </div>
@@ -830,7 +830,7 @@ export function VendorMarketplace() {
                 }}
                 className={`bg-white rounded-xl p-5 cursor-pointer hover:shadow-md transition ${
                   isActive
-                    ? 'border-2 border-[#A08C5A] shadow-sm'
+                    ? 'border-2 border-[#B24A2E] shadow-sm'
                     : 'border border-[#1E2D4D]/10'
                 }`}
               >
@@ -864,7 +864,7 @@ export function VendorMarketplace() {
               onChange={(e) =>
                 setSelectedSubcategory(e.target.value || null)
               }
-              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
             >
               <option value="">All Subcategories</option>
               {availableSubcategories.map((sub) => (
@@ -880,7 +880,7 @@ export function VendorMarketplace() {
               onChange={(e) =>
                 setTierFilter(e.target.value as MarketplaceTier | 'all')
               }
-              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
             >
               <option value="all">All Tiers</option>
               <option value="verified">Verified</option>
@@ -892,7 +892,7 @@ export function VendorMarketplace() {
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(Number(e.target.value))}
-              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
             >
               <option value={0}>Any Rating</option>
               <option value={4}>4+ Stars</option>
@@ -907,7 +907,7 @@ export function VendorMarketplace() {
                 placeholder="City or area..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="rounded-xl border border-[#1E2D4D]/10 pl-8 pr-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 w-36"
+                className="rounded-xl border border-[#1E2D4D]/10 pl-8 pr-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 w-36"
               />
             </div>
 
@@ -919,7 +919,7 @@ export function VendorMarketplace() {
                   e.target.value as 'rating' | 'response-time' | 'reviews',
                 )
               }
-              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20"
+              className="rounded-xl border border-[#1E2D4D]/10 px-3 py-2 text-sm bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"
             >
               <option value="rating">Highest Rated</option>
               <option value="response-time">Fastest Response</option>
@@ -1043,7 +1043,7 @@ export function VendorMarketplace() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Building2 className="h-5 w-5 text-[#A08C5A]" />
+                <Building2 className="h-5 w-5 text-[#B24A2E]" />
                 <h3 className="text-lg font-bold text-white">Are you a service provider?</h3>
               </div>
               <p className="text-sm text-white/80 max-w-lg">
@@ -1052,7 +1052,7 @@ export function VendorMarketplace() {
             </div>
             <button
               onClick={() => navigate('/vendor/register')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#A08C5A] text-white rounded-lg text-sm font-semibold hover:bg-[#b8962f] transition-colors whitespace-nowrap"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#B24A2E] text-white rounded-lg text-sm font-semibold hover:bg-[#b8962f] transition-colors whitespace-nowrap"
             >
               Claim Your Listing <ArrowRight className="h-4 w-4" />
             </button>

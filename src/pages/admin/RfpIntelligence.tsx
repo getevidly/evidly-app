@@ -965,7 +965,7 @@ function AnalyticsTab({ listings }: { listings: RfpListingWithDetails[] }) {
             <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#3D5068' }} />
             <YAxis tick={{ fontSize: 11, fill: '#6B7F96' }} />
             <Tooltip />
-            <Bar dataKey="count" fill="#A08C5A" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="count" fill="#B24A2E" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

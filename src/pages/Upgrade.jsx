@@ -106,12 +106,12 @@ export function Upgrade() {
           {/* EvidLY Standard */}
           <div
             className="rounded-xl border-2 overflow-hidden"
-            style={{ borderColor: '#A08C5A' }}
+            style={{ borderColor: '#B24A2E' }}
           >
             <div className="px-5 py-4" style={{ background: '#1E2D4D' }}>
               <p
                 className="text-xs font-semibold uppercase tracking-wider"
-                style={{ color: '#A08C5A' }}
+                style={{ color: '#B24A2E' }}
               >
                 Recommended
               </p>
@@ -129,7 +129,7 @@ export function Upgrade() {
                 const Icon = f.icon;
                 return (
                   <div key={i} className="flex items-start gap-2">
-                    <Icon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#A08C5A' }} />
+                    <Icon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#B24A2E' }} />
                     <span className="text-sm text-[#1E2D4D]/80">{f.label}</span>
                   </div>
                 );
@@ -139,9 +139,9 @@ export function Upgrade() {
               <a
                 href="mailto:founders@getevidly.com?subject=EvidLY Upgrade — Founder Pricing"
                 className="w-full flex items-center justify-center px-4 py-3 text-white text-sm font-semibold rounded-xl transition-colors"
-                style={{ background: '#A08C5A' }}
+                style={{ background: '#B24A2E' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#9A8450')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#A08C5A')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#B24A2E')}
               >
                 Upgrade Now →
               </a>

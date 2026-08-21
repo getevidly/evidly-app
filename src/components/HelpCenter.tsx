@@ -78,7 +78,7 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search help articles..."
-          className="w-full pl-10 pr-4 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
         />
       </div>
 

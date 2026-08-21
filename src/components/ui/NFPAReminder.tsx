@@ -126,7 +126,7 @@ export const NFPAReminder: React.FC = () => {
       </p>
       <div style={{
         background: '#FEFCF5', borderRadius: '6px', padding: '10px 12px',
-        borderLeft: '3px solid #A08C5A',
+        borderLeft: '3px solid #B24A2E',
       }}>
         <p style={{ color: '#7A6B43', fontSize: '11px', fontWeight: 700, margin: '0 0 3px', fontFamily: 'system-ui' }}>Action This Month</p>
         <p style={{ color: 'var(--text-secondary)', fontSize: '12px', margin: 0, fontFamily: 'system-ui' }}>{reminder.action}</p>

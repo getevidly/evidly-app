@@ -408,7 +408,7 @@ export default function FireSafetyTrajectory() {
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'rgba(30,45,77,0.5)' }} />
                 <YAxis tick={{ fontSize: 11, fill: 'rgba(30,45,77,0.5)' }} allowDecimals={false} />
                 <Tooltip contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
-                <Line type="monotone" dataKey="value" stroke="#A08C5A" strokeWidth={2} dot={false} name={metricLabel} />
+                <Line type="monotone" dataKey="value" stroke="#B24A2E" strokeWidth={2} dot={false} name={metricLabel} />
               </LineChart>
             </ResponsiveContainer>
           </div>

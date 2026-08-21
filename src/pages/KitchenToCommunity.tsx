@@ -6,7 +6,7 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const WARM_BG = '#FDF6E3';
 
 export default function KitchenToCommunity() {

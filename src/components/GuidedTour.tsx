@@ -219,7 +219,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
         <div className="absolute inset-0 bg-black/50" />
         {/* Spotlight cutout */}
         <div
-          className="absolute border-2 border-[#A08C5A] rounded-lg"
+          className="absolute border-2 border-[#B24A2E] rounded-lg"
           style={{
             top: highlightRect.top,
             left: highlightRect.left,

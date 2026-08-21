@@ -43,7 +43,7 @@ export default function VendorsPage() {
       <div className="px-4 pt-5 pb-3">
         <p
           className="uppercase tracking-wider mb-1"
-          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#A08C5A' }}
+          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#B24A2E' }}
         >
           Vendor services
         </p>

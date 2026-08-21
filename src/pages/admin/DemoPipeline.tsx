@@ -14,7 +14,7 @@ import { supabase } from '../../lib/supabase';
 type PipelineTab = 'active' | 'expiring_soon' | 'expired' | 'converted' | 'scheduled';
 
 const TABS: { key: PipelineTab; label: string; color: string; description: string }[] = [
-  { key: 'active', label: 'Active', color: '#A08C5A', description: 'Demo currently accessible to prospect' },
+  { key: 'active', label: 'Active', color: '#B24A2E', description: 'Demo currently accessible to prospect' },
   { key: 'expiring_soon', label: 'Expiring Soon', color: '#f59e0b', description: 'Expiring within 7 days — follow up!' },
   { key: 'scheduled', label: 'Scheduled', color: '#3b82f6', description: 'Meetings booked, demos not yet generated' },
   { key: 'expired', label: 'Expired', color: '#9ca3af', description: 'Demo expired without conversion' },

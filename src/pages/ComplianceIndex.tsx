@@ -270,7 +270,7 @@ export function ComplianceIndex() {
               <button
                 onClick={() => guardAction('download', 'compliance reports', () => toast.info('Download PDF (Demo)'))}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold"
-                style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+                style={{ backgroundColor: '#B24A2E', color: '#1E2D4D' }}
               >
                 <Download className="h-4 w-4" /> Download PDF
               </button>
@@ -377,7 +377,7 @@ export function ComplianceIndex() {
                   navigator.clipboard.writeText(demoReferral.referralUrl);
                   toast.success('Referral link copied!');
                 }}
-                style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+                style={{ color: '#B24A2E', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
               >
                 Share EvidLY with a peer kitchen →
               </button>
@@ -409,7 +409,7 @@ export function ComplianceIndex() {
                       <td className="py-3 text-center text-sm text-[#1E2D4D]/50 hidden sm:table-cell">{v.prev}</td>
                       <td className="py-3 text-center"><ChangeIndicator change={v.change} /></td>
                       <td className="py-3 text-center text-sm text-[#1E2D4D]/50 hidden sm:table-cell">{v.locations.toLocaleString()}</td>
-                      <td className="py-3 pl-4 hidden sm:table-cell"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#A08C5A' : '#ef4444'} /></td>
+                      <td className="py-3 pl-4 hidden sm:table-cell"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#B24A2E' : '#ef4444'} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -454,7 +454,7 @@ export function ComplianceIndex() {
                       <td className="py-2.5 text-center text-sm font-bold" style={{ color: '#1E2D4D' }}>{c.score}</td>
                       <td className="py-2.5 text-center"><ChangeIndicator change={c.change} /></td>
                       <td className="py-2.5 text-center text-xs text-[#1E2D4D]/50 hidden sm:table-cell">{c.locations}</td>
-                      <td className="py-2.5 pl-4 hidden sm:table-cell"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#A08C5A' : '#ef4444'} /></td>
+                      <td className="py-2.5 pl-4 hidden sm:table-cell"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#B24A2E' : '#ef4444'} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -634,7 +634,7 @@ export function ComplianceIndex() {
                       className="h-full rounded-full"
                       style={{
                         width: `${reg.preparedness}%`,
-                        backgroundColor: reg.preparedness >= 60 ? '#22c55e' : reg.preparedness >= 40 ? '#A08C5A' : '#ef4444',
+                        backgroundColor: reg.preparedness >= 60 ? '#22c55e' : reg.preparedness >= 40 ? '#B24A2E' : '#ef4444',
                       }}
                     />
                   </div>
@@ -695,7 +695,7 @@ export function ComplianceIndex() {
         <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: shadows.sm, border: `1px solid ${colors.borderLight}` }}>
           <div className="px-4 sm:px-6 py-4 border-b border-[#1E2D4D]/5" style={{ backgroundColor: '#fdf8e8' }}>
             <h2 className="text-lg font-bold text-[#1E2D4D] flex items-center gap-2">
-              <BookOpen className="h-5 w-5" style={{ color: '#A08C5A' }} />
+              <BookOpen className="h-5 w-5" style={{ color: '#B24A2E' }} />
               Content Ideas from This Report
             </h2>
             <p className="text-xs text-[#1E2D4D]/70 mt-1">Auto-generated topics for blogs, press releases, and social campaigns</p>
@@ -800,7 +800,7 @@ export function ComplianceIndex() {
             <button
               onClick={() => guardAction('export', 'compliance reports', () => toast.success('Report link copied'))}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold"
-              style={{ backgroundColor: '#A08C5A', color: '#1E2D4D' }}
+              style={{ backgroundColor: '#B24A2E', color: '#1E2D4D' }}
             >
               <Share2 className="h-4 w-4" /> Share This Report
             </button>

@@ -20,7 +20,7 @@ export function MobileHeader({ roleLabel, firstName, tasksDueCount, totalTasks }
       {/* Top row: brand + role + bell */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold uppercase tracking-[1.2px]" style={{ color: '#A08C5A' }}>
+          <span className="text-xs font-bold uppercase tracking-[1.2px]" style={{ color: '#B24A2E' }}>
             EVIDLY
           </span>
           <span className="text-xs text-white/50">—</span>
@@ -51,13 +51,13 @@ export function MobileHeader({ roleLabel, firstName, tasksDueCount, totalTasks }
         <div className="text-right">
           <span
             className="text-[28px] font-bold leading-none"
-            style={{ color: tasksDueCount > 3 ? '#F59E0B' : '#A08C5A' }}
+            style={{ color: tasksDueCount > 3 ? '#F59E0B' : '#B24A2E' }}
           >
             {tasksDueCount}
           </span>
           <p
             className="text-xs font-bold uppercase tracking-wide mt-0.5"
-            style={{ color: tasksDueCount > 3 ? '#F59E0B' : '#A08C5A' }}
+            style={{ color: tasksDueCount > 3 ? '#F59E0B' : '#B24A2E' }}
           >
             DUE
           </p>

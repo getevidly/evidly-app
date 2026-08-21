@@ -54,7 +54,7 @@ export function AiAnalysisPanel({ analysis, isOpen, onToggle }: AiAnalysisPanelP
         onClick={onToggle}
         className="w-full flex items-center gap-2 px-4 py-2.5 text-left hover:bg-[#FAF7F0] transition-colors"
       >
-        <Sparkles size={14} style={{ color: '#A08C5A' }} />
+        <Sparkles size={14} style={{ color: '#B24A2E' }} />
         <span className="text-xs font-medium" style={{ color: '#1E2D4D' }}>
           AI Analysis
         </span>

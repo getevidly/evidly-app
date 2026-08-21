@@ -92,7 +92,7 @@ export function EmptyState({ type, customHeading, customSubtext, customCta, cust
       {cta && ctaRoute && (
         <Link
           to={ctaRoute}
-          className="inline-flex items-center px-4 py-2 bg-[#A08C5A] text-white text-sm font-medium rounded-lg hover:bg-[#9A8450] transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[#B24A2E] text-white text-sm font-medium rounded-lg hover:bg-[#9A8450] transition-colors"
         >
           {cta}
         </Link>

@@ -150,7 +150,7 @@ export function EquipmentOverview({ equipment, onPrintQR }: EquipmentOverviewPro
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+                className="w-full px-3 py-2 text-sm rounded-xl border resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30"
                 style={{ borderColor: CARD_BORDER, color: NAVY }}
               />
               {notesError && (

@@ -30,7 +30,7 @@ import type { DriftRecipient } from '../../hooks/useDriftRouting';
 
 // ─── Brand tokens ────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const MUTED = '#6B7689';
 const LINE = '#E6E1D3';
 const GREEN = '#3F6B47';

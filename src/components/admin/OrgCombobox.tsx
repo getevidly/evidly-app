@@ -195,7 +195,7 @@ export default function OrgCombobox({
             >
               {org.name}
               {value?.id === org.id && (
-                <span style={{ marginLeft: 8, fontSize: 10, color: '#A08C5A', fontWeight: 600 }}>Selected</span>
+                <span style={{ marginLeft: 8, fontSize: 10, color: '#B24A2E', fontWeight: 600 }}>Selected</span>
               )}
             </div>
           ))}
@@ -204,7 +204,7 @@ export default function OrgCombobox({
               onClick={createNew}
               style={{
                 padding: '8px 12px', cursor: 'pointer', fontSize: 13,
-                color: '#A08C5A', fontWeight: 600,
+                color: '#B24A2E', fontWeight: 600,
                 background: focusIdx === filtered.length ? '#FAF7F2' : 'transparent',
                 borderTop: filtered.length > 0 ? '1px solid #E5E7EB' : 'none',
               }}

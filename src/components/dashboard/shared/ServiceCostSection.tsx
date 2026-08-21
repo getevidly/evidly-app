@@ -40,9 +40,9 @@ export function ServiceCostSection() {
           </p>
         </div>
         <span style={{
-          background: '#A08C5A20', border: '1px solid #A08C5A60',
+          background: '#B24A2E20', border: '1px solid #B24A2E60',
           borderRadius: '6px', padding: '3px 10px',
-          color: '#A08C5A', fontSize: '10px', fontWeight: 700,
+          color: '#B24A2E', fontSize: '10px', fontWeight: 700,
           fontFamily: 'system-ui',
         }}>
           CPP Partner

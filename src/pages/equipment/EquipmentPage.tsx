@@ -147,7 +147,7 @@ export function EquipmentPage() {
             onChange={e => setLocalSearch(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
             placeholder="Search equipment..."
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30"
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30"
             style={{ background: CARD_BG, borderColor: CARD_BORDER, color: NAVY }}
           />
         </div>

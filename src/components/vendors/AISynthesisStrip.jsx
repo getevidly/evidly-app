@@ -17,13 +17,13 @@ export function AISynthesisStrip({ message, onAskEvidLY }) {
         className="flex-shrink-0 w-[26px] h-[26px] rounded-full flex items-center justify-center mt-0.5"
         style={{ backgroundColor: '#F4EFE0' }}
       >
-        <Sparkles size={13} style={{ color: '#A08C5A' }} />
+        <Sparkles size={13} style={{ color: '#B24A2E' }} />
       </div>
 
       <div className="flex-1 min-w-0">
         <p
           className="uppercase tracking-wider mb-1"
-          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#A08C5A' }}
+          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#B24A2E' }}
         >
           EvidLY says
         </p>

@@ -9,7 +9,7 @@ import { forwardRef } from 'react';
 import type { StandingCardData } from '../../lib/ambassadorSystem';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const CREAM = '#FAF7F0';
 
 interface StandingCardProps {
@@ -79,7 +79,7 @@ export const StandingCard = forwardRef<HTMLDivElement, StandingCardProps>(
         {/* EvidLY-monitored badge */}
         <div
           style={{
-            background: 'rgba(160, 140, 90, 0.15)',
+            background: 'rgba(178,74,46, 0.15)',
             border: `1px solid ${GOLD}`,
             borderRadius: 8,
             padding: '12px 16px',

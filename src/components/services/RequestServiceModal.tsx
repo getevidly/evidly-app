@@ -660,7 +660,7 @@ export function RequestServiceModal({
                       style={{
                         borderWidth: '0.5px',
                         borderStyle: 'solid',
-                        borderColor: rowCppAccent ? '#A08C5A' : '#E2DDD4',
+                        borderColor: rowCppAccent ? '#B24A2E' : '#E2DDD4',
                         backgroundColor: rowCppAccent ? '#FBF8F1' : '#FFFFFF',
                       }}
                     >
@@ -672,7 +672,7 @@ export function RequestServiceModal({
                         {rowCppAccent && (
                           <span
                             className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                            style={{ backgroundColor: '#A08C5A', color: '#FFFFFF' }}
+                            style={{ backgroundColor: '#B24A2E', color: '#FFFFFF' }}
                           >
                             CPP
                           </span>
@@ -767,7 +767,7 @@ export function RequestServiceModal({
                     style={{
                       borderWidth: '0.5px',
                       borderStyle: 'solid',
-                      borderColor: showCppAccent ? '#A08C5A' : '#E2DDD4',
+                      borderColor: showCppAccent ? '#B24A2E' : '#E2DDD4',
                       backgroundColor: showCppAccent ? '#FBF8F1' : '#FFFFFF',
                     }}
                   >
@@ -780,7 +780,7 @@ export function RequestServiceModal({
                         <span
                           className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
                           style={{
-                            backgroundColor: '#A08C5A',
+                            backgroundColor: '#B24A2E',
                             color: '#FFFFFF',
                           }}
                         >
@@ -914,7 +914,7 @@ export function RequestServiceModal({
                   value={proposedCadenceDays}
                   onChange={(e) => setProposedCadenceDays(e.target.value)}
                   placeholder="e.g. 90"
-                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                  className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                 />
 
                 {floorBreach && floorDays && (
@@ -968,7 +968,7 @@ export function RequestServiceModal({
                             ? 'Slot 1 (required)'
                             : `Slot ${i + 1} (optional)`
                         }
-                        className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                        className="w-full border border-[#1E2D4D]/15 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                       />
                     </div>
                   ))}
@@ -985,7 +985,7 @@ export function RequestServiceModal({
                 rows={3}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
+                className="w-full border border-[#1E2D4D]/15 rounded-xl px-3 py-2 text-sm focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent resize-none"
                 placeholder="Any special requirements or access instructions..."
               />
             </div>

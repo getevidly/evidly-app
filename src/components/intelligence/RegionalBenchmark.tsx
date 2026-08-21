@@ -62,15 +62,15 @@ export const RegionalBenchmark: React.FC<Props> = ({ data }) => {
             <YAxis tick={{ fill: '#3D5068', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#D1D9E6' }} />
             <Tooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={{ fontSize: '11px' }} formatter={(v: string) => v === 'org' ? 'Your Org' : v === 'industry' ? 'Industry Avg' : 'Top 10%'} />
-            <Bar dataKey="org" fill="#A08C5A" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="org" fill="#B24A2E" radius={[4, 4, 0, 0]} />
             <Bar dataKey="industry" fill="#3D5068" radius={[4, 4, 0, 0]} />
             <Bar dataKey="topDecile" fill="#4ade80" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      <div style={{ background: '#EEF1F7', borderRadius: '8px', padding: '12px 16px', marginTop: '14px', borderLeft: '3px solid #A08C5A' }}>
-        <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>Benchmark Insight</p>
+      <div style={{ background: '#EEF1F7', borderRadius: '8px', padding: '12px 16px', marginTop: '14px', borderLeft: '3px solid #B24A2E' }}>
+        <p style={{ color: '#B24A2E', fontSize: '11px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>Benchmark Insight</p>
         <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>
           Your organization's checklist completion ({Math.round(orgMetrics.avgChecklistCompletion * 100)}%) exceeds industry average ({Math.round(benchmarks.avgChecklistCompletion * 100)}%).
           {orgMetrics.staffTurnoverOrgAvg < benchmarks.avgStaffTurnover

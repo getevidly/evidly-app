@@ -14,7 +14,7 @@ import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const LIGHT_BG = '#eef4f8';
 
 type Step = 1 | 2 | 3 | 4 | 5;

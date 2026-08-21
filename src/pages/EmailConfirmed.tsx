@@ -270,7 +270,7 @@ export function EmailConfirmed() {
         <div className="flex justify-center mb-4">
           <span className="text-3xl font-bold tracking-tight">
             <span className="text-[#1E2D4D]">Evid</span>
-            <span className="text-[#A08C5A]">LY</span>
+            <span className="text-[#B24A2E]">LY</span>
           </span>
         </div>
 
@@ -288,7 +288,7 @@ export function EmailConfirmed() {
 
         {status === 'provisioning' && (
           <>
-            <Loader className="h-12 w-12 text-[#A08C5A] animate-spin mx-auto mb-4" />
+            <Loader className="h-12 w-12 text-[#B24A2E] animate-spin mx-auto mb-4" />
             <h2 className="text-xl font-bold text-[#1E2D4D] mb-2">Setting up your account...</h2>
             <p className="text-[#1E2D4D]/70">Creating your organization and profile.</p>
           </>

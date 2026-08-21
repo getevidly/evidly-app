@@ -13,7 +13,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const TEXT_SEC = '#6B7F96';
 const BG = '#F4F6FA';
 

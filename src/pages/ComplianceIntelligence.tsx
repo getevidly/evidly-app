@@ -181,7 +181,7 @@ export function ComplianceIntelligence() {
       {/* Powered By */}
       {enterpriseTenant.showPoweredBy && (
         <footer className="text-center py-4 border-t border-[#1E2D4D]/5 bg-white mt-6">
-          <p className="text-xs text-[#1E2D4D]/30">Powered by <span style={{ color: '#A08C5A', fontWeight: 600 }}>EvidLY</span></p>
+          <p className="text-xs text-[#1E2D4D]/30">Powered by <span style={{ color: '#B24A2E', fontWeight: 600 }}>EvidLY</span></p>
         </footer>
       )}
 
@@ -337,7 +337,7 @@ function CommandCenterTab() {
             <YAxis domain={[75, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} />
             <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e5e7eb' }} />
             <Legend wrapperStyle={{ fontSize: 10 }} />
-            <ReferenceLine x="Jul" stroke="#A08C5A" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#A08C5A', fontWeight: 600 } }} />
+            <ReferenceLine x="Jul" stroke="#B24A2E" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#B24A2E', fontWeight: 600 } }} />
             <ReferenceLine x="Nov" stroke="#6b21a8" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'FDA Update', position: 'top', style: { fontSize: 9, fill: '#6b21a8', fontWeight: 600 } }} />
             <Line type="monotone" dataKey="compositeScore" name="Composite" stroke="#1E2D4D" strokeWidth={2.5} dot={false} />
             <Line type="monotone" dataKey="fire" name="Fire Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
@@ -349,7 +349,7 @@ function CommandCenterTab() {
       {/* Row 3 — AI Intelligence Insights */}
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Zap className="h-4 w-4" style={{ color: '#A08C5A' }} />
+          <Zap className="h-4 w-4" style={{ color: '#B24A2E' }} />
           <h3 className="text-sm font-semibold text-[#1E2D4D]">This Week's Intelligence Briefing</h3>
           <span className="text-xs text-[#1E2D4D]/30 ml-auto">{weeklyInsights.length} insights</span>
         </div>
@@ -450,7 +450,7 @@ function CompareTab() {
                   placeholder="Search locations..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl focus:outline-none focus:ring-1 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+                  className="w-full pl-9 pr-3 py-2 text-xs border border-[#1E2D4D]/10 rounded-xl focus:outline-none focus:ring-1 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
                 />
               </div>
               <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="text-xs border border-[#1E2D4D]/10 rounded-xl px-3 py-2">
@@ -560,7 +560,7 @@ function CompareTab() {
                 <Legend wrapperStyle={{ fontSize: 10 }} />
                 <Bar dataKey="avgScore" name="Avg Score" fill="#1E2D4D" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="avgChecklist" name="Checklist %" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="avgTraining" name="Training %" fill="#A08C5A" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="avgTraining" name="Training %" fill="#B24A2E" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -568,7 +568,7 @@ function CompareTab() {
           {/* Quartile Narrative */}
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Zap className="h-4 w-4" style={{ color: '#A08C5A' }} />
+              <Zap className="h-4 w-4" style={{ color: '#B24A2E' }} />
               <h3 className="text-sm font-semibold text-[#1E2D4D]">What Separates Top from Bottom?</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -758,7 +758,7 @@ function RiskTab() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Low Risk', count: riskSummary.low, color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0', desc: 'No predicted issues next 90 days' },
-            { label: 'Moderate Risk', count: riskSummary.moderate, color: '#A08C5A', bg: '#fefce8', border: '#fde68a', desc: '1-2 predicted issues' },
+            { label: 'Moderate Risk', count: riskSummary.moderate, color: '#B24A2E', bg: '#fefce8', border: '#fde68a', desc: '1-2 predicted issues' },
             { label: 'High Risk', count: riskSummary.high, color: '#f59e0b', bg: '#fff7ed', border: '#fdba74', desc: '3+ predicted issues' },
             { label: 'Critical Risk', count: riskSummary.critical, color: '#ef4444', bg: '#fef2f2', border: '#fca5a5', desc: 'Intervention recommended' },
           ].map(r => (
@@ -776,7 +776,7 @@ function RiskTab() {
         {[
           { label: 'Fire Lapse Risk', value: expiringThisQuarter.fireSuppression, icon: Flame, desc: 'locations with >70% lapse probability', color: '#ef4444' },
           { label: 'Inspection Failure', value: predictedInspectionFailures, icon: ClipboardCheck, desc: 'predicted B or lower grade', color: '#f59e0b' },
-          { label: 'Single-CFPM Risk', value: singleCFPMLocations, icon: Users, desc: 'locations — 1 departure = non-compliant', color: '#A08C5A' },
+          { label: 'Single-CFPM Risk', value: singleCFPMLocations, icon: Users, desc: 'locations — 1 departure = non-compliant', color: '#B24A2E' },
           { label: 'Equipment Aging', value: equipmentReplacementDue, icon: Clock, desc: 'approaching replacement cycle', color: '#6b21a8' },
         ].map(f => (
           <div key={f.label} className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
@@ -825,7 +825,7 @@ function RiskTab() {
                         <div key={i} className="flex items-center gap-3 text-xs">
                           <div className="w-16">
                             <div className="h-1.5 bg-[#1E2D4D]/8 rounded-full">
-                              <div className="h-full rounded-full" style={{ width: `${f.probability}%`, backgroundColor: f.severity === 'high' ? '#ef4444' : f.severity === 'medium' ? '#f59e0b' : '#A08C5A' }} />
+                              <div className="h-full rounded-full" style={{ width: `${f.probability}%`, backgroundColor: f.severity === 'high' ? '#ef4444' : f.severity === 'medium' ? '#f59e0b' : '#B24A2E' }} />
                             </div>
                           </div>
                           <span className="text-[#1E2D4D]/30 w-8 text-right font-mono">{f.probability}%</span>
@@ -896,8 +896,8 @@ function RiskTab() {
 
 function InsightCallout({ text }: { text: string }) {
   return (
-    <div className="mt-2 p-2.5 rounded-xl border border-[#A08C5A]/30 bg-[#fefce8]">
-      <p className="text-xs text-amber-800"><Zap className="h-3 w-3 inline mr-1 text-[#A08C5A]" />{text}</p>
+    <div className="mt-2 p-2.5 rounded-xl border border-[#B24A2E]/30 bg-[#fefce8]">
+      <p className="text-xs text-amber-800"><Zap className="h-3 w-3 inline mr-1 text-[#B24A2E]" />{text}</p>
     </div>
   );
 }
@@ -1008,7 +1008,7 @@ function StaffingTab() {
               <YAxis dataKey="y" type="number" name="Checklist %" domain={[40, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Checklist %', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
               <ZAxis range={[20, 20]} />
               <Tooltip content={<CustomScatterTooltip />} />
-              <Scatter data={checklistData} fill="#A08C5A" fillOpacity={0.5} />
+              <Scatter data={checklistData} fill="#B24A2E" fillOpacity={0.5} />
             </ScatterChart>
           </ResponsiveContainer>
           <InsightCallout text={staffingChecklistInsight} />
@@ -1041,7 +1041,7 @@ function StaffingTab() {
           {[
             { type: 'high-turnover' as const, label: 'High Turnover', icon: TrendingDown, color: '#ef4444' },
             { type: 'cfpm-departure' as const, label: 'CFPM Departure', icon: Users, color: '#f59e0b' },
-            { type: 'new-hires-untrained' as const, label: 'Untrained New Hires', icon: AlertCircle, color: '#A08C5A' },
+            { type: 'new-hires-untrained' as const, label: 'Untrained New Hires', icon: AlertCircle, color: '#B24A2E' },
             { type: 'manager-vacancy' as const, label: 'Manager Vacancy', icon: AlertTriangle, color: '#ef4444' },
           ].map(rt => (
             <div key={rt.type} className="rounded-xl border border-[#1E2D4D]/10 p-4">
@@ -1156,9 +1156,9 @@ function FinancialTab() {
       </div>
 
       {/* Executive ROI Summary */}
-      <div className="bg-white rounded-xl border-2 border-[#A08C5A]/30 p-4 sm:p-6">
+      <div className="bg-white rounded-xl border-2 border-[#B24A2E]/30 p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="h-5 w-5" style={{ color: '#A08C5A' }} />
+          <TrendingUp className="h-5 w-5" style={{ color: '#B24A2E' }} />
           <h3 className="text-base font-bold text-[#1E2D4D]">Executive ROI Summary</h3>
           <span className="text-xs text-[#1E2D4D]/30 ml-auto">Board-ready view</span>
         </div>
@@ -1193,9 +1193,9 @@ function FinancialTab() {
                 <span className="text-sm font-bold text-green-700">{formatDollars(roiSummary.riskReductionLow)} – {formatDollars(roiSummary.riskReductionHigh)}</span>
               </div>
             </div>
-            <div className="p-4 rounded-xl border-2 border-[#A08C5A] bg-[#fefce8] text-center">
+            <div className="p-4 rounded-xl border-2 border-[#B24A2E] bg-[#fefce8] text-center">
               <p className="text-xs text-[#1E2D4D]/70 mb-1">Net ROI</p>
-              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#A08C5A' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
+              <p className="text-xl sm:text-3xl font-bold tracking-tight" style={{ color: '#B24A2E' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
               <p className="text-xs text-[#1E2D4D]/50 mt-1">return on compliance investment</p>
             </div>
           </div>
@@ -1591,7 +1591,7 @@ function PlatformTab() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {cSuitePitch.valueProps.map((prop, i) => (
               <div key={i} className="flex items-start gap-2">
-                <CheckCircle className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" />
+                <CheckCircle className="h-4 w-4 text-[#B24A2E] flex-shrink-0 mt-0.5" />
                 <span className="text-[#1E2D4D]/80 text-xs">{prop}</span>
               </div>
             ))}
@@ -1810,12 +1810,12 @@ function PlatformTab() {
               key={tier.id}
               className={`rounded-xl p-4 sm:p-5 border-2 ${
                 tier.highlighted
-                  ? 'border-[#A08C5A] shadow-sm relative'
+                  ? 'border-[#B24A2E] shadow-sm relative'
                   : 'border-[#1E2D4D]/10'
               }`}
             >
               {tier.highlighted && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#A08C5A' }}>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#B24A2E' }}>
                   <Star className="h-3 w-3" /> MOST POPULAR
                 </div>
               )}
@@ -1856,7 +1856,7 @@ function PlatformTab() {
                   <p className="text-xs font-semibold text-[#1E2D4D]/90">{bundle.name}</p>
                   <p className="text-xs text-[#1E2D4D]/50">{bundle.description}</p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#A08C5A' }}>Save {bundle.saving}</span>
+                <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#B24A2E' }}>Save {bundle.saving}</span>
               </div>
             ))}
           </div>

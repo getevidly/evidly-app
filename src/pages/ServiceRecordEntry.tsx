@@ -11,7 +11,7 @@ import { useDemo } from '../contexts/DemoContext';
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const NAVY_HOVER = '#141E33';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
 // ── Demo equipment lookup ─────────────────────────────────────────
@@ -74,7 +74,7 @@ interface FormState {
   cost: string;
 }
 
-const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white';
+const inputClass = 'w-full px-3 py-2.5 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] bg-white';
 const labelClass = 'block text-sm font-medium text-[#1E2D4D]/80 mb-1';
 
 export function ServiceRecordEntry() {

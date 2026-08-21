@@ -143,7 +143,7 @@ export function USDAProductionRecords() {
             <div style={{ fontSize: 28, fontWeight: 800, color: withFoodSafetyPlan === locations.length ? '#40916C' : '#f59e0b' }}>{withFoodSafetyPlan}/{locations.length}</div>
             <div style={{ fontSize: 11, color: '#9ca3af' }}>schools with plans</div>
           </div>
-          <div style={{ background: 'white', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', borderLeft: '4px solid #A08C5A' }}>
+          <div style={{ background: 'white', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', borderLeft: '4px solid #B24A2E' }}>
             <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 600, marginBottom: 4 }}>USDA Compliant</div>
             <div style={{ fontSize: 28, fontWeight: 800, color: usdaCompliant === locations.length ? '#40916C' : '#f59e0b' }}>{usdaCompliant}/{locations.length}</div>
             <div style={{ fontSize: 11, color: '#9ca3af' }}>schools passing USDA</div>

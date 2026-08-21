@@ -344,7 +344,7 @@ export function IoTSensorHub() {
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-lg font-bold text-[#1E2D4D]">Evid</span>
-              <span className="text-lg font-bold" style={{ color: '#A08C5A' }}>LY</span>
+              <span className="text-lg font-bold" style={{ color: '#B24A2E' }}>LY</span>
               <span className="text-[#1E2D4D]/30 mx-1 hidden sm:inline">|</span>
               <span className="text-lg font-semibold tracking-tight text-[#1E2D4D]/80 hidden sm:inline">IoT Sensor Hub</span>
             </div>
@@ -559,7 +559,7 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4 mb-4 flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1E2D4D]/30" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sensors..." className="w-full pl-10 pr-4 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sensors..." className="w-full pl-10 pr-4 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
         </div>
         <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm bg-white">
           <option value="all">All Locations</option>
@@ -727,7 +727,7 @@ function AlertsTab() {
                   <item.icon className="h-3.5 w-3.5" style={{ color: item.color }} />
                   {item.label}
                 </label>
-                <input type="number" value={thresholds[item.key]} onChange={e => setThresholds(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+                <input type="number" value={thresholds[item.key]} onChange={e => setThresholds(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
               </div>
             ))}
           </div>
@@ -864,7 +864,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
   // SVG temperature trend for cooler sensors (last 3 readings each)
   const coolerSensors = iotSensors.filter(s => s.zone.toLowerCase().includes('cooler') || s.zone.toLowerCase().includes('freezer') || s.zone.toLowerCase().includes('display') || s.zone.toLowerCase().includes('salad') || s.zone.toLowerCase().includes('beverage') || s.zone.toLowerCase().includes('blast') || s.zone.toLowerCase().includes('cold'));
 
-  const trendColors = ['#1E2D4D', '#A08C5A', '#ef4444', '#22c55e', '#7c3aed', '#ea580c', '#0891b2', '#dc2626', '#059669'];
+  const trendColors = ['#1E2D4D', '#B24A2E', '#ef4444', '#22c55e', '#7c3aed', '#ea580c', '#0891b2', '#dc2626', '#059669'];
 
   // Bar chart data for readings by provider
   const providerEntries = Object.entries(data.byProvider).sort((a, b) => b[1] - a[1]);
@@ -881,7 +881,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total Readings (24h)', value: iotSensorReadings.length.toString(), icon: Database, color: '#1E2D4D' },
-          { label: 'Avg Temperature', value: `${avgTemp.toFixed(1)}°F`, icon: Thermometer, color: '#A08C5A' },
+          { label: 'Avg Temperature', value: `${avgTemp.toFixed(1)}°F`, icon: Thermometer, color: '#B24A2E' },
           { label: 'Compliance Rate', value: `${data.coolerTotal > 0 ? Math.round((data.coolerInRange / data.coolerTotal) * 100) : 0}%`, icon: () => <EvidlyIcon size={16} />, color: '#22c55e' },
           { label: 'Fleet Uptime', value: `${uptimePct}%`, icon: Wifi, color: '#7c3aed' },
         ].map(item => (
@@ -1055,7 +1055,7 @@ Content-Type: application/json
             ].map(item => (
               <div key={item.key}>
                 <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">{item.label}</label>
-                <input type="number" value={globalConfig[item.key]} onChange={e => setGlobalConfig(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+                <input type="number" value={globalConfig[item.key]} onChange={e => setGlobalConfig(prev => ({ ...prev, [item.key]: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
               </div>
             ))}
           </div>
@@ -1087,7 +1087,7 @@ Content-Type: application/json
           <div className="flex items-center gap-4 mb-4">
             <div className="flex-1">
               <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Data Retention (days)</label>
-              <input type="number" value={globalConfig.dataRetentionDays} onChange={e => setGlobalConfig(prev => ({ ...prev, dataRetentionDays: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+              <input type="number" value={globalConfig.dataRetentionDays} onChange={e => setGlobalConfig(prev => ({ ...prev, dataRetentionDays: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -1280,7 +1280,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                       </div>
                     </div>
                     <p className="text-xs text-blue-700 mb-3">Find your API key in your {selectedProv.name} account settings under "API Access" or "Integrations".</p>
-                    <input type="text" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder={`Enter ${selectedProv.name} API key...`} className="w-full px-3 py-2 rounded-xl border border-blue-200 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
+                    <input type="text" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder={`Enter ${selectedProv.name} API key...`} className="w-full px-3 py-2 rounded-xl border border-blue-200 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]" />
                   </div>
                   {apiKey && (
                     <div className="p-3 rounded-lg bg-green-50 border border-green-200">
@@ -1372,19 +1372,19 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">High Temp Alert (°F)</label>
-                  <input type="number" value={thresholds.highTempF} onChange={e => setThresholds(prev => ({ ...prev, highTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
+                  <input type="number" value={thresholds.highTempF} onChange={e => setThresholds(prev => ({ ...prev, highTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20" />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Low Temp Alert (°F)</label>
-                  <input type="number" value={thresholds.lowTempF} onChange={e => setThresholds(prev => ({ ...prev, lowTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
+                  <input type="number" value={thresholds.lowTempF} onChange={e => setThresholds(prev => ({ ...prev, lowTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20" />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Humidity High (%)</label>
-                  <input type="number" value={thresholds.humidityHigh} onChange={e => setThresholds(prev => ({ ...prev, humidityHigh: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
+                  <input type="number" value={thresholds.humidityHigh} onChange={e => setThresholds(prev => ({ ...prev, humidityHigh: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20" />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Battery Low (%)</label>
-                  <input type="number" value={thresholds.batteryLowPct} onChange={e => setThresholds(prev => ({ ...prev, batteryLowPct: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
+                  <input type="number" value={thresholds.batteryLowPct} onChange={e => setThresholds(prev => ({ ...prev, batteryLowPct: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20" />
                 </div>
               </div>
             </div>
@@ -1401,7 +1401,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                   <label className="text-xs font-medium text-[#1E2D4D]/70 mb-1 block">Alert Recipients</label>
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-[#1E2D4D]/30" />
-                    <input type="text" value={alertRecipients} onChange={e => setAlertRecipients(e.target.value)} placeholder="email@example.com, another@example.com" className="flex-1 px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20" />
+                    <input type="text" value={alertRecipients} onChange={e => setAlertRecipients(e.target.value)} placeholder="email@example.com, another@example.com" className="flex-1 px-3 py-2 rounded-xl border border-[#1E2D4D]/10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20" />
                   </div>
                   <p className="text-xs text-[#1E2D4D]/30 mt-1">Comma-separated email addresses</p>
                 </div>

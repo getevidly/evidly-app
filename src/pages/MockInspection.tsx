@@ -55,7 +55,7 @@ interface QuestionAnswer {
 // ---------------------------------------------------------------------------
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 /** Estimate likely outcome based on severity counts (NOT a score). */
 function estimateOutcome(critical: number, major: number): { label: string; color: string; bg: string } {
@@ -543,7 +543,7 @@ export default function MockInspection() {
                 onChange={e => setNotes(currentIdx, e.target.value)}
                 placeholder="Document the issue..."
                 rows={2}
-                className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
+                className="w-full text-sm border border-[#1E2D4D]/15 rounded-xl px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/30 focus:border-[#1E2D4D] resize-none"
               />
               <SuggestionPill
                 fieldLabel="Question Notes"

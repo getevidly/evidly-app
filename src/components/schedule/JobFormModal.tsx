@@ -72,7 +72,7 @@ export function JobFormModal({ job, onClose, onSave }: JobFormModalProps) {
     });
   }
 
-  const inputClass = 'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20';
+  const inputClass = 'w-full px-3 py-2 text-sm rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20';
 
   return (
     <Modal isOpen={true} onClose={onClose} size="lg">

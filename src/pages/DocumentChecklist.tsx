@@ -328,7 +328,7 @@ export function DocumentChecklist() {
                   navigator.clipboard.writeText(demoReferral.referralUrl);
                   toast.success('Referral link copied!');
                 })}
-                style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+                style={{ color: '#B24A2E', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
               >
                 Share →
               </button>
@@ -357,7 +357,7 @@ export function DocumentChecklist() {
               width: `${progressPct}%`,
               background: allRequiredDone
                 ? '#16a34a'
-                : `linear-gradient(90deg, #A08C5A, #16a34a)`,
+                : `linear-gradient(90deg, #B24A2E, #16a34a)`,
             }}
           />
         </div>

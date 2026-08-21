@@ -68,7 +68,7 @@ export function ReadingMethodSelect({ value, onChange }: ReadingMethodSelectProp
     <select
       value={value}
       onChange={(e) => onChange(e.target.value as ReadingMethod)}
-      className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] bg-white"
+      className="w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] bg-white"
     >
       <option value="manual_thermometer">Manual Thermometer</option>
       <option value="infrared_gun">Infrared Gun</option>
@@ -117,7 +117,7 @@ export function OutOfRangeWarning({ temperature, minTemp, maxTemp, correctiveAct
         onChange={(e) => { onCorrectiveActionChange(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
         rows={2}
         placeholder="Describe corrective action taken..."
-        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+        className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
       />
       {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
     </div>
@@ -131,7 +131,7 @@ export function isOutOfRange(temp: number, min: number, max: number): boolean {
 
 export function tempInputClass(temp: string, inRange: boolean | null): string {
   const base = 'w-full px-4 py-4 text-3xl font-bold tracking-tight text-center border-3 rounded-lg focus:outline-none focus:ring-4 transition-all';
-  if (!temp) return `${base} border-[#1E2D4D]/15 focus:ring-[#A08C5A]`;
+  if (!temp) return `${base} border-[#1E2D4D]/15 focus:ring-[#B24A2E]`;
   if (inRange) return `${base} border-green-500 focus:ring-green-200 bg-green-50`;
   return `${base} border-red-500 focus:ring-red-200 bg-red-50`;
 }
@@ -141,6 +141,6 @@ export function formatDateTimeLocal(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]';
+export const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]';
 export const BTN_PRIMARY = 'flex-1 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-semibold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] min-h-[44px]';
 export const BTN_CANCEL = 'flex-1 px-6 py-3 border-2 border-[#1E2D4D]/15 text-[#1E2D4D]/80 rounded-lg font-medium hover:bg-[#FAF7F0] transition-colors min-h-[44px]';

@@ -218,9 +218,9 @@ function RolesPermissionsInner() {
         <div className="flex items-center gap-3 mb-2">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: 'rgba(160, 140, 90, 0.12)' }}
+            style={{ backgroundColor: 'rgba(178,74,46, 0.12)' }}
           >
-            <Shield className="w-5 h-5" style={{ color: '#A08C5A' }} />
+            <Shield className="w-5 h-5" style={{ color: '#B24A2E' }} />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>

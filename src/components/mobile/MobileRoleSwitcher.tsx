@@ -34,7 +34,7 @@ export function MobileRoleSwitcher() {
                   ? 'text-[#1E2D4D]'
                   : 'bg-white/60 text-[#6B7280] active:bg-white/80'
               }`}
-              style={active ? { background: '#A08C5A', color: '#1E2D4D' } : undefined}
+              style={active ? { background: '#B24A2E', color: '#1E2D4D' } : undefined}
             >
               <span>{pill.icon}</span>
               <span>{pill.label}</span>

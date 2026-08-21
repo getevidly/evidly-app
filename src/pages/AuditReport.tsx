@@ -575,7 +575,7 @@ export function AuditReport() {
                 <select
                   value={dateRange}
                   onChange={e => setDateRange(e.target.value as DateRange)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="7">Last 7 days</option>
                   <option value="30">Last 30 days</option>
@@ -596,7 +596,7 @@ export function AuditReport() {
                 <select
                   value={locationFilter}
                   onChange={e => setLocationFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="all">All Locations</option>
                   {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
@@ -609,7 +609,7 @@ export function AuditReport() {
                 <select
                   value={reportType}
                   onChange={e => applyReportType(e.target.value as ReportType)}
-                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+                  className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
                 >
                   <option value="full">Full Compliance Report</option>
                   <option value="food_safety">Food Safety Report</option>
@@ -703,7 +703,7 @@ export function AuditReport() {
                   <EvidlyIcon size={32} />
                   <span className="text-2xl font-bold tracking-tight">
                     <span className="text-white">Evid</span>
-                    <span className="text-[#A08C5A]">LY</span>
+                    <span className="text-[#B24A2E]">LY</span>
                   </span>
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight mb-1">{reportTitle}</h2>

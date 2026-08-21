@@ -10,7 +10,7 @@ import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawS
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 export default function KitchenToCommunityImpact({ config }: { config: ReportTypeConfig }) {
   const { isDemoMode } = useDemo();

@@ -35,10 +35,10 @@ import { supabase } from '../lib/supabase';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const LIGHT_BG = '#eef4f8';
 const BORDER = '#b8d4e8';
-const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A] focus:border-transparent';
+const INPUT_CLASS = 'w-full px-4 py-3 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E] focus:border-transparent';
 
 /* ── Sensor Type Config ──────────────────────────────────── */
 

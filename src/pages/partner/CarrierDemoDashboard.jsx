@@ -76,7 +76,7 @@ export default function CarrierDemoDashboard() {
             {[
               { label: 'Portfolio Size', value: locations.length, icon: MapPin, bg: 'bg-blue-50', color: 'text-blue-700' },
               { label: 'PSE Verified', value: pseSummary.fully_verified || 0, icon: CheckCircle2, bg: 'bg-green-50', color: 'text-green-700' },
-              { label: 'PSE Partial / Missing', value: pseSummary.partial || 0, icon: AlertTriangle, bg: 'bg-[#FAF7F0]', color: 'text-[#A08C5A]' },
+              { label: 'PSE Partial / Missing', value: pseSummary.partial || 0, icon: AlertTriangle, bg: 'bg-[#FAF7F0]', color: 'text-[#B24A2E]' },
             ].map(s => (
               <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
                 <s.icon size={20} className={`${s.color} mb-2`} />
@@ -87,7 +87,7 @@ export default function CarrierDemoDashboard() {
           </div>
 
           {/* §1731 Disclosure */}
-          <div className="bg-[#FAF7F0] border border-[#A08C5A]/20 rounded-xl p-4">
+          <div className="bg-[#FAF7F0] border border-[#B24A2E]/20 rounded-xl p-4">
             <p className="text-xs text-[#1E2D4D]/70">
               <span className="font-semibold">Per CA Ins. Code §1731:</span> EvidLY reads jurisdiction grades, identifies operational deficiencies, and flags missing documentation.
               EvidLY does not rate, evaluate, score, or advise on insurance risk. All grades shown are jurisdiction-native (health department letter grades or pass/fail).
@@ -185,13 +185,13 @@ export default function CarrierDemoDashboard() {
           {/* Data Feed Preview — operational facts, no scores */}
           <div className="bg-[#1E2D4D] text-white rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-              <FileJson size={20} className="text-[#A08C5A]" />
+              <FileJson size={20} className="text-[#B24A2E]" />
               <h2 className="text-lg font-semibold tracking-tight">Data Feed Preview</h2>
             </div>
             <div className="space-y-2 text-sm mb-4">
               <div className="flex justify-between">
                 <span className="text-[#1E2D4D]/30">Endpoint:</span>
-                <span className="font-mono text-[#A08C5A]">{apiFeed.endpoint || '/api/v1/carrier/status-feed'}</span>
+                <span className="font-mono text-[#B24A2E]">{apiFeed.endpoint || '/api/v1/carrier/status-feed'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#1E2D4D]/30">Format:</span>

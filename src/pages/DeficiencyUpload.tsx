@@ -104,7 +104,7 @@ export function DeficiencyUpload() {
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <Bot className="w-5 h-5" style={{ color: '#A08C5A' }} />
+              <Bot className="w-5 h-5" style={{ color: '#B24A2E' }} />
               <h1 className="text-xl font-bold" style={{ color: '#0B1628' }}>
                 Extract deficiencies from report
               </h1>

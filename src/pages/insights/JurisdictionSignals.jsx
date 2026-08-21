@@ -60,7 +60,7 @@ export function JurisdictionSignals() {
     <div className="p-4 lg:p-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2.5 bg-[#1E2D4D] rounded-xl">
-          <Radio className="h-6 w-6 text-[#A08C5A]" />
+          <Radio className="h-6 w-6 text-[#B24A2E]" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-[#0B1628]">Jurisdiction Signals</h1>
@@ -70,7 +70,7 @@ export function JurisdictionSignals() {
 
       {loading ? (
         <div className="bg-white rounded-xl border border-[#D1D9E6] p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A08C5A] mx-auto" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B24A2E] mx-auto" />
           <p className="mt-3 text-sm text-[#6B7F96]">Loading jurisdiction signals...</p>
         </div>
       ) : (

@@ -211,7 +211,7 @@ export function CaliforniaCompliance() {
               <Link
                 to="/demo"
                 className="px-6 py-2.5 rounded-lg font-medium text-sm text-white"
-                style={{ backgroundColor: '#A08C5A' }}
+                style={{ backgroundColor: '#B24A2E' }}
               >
                 Try Free Demo
               </Link>

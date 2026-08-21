@@ -30,7 +30,7 @@ import { useHandoffRecipients } from '../hooks/useHandoffRecipients';
 import { formatRelativeTime } from '../utils/format';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 function getShiftDateLabel() {
   return new Date().toLocaleDateString('en-US', {

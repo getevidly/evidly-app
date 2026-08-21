@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Clock, ArrowRight, MessageCircle } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 /**
  * Full-screen upgrade prompt shown when an authenticated demo has expired.

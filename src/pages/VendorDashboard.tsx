@@ -64,7 +64,7 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={sz} fill={i <= Math.round(rating) ? '#A08C5A' : 'none'} stroke={i <= Math.round(rating) ? '#A08C5A' : '#d1d5db'} />
+        <Star key={i} className={sz} fill={i <= Math.round(rating) ? '#B24A2E' : 'none'} stroke={i <= Math.round(rating) ? '#B24A2E' : '#d1d5db'} />
       ))}
       <span className={`ml-1 font-semibold ${size === 'lg' ? 'text-lg' : 'text-sm'} text-[#1E2D4D]/80`}>{rating.toFixed(1)}</span>
     </div>
@@ -101,7 +101,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function ProgressBar({ value, color }: { value: number; color?: string }) {
-  const c = color || (value >= 95 ? '#22c55e' : value >= 80 ? '#A08C5A' : '#f59e0b');
+  const c = color || (value >= 95 ? '#22c55e' : value >= 80 ? '#B24A2E' : '#f59e0b');
   return (
     <div className="w-full bg-[#1E2D4D]/8 rounded-full h-2">
       <div className="h-2 rounded-full transition-all" style={{ width: `${Math.min(value, 100)}%`, backgroundColor: c }} />
@@ -559,9 +559,9 @@ export function VendorDashboard() {
                 return (
                   <div key={star} className="flex items-center gap-2 text-sm">
                     <span className="w-3 text-[#1E2D4D]/70">{star}</span>
-                    <Star className="h-3.5 w-3.5" fill="#A08C5A" stroke="#A08C5A" />
+                    <Star className="h-3.5 w-3.5" fill="#B24A2E" stroke="#B24A2E" />
                     <div className="flex-1 h-2 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#A08C5A' }} />
+                      <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#B24A2E' }} />
                     </div>
                     <span className="w-5 text-xs text-[#1E2D4D]/50 text-right">{count}</span>
                   </div>
@@ -611,10 +611,10 @@ export function VendorDashboard() {
         <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">Tips to Improve Your Rating</h3>
           <ul className="space-y-2 text-sm text-[#1E2D4D]/80">
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Respond to all reviews within 48 hours — operators notice and appreciate it</li>
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Upload service documentation within 24 hours of completing a job</li>
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Include before/after photos — they show quality and build trust</li>
-            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#A08C5A] flex-shrink-0 mt-0.5" /> Ask satisfied clients to leave a review on your EvidLY profile</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#B24A2E] flex-shrink-0 mt-0.5" /> Respond to all reviews within 48 hours — operators notice and appreciate it</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#B24A2E] flex-shrink-0 mt-0.5" /> Upload service documentation within 24 hours of completing a job</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#B24A2E] flex-shrink-0 mt-0.5" /> Include before/after photos — they show quality and build trust</li>
+            <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#B24A2E] flex-shrink-0 mt-0.5" /> Ask satisfied clients to leave a review on your EvidLY profile</li>
           </ul>
         </div>
       </div>
@@ -634,11 +634,11 @@ export function VendorDashboard() {
         {vendorCurrentSubscription.plan === 'free' && (
           <div className="bg-gradient-to-r from-[#1E2D4D] to-[#2c5f7f] rounded-xl p-4 sm:p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
-              <Lock className="h-5 w-5 text-[#A08C5A]" />
+              <Lock className="h-5 w-5 text-[#B24A2E]" />
               <span className="font-semibold">Premium Analytics</span>
             </div>
             <p className="text-white/80 text-sm mb-3">Upgrade to Standard ($49/mo) to unlock full analytics including revenue tracking, conversion funnels, and category benchmarks.</p>
-            <button onClick={() => setShowSubscriptionModal(true)} className="px-4 py-2 bg-[#A08C5A] text-[#1E2D4D] text-sm font-semibold rounded-lg hover:bg-[#A08C5A]">
+            <button onClick={() => setShowSubscriptionModal(true)} className="px-4 py-2 bg-[#B24A2E] text-[#1E2D4D] text-sm font-semibold rounded-lg hover:bg-[#B24A2E]">
               Upgrade Now
             </button>
           </div>
@@ -921,7 +921,7 @@ export function VendorDashboard() {
             {vendorSubscriptionPlans.map(plan => {
               const isCurrent = vendorCurrentSubscription.plan === plan.id.replace('plan-', '');
               return (
-                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#A08C5A] shadow-sm' : isCurrent ? 'border-[#1E2D4D]' : 'border-[#1E2D4D]/10'}`}>
+                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#B24A2E] shadow-sm' : isCurrent ? 'border-[#1E2D4D]' : 'border-[#1E2D4D]/10'}`}>
                   {plan.highlighted && (
                     <div className="text-xs font-bold text-[#1E2D4D] uppercase mb-2">Most Popular</div>
                   )}
@@ -990,14 +990,14 @@ export function VendorDashboard() {
             <div className="flex items-center">
               <div className="w-10 h-12">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#A08C5A"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#B24A2E"/>
                   <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#A08C5A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 32L26 36L34 26" stroke="#B24A2E" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <span className="ml-3 text-xl sm:text-2xl font-bold tracking-tight">
                 <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#A08C5A]">LY</span>
+                <span className="text-[#B24A2E]">LY</span>
                 <span className="ml-2 text-sm text-[#1E2D4D]/70 hidden sm:inline">Vendor Marketplace</span>
               </span>
             </div>

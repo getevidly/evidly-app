@@ -13,7 +13,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 function statusDot(s: IoTSensor['status']) {
   return { online: '#22c55e', warning: '#f59e0b', error: '#ef4444', offline: '#9ca3af' }[s];

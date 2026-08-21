@@ -21,7 +21,7 @@ const PRESET_CARDS = [
     label: 'EvidLY',
     desc: 'Default platform branding',
     color: '#1E2D4D',
-    accent: '#A08C5A',
+    accent: '#B24A2E',
   },
   {
     key: 'enterprise',
@@ -185,7 +185,7 @@ export function BrandingSettings() {
                 type="text"
                 value={localBrandName}
                 onChange={e => setLocalBrandName(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
@@ -194,7 +194,7 @@ export function BrandingSettings() {
                 type="text"
                 value={localTagline}
                 onChange={e => setLocalTagline(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
@@ -203,7 +203,7 @@ export function BrandingSettings() {
                 type="text"
                 value={localWelcome}
                 onChange={e => setLocalWelcome(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
@@ -212,7 +212,7 @@ export function BrandingSettings() {
                 type="email"
                 value={localSupport}
                 onChange={e => setLocalSupport(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+                className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div className="flex items-center justify-between py-2">
@@ -347,7 +347,7 @@ export function BrandingSettings() {
               value={localDomain}
               onChange={e => setLocalDomain(e.target.value)}
               placeholder="compliance.yourdomain.com"
-              className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
+              className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
             />
           </div>
           <div>
@@ -497,7 +497,7 @@ export function BrandingSettings() {
       </div>
 
       {/* White-Label Tiers Info */}
-      <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#A08C5A]/5 rounded-xl border border-[#1E2D4D]/10 p-6">
+      <div className="bg-gradient-to-br from-[#1E2D4D]/5 to-[#B24A2E]/5 rounded-xl border border-[#1E2D4D]/10 p-6">
         <h3 className="text-sm font-semibold text-[#1E2D4D] mb-3">White-Label Tiers</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-4">
@@ -517,7 +517,7 @@ export function BrandingSettings() {
               <li>Feature visibility controls</li>
             </ul>
           </div>
-          <div className="bg-white rounded-xl border border-[#A08C5A]/30 p-4 ring-1 ring-[#A08C5A]/20">
+          <div className="bg-white rounded-xl border border-[#B24A2E]/30 p-4 ring-1 ring-[#B24A2E]/20">
             <p className="text-xs font-bold text-[#1E2D4D] mb-1">Enterprise</p>
             <ul className="text-xs text-[#1E2D4D]/70 space-y-1">
               <li>Everything in Professional</li>

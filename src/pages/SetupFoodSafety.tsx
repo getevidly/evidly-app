@@ -7,7 +7,7 @@ import { WizardShell } from '../components/setup/WizardShell';
 
 const TOTAL_STEPS = 7;
 const PRIMARY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const TEXT_MUTED = '#5F5E5A';
 const STEP_INACTIVE_TEXT = '#888780';
 const SELECTED_BG = '#FFFDF5';

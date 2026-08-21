@@ -360,7 +360,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
   return (
     <div style={{
       background: '#FFFFFF',
-      border: applied ? '1px solid #A08C5A' : '1px solid #D1D9E6',
+      border: applied ? '1px solid #B24A2E' : '1px solid #D1D9E6',
       borderRadius: '12px',
       padding: '0',
       marginBottom: '20px',
@@ -385,7 +385,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
           <span className="text-lg">{'⚡'}</span>
           <div style={{ textAlign: 'left' }}>
             <p style={{
-              color: applied ? '#A08C5A' : '#0B1628',
+              color: applied ? '#B24A2E' : '#0B1628',
               fontSize: '14px', fontWeight: 700, margin: 0,
               fontFamily: F,
             }}>
@@ -408,7 +408,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
           {applied && (
             <>
               <span style={{
-                background: '#A08C5A', borderRadius: '10px', padding: '2px 10px',
+                background: '#B24A2E', borderRadius: '10px', padding: '2px 10px',
                 color: '#ffffff', fontSize: '11px', fontWeight: 700,
                 fontFamily: F,
               }}>
@@ -467,7 +467,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
                           cursor: 'pointer',
                           transition: 'border-color 0.15s',
                         }}
-                        onMouseEnter={e => (e.currentTarget.style.borderColor = '#A08C5A')}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = '#B24A2E')}
                         onMouseLeave={e => (e.currentTarget.style.borderColor = '#D1D9E6')}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
@@ -592,7 +592,7 @@ export const ScenarioEngine: React.FC<ScenarioEngineProps> = ({ onScenarioChange
                   onClick={() => { handleApply(); setExpanded(false); }}
                   disabled={!requiredFieldsFilled}
                   style={{
-                    background: requiredFieldsFilled ? '#A08C5A' : '#D1D9E6',
+                    background: requiredFieldsFilled ? '#B24A2E' : '#D1D9E6',
                     border: 'none',
                     borderRadius: '6px', padding: '8px 20px',
                     color: requiredFieldsFilled ? '#ffffff' : '#3D5068',

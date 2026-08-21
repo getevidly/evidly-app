@@ -16,7 +16,7 @@ import type { DriftRecipient } from '../hooks/useDriftRouting';
 
 // ─── Design tokens ────────────────────────────────────────────
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const MUTED = '#6B7689';
 const LINE = '#E6E1D3';
 const GREEN = '#3F6B47';
@@ -119,7 +119,7 @@ export function Alerts() {
         {/* Advanced filters */}
         <div className="flex flex-wrap gap-3">
           <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value as typeof severityFilter)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
             <option value="all">All severities</option>
             <option value="urgent">Urgent</option>
             <option value="high">High</option>
@@ -127,7 +127,7 @@ export function Alerts() {
             <option value="low">Low</option>
           </select>
           <select value={pillarFilter} onChange={e => setPillarFilter(e.target.value as typeof pillarFilter)}
-            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]">
+            className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
             <option value="all">All pillars</option>
             <option value="fire_safety">Fire Safety</option>
             <option value="food_safety">Food Safety</option>

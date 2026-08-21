@@ -5,7 +5,7 @@ import { Radio, AlertTriangle, Info, AlertCircle, Filter } from 'lucide-react';
 const SEVERITY_STYLES = {
   critical: { bg: 'bg-[#991B1B]/10', text: 'text-[#991B1B]', border: 'border-[#991B1B]/20', label: 'Critical' },
   high: { bg: 'bg-[#991B1B]/10', text: 'text-[#991B1B]', border: 'border-[#991B1B]/20', label: 'High' },
-  medium: { bg: 'bg-[#A08C5A]/10', text: 'text-[#A08C5A]', border: 'border-[#A08C5A]/20', label: 'Medium' },
+  medium: { bg: 'bg-[#B24A2E]/10', text: 'text-[#B24A2E]', border: 'border-[#B24A2E]/20', label: 'Medium' },
   low: { bg: 'bg-[#166534]/10', text: 'text-[#166534]', border: 'border-[#166534]/20', label: 'Low' },
   info: { bg: 'bg-[#1E2D4D]/10', text: 'text-[#1E2D4D]', border: 'border-[#1E2D4D]/20', label: 'Info' },
 };

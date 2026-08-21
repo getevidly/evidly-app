@@ -71,10 +71,10 @@ export const VendorNotification: React.FC<Props> = ({
 
   return (
     <div style={{
-      background: '#EEF1F7', border: '1px solid #A08C5A40',
+      background: '#EEF1F7', border: '1px solid #B24A2E40',
       borderRadius: '10px', padding: '16px', marginBottom: '12px',
     }}>
-      <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 12px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+      <p style={{ color: '#B24A2E', fontSize: '11px', fontWeight: 700, margin: '0 0 12px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
         {'📤'} Notify Your Vendor
       </p>
 
@@ -109,8 +109,8 @@ export const VendorNotification: React.FC<Props> = ({
               key={method}
               onClick={() => setContactMethod(method)}
               style={{
-                background: contactMethod === method ? '#A08C5A' : '#FFFFFF',
-                border: `1px solid ${contactMethod === method ? '#A08C5A' : '#D1D9E6'}`,
+                background: contactMethod === method ? '#B24A2E' : '#FFFFFF',
+                border: `1px solid ${contactMethod === method ? '#B24A2E' : '#D1D9E6'}`,
                 borderRadius: '6px', padding: '6px 14px',
                 color: contactMethod === method ? '#ffffff' : 'var(--text-primary, #0B1628)', fontSize: '12px', fontWeight: contactMethod === method ? 700 : 400,
                 cursor: 'pointer', fontFamily: 'system-ui',
@@ -132,7 +132,7 @@ export const VendorNotification: React.FC<Props> = ({
             onChange={e => setMessage(e.target.value)}
             rows={10}
             style={{
-              width: '100%', background: '#FFFFFF', border: '1px solid #A08C5A',
+              width: '100%', background: '#FFFFFF', border: '1px solid #B24A2E',
               borderRadius: '6px', padding: '10px', color: 'var(--text-primary, #0B1628)',
               fontSize: '12px', fontFamily: 'monospace', lineHeight: 1.6,
               resize: 'vertical', boxSizing: 'border-box' as const,
@@ -179,7 +179,7 @@ export const VendorNotification: React.FC<Props> = ({
           <button
             onClick={sendNotification}
             style={{
-              background: '#A08C5A', border: 'none',
+              background: '#B24A2E', border: 'none',
               borderRadius: '6px', padding: '8px 20px',
               color: '#ffffff', fontSize: '12px', fontWeight: 700,
               cursor: 'pointer', fontFamily: 'system-ui', flex: 1,

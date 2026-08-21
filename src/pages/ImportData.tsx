@@ -587,7 +587,7 @@ export function ImportData() {
                   isCompleted
                     ? 'bg-green-500 text-white'
                     : isCurrent
-                    ? 'bg-[#A08C5A] text-white'
+                    ? 'bg-[#B24A2E] text-white'
                     : 'bg-[#1E2D4D]/10 text-[#1E2D4D]/50'
                 }`}
               >
@@ -634,9 +634,9 @@ export function ImportData() {
               <button
                 key={s.dataType}
                 onClick={() => selectDataType(s.dataType)}
-                className={`text-left p-5 rounded-xl border bg-white shadow-sm transition-all hover:shadow-md hover:border-[#A08C5A] ${
+                className={`text-left p-5 rounded-xl border bg-white shadow-sm transition-all hover:shadow-md hover:border-[#B24A2E] ${
                   dataType === s.dataType
-                    ? 'border-[#A08C5A] ring-2 ring-[#A08C5A]/30'
+                    ? 'border-[#B24A2E] ring-2 ring-[#B24A2E]/30'
                     : 'border-[#1E2D4D]/10'
                 }`}
               >
@@ -714,13 +714,13 @@ export function ImportData() {
         onClick={() => fileInputRef.current?.click()}
         className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${
           dragOver
-            ? 'border-[#A08C5A] bg-[#A08C5A]/5'
+            ? 'border-[#B24A2E] bg-[#B24A2E]/5'
             : 'border-[#1E2D4D]/15 hover:border-[#1E2D4D]/20 bg-white'
         }`}
       >
         <FileUp
           className={`w-12 h-12 mx-auto mb-4 ${
-            dragOver ? 'text-[#A08C5A]' : 'text-[#1E2D4D]/30'
+            dragOver ? 'text-[#B24A2E]' : 'text-[#1E2D4D]/30'
           }`}
         />
         <p className="text-base font-medium text-[#1E2D4D]/80 mb-1">
@@ -875,7 +875,7 @@ export function ImportData() {
               type="checkbox"
               checked={skipErrors}
               onChange={(e) => setSkipErrors(e.target.checked)}
-              className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2"
+              className="w-4 h-4 rounded border-[#1E2D4D]/15 text-[#1E2D4D] focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2"
             />
             Skip rows with errors
           </label>
@@ -917,14 +917,14 @@ export function ImportData() {
       {importing && (
         <div className="mt-6">
           <div className="flex items-center gap-3 mb-3">
-            <Loader2 className="w-5 h-5 text-[#A08C5A] animate-spin" />
+            <Loader2 className="w-5 h-5 text-[#B24A2E] animate-spin" />
             <span className="text-sm text-[#1E2D4D]/70">
               Processing records... {importProgress}%
             </span>
           </div>
           <div className="w-full h-3 bg-[#1E2D4D]/8 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#A08C5A] rounded-full transition-all duration-500 ease-out"
+              className="h-full bg-[#B24A2E] rounded-full transition-all duration-500 ease-out"
               style={{ width: `${importProgress}%` }}
             />
           </div>

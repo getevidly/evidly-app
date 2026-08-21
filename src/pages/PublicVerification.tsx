@@ -44,12 +44,12 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
 const BADGE_CONFIG = {
   verified: { label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Compliance score 80+ for 3 consecutive months' },
   excellence: { label: 'EvidLY Excellence', icon: Star, color: '#3D5068', bg: '#f1f5f9', desc: 'Compliance score 90+ for 3 consecutive months' },
-  elite: { label: 'EvidLY Elite', icon: Crown, color: '#A08C5A', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
+  elite: { label: 'EvidLY Elite', icon: Crown, color: '#B24A2E', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
   platinum: { label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months' },
 };
 
 function PercentileBar({ label, value }: { label: string; value: number }) {
-  const color = value >= 80 ? '#22c55e' : value >= 50 ? '#A08C5A' : '#ef4444';
+  const color = value >= 80 ? '#22c55e' : value >= 50 ? '#B24A2E' : '#ef4444';
   return (
     <div className="flex items-center gap-3">
       <div className="w-40 text-sm text-[#1E2D4D]/70">{label}</div>
@@ -92,7 +92,7 @@ export default function PublicVerification() {
             <EvidlyIcon size={32} />
             <span className="text-xl font-bold">
               <span className="text-white">Evid</span>
-              <span style={{ color: '#A08C5A' }}>LY</span>
+              <span style={{ color: '#B24A2E' }}>LY</span>
             </span>
           </div>
           <span className="text-xs text-[#1E2D4D]/30">Answers before you ask.</span>

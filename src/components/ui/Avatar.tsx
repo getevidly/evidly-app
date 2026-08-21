@@ -5,7 +5,7 @@
 
 const PALETTE = [
   '#1E2D4D', '#059669', '#D97706', '#DC2626',
-  '#A08C5A', '#2563EB', '#7C3AED', '#0891B2',
+  '#B24A2E', '#2563EB', '#7C3AED', '#0891B2',
 ] as const;
 
 function hashCode(str: string): number {

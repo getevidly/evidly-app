@@ -18,7 +18,7 @@ import Button from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 
 // Color constants removed — now using Tailwind equivalents:
-// NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#A08C5A → text-gold/bg-gold
+// NAVY=#1E2D4D → text-navy/bg-navy, GOLD=#B24A2E → text-gold/bg-gold
 // TEXT_SEC=#6B7F96 → text-slate_ui, TEXT_MUTED=#9CA3AF → text-gray-400
 // BORDER=#E5E0D8 → border-border_ui
 

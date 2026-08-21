@@ -68,7 +68,7 @@ export function AcknowledgeModal({ deficiencyCode, deficiencyTitle, onClose, onS
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
               placeholder="Optional notes about acknowledgement..."
-              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#A08C5A]"
+              className="w-full px-3 py-2 border rounded-xl text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               style={{ borderColor: '#D1D9E6', color: '#0B1628' }}
             />
           </div>

@@ -15,7 +15,7 @@ export function SelfDiagCard() {
       onClick={() => navigate('/self-diagnosis')}
       style={{
         background: 'linear-gradient(135deg, #FEFDF8, #FEFCF4)',
-        border: '1px solid rgba(160,140,90,.35)',
+        border: '1px solid rgba(178,74,46,.35)',
         borderLeft: '4px solid var(--gold)',
         borderRadius: '12px',
         padding: '18px 20px',
@@ -25,10 +25,10 @@ export function SelfDiagCard() {
         justifyContent: 'space-between',
         marginBottom: '16px',
         transition: 'border-color 0.15s',
-        boxShadow: '0 1px 3px rgba(160,140,90,.1)',
+        boxShadow: '0 1px 3px rgba(178,74,46,.1)',
       }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = '#C4A96E')}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(160,140,90,.35)')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(178,74,46,.35)')}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         <span className="text-[28px]">{'🔧'}</span>
@@ -48,7 +48,7 @@ export function SelfDiagCard() {
         </div>
       </div>
       <div style={{
-        background: '#A08C5A',
+        background: '#B24A2E',
         borderRadius: '8px',
         padding: '8px 16px',
         whiteSpace: 'nowrap' as const,

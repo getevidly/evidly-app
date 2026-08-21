@@ -96,7 +96,7 @@ export default function ServiceDetail() {
         </Link>
         <p
           className="uppercase tracking-wider mb-1"
-          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#A08C5A' }}
+          style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', color: '#B24A2E' }}
         >
           Service detail
         </p>

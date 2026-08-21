@@ -412,7 +412,7 @@ const SidebarNavItem: React.FC<{
           gap: 10,
           padding: '8px 16px',
           background: isActive ? '#1e3a5f' : 'transparent',
-          borderLeft: isActive ? '3px solid #A08C5A' : '3px solid transparent',
+          borderLeft: isActive ? '3px solid #B24A2E' : '3px solid transparent',
           borderTop: 'none',
           borderRight: 'none',
           borderBottom: 'none',

@@ -21,7 +21,7 @@ import { useLocations } from '../hooks/api/useLocations';
 import { useCurrentShiftData } from '../hooks/useCurrentShiftData';
 
 const NAVY = '#1E2D4D';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 
 function getShiftDateLabel() {
   return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });

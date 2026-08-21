@@ -144,7 +144,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         />
       )}
 
-      <div data-topbar className="sticky top-0 z-50 flex-shrink-0 flex h-16 shadow-sm" style={{ backgroundColor: '#FAF7F0', borderBottom: '2px solid #A08C5A' }}>
+      <div data-topbar className="sticky top-0 z-50 flex-shrink-0 flex h-16 shadow-sm" style={{ backgroundColor: '#FAF7F0', borderBottom: '2px solid #B24A2E' }}>
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="text-sm md:text-base font-semibold truncate max-w-[120px] sm:max-w-[200px] lg:max-w-none" style={{ color: '#1E2D4D' }}>
@@ -152,7 +152,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             </div>
             <DemoModeBadge />
             {userRole === 'platform_admin' && (
-              <span className="hidden sm:inline px-2 py-0.5 text-xs font-bold tracking-wider rounded bg-[#A08C5A] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline px-2 py-0.5 text-xs font-bold tracking-wider rounded bg-[#B24A2E] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
               </span>
             )}
@@ -190,7 +190,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   }}
                   className="flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-150"
                   style={{ color: '#1E2D4D' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 >
                   <MapPin className="h-5 w-5" style={{ color: '#1E2D4D' }} />
@@ -211,7 +211,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           !selectedLocation
-                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#A08C5A]'
+                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#B24A2E]'
                             : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
                         }`}
                       >
@@ -226,7 +226,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                           }}
                           className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                             selectedLocation === location.id
-                              ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#A08C5A]'
+                              ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#B24A2E]'
                               : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
                           }`}
                         >
@@ -250,7 +250,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 }}
                 className="flex items-center space-x-1.5 px-2.5 py-2 rounded-md transition-colors duration-150"
                 style={{ color: '#1E2D4D' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 title={t('topBar.language')}
               >
@@ -269,7 +269,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           locale === loc
-                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#A08C5A]'
+                            ? 'bg-[#eef4f8] text-[#1E2D4D] font-medium border-l-2 border-[#B24A2E]'
                             : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
                         }`}
                       >
@@ -287,7 +287,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 onClick={() => navigate('/help')}
                 className="p-2 rounded-md transition-colors duration-150"
                 style={{ color: '#1E2D4D' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 title={t('topBar.helpAndSupport')}
                 data-tour="tour-help-topbar"
@@ -300,7 +300,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 onClick={() => navigate('/settings')}
                 className="p-2 rounded-md transition-colors duration-150"
                 style={{ color: '#1E2D4D' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 title={t('nav.settings')}
                 data-tour="tour-settings"
@@ -321,7 +321,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 }}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-150"
                 style={{ color: '#1E2D4D' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 {...(isTestMode ? { 'data-testid': 'role-switcher-button' } : {})}
               >
@@ -347,7 +347,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2.5 transition-colors duration-150 ${
                           userRole === role
-                            ? 'bg-[#eef4f8] text-[#1E2D4D] border-l-2 border-[#A08C5A]'
+                            ? 'bg-[#eef4f8] text-[#1E2D4D] border-l-2 border-[#B24A2E]'
                             : 'text-[#1E2D4D]/80 hover:bg-[#1E2D4D]/5'
                         }`}
                         {...(isTestMode ? { 'data-testid': `role-option-${role}` } : {})}
@@ -374,10 +374,10 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 }}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-150"
                 style={{ color: '#1E2D4D' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(178,74,46,0.1)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
               >
-                <div className="h-8 w-8 rounded-full flex items-center justify-center font-medium text-xs" style={{ backgroundColor: 'rgba(160,140,90,0.15)', color: '#1E2D4D' }}>
+                <div className="h-8 w-8 rounded-full flex items-center justify-center font-medium text-xs" style={{ backgroundColor: 'rgba(178,74,46,0.15)', color: '#1E2D4D' }}>
                   {avatarInitials}
                 </div>
                 <span className="hidden md:block text-sm font-medium" style={{ color: '#1E2D4D' }}>
@@ -473,7 +473,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                       type={showCurrentPw ? 'text' : 'password'}
                       value={pwForm.current}
                       onChange={(e) => setPwForm({ ...pwForm, current: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent pr-10"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent pr-10"
                       placeholder={t('topBar.enterCurrentPassword')}
                     />
                     <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
@@ -488,7 +488,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                       type={showNewPw ? 'text' : 'password'}
                       value={pwForm.newPw}
                       onChange={(e) => setPwForm({ ...pwForm, newPw: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent pr-10"
+                      className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent pr-10"
                       placeholder={t('topBar.enterNewPassword')}
                     />
                     <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70">
@@ -502,7 +502,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     type="password"
                     value={pwForm.confirm}
                     onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A08C5A]/50 focus-visible:ring-offset-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2 focus:border-transparent"
                     placeholder={t('topBar.reEnterNewPassword')}
                   />
                 </div>

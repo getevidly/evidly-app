@@ -110,9 +110,9 @@ export function ExtractedItemsReview({
       {/* AI disclaimer */}
       <div
         className="rounded-xl p-3 flex items-start gap-2"
-        style={{ border: '1px solid #A08C5A', backgroundColor: '#fdfaf4' }}
+        style={{ border: '1px solid #B24A2E', backgroundColor: '#fdfaf4' }}
       >
-        <Bot className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#A08C5A' }} />
+        <Bot className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#B24A2E' }} />
         <p className="text-xs" style={{ color: '#6B7F96' }}>
           AI-extracted items require human review. Verify each item against the original report before
           accepting. This is compliance guidance only — not legal advice.

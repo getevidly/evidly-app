@@ -34,7 +34,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       label: 'Est. Money Saved',
       suffix: '',
       prefix: '$',
-      color: '#A08C5A',
+      color: '#B24A2E',
       bgColor: '#fefce8',
       // POST-LAUNCH: was '/reports' — backend not built. Restore when wired.
       link: '/dashboard',

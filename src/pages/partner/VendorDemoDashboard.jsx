@@ -73,7 +73,7 @@ export default function VendorDemoDashboard() {
             {[
               { label: 'Client Locations', value: clients.length, icon: MapPin, bg: 'bg-blue-50', color: 'text-blue-700' },
               { label: 'Service History', value: `${config.service_history_months || 12} mo`, icon: Calendar, bg: 'bg-green-50', color: 'text-green-700' },
-              { label: 'Counties Served', value: Object.keys(slots).length || 3, icon: Star, bg: 'bg-[#FAF7F0]', color: 'text-[#A08C5A]' },
+              { label: 'Counties Served', value: Object.keys(slots).length || 3, icon: Star, bg: 'bg-[#FAF7F0]', color: 'text-[#B24A2E]' },
               { label: 'PSE Impact', value: `${clients.length}/5`, icon: TrendingUp, bg: 'bg-orange-50', color: 'text-orange-700' },
             ].map(s => (
               <div key={s.label} className={`${s.bg} rounded-xl p-4`}>
@@ -126,7 +126,7 @@ export default function VendorDemoDashboard() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[#1E2D4D]/50">Available</span>
-                      <span className="font-medium text-[#A08C5A]">{data.available}</span>
+                      <span className="font-medium text-[#B24A2E]">{data.available}</span>
                     </div>
                   </div>
                   <div className="mt-2 h-2 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
@@ -153,7 +153,7 @@ export default function VendorDemoDashboard() {
                       <p className="text-xs text-[#1E2D4D]/50">Hood Cleaning — NFPA 96</p>
                     </div>
                   </div>
-                  <span className="text-sm text-[#A08C5A] font-medium">
+                  <span className="text-sm text-[#B24A2E] font-medium">
                     {new Date(Date.now() + (i + 1) * 15 * 86400000).toLocaleDateString()}
                   </span>
                 </div>
@@ -162,7 +162,7 @@ export default function VendorDemoDashboard() {
           </div>
 
           {/* Lead Pipeline */}
-          <div className="bg-[#FAF7F0] border border-[#A08C5A]/20 rounded-xl p-6">
+          <div className="bg-[#FAF7F0] border border-[#B24A2E]/20 rounded-xl p-6">
             <h2 className="text-lg font-semibold tracking-tight text-[#1E2D4D] mb-2">Lead Pipeline</h2>
             <p className="text-sm text-[#1E2D4D]/50 mb-4">
               Simulated Day 30 outreach — restaurants in your service area who need hood cleaning

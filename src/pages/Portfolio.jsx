@@ -29,7 +29,7 @@ const CREAM = '#F7F4ED';
 const TEAL = '#0F766E';
 const CORAL = '#C2553A';
 const WARN = '#B7791F';
-const GOLD = '#A08C5A';
+const GOLD = '#B24A2E';
 const MUTED = '#6B7280';
 
 const STATUS_CONFIG = {

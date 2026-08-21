@@ -135,7 +135,7 @@ function PermissionRow({
       className="flex items-center justify-between px-5 py-3 border-b last:border-b-0 transition-colors"
       style={{
         borderColor: 'var(--border-subtle, #E8EDF5)',
-        backgroundColor: isOverridden ? 'rgba(160, 140, 90, 0.06)' : undefined,
+        backgroundColor: isOverridden ? 'rgba(178,74,46, 0.06)' : undefined,
       }}
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -150,7 +150,7 @@ function PermissionRow({
             {isOverridden && (
               <span
                 className="text-xs font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: 'rgba(160, 140, 90, 0.15)', color: '#A08C5A' }}
+                style={{ backgroundColor: 'rgba(178,74,46, 0.15)', color: '#B24A2E' }}
               >
                 OVERRIDE
               </span>
@@ -176,7 +176,7 @@ function PermissionRow({
         `}
         style={{
           backgroundColor: granted
-            ? isOverridden ? '#A08C5A' : '#1E2D4D'
+            ? isOverridden ? '#B24A2E' : '#1E2D4D'
             : '#D1D9E6',
           ...(granted && !isLocked ? { boxShadow: '0 0 0 2px transparent' } : {}),
         }}
