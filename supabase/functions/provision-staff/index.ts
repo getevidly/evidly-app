@@ -35,7 +35,7 @@ Deno.serve(async (req: Request) => {
     // ── Verify caller JWT ──────────────────────────────────
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return json({ error: "Unauthorized" }, 401, headers);
+      return json({ ok: false, error: "Unauthorized — no Bearer token", step: "jwt_extract" }, 401, headers);
     }
     const token = authHeader.slice(7);
     const {
@@ -43,7 +43,7 @@ Deno.serve(async (req: Request) => {
       error: authErr,
     } = await supabase.auth.getUser(token);
     if (authErr || !caller) {
-      return json({ error: "Unauthorized" }, 401, headers);
+      return json({ ok: false, error: authErr?.message || "Unauthorized — invalid JWT", step: "jwt_verify" }, 401, headers);
     }
 
     // ── Load caller profile & check permissions ───────────
@@ -54,7 +54,7 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (profileErr || !callerProfile) {
-      return json({ error: "Caller profile not found" }, 403, headers);
+      return json({ ok: false, error: profileErr?.message || "Caller profile not found", step: "load_caller_profile" }, 403, headers);
     }
 
     const hasRole =
@@ -64,7 +64,7 @@ Deno.serve(async (req: Request) => {
 
     if (!hasRole && !hasPerm) {
       return json(
-        { error: "Forbidden — staff management access required" },
+        { ok: false, error: "Forbidden — staff management access required", step: "check_permissions" },
         403,
         headers,
       );
@@ -76,14 +76,14 @@ Deno.serve(async (req: Request) => {
 
     if (!email || !role || !mode) {
       return json(
-        { error: "Missing required fields: email, role, mode" },
+        { ok: false, error: "Missing required fields: email, role, mode", step: "parse_input" },
         400,
         headers,
       );
     }
     if (mode !== "provision" && mode !== "invite") {
       return json(
-        { error: "mode must be 'provision' or 'invite'" },
+        { ok: false, error: "mode must be 'provision' or 'invite'", step: "parse_input" },
         400,
         headers,
       );
@@ -118,7 +118,7 @@ Deno.serve(async (req: Request) => {
         } else {
           logger.error("[provision-staff] createUser failed", createErr);
           return json(
-            { error: createErr.message || "Failed to create user" },
+            { ok: false, error: createErr.message || "Failed to create user", step: "create_user" },
             500,
             headers,
           );
@@ -187,7 +187,7 @@ Deno.serve(async (req: Request) => {
             const msg =
               (linkErr || inviteErr)?.message || "Failed to invite user";
             logger.error("[provision-staff] invite path failed", msg);
-            return json({ error: msg }, 500, headers);
+            return json({ ok: false, error: msg, step: "invite_generate_link" }, 500, headers);
           }
         }
       }
@@ -195,36 +195,53 @@ Deno.serve(async (req: Request) => {
 
     if (!userId) {
       return json(
-        { error: "Could not determine user ID after auth operation" },
+        { ok: false, error: "Could not determine user ID after auth operation", step: "resolve_user_id" },
         500,
         headers,
       );
     }
 
     // ── Upsert user_profiles ──────────────────────────────
-    const profileData: Record<string, unknown> = {
-      id: userId,
+    // Build the staff-specific columns (evidly_staff_role + perm_*)
+    const staffCols: Record<string, unknown> = {
       email,
       full_name: full_name || email.split("@")[0],
       evidly_staff_role: role,
     };
-
     if (perms && typeof perms === "object") {
       for (const key of Object.keys(perms)) {
         if (key.startsWith("perm_")) {
-          profileData[key] = !!perms[key];
+          staffCols[key] = !!perms[key];
         }
       }
     }
 
-    const { error: upsertErr } = await supabase
+    const { data: existingRow } = await supabase
       .from("user_profiles")
-      .upsert(profileData, { onConflict: "id" });
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
 
-    if (upsertErr) {
-      logger.error("[provision-staff] profile upsert failed", upsertErr);
+    let writeErr: any = null;
+    if (existingRow) {
+      // UPDATE — never overwrite the existing row's `role` column
+      const { error } = await supabase
+        .from("user_profiles")
+        .update(staffCols)
+        .eq("id", userId);
+      writeErr = error;
+    } else {
+      // INSERT — set role: null to satisfy user_profiles_role_check
+      const { error } = await supabase
+        .from("user_profiles")
+        .insert({ id: userId, ...staffCols, role: null });
+      writeErr = error;
+    }
+
+    if (writeErr) {
+      logger.error("[provision-staff] profile upsert failed", writeErr);
       return json(
-        { error: upsertErr.message || "Failed to update profile" },
+        { ok: false, error: writeErr.message || "Failed to update profile", step: "upsert_profile" },
         500,
         headers,
       );
@@ -238,6 +255,6 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, userId, actionLink }, 200, headers);
   } catch (error) {
     logger.error("[provision-staff] Unhandled error", error);
-    return json({ error: (error as Error).message }, 500, headers);
+    return json({ ok: false, error: (error as Error).message, step: "unhandled" }, 500, headers);
   }
 });
