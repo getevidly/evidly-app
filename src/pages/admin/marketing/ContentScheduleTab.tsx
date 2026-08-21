@@ -852,7 +852,7 @@ export default function ContentScheduleTab() {
           </div>
         </div>
 
-        {/* ROW 2 — Channel legend */}
+        {/* ROW 2 — Channel legend + status key */}
         <div className="flex items-center gap-2 flex-wrap">
           {channelOptions.map(ch => (
             <button
@@ -871,6 +871,22 @@ export default function ContentScheduleTab() {
               />
               {ch}
             </button>
+          ))}
+
+          <span className="mx-1 text-[10px]" style={{ color: EV_LINE }}>|</span>
+
+          {STATUS_OPTIONS.map(s => (
+            <span
+              key={s}
+              className="inline-flex items-center gap-1 text-[10px] capitalize"
+              style={{ color: EV_MUTED }}
+            >
+              <span
+                className="inline-block w-[3px] h-[10px] rounded-sm"
+                style={{ backgroundColor: STATUS_DOT[s] }}
+              />
+              {s}
+            </span>
           ))}
         </div>
 
@@ -1665,12 +1681,12 @@ export default function ContentScheduleTab() {
                         key={p.id}
                         onClick={(e) => { e.stopPropagation(); openFormForPost(p); }}
                         className="flex items-center gap-1 px-1 py-[2px] rounded cursor-pointer"
-                        style={{ backgroundColor: EV_LIGHT }}
+                        style={{ backgroundColor: EV_LIGHT, borderLeft: `3px solid ${STATUS_DOT[p.status] || '#94A3B8'}` }}
                         title={`${p.title} (${p.channel_label})`}
                       >
                         <span
                           className="inline-block w-[5px] h-[5px] rounded-full flex-shrink-0"
-                          style={{ backgroundColor: displayStatus(p).dotColor }}
+                          style={{ backgroundColor: CHANNEL_DOT[p.channel_label] || '#94A3B8' }}
                         />
                         <span
                           className="text-[10px] font-medium truncate"
@@ -1778,7 +1794,7 @@ export default function ContentScheduleTab() {
                       <tr
                         key={p.id}
                         className="group cursor-pointer"
-                        style={{ borderBottom: `1px solid ${EV_LINE}` }}
+                        style={{ borderBottom: `1px solid ${EV_LINE}`, borderLeft: `3px solid ${STATUS_DOT[p.status] || '#94A3B8'}` }}
                         onClick={() => openFormForPost(p)}
                       >
                         <td
@@ -1811,7 +1827,7 @@ export default function ContentScheduleTab() {
                           >
                             <span
                               className="inline-block w-[7px] h-[7px] rounded-full flex-shrink-0"
-                              style={{ backgroundColor: ds.dotColor }}
+                              style={{ backgroundColor: CHANNEL_DOT[p.channel_label] || '#94A3B8' }}
                             />
                             {ds.label}
                           </span>
