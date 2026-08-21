@@ -441,11 +441,23 @@ export default function StaffRoles() {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => {
+                    onClick={async () => {
                       if (isDemoMode) return;
                       if (!formEmail) return;
-                      alert(`Invitation for ${formEmail} requires the server-side auth pipeline. Use Supabase Dashboard to send invitations.`);
+                      const { data, error } = await supabase.functions.invoke('provision-staff', {
+                        body: { email: formEmail, full_name: formName || undefined, role: formRole, perms: formPerms, mode: 'invite' },
+                      });
+                      if (error || !data?.ok) {
+                        alert((data as any)?.error || error?.message || 'Invitation failed');
+                        return;
+                      }
+                      if (data.actionLink) {
+                        alert(`Send this link manually to ${formEmail}: ${data.actionLink}`);
+                      } else {
+                        alert(`Invitation sent to ${formEmail}`);
+                      }
                       resetModal();
+                      loadData();
                     }}
                   >
                     Send Invitation
@@ -453,11 +465,19 @@ export default function StaffRoles() {
                   <Button
                     variant="gold"
                     size="sm"
-                    onClick={() => {
+                    onClick={async () => {
                       if (isDemoMode) return;
                       if (!formEmail) return;
-                      alert(`Provisioning ${formEmail} requires the server-side auth pipeline. Use Supabase Dashboard to create accounts.`);
+                      const { data, error } = await supabase.functions.invoke('provision-staff', {
+                        body: { email: formEmail, full_name: formName || undefined, role: formRole, perms: formPerms, mode: 'provision' },
+                      });
+                      if (error || !data?.ok) {
+                        alert((data as any)?.error || error?.message || 'Provisioning failed');
+                        return;
+                      }
+                      alert(`Account created for ${formEmail}. Sign-in link: ${data.actionLink}`);
                       resetModal();
+                      loadData();
                     }}
                   >
                     Provision Now
