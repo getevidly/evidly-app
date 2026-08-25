@@ -10,6 +10,8 @@
  *   - policy_lens_intakes.policy_pdf_path -> NULL
  *   - pl_extraction_runs: pass_a / pass_b / reconciled -> NULL
  *   - pl_documents: file_path / original_filename / extraction -> NULL
+ *   - pl_send_events: recipient_name / recipient_email -> NULL, plus
+ *     one 'purged' event for the intake. Events are never deleted.
  *
  * ADDITIONALLY for source IN ('prospect','agent'):
  *   - scrub intake identity columns -> NULL
@@ -118,6 +120,7 @@ Deno.serve(async (req: Request) => {
       const intakeId = intake.id as string;
       const source = intake.source as string;
       const scrubIdentity = source === "prospect" || source === "agent";
+      const retentionChoice = (intake.retention_choice as string) ?? null;
 
       try {
         // ── 1. Remove every stored object for this intake ────
@@ -198,7 +201,44 @@ Deno.serve(async (req: Request) => {
           }
         }
 
-        // ── 6. Stamp purged_at — only once every step landed ──
+        // ── 6. Tracking trail: scrub identity, record the purge ──
+        // Events are NEVER deleted — the funnel tally outlives the
+        // client's identity. Only the recipient columns are cleared.
+        // agent_id is read before the scrub so the purged row can carry
+        // it; an intake-sourced trail has none, and null is correct.
+        const { data: trailAgents, error: trailReadErr } = await supabase
+          .from("pl_send_events")
+          .select("agent_id")
+          .eq("intake_id", intakeId)
+          .not("agent_id", "is", null)
+          .limit(1);
+        if (trailReadErr) {
+          throw new Error(`send event read failed: ${trailReadErr.message}`);
+        }
+        const trailAgentId =
+          (trailAgents?.[0]?.agent_id as string | undefined) ?? null;
+
+        const { error: trailScrubErr } = await supabase
+          .from("pl_send_events")
+          .update({ recipient_name: null, recipient_email: null })
+          .eq("intake_id", intakeId);
+        if (trailScrubErr) {
+          throw new Error(`send event scrub failed: ${trailScrubErr.message}`);
+        }
+
+        const { error: purgedEventErr } = await supabase
+          .from("pl_send_events")
+          .insert({
+            agent_id: trailAgentId,
+            intake_id: intakeId,
+            kind: "purged",
+            meta: { retention_choice: retentionChoice },
+          });
+        if (purgedEventErr) {
+          throw new Error(`purged event insert failed: ${purgedEventErr.message}`);
+        }
+
+        // ── 7. Stamp purged_at — only once every step landed ──
         const { error: stampErr } = await supabase
           .from("policy_lens_intakes")
           .update({ purged_at: new Date().toISOString() })
