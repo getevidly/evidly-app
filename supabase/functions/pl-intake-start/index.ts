@@ -301,6 +301,21 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // ── Retention choice (optional; defaults to immediate) ──
+    if (
+      body.retention_choice !== undefined &&
+      body.retention_choice !== null &&
+      !["immediate", "hold_30"].includes(body.retention_choice)
+    ) {
+      return json(
+        { error: 'retention_choice must be "immediate" or "hold_30"' },
+        400,
+        headers,
+      );
+    }
+    const retentionChoice: "immediate" | "hold_30" =
+      body.retention_choice === "hold_30" ? "hold_30" : "immediate";
+
     // ── Rate limits (check BEFORE creating rows) ────────────
     const ipLimit = await checkRateLimit({
       key: `pl_intake:${clientIp}`,
@@ -354,6 +369,7 @@ Deno.serve(async (req: Request) => {
       agent_report_consent: false,
       broker_party_id: body.broker_party_id || null,
       first_name: body.first_name || null,
+      retention_choice: retentionChoice,
     };
 
     if (source === "prospect" && body.agent_email) {

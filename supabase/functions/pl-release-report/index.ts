@@ -93,7 +93,7 @@ Deno.serve(async (req: Request) => {
     // ── Resolve the authorizing org (insured) from the intake ───────
     const { data: intakeCheck, error: intakeErr } = await supabase
       .from("policy_lens_intakes")
-      .select("organization_id, broker_party_id, source, business_name, contact_email, contact_name, contact_phone, state, county")
+      .select("organization_id, broker_party_id, source, business_name, contact_email, contact_name, contact_phone, state, county, retention_choice")
       .eq("id", intake_id)
       .single();
 
@@ -463,6 +463,36 @@ Deno.serve(async (req: Request) => {
         notificationError = notifErr instanceof Error ? notifErr.message : String(notifErr);
         logger.error("[pl-release-report] Insured notification failed — release intact", notifErr);
       }
+    }
+
+    // ── Stamp retention purge window on the intake ───────────
+    // in_app intakes always purge on release, regardless of choice.
+    // prospect/agent honour retention_choice: immediate = now,
+    // hold_30 = now + 30 days.
+    // Never abort the release on failure — the report is already sealed.
+    const purgeDueAt =
+      intakeCheck.source === "in_app" ||
+      intakeCheck.retention_choice !== "hold_30"
+        ? now.toISOString()
+        : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { error: purgeErr } = await supabase
+      .from("policy_lens_intakes")
+      .update({ purge_due_at: purgeDueAt })
+      .eq("id", intake_id);
+
+    if (purgeErr) {
+      logger.error(
+        "[pl-release-report] purge_due_at stamp failed — release intact",
+        purgeErr,
+      );
+    } else {
+      logger.info("[pl-release-report] purge_due_at stamped", {
+        intake_id,
+        source: intakeCheck.source,
+        retention_choice: intakeCheck.retention_choice,
+        purge_due_at: purgeDueAt,
+      });
     }
 
     // ── Log event and return ─────────────────────────────────
