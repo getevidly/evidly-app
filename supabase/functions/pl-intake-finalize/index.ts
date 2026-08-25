@@ -5,6 +5,15 @@ import { logger } from "../_shared/logger.ts";
 import { logEvent } from "../_shared/events.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 
+const UPLOAD_BUCKET = "policy-lens-uploads";
+const MAX_BYTES = 26214400; // 25 MB
+
+/**
+ * Objects the intake folder may hold: policy-1.pdf … policy-5.pdf, plus the
+ * legacy single-file object policy.pdf, which counts as policy-1.
+ */
+const POLICY_OBJECT = /^policy(?:-([1-5]))?\.pdf$/i;
+
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
 }
@@ -31,7 +40,7 @@ Deno.serve(async (req: Request) => {
     // Fetch intake
     const { data: intake, error: fetchErr } = await supabase
       .from("policy_lens_intakes")
-      .select("source, phone_verified_at, agent_email_verified_at, policy_pdf_path, referral_code, business_name, contact_name, contact_email, contact_phone, zip, created_at, agent_email, agent_name")
+      .select("source, phone_verified_at, agent_email_verified_at, policy_pdf_path, referral_code, business_name, contact_name, contact_email, contact_phone, zip, created_at, agent_email, agent_name, extracted_fields")
       .eq("id", intake_id)
       .single();
 
@@ -66,34 +75,92 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Check object exists in storage
+    // ── Enumerate every policy object in the intake folder ────
     const { data: files, error: listErr } = await supabase.storage
-      .from("policy-lens-uploads")
+      .from(UPLOAD_BUCKET)
       .list(intake_id);
 
-    const pdfFile = files?.find(
-      (f: { name: string }) => f.name === "policy.pdf",
-    );
-    if (listErr || !pdfFile) {
+    if (listErr) {
+      logger.error("[pl-intake-finalize] Storage list failed", listErr);
       return json({ error: "No PDF uploaded" }, 400, headers);
     }
 
-    // Verify file constraints
-    if (
-      pdfFile.metadata?.mimetype &&
-      pdfFile.metadata.mimetype !== "application/pdf"
-    ) {
-      return json({ error: "Uploaded file must be a PDF" }, 400, headers);
-    }
-    if (pdfFile.metadata?.size && pdfFile.metadata.size > 26214400) {
-      return json({ error: "PDF must be 25 MB or smaller" }, 400, headers);
+    type PolicyObject = {
+      name: string;
+      slot: number;
+      legacy: boolean;
+      mimetype?: string;
+      size?: number;
+    };
+
+    const policyFiles: PolicyObject[] = (files ?? [])
+      .map((f: { name: string; metadata?: Record<string, unknown> }) => {
+        const match = POLICY_OBJECT.exec(f.name);
+        if (!match) return null;
+        return {
+          name: f.name,
+          slot: match[1] ? Number(match[1]) : 1,
+          legacy: !match[1],
+          mimetype: f.metadata?.mimetype as string | undefined,
+          size: f.metadata?.size as number | undefined,
+        };
+      })
+      .filter((f): f is PolicyObject => f !== null)
+      // Slot order; the legacy policy.pdf leads its slot so it stays the
+      // canonical policy_pdf_path when both forms are present.
+      .sort((a, b) => a.slot - b.slot || Number(b.legacy) - Number(a.legacy));
+
+    if (policyFiles.length === 0) {
+      return json({ error: "No PDF uploaded" }, 400, headers);
     }
 
-    // Set policy_pdf_path + advance status to 'review'
-    const pdfPath = `${intake_id}/policy.pdf`;
+    // Verify file constraints on every object
+    for (const f of policyFiles) {
+      if (f.mimetype && f.mimetype !== "application/pdf") {
+        return json({ error: `${f.name} must be a PDF` }, 400, headers);
+      }
+      if (f.size && f.size > MAX_BYTES) {
+        return json({ error: `${f.name} must be 25 MB or smaller` }, 400, headers);
+      }
+    }
+
+    // ── Declared types stashed at intake start, indexed by slot ──
+    const stash = (intake.extracted_fields as Record<string, unknown> | null)
+      ?.stated_policy_types;
+    const statedTypes = Array.isArray(stash) ? stash : [];
+    const statedTypeFor = (slot: number): string | null => {
+      const value = statedTypes[slot - 1];
+      return typeof value === "string" && value !== "other" ? value : null;
+    };
+
+    // ── One pl_documents row per uploaded policy PDF ──────────
+    const { error: docsErr } = await supabase.from("pl_documents").insert(
+      policyFiles.map((f) => ({
+        intake_id,
+        doc_type: "policy",
+        file_path: `${intake_id}/${f.name}`,
+        original_filename: f.name,
+        mime_type: f.mimetype ?? "application/pdf",
+        file_size_bytes: f.size ?? null,
+        stated_policy_type: statedTypeFor(f.slot),
+      })),
+    );
+
+    if (docsErr) {
+      logger.error("[pl-intake-finalize] Document insert failed", docsErr);
+      return json({ error: "Failed to record policy documents" }, 500, headers);
+    }
+
+    // Set policy_pdf_path (first object, legacy) + count, advance to 'review'
+    const pdfPath = `${intake_id}/${policyFiles[0].name}`;
+    const pdfCount = policyFiles.length;
     const { error: updateErr } = await supabase
       .from("policy_lens_intakes")
-      .update({ policy_pdf_path: pdfPath, status: "review" })
+      .update({
+        policy_pdf_path: pdfPath,
+        policy_pdf_count: pdfCount,
+        status: "review",
+      })
       .eq("id", intake_id);
 
     if (updateErr) {
@@ -101,7 +168,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Failed to finalize intake" }, 500, headers);
     }
 
-    // ── Fire pl-extract chain (async, non-blocking) ──────────
+    // ── Fire pl-extract chain once (async, non-blocking) ─────
     fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/pl-extract`, {
       method: "POST",
       headers: {
@@ -111,12 +178,12 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({ intake_id }),
     }).catch((e) => logger.error("[pl-intake-finalize] pl-extract fire failed", e));
 
-    // ── Log uploaded event ────────────��─────────────────────
+    // ── Log uploaded event ───────────────────────────────────
     await logEvent(supabase, {
       event_type: "uploaded",
       intake_id,
       referral_code: intake.referral_code || undefined,
-      metadata: { status_advanced: "review", pdf_path: pdfPath },
+      metadata: { status_advanced: "review", pdf_path: pdfPath, pdf_count: pdfCount },
     });
 
     // ── After-finalize confirmation email (non-blocking) ────
@@ -171,7 +238,7 @@ Deno.serve(async (req: Request) => {
         `<p><strong>Door:</strong> ${door}</p>`,
         `<p><strong>Authorization:</strong> ${authStatus}</p>`,
         `<p><strong>Intake created:</strong> ${createdDate}</p>`,
-        `<p><strong>PDF location:</strong> policy-lens-uploads/${pdfPath}</p>`,
+        `<p><strong>Policy PDFs:</strong> ${pdfCount}</p>`,
       ].join("\n");
 
       await sendEmail({
@@ -183,7 +250,7 @@ Deno.serve(async (req: Request) => {
       logger.error("[pl-intake-finalize] Notification email failed", emailErr);
     }
 
-    return json({ success: true, referral_code: intake.referral_code || null }, 200, headers);
+    return json({ success: true, policy_pdf_count: pdfCount, referral_code: intake.referral_code || null }, 200, headers);
   } catch (err) {
     logger.error("[pl-intake-finalize] Unhandled error", err);
     return json({ error: "Internal server error" }, 500, headers);

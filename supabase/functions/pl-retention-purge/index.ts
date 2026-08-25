@@ -6,7 +6,7 @@
  * uploaded policy PDF plus its derived extraction payloads.
  *
  * ALWAYS (every source):
- *   - delete {intake_id}/policy.pdf from policy-lens-uploads
+ *   - delete every object under {intake_id}/ in policy-lens-uploads
  *   - policy_lens_intakes.policy_pdf_path -> NULL
  *   - pl_extraction_runs: pass_a / pass_b / reconciled -> NULL
  *   - pl_documents: file_path / original_filename / extraction -> NULL
@@ -120,14 +120,24 @@ Deno.serve(async (req: Request) => {
       const scrubIdentity = source === "prospect" || source === "agent";
 
       try {
-        // ── 1. Remove the stored policy PDF ──────────────────
-        const objectPath = `${intakeId}/policy.pdf`;
-        const { error: rmErr } = await supabase.storage
+        // ── 1. Remove every stored object for this intake ────
+        const { data: objects, error: lsErr } = await supabase.storage
           .from(UPLOAD_BUCKET)
-          .remove([objectPath]);
+          .list(intakeId, { limit: 1000 });
 
-        if (rmErr && !isObjectMissing(rmErr)) {
-          throw new Error(`storage remove failed: ${rmErr.message}`);
+        if (lsErr) {
+          throw new Error(`storage list failed: ${lsErr.message}`);
+        }
+
+        const objectPaths = (objects ?? []).map((o) => `${intakeId}/${o.name}`);
+        if (objectPaths.length > 0) {
+          const { error: rmErr } = await supabase.storage
+            .from(UPLOAD_BUCKET)
+            .remove(objectPaths);
+
+          if (rmErr && !isObjectMissing(rmErr)) {
+            throw new Error(`storage remove failed: ${rmErr.message}`);
+          }
         }
 
         // ── 2. Intake row: drop the path, and identity when due ──
