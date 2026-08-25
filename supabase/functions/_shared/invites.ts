@@ -283,3 +283,211 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   return { subject, html };
 }
+
+// ─────────────────────────────────────────────────────────────
+// POLICY LENS INVITES — insurance professional + policyholder
+//
+// Both follow the EvidLY email standard set by buildClientInviteEmail:
+// table-based, 600px, inline styles, Instrument Sans stacks (no serif
+// anywhere), navy header over a cream body, light-only color-scheme
+// meta plus bgcolor attributes on every key cell, and exactly ONE CTA.
+// ─────────────────────────────────────────────────────────────
+
+const PL_FONT_SANS =
+  "'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+const PL_FONT_MONO = "'IBM Plex Mono','Courier New',monospace";
+const PL_FONT_WORDMARK =
+  "'Montserrat','Arial Black','Helvetica Neue',Arial,sans-serif";
+
+interface PolicyLensShellParams {
+  preheader: string;
+  title: string;
+  headline: string;
+  /** Paragraphs inside the navy block, under the headline. */
+  introHtml: string;
+  /** Paragraphs and lists inside the cream body block. */
+  bodyHtml: string;
+  retentionTitle: string;
+  retentionItems: string[];
+  ctaKicker: string;
+  ctaText: string;
+  ctaUrl: string;
+  unsubUrl: string;
+}
+
+/** Shared shell for the two Policy Lens invite emails. */
+function buildPolicyLensInviteHtml(p: PolicyLensShellParams): string {
+  const retentionRows = p.retentionItems
+    .map(
+      (item) =>
+        `<tr><td valign="top" style="padding:0 0 12px;font-family:${PL_FONT_SANS};font-size:13.5px;line-height:1.6;color:#3A4453;">
+          <span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; ${item}</td></tr>`,
+    )
+    .join("\n");
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>${p.title}</title>
+<style>
+:root { color-scheme: light only; supported-color-schemes: light only; }
+body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
+@media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}
+</style>
+</head><body style="margin:0;padding:0;background:#F7F1E6;" bgcolor="#F7F1E6">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${p.preheader}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;" bgcolor="#F7F1E6">
+<tr><td align="center" style="padding:28px 16px;">
+<table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;" bgcolor="#FFFFFF">
+
+  <!-- 1. HEADER — navy, wordmark + company lockup -->
+  <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;" bgcolor="#1C2A3A">
+    <div style="font-family:${PL_FONT_WORDMARK};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#FFFFFF;">vid</span><span style="color:#B24A2E;">LY</span></div>
+    <div style="font-family:${PL_FONT_MONO};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">Policy Lens</div>
+  </td></tr>
+
+  <!-- 2. NAVY BLOCK — headline + intro -->
+  <tr><td class="p40" style="background:#1C2A3A;padding:32px 40px 30px;" bgcolor="#1C2A3A">
+    <h1 style="margin:0;font-family:${PL_FONT_SANS};font-weight:bold;font-size:26px;line-height:1.24;color:#FFFFFF;">${p.headline}</h1>
+    ${p.introHtml}
+  </td></tr>
+
+  <!-- 3. CREAM BODY -->
+  <tr><td class="p40" style="background:#FAF7F0;padding:28px 40px 26px;border-top:1px solid #EEE7D9;border-bottom:1px solid #EEE7D9;" bgcolor="#FAF7F0">
+    ${p.bodyHtml}
+  </td></tr>
+
+  <!-- 4. RETENTION -->
+  <tr><td class="p40" style="background:#FBF9F2;padding:24px 40px;border-bottom:1px solid #EEE7D9;" bgcolor="#FBF9F2">
+    <div style="font-family:${PL_FONT_MONO};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin-bottom:14px;">${p.retentionTitle}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+${retentionRows}
+    </table>
+  </td></tr>
+
+  <!-- 5. CTA — exactly one -->
+  <tr><td class="p40" align="center" style="background:#FFFFFF;padding:28px 40px 34px;text-align:center;" bgcolor="#FFFFFF">
+    <div style="font-family:${PL_FONT_SANS};font-weight:bold;font-size:17px;line-height:1.35;color:#1C2A3A;margin-bottom:18px;">${p.ctaKicker}</div>
+    <table role="presentation" align="center" cellpadding="0" cellspacing="0"><tr>
+      <td align="center" style="background:#1C2A3A;" bgcolor="#1C2A3A"><a href="${p.ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${PL_FONT_SANS};font-size:15px;font-weight:bold;color:#FFFFFF;">${p.ctaText}</a></td>
+    </tr></table>
+  </td></tr>
+
+  <!-- 6. FOOTER -->
+  <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;" bgcolor="#FBF9F2">
+    <div style="font-family:${PL_FONT_SANS};font-size:12px;color:#5F6875;line-height:1.6;"><span style="white-space:nowrap;">founders@getevidly.com</span> &middot; <span style="white-space:nowrap;">(855) 384-3591</span> &middot; <span style="white-space:nowrap;"><a href="https://getevidly.com" style="color:#1C2A3A;">getevidly.com</a></span></div>
+    <div style="font-family:${PL_FONT_MONO};font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#9A9384;margin-top:10px;">EvidLY &middot; Commercial Kitchen Risk Management</div>
+    <div style="font-family:${PL_FONT_SANS};font-size:11px;color:#9A9384;margin-top:10px;line-height:1.6;">Cleaning Pros Plus, LLC &middot; 2324 M Street #2711 &middot; Merced, CA 95344</div>
+    <div style="font-family:${PL_FONT_SANS};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &nbsp;&middot;&nbsp; <a href="${p.unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
+  </td></tr>
+
+</table></td></tr></table></body></html>`;
+}
+
+/** mailto unsubscribe, matching buildClientInviteEmail's fallback. */
+function plUnsubUrl(recipientName: string): string {
+  return `mailto:founders@getevidly.com?subject=Unsubscribe&body=Please%20remove%20${encodeURIComponent(recipientName)}`;
+}
+
+interface InsuranceProInviteParams {
+  recipientName: string;
+  sampleUrl?: string;
+}
+
+/**
+ * Insurance professional invite — asks an agent or broker to send a
+ * client through for a free policy read.
+ */
+export function buildInsuranceProInviteEmail(
+  params: InsuranceProInviteParams,
+): { subject: string; html: string } {
+  const { recipientName } = params;
+  const sampleUrl =
+    params.sampleUrl || "https://getevidly.com/policy-lens/sample-agent";
+
+  const subject = "Your clients' policies, read before the carrier asks";
+
+  const html = buildPolicyLensInviteHtml({
+    preheader:
+      "Send a client for a free policy read — up to five policies, read as one program.",
+    title: subject,
+    headline:
+      "Send a client for a free policy read &mdash; and be the agent who caught it early.",
+    introHtml: `
+      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">A denial letter is the worst place for a kitchen to find out what its policy actually required. By the time that paragraph is being read, the cleaning interval, the suppression-service warranty or the protective safeguard endorsement has already done its work &mdash; and the conversation you have with your client is a different conversation.</p>
+      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">Policy Lens reads the policy before anyone has to.</p>`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Send a client through for a free read. They can submit <strong>up to five policies</strong> in one go &mdash; the property policy, the umbrella, the liquor liability &mdash; and they are read together as one program of insurance rather than five unrelated documents.</p>
+      <p style="margin:0 0 10px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">What comes back names, in plain English:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;">
+        <tr><td valign="top" style="padding:0 0 10px;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#3A4453;"><span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; <strong>Protective safeguard endorsements</strong> &mdash; which form, which edition, what it warrants, and the premises where the schedule never confirms the protection is installed.</td></tr>
+        <tr><td valign="top" style="padding:0 0 10px;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#3A4453;"><span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; <strong>Liability</strong> &mdash; what the policy responds to, and the conditions attached to it.</td></tr>
+        <tr><td valign="top" style="padding:0 0 10px;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#3A4453;"><span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; <strong>Food contamination and spoilage</strong> &mdash; the sublimits, what has to happen first to trigger them, and whether a scheduled value sits behind them at all.</td></tr>
+      </table>
+      <p style="margin:0;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Policy Lens reads the policy and flags what it finds. It never advises &mdash; evaluating whether the coverage fits is your work, not ours. <strong>The report credits the request to you.</strong></p>`,
+    retentionTitle: "What happens to your client's policy",
+    retentionItems: [
+      "<strong>Read by software, not people.</strong> It is never made available for anyone to view &mdash; not at EvidLY, not at any company we work with.",
+      "<strong>Never sold, never shared, never used to train anything.</strong> It is read to produce your client's report, and for nothing else.",
+      "<strong>Deleted on a schedule your client chooses</strong> &mdash; the moment the reading is released, or thirty days later if they want time with it. Either way the uploaded file is removed from our storage.",
+    ],
+    ctaKicker: "See what a client gets back before you send anyone.",
+    ctaText: "See a sample read &#8594;",
+    ctaUrl: sampleUrl,
+    unsubUrl: plUnsubUrl(recipientName),
+  });
+
+  return { subject, html };
+}
+
+interface PolicyholderInviteParams {
+  recipientName: string;
+  agentName: string;
+  agencyName: string;
+  /** The flow's existing entry link — the referral URL pl-invite builds. */
+  entryLink: string;
+}
+
+/**
+ * Policyholder invite — sent on an agent's request, inviting the insured
+ * to have their own policies read.
+ */
+export function buildPolicyholderInviteEmail(
+  params: PolicyholderInviteParams,
+): { subject: string; html: string } {
+  const { recipientName, agentName, agencyName, entryLink } = params;
+
+  const subject = `${agentName} requested a free reading of your policies`;
+
+  // The agency only earns a clause when the intake actually carries one.
+  const agentLine = agencyName
+    ? `<strong>${agentName}</strong> at <strong>${agencyName}</strong>`
+    : `<strong>${agentName}</strong>`;
+
+  const html = buildPolicyLensInviteHtml({
+    preheader:
+      "Free, in plain English — up to five policies, read together as one program.",
+    title: subject,
+    headline:
+      "Your agent asked us to read your policies &mdash; free, in plain English.",
+    introHtml: `
+      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">${agentLine} asked us to read your commercial insurance policies for you. There is no charge, and there is nothing to sign up for.</p>`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Most kitchen policies are written to be defended, not read. Policy Lens reads yours and tells you what it actually says &mdash; your building and contents limits, your coinsurance, what happens to the food in your walk-in when the power goes, and the fire and food safety systems your policy quietly expects you to keep up.</p>
+      <p style="margin:0 0 16px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">You can send <strong>up to five policies</strong> at once &mdash; property, umbrella, liquor liability, whatever you hold &mdash; and they are read together as one program, so a coverage that lives on one of them is not reported as missing from another.</p>
+      <p style="margin:0;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">The report is yours. <strong>Your agent sees it only if you authorize that.</strong></p>`,
+    retentionTitle: "What happens to your policy",
+    retentionItems: [
+      "<strong>Read by software, not people.</strong> It is never made available for anyone to view &mdash; not at EvidLY, not at any company we work with.",
+      "<strong>You keep the only copy of your report.</strong> Nobody else is sent it, and nobody else can open it unless you say so.",
+      "<strong>Deleted on a schedule you choose</strong> &mdash; the moment your reading is released, or thirty days later if you want time with it. Either way the file you uploaded is removed from our storage.",
+    ],
+    ctaKicker: "It takes a few minutes, and it costs nothing.",
+    ctaText: "Start my free read &#8594;",
+    ctaUrl: entryLink,
+    unsubUrl: plUnsubUrl(recipientName),
+  });
+
+  return { subject, html };
+}

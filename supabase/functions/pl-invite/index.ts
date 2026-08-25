@@ -5,6 +5,8 @@ import { sendEmail } from "../_shared/email.ts";
 import {
   buildCompanyInviteEmail,
   buildAgentInviteEmail,
+  buildInsuranceProInviteEmail,
+  buildPolicyholderInviteEmail,
 } from "../_shared/invites.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { logEvent } from "../_shared/events.ts";
@@ -63,9 +65,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!["company", "agent"].includes(door)) {
+    const DOORS = ["company", "agent", "insurance_pro", "policyholder"];
+    if (!DOORS.includes(door)) {
       return json(
-        { error: 'door must be "company" or "agent"' },
+        { error: `door must be one of: ${DOORS.join(", ")}` },
         400,
         headers,
       );
@@ -118,12 +121,24 @@ Deno.serve(async (req: Request) => {
         recipientName: recipient_name,
         referralLink,
       });
-    } else {
+    } else if (door === "agent") {
       emailContent = buildAgentInviteEmail({
         senderName: intake.agent_name || "An agent",
         senderOrg: intake.agency_name || "",
         recipientName: recipient_name,
         referralLink,
+      });
+    } else if (door === "insurance_pro") {
+      emailContent = buildInsuranceProInviteEmail({
+        recipientName: recipient_name,
+      });
+    } else {
+      // policyholder — sent on an agent's request, off the intake's agent fields
+      emailContent = buildPolicyholderInviteEmail({
+        recipientName: recipient_name,
+        agentName: intake.agent_name || "Your agent",
+        agencyName: intake.agency_name || "",
+        entryLink: referralLink,
       });
     }
 
