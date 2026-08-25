@@ -415,22 +415,14 @@ export function buildInsuranceProInviteEmail(
     headline:
       "Send a client for a free policy read &mdash; and be the agent who caught it early.",
     introHtml: `
-      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">A denial letter is the worst place for a kitchen to find out what its policy actually required. By the time that paragraph is being read, the cleaning interval, the suppression-service warranty or the protective safeguard endorsement has already done its work &mdash; and the conversation you have with your client is a different conversation.</p>
-      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">Policy Lens reads the policy before anyone has to.</p>`,
+      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">Most kitchen owners meet their Protective Safeguards Endorsement for the first time in a denial letter. You can be the reason they meet it at renewal instead.</p>`,
     bodyHtml: `
-      <p style="margin:0 0 16px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Send a client through for a free read. They can submit <strong>up to five policies</strong> in one go &mdash; the property policy, the umbrella, the liquor liability &mdash; and they are read together as one program of insurance rather than five unrelated documents.</p>
-      <p style="margin:0 0 10px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">What comes back names, in plain English:</p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;">
-        <tr><td valign="top" style="padding:0 0 10px;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#3A4453;"><span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; <strong>Protective safeguard endorsements</strong> &mdash; which form, which edition, what it warrants, and the premises where the schedule never confirms the protection is installed.</td></tr>
-        <tr><td valign="top" style="padding:0 0 10px;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#3A4453;"><span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; <strong>Liability</strong> &mdash; what the policy responds to, and the conditions attached to it.</td></tr>
-        <tr><td valign="top" style="padding:0 0 10px;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#3A4453;"><span style="color:#B24A2E;font-weight:700;">&middot;</span>&nbsp; <strong>Food contamination and spoilage</strong> &mdash; the sublimits, what has to happen first to trigger them, and whether a scheduled value sits behind them at all.</td></tr>
-      </table>
-      <p style="margin:0;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Policy Lens reads the policy and flags what it finds. It never advises &mdash; evaluating whether the coverage fits is your work, not ours. <strong>The report credits the request to you.</strong></p>`,
+      <p style="margin:0;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Policy Lens reads a client&rsquo;s policies &mdash; up to five &mdash; and reports every condition and coverage gap in plain English: the safeguards the policy names, liability, and food contamination and spoilage coverage. The report credits the request to you.</p>`,
     retentionTitle: "What happens to your client's policy",
     retentionItems: [
       "<strong>Read by software, not people.</strong> It is never made available for anyone to view &mdash; not at EvidLY, not at any company we work with.",
-      "<strong>Never sold, never shared, never used to train anything.</strong> It is read to produce your client's report, and for nothing else.",
-      "<strong>Deleted on a schedule your client chooses</strong> &mdash; the moment the reading is released, or thirty days later if they want time with it. Either way the uploaded file is removed from our storage.",
+      "<strong>Never shared, never sold.</strong> The report is delivered to your client, and to you only with their authorization.",
+      "<strong>Deleted on their schedule:</strong> immediately after delivery, or automatically on day 30.",
     ],
     ctaKicker: "See what a client gets back before you send anyone.",
     ctaText: "See a sample read &#8594;",
@@ -462,7 +454,7 @@ export function buildPolicyholderInviteEmail(
 
   // The agency only earns a clause when the intake actually carries one.
   const agentLine = agencyName
-    ? `<strong>${agentName}</strong> at <strong>${agencyName}</strong>`
+    ? `<strong>${agentName}</strong> of <strong>${agencyName}</strong>`
     : `<strong>${agentName}</strong>`;
 
   const html = buildPolicyLensInviteHtml({
@@ -472,16 +464,14 @@ export function buildPolicyholderInviteEmail(
     headline:
       "Your agent asked us to read your policies &mdash; free, in plain English.",
     introHtml: `
-      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">${agentLine} asked us to read your commercial insurance policies for you. There is no charge, and there is nothing to sign up for.</p>`,
+      <p style="margin:14px 0 0;font-family:${PL_FONT_SANS};font-size:14px;line-height:1.6;color:#A9B2BE;">${agentLine} asked us to prepare a Policy Lens reading for your kitchen. It reports what your policies require of you and what they cover &mdash; the Protective Safeguards Endorsement, liability, and food contamination and spoilage coverage &mdash; before renewal, while there is still time to act.</p>`,
     bodyHtml: `
-      <p style="margin:0 0 16px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">Most kitchen policies are written to be defended, not read. Policy Lens reads yours and tells you what it actually says &mdash; your building and contents limits, your coinsurance, what happens to the food in your walk-in when the power goes, and the fire and food safety systems your policy quietly expects you to keep up.</p>
-      <p style="margin:0 0 16px;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">You can send <strong>up to five policies</strong> at once &mdash; property, umbrella, liquor liability, whatever you hold &mdash; and they are read together as one program, so a coverage that lives on one of them is not reported as missing from another.</p>
-      <p style="margin:0;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">The report is yours. <strong>Your agent sees it only if you authorize that.</strong></p>`,
+      <p style="margin:0;font-family:${PL_FONT_SANS};font-size:14.5px;line-height:1.65;color:#3A4453;">You upload the policies yourself, and you receive the report directly. Your agent sees it only if you authorize that.</p>`,
     retentionTitle: "What happens to your policy",
     retentionItems: [
       "<strong>Read by software, not people.</strong> It is never made available for anyone to view &mdash; not at EvidLY, not at any company we work with.",
-      "<strong>You keep the only copy of your report.</strong> Nobody else is sent it, and nobody else can open it unless you say so.",
-      "<strong>Deleted on a schedule you choose</strong> &mdash; the moment your reading is released, or thirty days later if you want time with it. Either way the file you uploaded is removed from our storage.",
+      "<strong>Never shared, never sold.</strong> You keep the only copy of your report.",
+      "<strong>Deleted on your schedule:</strong> immediately after delivery, or automatically on day 30 if you choose the hold.",
     ],
     ctaKicker: "It takes a few minutes, and it costs nothing.",
     ctaText: "Start my free read &#8594;",
