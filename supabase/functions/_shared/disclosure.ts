@@ -131,8 +131,14 @@ export type TrackKind =
   | "client_opened"
   | "client_clicked";
 
+/**
+ * A tracked send is identified by an agent, an intake, or both — an
+ * agent-led invite has no intake yet, an intake-sourced invite has no
+ * pl_agents row. At least one must be present; a token with neither
+ * identifies nothing and is rejected.
+ */
 export interface TrackTokenPayload {
-  agent_id: string;
+  agent_id: string | null;
   intake_id: string | null;
   kind: TrackKind;
 }
@@ -153,7 +159,7 @@ export async function generateTrackToken(
   payload: TrackTokenPayload,
 ): Promise<string> {
   const body = JSON.stringify({
-    aid: payload.agent_id,
+    aid: payload.agent_id ?? null,
     iid: payload.intake_id ?? null,
     k: payload.kind,
   });
@@ -191,16 +197,20 @@ export async function verifyTrackToken(
   if (!valid) throw new Error("Invalid token signature");
 
   const decoded = JSON.parse(base64urlDecodeString(payloadB64));
-  if (!decoded.aid || typeof decoded.aid !== "string") {
-    throw new Error("Invalid token payload");
+  const agentId = typeof decoded.aid === "string" && decoded.aid ? decoded.aid : null;
+  const intakeId = typeof decoded.iid === "string" && decoded.iid ? decoded.iid : null;
+
+  // Either identifier alone is enough. Neither is not.
+  if (!agentId && !intakeId) {
+    throw new Error("Invalid token payload: no agent_id or intake_id");
   }
   if (!TRACK_KINDS.includes(decoded.k)) {
     throw new Error("Invalid token kind");
   }
 
   return {
-    agent_id: decoded.aid,
-    intake_id: typeof decoded.iid === "string" ? decoded.iid : null,
+    agent_id: agentId,
+    intake_id: intakeId,
     kind: decoded.k as TrackKind,
   };
 }

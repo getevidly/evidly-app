@@ -132,12 +132,24 @@ Deno.serve(async (req: Request) => {
         Deno.env.get("SUPABASE_URL")!,
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       );
+      // Either id may legitimately be null — an agent-led send has no
+      // intake, an intake-sourced send has no pl_agents row.
       const { error: insertErr } = await supabase.from("pl_send_events").insert({
-        agent_id: payload.agent_id,
-        intake_id: payload.intake_id,
+        agent_id: payload.agent_id ?? null,
+        intake_id: payload.intake_id ?? null,
         kind: payload.kind,
       });
       if (insertErr) {
+        // Loud on purpose: this is the only place a tracked event can be
+        // lost, and the reader still gets a pixel either way.
+        console.error("[pl-track] Event insert FAILED", JSON.stringify({
+          kind: payload.kind,
+          agent_id: payload.agent_id ?? null,
+          intake_id: payload.intake_id ?? null,
+          code: insertErr.code ?? null,
+          message: insertErr.message ?? String(insertErr),
+          details: insertErr.details ?? null,
+        }));
         logger.error("[pl-track] Event insert failed", insertErr);
       }
     } catch (dbErr) {

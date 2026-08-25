@@ -23,7 +23,7 @@ const NOREPLY_ADDRESS = "noreply@getevidly.com";
  * against its own host allowlist before redirecting.
  */
 async function trackUrl(
-  agentId: string,
+  agentId: string | null,
   intakeId: string | null,
   kind: TrackKind,
   destination?: string,
@@ -206,19 +206,22 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("PL_PUBLIC_BASE") || "https://getevidly.com";
     const referralLink = `${publicBase}/policy-lens/review?ref=${refCode}`;
 
-    // ── pl-track wrapping (agent-sourced sends only) ─────────
-    // Tokens must carry an agent_id, so only the agent branch is
-    // tracked today — see the note in the commit for the intake case.
+    // ── pl-track wrapping (both PL doors, either source) ─────
+    // The token carries whichever identifier this send has: agent_id
+    // for an agent-led send, intake_id for an intake-sourced one.
+    // company/agent doors are never wrapped.
     let ctaUrl: string | undefined;
     let pixelUrl: string | undefined;
-    if (agent_id && (door === "insurance_pro" || door === "policyholder")) {
+    if (door === "insurance_pro" || door === "policyholder") {
       const clickKind: TrackKind = door === "policyholder" ? "client_clicked" : "invite_clicked";
       const openKind: TrackKind = door === "policyholder" ? "client_opened" : "invite_opened";
       const destination = door === "policyholder"
         ? referralLink
         : `https://getevidly.com/policy-lens/sample-agent?ref=${encodeURIComponent(refCode)}`;
-      ctaUrl = await trackUrl(agent_id, intake_id ?? null, clickKind, destination);
-      pixelUrl = await trackUrl(agent_id, intake_id ?? null, openKind);
+      const tokenAgentId = agent_id ?? null;
+      const tokenIntakeId = intake_id ?? null;
+      ctaUrl = await trackUrl(tokenAgentId, tokenIntakeId, clickKind, destination);
+      pixelUrl = await trackUrl(tokenAgentId, tokenIntakeId, openKind);
     }
 
     let emailContent: { subject: string; html: string };
