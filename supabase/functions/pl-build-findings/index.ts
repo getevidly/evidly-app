@@ -269,6 +269,9 @@ function buildEvidence(sourceRefs: unknown[]): Rec | null {
     quote: ev.quote ?? null,
     form: ev.form ?? null,
     page: ev.page ?? null,
+    // 1-based index of the uploaded policy the quote came from; null on
+    // single-document intakes extracted before pl-extract emitted it.
+    policy_index: ev.policy_index ?? null,
     agreement: status,
     pass_a_value: summarizeDetermination(passA),
     pass_b_value: summarizeDetermination(passB),
