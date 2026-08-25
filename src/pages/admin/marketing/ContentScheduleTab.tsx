@@ -249,6 +249,7 @@ export default function ContentScheduleTab() {
   const [form, setForm] = useState<AddPostInput>({ ...EMPTY_FORM });
   const [saving, setSaving] = useState(false);
   const [drafting, setDrafting] = useState(false);
+  const [draftError, setDraftError] = useState<string | null>(null);
 
   // Sort state (list view)
   const [sortKey, setSortKey] = useState<SortKey>('scheduled_date');
@@ -589,6 +590,7 @@ export default function ContentScheduleTab() {
     setShowForm(false);
     setEditingId(null);
     setForm({ ...EMPTY_FORM });
+    setDraftError(null);
   };
 
   // ── Editing row lookup (for brief access) ───────────────────
@@ -600,20 +602,45 @@ export default function ContentScheduleTab() {
 
   // ── Draft from brief ───────────────────────────────────────
 
+  /**
+   * Pulls the real failure text out of a functions.invoke result.
+   * On a non-2xx the SDK returns a generic message and puts the actual
+   * response on error.context, so read the body's JSON `error` field first.
+   */
+  const readInvokeError = async (fnErr: unknown, data: any): Promise<string> => {
+    if (data?.error) return String(data.error);
+    const res = (fnErr as { context?: { text?: () => Promise<string> } })?.context;
+    if (res && typeof res.text === 'function') {
+      try {
+        const raw = await res.text();
+        try {
+          const parsed = JSON.parse(raw);
+          const fromBody = parsed?.error ?? parsed?.message;
+          if (fromBody) return String(fromBody);
+        } catch {
+          // Body was not JSON — fall through to the raw text.
+        }
+        if (raw && raw.trim() !== '') return raw.trim();
+      } catch {
+        // Body already consumed or unreadable — fall through.
+      }
+    }
+    if (fnErr instanceof Error && fnErr.message) return fnErr.message;
+    return 'Draft request failed';
+  };
+
   const handleDraft = async () => {
     if (!editingId || !editingRow?.brief) return;
     setDrafting(true);
+    setDraftError(null);
     try {
       const { data, error: fnErr } = await supabase.functions.invoke('ai-content-draft', {
         body: { rowId: editingId },
       });
-      if (fnErr) {
-        toast.error(`Draft failed: ${fnErr.message}`);
-        setDrafting(false);
-        return;
-      }
-      if (data?.error) {
-        toast.error(`Draft failed: ${data.error}`);
+      if (fnErr || data?.error) {
+        const msg = await readInvokeError(fnErr, data);
+        setDraftError(msg);
+        toast.error(msg);
         setDrafting(false);
         return;
       }
@@ -621,6 +648,7 @@ export default function ContentScheduleTab() {
       await refresh();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Draft request failed';
+      setDraftError(msg);
       toast.error(msg);
     }
     setDrafting(false);
@@ -673,8 +701,10 @@ export default function ContentScheduleTab() {
 
     const queue = batchEligible.slice(0, BATCH_DRAFT_CAP);
     setBatchDrafting(true);
+    setDraftError(null);
     let drafted = 0;
     let failed = 0;
+    const failures: string[] = [];
 
     // Process with concurrency of 3
     const concurrency = 3;
@@ -691,11 +721,13 @@ export default function ContentScheduleTab() {
           });
           if (fnErr || data?.error) {
             failed++;
+            failures.push(`${row.title || row.id}: ${await readInvokeError(fnErr, data)}`);
           } else {
             drafted++;
           }
-        } catch {
+        } catch (e: unknown) {
           failed++;
+          failures.push(`${row.title || row.id}: ${e instanceof Error ? e.message : 'Draft request failed'}`);
         }
       }
     };
@@ -708,7 +740,12 @@ export default function ContentScheduleTab() {
 
     const parts = [`${drafted} drafted`];
     if (failed > 0) parts.push(`${failed} failed`);
-    toast.success(`Batch complete: ${parts.join(', ')}`);
+    if (failures.length > 0) {
+      setDraftError(failures.join('\n'));
+      toast.error(`Batch complete: ${parts.join(', ')} — ${failures[0]}`);
+    } else {
+      toast.success(`Batch complete: ${parts.join(', ')}`);
+    }
   };
 
   // ── Apply date adjustment ─────────────────────────────────────
@@ -1151,15 +1188,16 @@ export default function ContentScheduleTab() {
                 <label className="text-[11px] font-semibold" style={{ color: EV_MUTED }}>
                   Body
                 </label>
-                {editingId && editingRow?.brief && (
+                {editingId && (
                   <button
                     onClick={handleDraft}
-                    disabled={drafting}
+                    disabled={drafting || !editingRow?.brief}
                     type="button"
-                    className="py-[4px] px-3 text-[11px] font-semibold rounded-md cursor-pointer border-none"
+                    title={!editingRow?.brief ? 'This row has no brief to draft from.' : undefined}
+                    className={`py-[4px] px-3 text-[11px] font-semibold rounded-md border-none ${drafting || !editingRow?.brief ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     style={{
-                      backgroundColor: drafting ? EV_LIGHT : '#DBEAFE',
-                      color: drafting ? EV_MUTED : '#1D4ED8',
+                      backgroundColor: drafting || !editingRow?.brief ? EV_LIGHT : '#DBEAFE',
+                      color: drafting || !editingRow?.brief ? EV_MUTED : '#1D4ED8',
                     }}
                   >
                     {drafting ? 'Drafting\u2026' : 'Draft from brief'}
@@ -1238,6 +1276,16 @@ export default function ContentScheduleTab() {
               </div>
             )}
           </div>
+
+          {/* Draft failure — real error text from the edge function */}
+          {draftError && (
+            <div
+              className="mb-3 py-2 px-3 text-[12px] rounded-md whitespace-pre-wrap break-words"
+              style={{ backgroundColor: '#FEE2E2', color: '#B91C1C' }}
+            >
+              {draftError}
+            </div>
+          )}
 
           {/* Form actions */}
           <div className="flex gap-2 justify-end">
