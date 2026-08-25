@@ -132,7 +132,11 @@ export default function PolicyLensReleased() {
       {loading ? (
         <p style={{ color: MUTE, fontSize: 13, padding: 24 }}>Loading…</p>
       ) : filtered.length === 0 ? (
-        <EmptyState icon={<Shield size={32} />} title="No released reports" message="Reports will appear here after they are sealed and released." />
+        <EmptyState
+          icon={Shield}
+          title="No released reports"
+          description="Reports will appear here after they are sealed and released."
+        />
       ) : (
         <div style={{ border: '1px solid #E5E7EB', borderRadius: 8, overflow: 'hidden' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 100px 140px 120px 160px 36px', gap: 0, background: '#F9FAFB', borderBottom: '1px solid #E5E7EB', padding: '10px 16px', fontSize: 11, fontWeight: 600, color: MUTE, textTransform: 'uppercase', letterSpacing: '0.06em' }}>

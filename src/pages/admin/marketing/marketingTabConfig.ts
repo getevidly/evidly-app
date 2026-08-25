@@ -29,6 +29,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'overview',  label: 'Overview',           Icon: LayoutDashboard, route: 'overview' },
   { id: 'planner',   label: 'Planner',            Icon: Target,          route: 'planner' },
   { id: 'schedule',  label: 'Content Schedule',    Icon: Calendar,        route: 'content-schedule' },
+  { id: 'policylens', label: 'Policy Lens',        Icon: ScanSearch,      route: 'policy-lens' },
   { id: 'sequence',  label: 'Outreach',           Icon: Mail,            route: 'email-sequence' },
   { id: 'calls',     label: 'Outbound Calls',     Icon: Radio,           route: 'outbound-calls' },
   { id: 'field',     label: 'In Person',           Icon: MapPin,          route: 'in-person' },
@@ -43,7 +44,6 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'serp',      label: 'SERP',                Icon: TrendingUp,      route: 'serp' },
   { id: 'ads',       label: 'Google Ads',          Icon: Megaphone,       route: 'google-ads' },
   { id: 'forecast',  label: 'Forecast vs Actual',  Icon: FileBarChart,    route: 'forecast' },
-  { id: 'policylens', label: 'Policy Lens',        Icon: ScanSearch,      route: 'policy-lens' },
 ];
 
 export type MarketingTabId =
