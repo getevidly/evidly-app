@@ -249,6 +249,49 @@ Deno.serve(async (req: Request) => {
       metadata: { status_advanced: "review", pdf_path: pdfPath, pdf_count: pdfCount },
     });
 
+    // ── Conversion event: read_started (best-effort) ─────────
+    // Tracking must never fail the finalize — the product action is
+    // done by this point and the reader is owed their confirmation.
+    try {
+      const { data: priorRead } = await supabase
+        .from("pl_send_events")
+        .select("id")
+        .eq("intake_id", intake_id)
+        .eq("kind", "read_started")
+        .limit(1);
+
+      if (!priorRead || priorRead.length === 0) {
+        // LEFT-join semantics: a referral code that matches no agent, or
+        // no code at all, still emits the event with a null agent_id.
+        let agentId: string | null = null;
+        if (intake.referral_code) {
+          const { data: agentRow } = await supabase
+            .from("pl_agents")
+            .select("id")
+            .eq("ref_code", intake.referral_code)
+            .maybeSingle();
+          agentId = agentRow?.id ?? null;
+        }
+
+        const { error: readEvErr } = await supabase.from("pl_send_events").insert({
+          agent_id: agentId,
+          intake_id,
+          kind: "read_started",
+          meta: { policy_count: pdfCount },
+        });
+        if (readEvErr) {
+          console.error("[pl-intake-finalize] read_started insert FAILED", JSON.stringify({
+            intake_id,
+            agent_id: agentId,
+            code: readEvErr.code ?? null,
+            message: readEvErr.message ?? String(readEvErr),
+          }));
+        }
+      }
+    } catch (readEvErr) {
+      console.error("[pl-intake-finalize] read_started emit threw", readEvErr);
+    }
+
     // ── After-finalize confirmation email (non-blocking) ────
     const userEmail = intake.contact_email || intake.agent_email;
     const userName = intake.contact_name || intake.agent_name || "there";

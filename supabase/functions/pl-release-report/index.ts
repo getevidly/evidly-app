@@ -93,7 +93,7 @@ Deno.serve(async (req: Request) => {
     // ── Resolve the authorizing org (insured) from the intake ───────
     const { data: intakeCheck, error: intakeErr } = await supabase
       .from("policy_lens_intakes")
-      .select("organization_id, broker_party_id, source, business_name, contact_email, contact_name, contact_phone, state, county, retention_choice")
+      .select("organization_id, broker_party_id, source, business_name, contact_email, contact_name, contact_phone, state, county, retention_choice, referral_code")
       .eq("id", intake_id)
       .single();
 
@@ -513,6 +513,67 @@ Deno.serve(async (req: Request) => {
       intake_id,
       metadata: eventMeta,
     });
+
+    // ── Conversion event: report_delivered (best-effort) ─────
+    // Never fails the release — the report is already sealed and
+    // granted by this point.
+    try {
+      const { data: priorDelivered } = await supabase
+        .from("pl_send_events")
+        .select("id")
+        .eq("intake_id", intake_id)
+        .eq("kind", "report_delivered")
+        .limit(1);
+
+      if (!priorDelivered || priorDelivered.length === 0) {
+        // LEFT-join semantics: an unmatched or absent referral code still
+        // emits the event, with a null agent_id.
+        let agentId: string | null = null;
+        if (intakeCheck.referral_code) {
+          const { data: agentRow } = await supabase
+            .from("pl_agents")
+            .select("id")
+            .eq("ref_code", intakeCheck.referral_code)
+            .maybeSingle();
+          agentId = agentRow?.id ?? null;
+        }
+
+        const deliveredMeta: Record<string, unknown> = {
+          retention_choice: intakeCheck.retention_choice ?? null,
+        };
+
+        // agent_authorized is only meaningful when this release actually
+        // discloses to an agent. The policyholder's authorization lives in
+        // policy_lens_authorizations — the same signed/attested gate
+        // pl-intake-finalize uses for the agent door.
+        if (grant) {
+          const { data: authRow } = await supabase
+            .from("policy_lens_authorizations")
+            .select("status")
+            .eq("intake_id", intake_id)
+            .in("status", ["signed", "attested"])
+            .limit(1);
+          deliveredMeta.agent_authorized = Boolean(authRow && authRow.length > 0);
+        }
+
+        const { error: deliveredErr } = await supabase.from("pl_send_events").insert({
+          agent_id: agentId,
+          intake_id,
+          kind: "report_delivered",
+          meta: deliveredMeta,
+        });
+        if (deliveredErr) {
+          console.error("[pl-release-report] report_delivered insert FAILED", JSON.stringify({
+            intake_id,
+            agent_id: agentId,
+            code: deliveredErr.code ?? null,
+            message: deliveredErr.message ?? String(deliveredErr),
+          }));
+        }
+      }
+    } catch (deliveredErr) {
+      console.error("[pl-release-report] report_delivered emit threw", deliveredErr);
+    }
 
     logger.info("[pl-release-report] Released", {
       run_id,
