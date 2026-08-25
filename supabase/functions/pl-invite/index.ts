@@ -11,6 +11,33 @@ import {
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { logEvent } from "../_shared/events.ts";
 import { logger } from "../_shared/logger.ts";
+import { generateTrackToken } from "../_shared/disclosure.ts";
+import type { TrackKind } from "../_shared/disclosure.ts";
+
+/** Sender address for agent-led policyholder mail. Verified with Resend. */
+const NOREPLY_ADDRESS = "noreply@getevidly.com";
+
+/**
+ * Build a pl-track URL. Open pixels are action o; clicks are action c
+ * and carry their final destination in `to`, which pl-track validates
+ * against its own host allowlist before redirecting.
+ */
+async function trackUrl(
+  agentId: string,
+  intakeId: string | null,
+  kind: TrackKind,
+  destination?: string,
+): Promise<string> {
+  const token = await generateTrackToken({
+    agent_id: agentId,
+    intake_id: intakeId,
+    kind,
+  });
+  const base = `${Deno.env.get("SUPABASE_URL")}/functions/v1/pl-track`;
+  return destination
+    ? `${base}?a=c&t=${encodeURIComponent(token)}&to=${encodeURIComponent(destination)}`
+    : `${base}?a=o&t=${encodeURIComponent(token)}`;
+}
 
 function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
@@ -114,12 +141,13 @@ Deno.serve(async (req: Request) => {
     let businessName = "";
     let agentName = "";
     let agencyName = "";
+    let agentEmail: string | null = null;
     let rateLimitKey: string;
 
     if (agent_id) {
       const { data: agent, error: agentErr } = await supabase
         .from("pl_agents")
-        .select("id, name, agency, ref_code")
+        .select("id, name, agency, email, ref_code")
         .eq("id", agent_id)
         .single();
 
@@ -133,6 +161,7 @@ Deno.serve(async (req: Request) => {
       refCode = agent.ref_code;
       agentName = agent.name || "Your agent";
       agencyName = agent.agency || "";
+      agentEmail = agent.email || null;
       rateLimitKey = `pl_invite:agent:${agent_id}`;
     } else {
       const { data: intake, error: fetchErr } = await supabase
@@ -177,6 +206,21 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("PL_PUBLIC_BASE") || "https://getevidly.com";
     const referralLink = `${publicBase}/policy-lens/review?ref=${refCode}`;
 
+    // ── pl-track wrapping (agent-sourced sends only) ─────────
+    // Tokens must carry an agent_id, so only the agent branch is
+    // tracked today — see the note in the commit for the intake case.
+    let ctaUrl: string | undefined;
+    let pixelUrl: string | undefined;
+    if (agent_id && (door === "insurance_pro" || door === "policyholder")) {
+      const clickKind: TrackKind = door === "policyholder" ? "client_clicked" : "invite_clicked";
+      const openKind: TrackKind = door === "policyholder" ? "client_opened" : "invite_opened";
+      const destination = door === "policyholder"
+        ? referralLink
+        : `https://getevidly.com/policy-lens/sample-agent?ref=${encodeURIComponent(refCode)}`;
+      ctaUrl = await trackUrl(agent_id, intake_id ?? null, clickKind, destination);
+      pixelUrl = await trackUrl(agent_id, intake_id ?? null, openKind);
+    }
+
     let emailContent: { subject: string; html: string };
     if (door === "company") {
       emailContent = buildCompanyInviteEmail({
@@ -195,6 +239,8 @@ Deno.serve(async (req: Request) => {
     } else if (door === "insurance_pro") {
       emailContent = buildInsuranceProInviteEmail({
         recipientName: recipient_name,
+        ctaUrl,
+        pixelUrl,
       });
     } else {
       // policyholder — sent on an agent's request. The agent identity comes
@@ -204,14 +250,24 @@ Deno.serve(async (req: Request) => {
         agentName: agentName || "Your agent",
         agencyName,
         entryLink: referralLink,
+        ctaUrl,
+        pixelUrl,
       });
     }
 
     // ── Blocking send ────────────────────────────────────────
+    // Agent-led policyholder mail carries the agent's name in the From
+    // display and their address as Reply-To, so a reply reaches the
+    // agent, not us. The envelope address stays the verified noreply.
+    const agentLed = Boolean(agent_id) && door === "policyholder";
     const sendResult = await sendEmail({
       to: recipient_email,
       subject: emailContent.subject,
       html: emailContent.html,
+      from: agentLed && agentName
+        ? `${agentName} via EvidLY <${NOREPLY_ADDRESS}>`
+        : undefined,
+      replyTo: agentLed && agentEmail ? agentEmail : undefined,
     });
 
     if (!sendResult) {
@@ -250,6 +306,21 @@ Deno.serve(async (req: Request) => {
     // caller can own this write instead by passing skip_send_event —
     // pl-agent-request does, so client_sent is logged once, by it.
     if (agent_id && !skip_send_event) {
+      // Best-effort attribution. An internal service-role call has no
+      // user behind it, so sent_by stays null there.
+      let sentBy: string | null = null;
+      const authHeader = req.headers.get("authorization");
+      const bearer = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      if (bearer && bearer !== serviceKey.trim()) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser(bearer);
+          sentBy = user?.id ?? null;
+        } catch {
+          sentBy = null;
+        }
+      }
+
       const { error: sendEventErr } = await supabase
         .from("pl_send_events")
         .insert({
@@ -258,6 +329,7 @@ Deno.serve(async (req: Request) => {
           kind: door === "policyholder" ? "client_sent" : "invite_sent",
           recipient_name,
           recipient_email,
+          sent_by: sentBy,
         });
       if (sendEventErr) {
         logger.error("[pl-invite] Send event insert failed", sendEventErr);

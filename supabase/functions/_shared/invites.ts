@@ -313,6 +313,8 @@ interface PolicyLensShellParams {
   ctaText: string;
   ctaUrl: string;
   unsubUrl: string;
+  /** pl-track open pixel. Omitted when the send is not tracked. */
+  pixelUrl?: string;
 }
 
 /** Shared shell for the two Policy Lens invite emails. */
@@ -382,7 +384,9 @@ ${retentionRows}
     <div style="font-family:${PL_FONT_SANS};font-size:10.5px;color:#9A9384;margin-top:8px;">&copy; 2026 EvidLY &middot; a Cleaning Pros Plus, LLC Company &nbsp;&middot;&nbsp; <a href="${p.unsubUrl}" style="color:#9A9384;text-decoration:underline;">Unsubscribe</a></div>
   </td></tr>
 
-</table></td></tr></table></body></html>`;
+</table></td></tr></table>
+${p.pixelUrl ? `<img src="${p.pixelUrl}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;" />` : ""}
+</body></html>`;
 }
 
 /** mailto unsubscribe, matching buildClientInviteEmail's fallback. */
@@ -393,6 +397,10 @@ function plUnsubUrl(recipientName: string): string {
 interface InsuranceProInviteParams {
   recipientName: string;
   sampleUrl?: string;
+  /** pl-track click wrapper. Falls back to the bare sample URL. */
+  ctaUrl?: string;
+  /** pl-track open pixel. */
+  pixelUrl?: string;
 }
 
 /**
@@ -405,6 +413,8 @@ export function buildInsuranceProInviteEmail(
   const { recipientName } = params;
   const sampleUrl =
     params.sampleUrl || "https://getevidly.com/policy-lens/sample-agent";
+  // The tracked link is the CTA when supplied; the raw URL otherwise.
+  const ctaUrl = params.ctaUrl || sampleUrl;
 
   const subject = "Your clients' policies, read before the carrier asks";
 
@@ -426,8 +436,9 @@ export function buildInsuranceProInviteEmail(
     ],
     ctaKicker: "See what a client gets back before you send anyone.",
     ctaText: "See a sample read &#8594;",
-    ctaUrl: sampleUrl,
+    ctaUrl,
     unsubUrl: plUnsubUrl(recipientName),
+    pixelUrl: params.pixelUrl,
   });
 
   return { subject, html };
@@ -439,6 +450,10 @@ interface PolicyholderInviteParams {
   agencyName: string;
   /** The flow's existing entry link — the referral URL pl-invite builds. */
   entryLink: string;
+  /** pl-track click wrapper. Falls back to entryLink. */
+  ctaUrl?: string;
+  /** pl-track open pixel. */
+  pixelUrl?: string;
 }
 
 /**
@@ -475,8 +490,9 @@ export function buildPolicyholderInviteEmail(
     ],
     ctaKicker: "It takes a few minutes, and it costs nothing.",
     ctaText: "Start my free read &#8594;",
-    ctaUrl: entryLink,
+    ctaUrl: params.ctaUrl || entryLink,
     unsubUrl: plUnsubUrl(recipientName),
+    pixelUrl: params.pixelUrl,
   });
 
   return { subject, html };
