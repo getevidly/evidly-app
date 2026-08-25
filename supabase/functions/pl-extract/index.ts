@@ -43,6 +43,25 @@ Read the attached policy PDF and extract a structured JSON object with these top
        form_listed_not_extracted | other),
        detail } ]
 
+EVIDENCE — REQUIRED ON EVERY DETERMINATION:
+Every object you emit inside protective_safeguards, fire_findings, food_findings, policy_wide and
+integrity_observations MUST additionally carry an "evidence" key:
+
+  "evidence": { "quote": <verbatim clause text from the document that this determination relied on>,
+                "form":  <form number the clause sits on, e.g. "CP 04 11", if identifiable, else null>,
+                "page":  <page number the clause appears on, if identifiable, else null> }
+
+- "quote" is a VERBATIM span copied from the policy — never paraphrased, summarized, corrected or
+  reflowed. Copy the wording exactly as printed, including its capitalization and punctuation.
+- Quote the narrowest span that actually supports the determination — typically one sentence or
+  clause. Do not quote a whole paragraph or section when a clause carries it.
+- If a determination genuinely rests on more than one clause, quote the single most load-bearing one.
+- "form" and "page" are best-effort: emit null when the document does not let you identify them.
+  NEVER guess a form number or a page number, and never reuse one from a neighbouring item.
+- Adding evidence does NOT change what you determine. Extract exactly what you would have extracted
+  without this section, then attach the clause each determination came from. If you cannot find a
+  verbatim clause supporting an item, that item should not have been extracted.
+
 RULES:
 - Two regulatory pillars stay SEPARATE: fire_findings and food_findings never merge. Never invent a
   blended or composite category.

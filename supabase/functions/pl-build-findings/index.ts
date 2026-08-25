@@ -223,6 +223,58 @@ function foodItemKey(f: Rec): string { return `food|${norm(f.topic)}|${norm(f.fo
 function pwItemKey(p: Rec): string { return `pw|${norm(p.topic)}`; }
 function intItemKey(o: Rec): string { return `integrity|${norm(o.type)}`; }
 
+// ── Evidence carried onto each finding ───────────────────
+// pl-extract attaches an { quote, form, page } evidence object to every
+// determination; pl-reconcile then stamps each merged item with _status
+// ("agreed" | "conflict" | "single_pass"), keeping both pass objects as
+// `a`/`b` on a conflict and recording `_from` on a single-pass item.
+// Both survive into sourceRefs, so a finding can show the clause it rests
+// on and how the two passes compared — without opening the policy.
+
+/** Short human-readable rendering of one determination, for pass comparison. */
+function summarizeDetermination(item: unknown): string | null {
+  if (!item || typeof item !== "object") return null;
+  const r = item as Rec;
+  const text = r.requirement_text ?? r.requirement_or_exclusion_text ?? r.description ??
+    r.text ?? r.detail ?? r.named_standard ?? r.topic ?? r.code ?? null;
+  if (text === null || text === undefined) return null;
+  const s = String(text).trim();
+  if (!s) return null;
+  return s.length > 400 ? s.slice(0, 400) + "…" : s;
+}
+
+function buildEvidence(sourceRefs: unknown[]): Rec | null {
+  const src = (sourceRefs ?? []).find((r) => r && typeof r === "object") as Rec | undefined;
+  if (!src) return null;
+
+  const ev = (src.evidence ?? {}) as Rec;
+  const status = typeof src._status === "string" ? src._status : null;
+
+  let passA: unknown = null;
+  let passB: unknown = null;
+  if (status === "conflict") {
+    passA = src.a ?? null;
+    passB = src.b ?? null;
+  } else if (status === "single_pass") {
+    // _from records which pass produced it; the other pass never saw it.
+    if (src._from === "b") passB = src;
+    else passA = src;
+  } else {
+    // agreed (or unstamped): both passes produced the same determination.
+    passA = src;
+    passB = src;
+  }
+
+  return {
+    quote: ev.quote ?? null,
+    form: ev.form ?? null,
+    page: ev.page ?? null,
+    agreement: status,
+    pass_a_value: summarizeDetermination(passA),
+    pass_b_value: summarizeDetermination(passB),
+  };
+}
+
 interface ExtractedItem { section: string; key: string; summary: string; }
 
 function buildExtractedItems(reconciled: Rec): ExtractedItem[] {
@@ -1104,6 +1156,7 @@ Deno.serve(async (req: Request) => {
         body: fillSlots(t.template.kitchen_body, t.slots),
       };
       const correlation = fillSlotsJsonb(t.template.correlation, t.slots);
+      const evidence = buildEvidence(t.sourceRefs);
 
       return {
         run_id,
@@ -1121,6 +1174,7 @@ Deno.serve(async (req: Request) => {
         source_run_id: run.id,
         source_document_id: run.document_id,
         release_status_at_build: run.release_status,
+        flag_detail: evidence ? { evidence } : null,
       };
     });
 

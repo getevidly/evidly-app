@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FileText, Plus, Trash2, Loader2, ExternalLink, Shield, ChevronDown, ChevronUp, Eye, CheckCircle, Download, Search, Clock, X } from 'lucide-react';
+import { FileText, Plus, Trash2, Loader2, ExternalLink, Shield, ChevronDown, ChevronUp, Eye, CheckCircle, Search, Clock, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -257,26 +257,6 @@ export default function ProspectMarketingReport() {
       setReviewingVerify(null);
     }
   }, [user?.email, loadVerifications]);
-
-  const handleOpenPdf = useCallback(async (intakeId) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('Not authenticated');
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL || ''}/functions/v1/pl-admin`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-          body: JSON.stringify({ action: 'signed_url', intake_id: intakeId }),
-        },
-      );
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Failed');
-      window.open(json.signed_url, '_blank');
-    } catch (err) {
-      toast.error(err.message || 'Failed to open PDF');
-    }
-  }, []);
 
   const handleMarkSent = useCallback(async (intakeId) => {
     setMarkingSent(intakeId);
@@ -646,15 +626,6 @@ export default function ProspectMarketingReport() {
                       {authStatus}
                     </span>
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      {hasPdf && (
-                        <button
-                          onClick={() => handleOpenPdf(intake.id)}
-                          className="p-1 rounded hover:bg-[#FAF7F0] text-[#1E2D4D]/60 hover:text-[#1E2D4D]"
-                          title="Open PDF (1hr signed URL)"
-                        >
-                          <Download size={12} />
-                        </button>
-                      )}
                       {intake.status !== 'report_sent' && hasPdf && (
                         <button
                           onClick={() => handleMarkSent(intake.id)}

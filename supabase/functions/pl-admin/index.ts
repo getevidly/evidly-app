@@ -55,29 +55,9 @@ Deno.serve(async (req: Request) => {
       return json({ error: "action and intake_id required" }, 400, headers);
     }
 
-    // ── ACTION: signed_url ─────────────────────────────────
-    if (action === "signed_url") {
-      const { data: intake } = await supabase
-        .from("policy_lens_intakes")
-        .select("policy_pdf_path")
-        .eq("id", intake_id)
-        .single();
-
-      if (!intake?.policy_pdf_path) {
-        return json({ error: "No PDF uploaded for this intake" }, 404, headers);
-      }
-
-      const { data: urlData, error: urlErr } = await supabase.storage
-        .from("policy-lens-uploads")
-        .createSignedUrl(intake.policy_pdf_path, 3600);
-
-      if (urlErr || !urlData?.signedUrl) {
-        logger.error("[pl-admin] Signed URL failed", urlErr);
-        return json({ error: "Failed to create signed URL" }, 500, headers);
-      }
-
-      return json({ signed_url: urlData.signedUrl }, 200, headers);
-    }
+    // NOTE: there is deliberately no action that returns a URL, bytes, or any
+    // other rendering of the uploaded policy PDF. The human view path was
+    // removed; review works from the quoted evidence carried on each finding.
 
     // ── ACTION: mark_report_sent ───────────────────────────
     if (action === "mark_report_sent") {

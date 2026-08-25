@@ -33,6 +33,15 @@ const MUTE = '#6B7280';
 const SLATE = '#475569';
 const LINE = '#E5E0D5';
 const LOCK_BG = '#F3F1EA';
+/* Gold-family token shared with the queue's `elevated` severity. */
+const EVIDENCE_GOLD = '#9A7B2D';
+
+/* ── Pass agreement (pl-reconcile _status) ─────────────────────── */
+const AGREEMENT_META = {
+  agreed:      { label: 'Passes agree',    bg: '#E8F2F1', fg: '#0F766E' },
+  conflict:    { label: 'Passes disagree', bg: '#FBEAE5', fg: '#C2553A' },
+  single_pass: { label: 'One pass only',   bg: '#FBF3E0', fg: '#9A7B2D' },
+};
 
 /* ── Flag severity ─────────────────────────────────────────────── */
 const FLAG_COLORS = {
@@ -138,6 +147,121 @@ function FlagBadge({ flag }) {
     }}>
       {flag}
     </span>
+  );
+}
+
+/**
+ * EvidencePanel — the quoted clause a finding rests on, its form/page source
+ * line, and how the two extraction passes compared.
+ *
+ * This is the review surface: the policy PDF is not viewable from the admin,
+ * so the quote is the reviewer's only sight of the underlying document.
+ *
+ * `onRerun` is intentionally absent — no admin-callable path fires pl-extract
+ * for an intake, so the re-run control renders disabled.
+ */
+function EvidencePanel({ evidence }) {
+  if (!evidence) return null;
+
+  const { quote, form, page, agreement, pass_a_value, pass_b_value } = evidence;
+  const meta = AGREEMENT_META[agreement] || null;
+  const disagree = agreement === 'conflict';
+  const sourceBits = [form || null, page ? `Page ${page}` : null].filter(Boolean);
+
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 8,
+        marginBottom: 6,
+      }}>
+        <div style={{
+          fontSize: 10, fontWeight: 700, letterSpacing: '.5px',
+          textTransform: 'uppercase', color: SLATE,
+        }}>
+          Evidence
+        </div>
+        {meta && (
+          <span style={{
+            fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: '0.1em', background: meta.bg, color: meta.fg,
+            borderRadius: 3, padding: '2px 6px', whiteSpace: 'nowrap',
+          }}>
+            {meta.label}
+          </span>
+        )}
+      </div>
+
+      {quote ? (
+        <blockquote style={{
+          margin: 0, padding: '10px 12px', background: CREAM,
+          borderLeft: `3px solid ${EVIDENCE_GOLD}`,
+          borderRadius: '0 8px 8px 0',
+        }}>
+          <div style={{
+            fontSize: 12.5, color: '#3a4254', lineHeight: 1.6,
+            fontStyle: 'italic', whiteSpace: 'pre-wrap',
+          }}>
+            {'“'}{quote}{'”'}
+          </div>
+          {sourceBits.length > 0 && (
+            <div style={{
+              marginTop: 8, fontSize: 10, fontWeight: 700,
+              fontFamily: 'monospace', letterSpacing: '0.08em',
+              textTransform: 'uppercase', color: EVIDENCE_GOLD,
+            }}>
+              {sourceBits.join(' · ')}
+            </div>
+          )}
+        </blockquote>
+      ) : (
+        <div style={{
+          padding: '10px 12px', background: CREAM,
+          borderLeft: `3px solid ${LINE}`, borderRadius: '0 8px 8px 0',
+          fontSize: 12, color: MUTE, fontStyle: 'italic',
+        }}>
+          No clause was captured for this finding.
+        </div>
+      )}
+
+      {(pass_a_value || pass_b_value) && (
+        <div style={{ marginTop: 10 }}>
+          {[['Pass A', pass_a_value], ['Pass B', pass_b_value]].map(([label, val]) => (
+            <div key={label} style={{
+              display: 'flex', gap: 8, alignItems: 'flex-start',
+              padding: '4px 0', fontSize: 12, lineHeight: 1.5,
+            }}>
+              <span style={{
+                flexShrink: 0, width: 46, fontSize: 10, fontWeight: 700,
+                fontFamily: 'monospace', letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: disagree ? CORAL : MUTE,
+              }}>
+                {label}
+              </span>
+              <span style={{ color: val ? '#3a4254' : MUTE, fontStyle: val ? 'normal' : 'italic' }}>
+                {val || 'Not extracted in this pass'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {disagree && (
+        <button
+          type="button"
+          disabled
+          title="Re-run not yet wired"
+          style={{
+            marginTop: 8, fontSize: 11, fontWeight: 700,
+            padding: '6px 12px', borderRadius: 8,
+            border: `1px solid ${LINE}`, background: '#fff',
+            color: MUTE, cursor: 'not-allowed', opacity: 0.6,
+          }}
+        >
+          Re-run extraction
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -851,6 +975,9 @@ export default function ExtractionDetail() {
                       </div>
                     </div>
                   )}
+
+                  {/* ── Evidence: quoted clause + pass agreement ─ */}
+                  <EvidencePanel evidence={selected.flag_detail?.evidence} />
 
                   {/* ── Citation chip ─────────────────────────── */}
                   <div style={{ marginBottom: 16 }}>
