@@ -42,6 +42,24 @@ const STATUS_DOT: Record<string, string> = {
   published: '#22C55E',
 };
 
+// Derived display statuses - computed at render time only, never stored.
+const OVERDUE_DOT = '#DC2626';
+
+const DISPLAY_STATUS_OPTIONS = ['planned', 'drafted', 'scheduled', 'published', 'overdue'] as const;
+
+const DISPLAY_STATUS_DOT: Record<string, string> = {
+  ...STATUS_DOT,
+  overdue: OVERDUE_DOT,
+};
+
+const DISPLAY_STATUS_LABEL: Record<string, string> = {
+  planned:   'Planned',
+  drafted:   'Drafted',
+  scheduled: 'Scheduled',
+  published: 'Published',
+  overdue:   'Overdue',
+};
+
 const CHANNEL_DOT: Record<string, string> = {
   Articles:  '#6366F1',
   Blog:      '#10B981',
@@ -49,6 +67,7 @@ const CHANNEL_DOT: Record<string, string> = {
   Facebook:  '#1877F2',
   Instagram: '#E1306C',
   LinkedIn:  '#0A66C2',
+  TikTok:    '#06B6D4',
   X:         '#14171A',
   YouTube:   '#FF0000',
 };
@@ -100,21 +119,29 @@ function fmtTime12(time: string): string {
 
 /** Derive a display label + colors from stored status + scheduled datetime.
  *  The row's real status is never mutated — this is render-only. */
-function displayStatus(row: ContentPostRow): { label: string; dotColor: string; labelColor: string } {
+/** Derived status key for a row - render-only, never written back to the database.
+ *  Past + 'scheduled'            -> 'published'
+ *  Past + 'planned' | 'drafted'  -> 'overdue'
+ *  Otherwise                     -> the stored status, unchanged. */
+function derivedStatusKey(row: ContentPostRow): string {
   const time = row.scheduled_time || '23:59';
   const postDt = new Date(`${row.scheduled_date}T${time}`);
   const isPast = postDt < new Date();
 
-  if (isPast && row.status === 'scheduled') {
-    return { label: 'Published', dotColor: '#22C55E', labelColor: '#16A34A' };
-  }
-  if (isPast && (row.status === 'planned' || row.status === 'drafted')) {
-    return { label: 'Overdue', dotColor: EV_EMBER, labelColor: EV_EMBER };
-  }
+  if (isPast && row.status === 'scheduled') return 'published';
+  if (isPast && (row.status === 'planned' || row.status === 'drafted')) return 'overdue';
+  return row.status;
+}
+
+function displayStatus(row: ContentPostRow): { label: string; dotColor: string; labelColor: string } {
+  const key = derivedStatusKey(row);
   return {
-    label: row.status,
-    dotColor: STATUS_DOT[row.status] || STATUS_DOT.planned,
-    labelColor: EV_MUTED,
+    label: DISPLAY_STATUS_LABEL[key] || key,
+    dotColor: DISPLAY_STATUS_DOT[key] || DISPLAY_STATUS_DOT.planned,
+    labelColor:
+      key === 'published' ? '#16A34A'
+      : key === 'overdue' ? OVERDUE_DOT
+      : EV_MUTED,
   };
 }
 
@@ -368,7 +395,8 @@ export default function ContentScheduleTab() {
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const p of baseFiltered) {
-      counts[p.status] = (counts[p.status] || 0) + 1;
+      const key = derivedStatusKey(p);
+      counts[key] = (counts[key] || 0) + 1;
     }
     return counts;
   }, [baseFiltered]);
@@ -377,7 +405,7 @@ export default function ContentScheduleTab() {
 
   const displayed = useMemo(() => {
     let list = [...baseFiltered];
-    if (fStatus) list = list.filter(p => p.status === fStatus);
+    if (fStatus) list = list.filter(p => derivedStatusKey(p) === fStatus);
 
     list.sort((a, b) => {
       const av = (a[sortKey] || '') as string;
@@ -794,22 +822,22 @@ export default function ContentScheduleTab() {
               >
                 All ({baseFiltered.length})
               </button>
-              {STATUS_OPTIONS.map(s => (
+              {DISPLAY_STATUS_OPTIONS.map(s => (
                 <button
                   key={s}
                   onClick={() => setFStatus(fStatus === s ? '' : s)}
-                  className="inline-flex items-center gap-1.5 py-[4px] px-3 text-[11px] font-semibold rounded-full cursor-pointer border capitalize"
+                  className="inline-flex items-center gap-1.5 py-[4px] px-3 text-[11px] font-semibold rounded-full cursor-pointer border"
                   style={{
-                    borderColor: fStatus === s ? STATUS_DOT[s] : EV_LINE,
-                    backgroundColor: fStatus === s ? `${STATUS_DOT[s]}18` : '#fff',
-                    color: fStatus === s ? STATUS_DOT[s] : EV_MUTED,
+                    borderColor: fStatus === s ? DISPLAY_STATUS_DOT[s] : EV_LINE,
+                    backgroundColor: fStatus === s ? `${DISPLAY_STATUS_DOT[s]}18` : '#fff',
+                    color: fStatus === s ? DISPLAY_STATUS_DOT[s] : EV_MUTED,
                   }}
                 >
                   <span
                     className="inline-block w-[6px] h-[6px] rounded-full"
-                    style={{ backgroundColor: STATUS_DOT[s] }}
+                    style={{ backgroundColor: DISPLAY_STATUS_DOT[s] }}
                   />
-                  {s} ({statusCounts[s] || 0})
+                  {DISPLAY_STATUS_LABEL[s]} ({statusCounts[s] || 0})
                 </button>
               ))}
             </div>
@@ -875,17 +903,17 @@ export default function ContentScheduleTab() {
 
           <span className="mx-1 text-[10px]" style={{ color: EV_LINE }}>|</span>
 
-          {STATUS_OPTIONS.map(s => (
+          {DISPLAY_STATUS_OPTIONS.map(s => (
             <span
               key={s}
-              className="inline-flex items-center gap-1 text-[10px] capitalize"
+              className="inline-flex items-center gap-1 text-[10px]"
               style={{ color: EV_MUTED }}
             >
               <span
                 className="inline-block w-[3px] h-[10px] rounded-sm"
-                style={{ backgroundColor: STATUS_DOT[s] }}
+                style={{ backgroundColor: DISPLAY_STATUS_DOT[s] }}
               />
-              {s}
+              {DISPLAY_STATUS_LABEL[s]}
             </span>
           ))}
         </div>
@@ -1681,7 +1709,7 @@ export default function ContentScheduleTab() {
                         key={p.id}
                         onClick={(e) => { e.stopPropagation(); openFormForPost(p); }}
                         className="flex items-center gap-1 px-1 py-[2px] rounded cursor-pointer"
-                        style={{ backgroundColor: EV_LIGHT, borderLeft: `3px solid ${STATUS_DOT[p.status] || '#94A3B8'}` }}
+                        style={{ backgroundColor: EV_LIGHT, borderLeft: `3px solid ${DISPLAY_STATUS_DOT[derivedStatusKey(p)] || '#94A3B8'}` }}
                         title={`${p.title} (${p.channel_label})`}
                       >
                         <span
@@ -1794,7 +1822,7 @@ export default function ContentScheduleTab() {
                       <tr
                         key={p.id}
                         className="group cursor-pointer"
-                        style={{ borderBottom: `1px solid ${EV_LINE}`, borderLeft: `3px solid ${STATUS_DOT[p.status] || '#94A3B8'}` }}
+                        style={{ borderBottom: `1px solid ${EV_LINE}`, borderLeft: `3px solid ${ds.dotColor}` }}
                         onClick={() => openFormForPost(p)}
                       >
                         <td
@@ -1822,7 +1850,7 @@ export default function ContentScheduleTab() {
                         </td>
                         <td className="py-2.5 px-3">
                           <span
-                            className="inline-flex items-center gap-1.5 text-[11px] font-semibold capitalize"
+                            className="inline-flex items-center gap-1.5 text-[11px] font-semibold"
                             style={{ color: ds.labelColor }}
                           >
                             <span
