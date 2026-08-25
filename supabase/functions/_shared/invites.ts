@@ -410,7 +410,7 @@ export function buildInsuranceProInviteEmail(
 
   const html = buildPolicyLensInviteHtml({
     preheader:
-      "Send a client for a free policy read — up to five policies, read as one program.",
+      "A free plain-English read of a client&rsquo;s policies &mdash; up to five, credited to you.",
     title: subject,
     headline:
       "Send a client for a free policy read &mdash; and be the agent who caught it early.",
@@ -459,7 +459,7 @@ export function buildPolicyholderInviteEmail(
 
   const html = buildPolicyLensInviteHtml({
     preheader:
-      "Free, in plain English — up to five policies, read together as one program.",
+      "Free, plain English, and you keep the only copy.",
     title: subject,
     headline:
       "Your agent asked us to read your policies &mdash; free, in plain English.",
