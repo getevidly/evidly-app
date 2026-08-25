@@ -8,6 +8,17 @@ import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 const UPLOAD_BUCKET = "policy-lens-uploads";
 const MAX_BYTES = 26214400; // 25 MB
 
+/** Declared policy types — the same set pl-intake-start-inapp accepts. */
+const POLICY_TYPES: readonly string[] = [
+  "property",
+  "general_liability",
+  "umbrella_excess",
+  "spoilage_contamination",
+  "bop",
+  "liquor_liability",
+  "other",
+];
+
 /**
  * Objects the intake folder may hold: policy-1.pdf … policy-5.pdf, plus the
  * legacy single-file object policy.pdf, which counts as policy-1.
@@ -32,9 +43,26 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const { intake_id } = await req.json();
+    const body = await req.json();
+    const { intake_id } = body;
     if (!intake_id) {
       return json({ error: "intake_id required" }, 400, headers);
+    }
+
+    // Optional per-slot declared types. When supplied they replace the types
+    // stashed at intake start; a slot the caller omits resolves to NULL.
+    let bodyStatedTypes: string[] | null = null;
+    const rawStated = (body as { stated_policy_types?: unknown }).stated_policy_types;
+    if (rawStated !== undefined && rawStated !== null) {
+      if (!Array.isArray(rawStated)) {
+        return json({ error: "stated_policy_types must be an array" }, 400, headers);
+      }
+      for (const t of rawStated) {
+        if (typeof t !== "string" || !POLICY_TYPES.includes(t)) {
+          return json({ error: `unknown stated_policy_type: ${String(t)}` }, 400, headers);
+        }
+      }
+      bodyStatedTypes = rawStated as string[];
     }
 
     // Fetch intake
@@ -124,10 +152,10 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // ── Declared types stashed at intake start, indexed by slot ──
+    // ── Declared types by slot: request body wins over the stash ──
     const stash = (intake.extracted_fields as Record<string, unknown> | null)
       ?.stated_policy_types;
-    const statedTypes = Array.isArray(stash) ? stash : [];
+    const statedTypes = bodyStatedTypes ?? (Array.isArray(stash) ? stash : []);
     const statedTypeFor = (slot: number): string | null => {
       const value = statedTypes[slot - 1];
       return typeof value === "string" && value !== "other" ? value : null;
