@@ -7,10 +7,35 @@ function json(data: unknown, status: number, headers: Record<string, string>) {
   return new Response(JSON.stringify(data), { status, headers });
 }
 
+// ── Multi-document limits and helpers ────────────────────
+/** Hard cap on policy PDFs per intake — over this the run FAILS, never truncates. */
+const MAX_POLICY_DOCUMENTS = 5;
+
+/** One policy document on the intake, in file order. */
+type PolicyDoc = { id: string | null; path: string; stated: string | null };
+
+/** Base64 in chunks — String.fromCharCode overflows the stack on large PDFs. */
+function encodeBase64(bytes: Uint8Array): string {
+  let out = "";
+  const CHUNK = 32768;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    out += btoa(String.fromCharCode(...bytes.slice(i, i + CHUNK)));
+  }
+  return out;
+}
+
+/** "Policy 2 — uploader labeled it: general liability" */
+function attachmentLabel(index: number, stated: string | null): string {
+  const base = `Policy ${index}`;
+  if (!stated) return base;
+  return `${base} — uploader labeled it: ${stated.replace(/_/g, " ")}`;
+}
+
 // ── Extraction system prompt (both passes) ───────────────
 const EXTRACTION_PROMPT = `You are reading a commercial kitchen insurance policy as a meticulous claims adjuster would AFTER a loss — your job is MAXIMUM EXTRACTION on the kitchen's behalf: surface EVERY requirement, safeguard, condition, sublimit, exclusion, and warranty a carrier could deny on. Exhaustive over cautious.
 
-Read the attached policy PDF and extract a structured JSON object with these top-level keys:
+Read the attached policy document(s) and extract ONE structured JSON object covering the whole set,
+with these top-level keys:
 
   "declarations": { carrier, policy_number, named_insured, policy_period, forms_list[], total_locations,
        locations: [ { loc_no, address, scheduled_building, scheduled_bpp, bi_limit, coinsurance, occupancy,
@@ -40,7 +65,7 @@ Read the attached policy PDF and extract a structured JSON object with these top
        no_food_contamination_coverage | endorsement_named_not_attached | sublimit_no_scheduled_value |
        safeguard_premises_mismatch | safeguard_required_not_confirmed | safeguard_presence_not_scheduled |
        coinsurance_no_valuation | address_or_period_mismatch | location_count_mismatch |
-       form_listed_not_extracted | other),
+       stated_type_mismatch | form_listed_not_extracted | other),
        detail } ]
 
 EVIDENCE — REQUIRED ON EVERY DETERMINATION:
@@ -49,7 +74,9 @@ integrity_observations MUST additionally carry an "evidence" key:
 
   "evidence": { "quote": <verbatim clause text from the document that this determination relied on>,
                 "form":  <form number the clause sits on, e.g. "CP 04 11", if identifiable, else null>,
-                "page":  <page number the clause appears on, if identifiable, else null> }
+                "page":  <page number the clause appears on, if identifiable, else null>,
+                "policy_index": <1-based number of the attached document the quote was copied from,
+                                 matching its "Policy N" label> }
 
 - "quote" is a VERBATIM span copied from the policy — never paraphrased, summarized, corrected or
   reflowed. Copy the wording exactly as printed, including its capitalization and punctuation.
@@ -58,6 +85,9 @@ integrity_observations MUST additionally carry an "evidence" key:
 - If a determination genuinely rests on more than one clause, quote the single most load-bearing one.
 - "form" and "page" are best-effort: emit null when the document does not let you identify them.
   NEVER guess a form number or a page number, and never reuse one from a neighbouring item.
+- "policy_index" is REQUIRED and is NEVER null — it is the 1-based number from the "Policy N" label
+  on the attachment the quote was copied from. With a single attachment it is always 1. When a
+  determination rests on clauses in more than one attachment, index the one you quoted.
 - Adding evidence does NOT change what you determine. Extract exactly what you would have extracted
   without this section, then attach the clause each determination came from. If you cannot find a
   verbatim clause supporting an item, that item should not have been extracted.
@@ -150,14 +180,59 @@ RULES:
   system, code it as P-9. Do NOT reclassify it as P-5. Where a policy schedules BOTH P-1 AND P-9 (or
   any two distinct symbols), each is an independent requirement — satisfying one does NOT satisfy the
   other.
+- MULTIPLE POLICY DOCUMENTS: the message attaches up to 5 policy documents, each preceded by a
+  "Policy N" label (1-based, in file order) that also carries the type the UPLOADER said it was.
+  Treat the attachments as ONE program of insurance, not N independent readings:
+  • Emit ONE combined JSON object covering the whole set. NEVER emit one object per document.
+  • Merge declarations across the set. Where two documents describe the same premises, reconcile
+    them into a single locations[] entry; where they schedule different premises, enumerate every
+    one. forms_list[] is the UNION of the forms listed across all attachments.
+  • Every determination carries evidence.policy_index naming which attachment it came from.
+  • PRESENT IN POLICY N vs ABSENT FROM EVERY POLICY: a coverage, safeguard, sublimit, exclusion or
+    condition found in ANY attachment is PRESENT for this insured — record it once, with
+    policy_index pointing at the document that carries it. NEVER treat something as missing because
+    it is absent from one attachment while others are attached: an umbrella or liquor policy is not
+    expected to restate property terms, and a property policy is not expected to carry liquor
+    liability. Only when a coverage is absent from EVERY attachment may you record it as absent, and
+    then the detail must say so explicitly — "absent from all N uploaded policies", never
+    "absent from the policy". Do not invent an absence you did not check for across the full set.
+  • STATED vs IDENTIFIED TYPE: the "uploader labeled it" text is the uploader's CLAIM, not fact.
+    Read each attachment and determine what it actually is. Where the identified type contradicts
+    the stated label — labeled general liability, reads as a property policy — emit an
+    integrity_observation with type "stated_type_mismatch" whose detail names the attachment
+    ("Policy 2"), the stated label, and the type you identified. Always extract the document for
+    what it ACTUALLY is; the uploader's label never overrides the document.
 - Output ONLY the JSON object. No preamble, no markdown, no commentary.`;
 
+/** One attached policy PDF: its "Policy N" label and its base64 bytes. */
+type PolicyAttachment = { label: string; base64: string };
+
 // ── Anthropic call helper ────────────────────────────────
+// Every attachment goes into EVERY pass, as multiple document blocks in one
+// message, each preceded by its label. One run, two passes, all documents in
+// both — never a run per document.
 async function callAnthropic(
   apiKey: string,
   model: string,
-  pdfBase64: string,
+  attachments: PolicyAttachment[],
 ): Promise<{ parsed: unknown; raw: string }> {
+  const content: unknown[] = [];
+  for (const doc of attachments) {
+    content.push({ type: "text", text: doc.label });
+    content.push({
+      type: "document",
+      source: { type: "base64", media_type: "application/pdf", data: doc.base64 },
+    });
+  }
+  content.push({
+    type: "text",
+    text:
+      attachments.length === 1
+        ? "Extract the policy per the system instructions. Output ONLY the JSON object."
+        : `Extract across all ${attachments.length} attached policy documents per the system ` +
+          "instructions, as ONE combined JSON object. Output ONLY the JSON object.",
+  });
+
   const resp = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -172,16 +247,7 @@ async function callAnthropic(
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "document",
-              source: { type: "base64", media_type: "application/pdf", data: pdfBase64 },
-            },
-            {
-              type: "text",
-              text: "Extract the policy per the system instructions. Output ONLY the JSON object.",
-            },
-          ],
+          content,
         },
       ],
     }),
@@ -291,19 +357,52 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Intake not found" }, 404, headers);
     }
 
-    const { data: doc, error: docErr } = await supabase
+    const { data: docRows, error: docErr } = await supabase
       .from("pl_documents")
-      .select("id, file_path")
+      .select("id, file_path, stated_policy_type")
       .eq("intake_id", intake_id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+      .eq("doc_type", "policy")
+      .order("file_path", { ascending: true });
 
-    // Determine the storage path: prefer pl_documents row, fall back to intake.policy_pdf_path
-    const storagePath = doc?.file_path ?? intake.policy_pdf_path;
-    const documentId = doc?.id ?? null;
+    if (docErr) {
+      // A real query error fails the run — never fall through to the legacy
+      // single-path guess as though the intake simply had no documents.
+      console.error("[pl-extract] pl_documents query failed:", docErr.message);
+      await supabase.from("pl_extraction_runs").insert({
+        intake_id,
+        document_id: null,
+        status: "failed",
+        error: `document_query_failed: ${docErr.message}`,
+      });
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intake_id)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
+      return json({ error: "document_query_failed" }, 500, headers);
+    }
 
-    if (!storagePath) {
+    // file_path is nulled by pl-retention-purge — those rows carry no bytes.
+    const policyDocs: PolicyDoc[] = (docRows ?? [])
+      .filter((d) => typeof d.file_path === "string" && d.file_path.length > 0)
+      .map((d) => ({
+        id: d.id as string,
+        path: d.file_path as string,
+        stated: (d.stated_policy_type as string | null) ?? null,
+      }));
+
+    // Legacy fallback: an intake with no pl_documents rows still extracts from
+    // the single path on the intake, exactly as before.
+    if (policyDocs.length === 0 && intake.policy_pdf_path) {
+      policyDocs.push({ id: null, path: intake.policy_pdf_path, stated: null });
+    }
+
+    // The run's document_id keeps pointing at the first document in file order.
+    const documentId = policyDocs[0]?.id ?? null;
+
+    if (policyDocs.length === 0) {
       // No document anywhere — write a failed run and return 400
       await supabase.from("pl_extraction_runs").insert({
         intake_id,
@@ -319,6 +418,28 @@ Deno.serve(async (req: Request) => {
         .single();
       if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
       return json({ error: "no_document" }, 400, headers);
+    }
+
+    // ── Cap: an over-large set FAILS the run, never truncates ──
+    if (policyDocs.length > MAX_POLICY_DOCUMENTS) {
+      const capError =
+        `too_many_documents: intake has ${policyDocs.length} policy documents, ` +
+        `maximum is ${MAX_POLICY_DOCUMENTS}`;
+      console.error("[pl-extract]", capError);
+      await supabase.from("pl_extraction_runs").insert({
+        intake_id,
+        document_id: documentId,
+        status: "failed",
+        error: capError,
+      });
+      const { error: intakeFailErr } = await supabase
+        .from("policy_lens_intakes")
+        .update({ status: "failed" })
+        .eq("id", intake_id)
+        .select("id")
+        .single();
+      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
+      return json({ error: capError }, 400, headers);
     }
 
     // ── Duplicate guard: skip if active run exists ──────────
@@ -365,33 +486,34 @@ Deno.serve(async (req: Request) => {
       console.error("[pl-extract] Failed to set intake status=extracting:", intakeExtractingErr.message);
     }
 
-    // ── Step 3: download PDF bytes from storage ──────────
-    const { data: fileData, error: dlErr } = await supabase.storage
-      .from("policy-lens-uploads")
-      .download(storagePath);
+    // ── Step 3: download + encode EVERY policy document ──
+    const attachments: PolicyAttachment[] = [];
+    for (let i = 0; i < policyDocs.length; i++) {
+      const policyDoc = policyDocs[i];
+      const { data: fileData, error: dlErr } = await supabase.storage
+        .from("policy-lens-uploads")
+        .download(policyDoc.path);
 
-    if (dlErr || !fileData) {
-      await supabase
-        .from("pl_extraction_runs")
-        .update({ status: "failed", error: "pdf_download_failed" })
-        .eq("id", run.id);
-      const { error: intakeFailErr } = await supabase
-        .from("policy_lens_intakes")
-        .update({ status: "failed" })
-        .eq("id", intake_id)
-        .select("id")
-        .single();
-      if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
-      return json({ error: "Failed to download PDF" }, 500, headers);
-    }
+      if (dlErr || !fileData) {
+        await supabase
+          .from("pl_extraction_runs")
+          .update({ status: "failed", error: `pdf_download_failed: ${policyDoc.path}` })
+          .eq("id", run.id);
+        const { error: intakeFailErr } = await supabase
+          .from("policy_lens_intakes")
+          .update({ status: "failed" })
+          .eq("id", intake_id)
+          .select("id")
+          .single();
+        if (intakeFailErr) console.error("[pl-extract] intake status=failed write failed:", intakeFailErr.message);
+        return json({ error: "Failed to download PDF" }, 500, headers);
+      }
 
-    const arrayBuf = await fileData.arrayBuffer();
-    const bytes = new Uint8Array(arrayBuf);
-    // Encode to base64 in chunks to avoid stack overflow on large PDFs
-    let pdfBase64 = "";
-    const CHUNK = 32768;
-    for (let i = 0; i < bytes.length; i += CHUNK) {
-      pdfBase64 += btoa(String.fromCharCode(...bytes.slice(i, i + CHUNK)));
+      const bytes = new Uint8Array(await fileData.arrayBuffer());
+      attachments.push({
+        label: attachmentLabel(i + 1, policyDoc.stated),
+        base64: encodeBase64(bytes),
+      });
     }
 
     // ── Step 4: two independent Anthropic passes ─────────
@@ -415,8 +537,8 @@ Deno.serve(async (req: Request) => {
     const MODEL_B = "claude-opus-4-8";
 
     const [passA, passB] = await Promise.all([
-      callAnthropic(anthropicKey, MODEL_A, pdfBase64),
-      callAnthropic(anthropicKey, MODEL_B, pdfBase64),
+      callAnthropic(anthropicKey, MODEL_A, attachments),
+      callAnthropic(anthropicKey, MODEL_B, attachments),
     ]);
 
     // ── Step 4.5: sanity-check location counts ───────────
