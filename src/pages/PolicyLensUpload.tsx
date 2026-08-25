@@ -100,7 +100,7 @@ export default function PolicyLensUpload() {
   if (done) {
     return (
       <div className="max-w-2xl mx-auto p-6 md:p-8">
-        <h1 className="text-2xl font-medium mb-2">Policy received</h1>
+        <h1 className="text-2xl font-medium mb-2">{readyCount === 1 ? 'Policy received' : 'Policies received'}</h1>
         <p className="text-sm text-gray-600 leading-relaxed mb-6">
           {readyCount === 1 ? 'Your policy is' : `Your ${readyCount} policies are`} uploaded and your Policy Lens review is underway. Your coverage figures and safety-system findings will appear in Policy Lens once the review is complete.
         </p>
