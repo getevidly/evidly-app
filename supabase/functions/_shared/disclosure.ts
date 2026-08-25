@@ -1,4 +1,5 @@
-// Shared disclosure text and HMAC token utilities for Policy Lens authorization.
+// Shared disclosure text and HMAC token utilities for Policy Lens
+// authorization and open/click tracking.
 
 export const DISCLOSURE_VERSION = "draft-1";
 
@@ -113,4 +114,93 @@ export async function verifySignToken(
     throw new Error("Token expired");
 
   return { aid: payload.aid, exp: payload.exp };
+}
+
+// ── Tracking token utilities ─────────────────────────────────
+// Same secret, same HMAC-SHA256 scheme and same wire format as the
+// authorization tokens above — only the payload differs.
+//
+// Deliberately NO expiry: these tokens live inside sent email, which
+// stays in a mailbox indefinitely. An expiring token would silently
+// stop recording opens and clicks on mail that is still being read.
+
+/** Tracking kinds pl-track is allowed to record. */
+export type TrackKind =
+  | "invite_opened"
+  | "invite_clicked"
+  | "client_opened"
+  | "client_clicked";
+
+export interface TrackTokenPayload {
+  agent_id: string;
+  intake_id: string | null;
+  kind: TrackKind;
+}
+
+const TRACK_KINDS: readonly string[] = [
+  "invite_opened",
+  "invite_clicked",
+  "client_opened",
+  "client_clicked",
+];
+
+/**
+ * Generate an HMAC-SHA256 signed tracking token.
+ * Format: base64url(payload).base64url(signature)
+ * Payload: { aid: agent_id, iid: intake_id | null, k: kind }
+ */
+export async function generateTrackToken(
+  payload: TrackTokenPayload,
+): Promise<string> {
+  const body = JSON.stringify({
+    aid: payload.agent_id,
+    iid: payload.intake_id ?? null,
+    k: payload.kind,
+  });
+  const payloadB64 = base64urlEncodeString(body);
+  const key = await getHmacKey();
+  const sig = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(payloadB64),
+  );
+  return `${payloadB64}.${base64urlEncode(sig)}`;
+}
+
+/**
+ * Verify a tracking token. Returns the decoded payload, or throws on a
+ * malformed token, a bad signature, or an unknown kind. Callers must
+ * treat every throw as "record nothing" — never as an error to render.
+ * crypto.subtle.verify is inherently timing-safe.
+ */
+export async function verifyTrackToken(
+  token: string,
+): Promise<TrackTokenPayload> {
+  const parts = token.split(".");
+  if (parts.length !== 2) throw new Error("Invalid token format");
+
+  const [payloadB64, sigB64] = parts;
+  const key = await getHmacKey();
+
+  const valid = await crypto.subtle.verify(
+    "HMAC",
+    key,
+    base64urlDecode(sigB64),
+    new TextEncoder().encode(payloadB64),
+  );
+  if (!valid) throw new Error("Invalid token signature");
+
+  const decoded = JSON.parse(base64urlDecodeString(payloadB64));
+  if (!decoded.aid || typeof decoded.aid !== "string") {
+    throw new Error("Invalid token payload");
+  }
+  if (!TRACK_KINDS.includes(decoded.k)) {
+    throw new Error("Invalid token kind");
+  }
+
+  return {
+    agent_id: decoded.aid,
+    intake_id: typeof decoded.iid === "string" ? decoded.iid : null,
+    kind: decoded.k as TrackKind,
+  };
 }

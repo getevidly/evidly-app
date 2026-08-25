@@ -465,6 +465,12 @@ verify_jwt = false
 [functions.pl-build-findings]
 verify_jwt = false
 
+# Email open pixel + click redirect — loaded by mail clients, no user
+# context. The HMAC-signed token is the auth; bad tokens degrade to a
+# silent 204 / redirect home, never an error page.
+[functions.pl-track]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
