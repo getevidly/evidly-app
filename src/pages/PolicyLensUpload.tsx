@@ -102,7 +102,7 @@ export default function PolicyLensUpload() {
       <div className="max-w-2xl mx-auto p-6 md:p-8">
         <h1 className="text-2xl font-medium mb-2">Policy received</h1>
         <p className="text-sm text-gray-600 leading-relaxed mb-6">
-          Your policy is uploaded and your Policy Lens review is underway. Your coverage figures and safety-system findings will appear in Policy Lens once the review is complete.
+          {readyCount === 1 ? 'Your policy is' : `Your ${readyCount} policies are`} uploaded and your Policy Lens review is underway. Your coverage figures and safety-system findings will appear in Policy Lens once the review is complete.
         </p>
         <button onClick={() => navigate('/policy-lens')} className="text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md px-4 py-2">Back to Policy Lens</button>
       </div>
