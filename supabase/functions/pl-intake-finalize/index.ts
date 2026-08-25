@@ -133,6 +133,41 @@ Deno.serve(async (req: Request) => {
       return typeof value === "string" && value !== "other" ? value : null;
     };
 
+    // ── Re-entry guard: rebuild this intake's policy rows ─────
+    // Only doc_type 'policy' is cleared — capture-flow compliance
+    // documents on the same intake are left untouched. Extraction
+    // runs hold an FK to pl_documents with no cascade, so pointers
+    // at the outgoing rows are released before the delete.
+    const { data: priorDocs, error: priorErr } = await supabase
+      .from("pl_documents")
+      .select("id")
+      .eq("intake_id", intake_id)
+      .eq("doc_type", "policy");
+
+    if (priorErr) {
+      logger.error("[pl-intake-finalize] Prior document lookup failed", priorErr);
+      return json({ error: "Failed to record policy documents" }, 500, headers);
+    }
+
+    if (priorDocs && priorDocs.length > 0) {
+      const priorIds = priorDocs.map((d: { id: string }) => d.id);
+
+      const { error: unlinkErr } = await supabase
+        .from("pl_extraction_runs")
+        .update({ document_id: null })
+        .in("document_id", priorIds);
+
+      const { error: clearErr } = await supabase
+        .from("pl_documents")
+        .delete()
+        .in("id", priorIds);
+
+      if (unlinkErr || clearErr) {
+        logger.error("[pl-intake-finalize] Document clear failed", unlinkErr ?? clearErr);
+        return json({ error: "Failed to record policy documents" }, 500, headers);
+      }
+    }
+
     // ── One pl_documents row per uploaded policy PDF ──────────
     const { error: docsErr } = await supabase.from("pl_documents").insert(
       policyFiles.map((f) => ({
