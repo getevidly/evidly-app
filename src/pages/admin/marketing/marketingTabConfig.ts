@@ -13,7 +13,7 @@ import {
   LayoutDashboard, Radio, MapPin, Building2,
   Layers, ClipboardList, Calendar, Flame, GitBranch,
   Users, Mail, Search, TrendingUp, Megaphone, FileBarChart,
-  Ticket, Target,
+  Ticket, Target, ScanSearch,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -43,12 +43,13 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'serp',      label: 'SERP',                Icon: TrendingUp,      route: 'serp' },
   { id: 'ads',       label: 'Google Ads',          Icon: Megaphone,       route: 'google-ads' },
   { id: 'forecast',  label: 'Forecast vs Actual',  Icon: FileBarChart,    route: 'forecast' },
+  { id: 'policylens', label: 'Policy Lens',        Icon: ScanSearch,      route: 'policy-lens' },
 ];
 
 export type MarketingTabId =
   | 'today' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
-  | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast';
+  | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
 
 /** Map tab id → route path */
 export function tabRoute(id: MarketingTabId): string {

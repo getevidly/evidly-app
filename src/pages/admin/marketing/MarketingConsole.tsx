@@ -28,6 +28,7 @@ import SERPTab from './SERPTab';
 import GoogleAdsTab from './GoogleAdsTab';
 import ForecastTab from './ForecastTab';
 import PlannerTab from './PlannerTab';
+import PolicyLensTab from './PolicyLensTab';
 import {
   Layers, ClipboardList,
   Calendar, Mail,
@@ -264,6 +265,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'ads'       && <GoogleAdsTab />}
       {tab === 'planner'   && <PlannerTab />}
       {tab === 'forecast'  && <ForecastTab />}
+      {tab === 'policylens' && <PolicyLensTab />}
 
       {/* ── Add-account modal ──────────────────────────────────────── */}
       <Modal isOpen={showAddAccount} onClose={() => setShowAddAccount(false)} size="lg">
