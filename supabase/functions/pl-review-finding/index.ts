@@ -101,7 +101,7 @@ Deno.serve(async (req: Request) => {
     // ── Confirm the finding exists ─────────────────────────────
     const { data: existing, error: exErr } = await supabase
       .from("pl_findings")
-      .select("id, run_id")
+      .select("id, run_id, flag_detail")
       .eq("id", finding_id)
       .single();
     if (exErr || !existing) {
@@ -128,8 +128,12 @@ Deno.serve(async (req: Request) => {
       };
     }
     // Only 'flag' writes flag_detail (workflow data — never sealed; flags block release).
+    // Merge, never replace: pl-build-findings stores the finding's quoted
+    // evidence under flag_detail.evidence, and that is the reviewer's only
+    // sight of the policy now that the PDF view path is gone.
     if (action === "flag") {
       update.flag_detail = {
+        ...((existing.flag_detail as Record<string, unknown> | null) ?? {}),
         reason_code: reason!,
         notes: (typeof notes === "string" && notes.trim() !== "") ? notes : null,
       };
