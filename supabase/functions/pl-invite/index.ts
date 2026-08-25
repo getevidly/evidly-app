@@ -52,14 +52,35 @@ Deno.serve(async (req: Request) => {
     );
 
     const body = await req.json();
-    const { intake_id, recipient_name, recipient_email, door } = body;
+    const {
+      intake_id,
+      agent_id,
+      recipient_name,
+      recipient_email,
+      door,
+      // Internal: the caller owns the pl_send_events write for this send.
+      skip_send_event,
+    } = body;
 
-    if (!intake_id || !recipient_name || !recipient_email || !door) {
+    if (!recipient_name || !recipient_email || !door) {
       return json(
-        {
-          error:
-            "intake_id, recipient_name, recipient_email, and door required",
-        },
+        { error: "recipient_name, recipient_email, and door required" },
+        400,
+        headers,
+      );
+    }
+
+    // Exactly one source of identity — an intake, or an agent.
+    if (!intake_id && !agent_id) {
+      return json(
+        { error: "one of intake_id or agent_id required" },
+        400,
+        headers,
+      );
+    }
+    if (intake_id && agent_id) {
+      return json(
+        { error: "intake_id and agent_id are mutually exclusive" },
         400,
         headers,
       );
@@ -74,25 +95,70 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // ── Fetch intake ─────────────────────────────────────────
-    const { data: intake, error: fetchErr } = await supabase
-      .from("policy_lens_intakes")
-      .select(
-        "referral_code, contact_name, business_name, agent_name, agency_name",
-      )
-      .eq("id", intake_id)
-      .single();
-
-    if (fetchErr || !intake) {
-      return json({ error: "Intake not found" }, 404, headers);
+    // Only the two agent-facing doors can be driven from a pl_agents row.
+    // company/agent stay intake-only — their copy quotes intake fields.
+    const AGENT_DOORS = ["insurance_pro", "policyholder"];
+    if (agent_id && !AGENT_DOORS.includes(door)) {
+      return json(
+        { error: `agent_id is only valid for doors: ${AGENT_DOORS.join(", ")}` },
+        400,
+        headers,
+      );
     }
 
-    if (!intake.referral_code) {
-      return json({ error: "Intake has no referral code" }, 400, headers);
+    // ── Resolve identity: intake row, or pl_agents row ───────
+    // senderName/senderOrg feed the intake-door templates; agentName/
+    // agencyName feed the policyholder template; refCode builds the link.
+    let refCode: string;
+    let contactName = "";
+    let businessName = "";
+    let agentName = "";
+    let agencyName = "";
+    let rateLimitKey: string;
+
+    if (agent_id) {
+      const { data: agent, error: agentErr } = await supabase
+        .from("pl_agents")
+        .select("id, name, agency, ref_code")
+        .eq("id", agent_id)
+        .single();
+
+      if (agentErr || !agent) {
+        return json({ error: "Agent not found" }, 404, headers);
+      }
+      if (!agent.ref_code) {
+        return json({ error: "Agent has no referral code" }, 400, headers);
+      }
+
+      refCode = agent.ref_code;
+      agentName = agent.name || "Your agent";
+      agencyName = agent.agency || "";
+      rateLimitKey = `pl_invite:agent:${agent_id}`;
+    } else {
+      const { data: intake, error: fetchErr } = await supabase
+        .from("policy_lens_intakes")
+        .select(
+          "referral_code, contact_name, business_name, agent_name, agency_name",
+        )
+        .eq("id", intake_id)
+        .single();
+
+      if (fetchErr || !intake) {
+        return json({ error: "Intake not found" }, 404, headers);
+      }
+      if (!intake.referral_code) {
+        return json({ error: "Intake has no referral code" }, 400, headers);
+      }
+
+      refCode = intake.referral_code;
+      contactName = intake.contact_name || "";
+      businessName = intake.business_name || "";
+      agentName = intake.agent_name || "";
+      agencyName = intake.agency_name || "";
+      rateLimitKey = `pl_invite:${intake_id}`;
     }
 
     // ── Rate limit ───────────────────────────────────────────
-    const rateLimitKey = `pl_invite:${intake_id}`;
     const limit = await checkRateLimit({
       key: rateLimitKey,
       maxRequests: 10,
@@ -106,25 +172,23 @@ Deno.serve(async (req: Request) => {
         headers,
       );
     }
-
     // ── Build email ──────────────────────────────────────────
     const publicBase =
       Deno.env.get("PL_PUBLIC_BASE") || "https://getevidly.com";
-    const referralLink = `${publicBase}/policy-lens/review?ref=${intake.referral_code}`;
+    const referralLink = `${publicBase}/policy-lens/review?ref=${refCode}`;
 
     let emailContent: { subject: string; html: string };
     if (door === "company") {
       emailContent = buildCompanyInviteEmail({
-        senderName:
-          intake.contact_name || intake.business_name || "A kitchen leader",
-        senderOrg: intake.business_name || "",
+        senderName: contactName || businessName || "A kitchen leader",
+        senderOrg: businessName,
         recipientName: recipient_name,
         referralLink,
       });
     } else if (door === "agent") {
       emailContent = buildAgentInviteEmail({
-        senderName: intake.agent_name || "An agent",
-        senderOrg: intake.agency_name || "",
+        senderName: agentName || "An agent",
+        senderOrg: agencyName,
         recipientName: recipient_name,
         referralLink,
       });
@@ -133,11 +197,12 @@ Deno.serve(async (req: Request) => {
         recipientName: recipient_name,
       });
     } else {
-      // policyholder — sent on an agent's request, off the intake's agent fields
+      // policyholder — sent on an agent's request. The agent identity comes
+      // from pl_agents when agent_id was supplied, else off the intake.
       emailContent = buildPolicyholderInviteEmail({
         recipientName: recipient_name,
-        agentName: intake.agent_name || "Your agent",
-        agencyName: intake.agency_name || "",
+        agentName: agentName || "Your agent",
+        agencyName,
         entryLink: referralLink,
       });
     }
@@ -162,9 +227,11 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── Log invite row ───────────────────────────────────────
+    // On the agent branch intake_id is null by design — attribution for
+    // those sends lives in pl_send_events, not here. No new columns.
     await supabase.from("policy_lens_invites").insert({
-      intake_id,
-      referral_code: intake.referral_code,
+      intake_id: intake_id ?? null,
+      referral_code: refCode,
       recipient_name,
       recipient_email,
       channel: "email",
@@ -173,10 +240,29 @@ Deno.serve(async (req: Request) => {
     // ── Log event (non-blocking) ─────────────────────────────
     await logEvent(supabase, {
       event_type: "invite_sent",
-      intake_id,
-      referral_code: intake.referral_code,
+      intake_id: intake_id ?? undefined,
+      referral_code: refCode,
       metadata: { recipient_email, door },
     });
+
+    // ── Agent attribution (pl_send_events) ───────────────────
+    // Only the agent branch carries an agent_id to attribute to. The
+    // caller can own this write instead by passing skip_send_event —
+    // pl-agent-request does, so client_sent is logged once, by it.
+    if (agent_id && !skip_send_event) {
+      const { error: sendEventErr } = await supabase
+        .from("pl_send_events")
+        .insert({
+          agent_id,
+          intake_id: intake_id ?? null,
+          kind: door === "policyholder" ? "client_sent" : "invite_sent",
+          recipient_name,
+          recipient_email,
+        });
+      if (sendEventErr) {
+        logger.error("[pl-invite] Send event insert failed", sendEventErr);
+      }
+    }
 
     return json({ success: true }, 200, headers);
   } catch (err) {
