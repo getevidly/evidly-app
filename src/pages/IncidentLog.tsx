@@ -473,11 +473,10 @@ export function IncidentLog() {
     'Minor': t('incidents.minor'),
   };
 
-  // Keyed by STATUS_CONFIG.label — the live four only.
-  // 'Investigating' has no translation key yet, so it falls through to the
-  // English STATUS_CONFIG.label at the call sites (`statusLabels[...] || label`).
+  // Keyed by STATUS_CONFIG.label — the live four, all translated.
   const statusLabels: Record<string, string> = {
     'Open': t('common.open'),
+    'Investigating': t('incidents.investigating'),
     'Resolved': t('common.resolved'),
     'Verified': t('incidents.verified'),
   };

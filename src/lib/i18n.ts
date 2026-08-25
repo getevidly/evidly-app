@@ -616,6 +616,7 @@ const en = {
     // Status
     reported: 'Reported',
     assigned: 'Assigned',
+    investigating: 'Investigating',
     verified: 'Verified',
     // Detail view
     backToIncidentLog: 'Back to Incidents',
@@ -2022,6 +2023,7 @@ const es: typeof en = {
     minor: 'Menor',
     reported: 'Reportado',
     assigned: 'Asignado',
+    investigating: 'En investigación',
     verified: 'Verificado',
     backToIncidentLog: 'Volver a Incidentes',
     takeAction: 'Tomar Acción',
