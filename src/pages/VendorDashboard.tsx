@@ -26,6 +26,7 @@ import {
 import { ClientInviteModal } from '../components/vendor/ClientInviteModal';
 import { BulkClientImport } from '../components/vendor/BulkClientImport';
 import { ShareInviteLinkPanel } from '../components/vendor/ShareInviteLinkPanel';
+import { EvidlyLogo } from '../components/ui/EvidlyLogo';
 
 // ── Types ────────────────────────────────────────────────────
 type VendorTab = 'overview' | 'leads' | 'services' | 'clients' | 'documents' | 'reviews' | 'analytics';
@@ -988,18 +989,8 @@ export function VendorDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <div className="w-10 h-12">
-                <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#B24A2E"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#B24A2E" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="ml-3 text-xl sm:text-2xl font-bold tracking-tight">
-                <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#B24A2E]">LY</span>
-                <span className="ml-2 text-sm text-[#1E2D4D]/70 hidden sm:inline">Vendor Marketplace</span>
-              </span>
+              <EvidlyLogo onDark={false} showTagline={false} />
+              <span className="ml-2 text-sm text-[#1E2D4D]/70 hidden sm:inline">Vendor Marketplace</span>
             </div>
             <div className="flex items-center gap-3">
               <button onClick={() => toast.info('Notifications (Demo)')} className="relative p-2 text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80">

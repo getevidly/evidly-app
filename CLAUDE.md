@@ -116,10 +116,12 @@ New page files use .jsx not .tsx.
 
 ## DEPLOYMENT
 
+Deploys happen by push to origin/main. `npx vercel --prod` is BANNED — never run it.
+
 Every prompt ends with:
 git add -A
 git commit -m "..."
-npx vercel --prod
+git push origin main
 
 Arthur validates in live production. No preview step needed.
 

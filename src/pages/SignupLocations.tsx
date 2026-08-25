@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { CALENDLY_URL } from '../lib/config';
+import { EvidlyLogo } from '../components/ui/EvidlyLogo';
 
 export function SignupLocations() {
   const [selectedType, setSelectedType] = useState<'single' | 'multiple' | 'enterprise' | null>(null);
@@ -95,19 +96,7 @@ export function SignupLocations() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <div className="flex items-center">
-              <div className="w-12 h-14">
-                <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#B24A2E"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#B24A2E" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="ml-3 text-3xl font-bold tracking-tight">
-                <span className="text-[#1E2D4D]">Evid</span>
-                <span className="text-[#B24A2E]">LY</span>
-              </span>
-            </div>
+            <EvidlyLogo onDark={false} showTagline={false} />
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-[#1E2D4D] mb-2">How many locations will you be managing?</h1>
           <p className="text-lg text-[#1E2D4D]/70">Choose the option that best fits your business</p>

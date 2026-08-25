@@ -1,3 +1,5 @@
+import { EvidlyLogo } from './ui/EvidlyLogo';
+
 export default function Footer() {
   return (
     <footer className="py-12 sm:py-16 px-4 sm:px-6 pb-20 sm:pb-16 bg-[var(--color-blue)] border-t border-[rgba(255,255,255,0.1)]">
@@ -5,18 +7,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-9">
-                <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#B24A2E"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1E2D4D"/>
-                  <path d="M22 32L26 36L34 26" stroke="#B24A2E" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '20px' }}>
-                <span style={{ color: '#B24A2E' }}>Evid</span>
-                <span style={{ color: '#FFFFFF' }}>LY</span>
-              </span>
+            <div className="flex items-center mb-4">
+              <EvidlyLogo showTagline={false} />
             </div>
             <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed">
               Answers before you ask.

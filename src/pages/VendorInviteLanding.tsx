@@ -9,6 +9,7 @@
 
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Shield, Calendar, FileText, BarChart3 } from 'lucide-react';
+import { EvidlyLogo } from '../components/ui/EvidlyLogo';
 
 const NAVY = '#1E2D4D';
 const GOLD = '#B24A2E';
@@ -46,18 +47,8 @@ export function VendorInviteLanding() {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-10">
-              <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill={GOLD} />
-                <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill={NAVY} />
-                <path d="M22 32L26 36L34 26" stroke={GOLD} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold">
-              <span style={{ color: NAVY }}>Evid</span>
-              <span style={{ color: GOLD }}>LY</span>
-            </span>
+          <div className="flex items-center">
+            <EvidlyLogo onDark={false} showTagline={false} />
           </div>
           <button
             onClick={() => navigate('/login')}
