@@ -44,6 +44,7 @@ export function DocumentsToolbar({
         <input
           type="text"
           placeholder="Search documents…"
+          aria-label="Search documents"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full pl-8 pr-3 py-2.5 border border-[#E2DDD4] bg-white rounded-md text-[13px] text-[#1E2D4D] focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"
@@ -52,6 +53,7 @@ export function DocumentsToolbar({
 
       <select
         value={locationFilter}
+        aria-label="Filter by location"
         onChange={(e) => onLocationFilterChange(e.target.value)}
         className={selectClass}
       >
@@ -64,6 +66,7 @@ export function DocumentsToolbar({
       {showVendor && (
         <select
           value={vendorFilter}
+          aria-label="Filter by vendor"
           onChange={(e) => onVendorFilterChange(e.target.value)}
           className={selectClass}
         >
@@ -76,6 +79,7 @@ export function DocumentsToolbar({
 
       <select
         value={statusFilter}
+        aria-label="Filter by status"
         onChange={(e) => onStatusFilterChange(e.target.value)}
         className={selectClass}
       >

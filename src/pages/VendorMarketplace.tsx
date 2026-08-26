@@ -353,6 +353,7 @@ function ProductionMarketplace() {
               <input
                 type="text"
                 placeholder="Search vendors..."
+                aria-label="Search vendors"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full bg-white rounded-xl pl-10 pr-4 py-3 text-sm text-[#1E2D4D] placeholder-[#1E2D4D]/30 border border-[#1E2D4D]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20"

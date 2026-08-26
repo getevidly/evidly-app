@@ -40,10 +40,14 @@ const CHANNEL_META: { key: Channel; label: string; icon: typeof Mail; desc: stri
 
 const cardClasses = 'bg-white border border-border_ui-cool rounded-xl shadow-[0_1px_3px_rgba(11,22,40,.06),0_1px_2px_rgba(11,22,40,.04)] p-6 mb-5';
 
-function ToggleSwitch({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
+function ToggleSwitch({ checked, onChange, disabled, label }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean; label: string }) {
   return (
     <button
       onClick={() => !disabled && onChange(!checked)}
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
       className={`w-[44px] h-6 rounded-xl border-none relative shrink-0 transition-colors duration-200 ${checked ? 'bg-navy-muted' : 'bg-gray-300'} ${disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'}`}
     >
       <div
@@ -262,6 +266,7 @@ export function NotificationsPage() {
                   </div>
                 </div>
                 <ToggleSwitch
+                  label={`${ch.label} notifications`}
                   checked={isSmsLocked ? false : globalToggles[ch.key]}
                   onChange={v => toggleGlobal(ch.key, v)}
                   disabled={isSmsLocked}
@@ -316,6 +321,7 @@ export function NotificationsPage() {
                       <td key={ch.key} className="text-center px-3.5 py-2.5">
                         <input
                           type="checkbox"
+                          aria-label={`${cat.label} via ${ch.label}`}
                           checked={isSmsLocked ? false : (prefs[cat.key]?.[ch.key] || false)}
                           onChange={() => toggleCategory(cat.key, ch.key)}
                           disabled={isDisabled}
@@ -349,6 +355,7 @@ export function NotificationsPage() {
                 <span className="text-sm font-medium text-navy-deeper">{cat.label}</span>
               </div>
               <ToggleSwitch
+                label={`${cat.label} in the digest`}
                 checked={!digestOptOut[cat.key]}
                 onChange={v => setDigestOptOut(prev => ({ ...prev, [cat.key]: !v }))}
               />
@@ -372,6 +379,7 @@ export function NotificationsPage() {
         </p>
         <input
           type="tel"
+          aria-label="Mobile number for SMS alerts"
           placeholder="+1 (555) 123-4567"
           value={phone}
           onChange={e => setPhone(e.target.value)}

@@ -127,12 +127,14 @@ export default function PolicyLensUpload() {
           <input
             type="file"
             accept="application/pdf"
+            aria-label="Policy PDF"
             onChange={(e) => updateRow(row.id, { file: e.target.files?.[0] ?? null })}
             className="block w-full text-sm text-gray-600 mb-4"
           />
           <label className="block text-sm font-medium text-gray-800 mb-2">Policy type</label>
           <select
             value={row.policyType}
+            aria-label="Policy type"
             onChange={(e) => updateRow(row.id, { policyType: e.target.value })}
             className="block w-full text-sm border border-gray-300 rounded-md px-3 py-2"
           >
@@ -155,7 +157,7 @@ export default function PolicyLensUpload() {
 
       <div className="border border-gray-200 rounded-lg p-5 mb-4">
         <label className="block text-sm font-medium text-gray-800 mb-2">Carrier <span className="font-normal text-gray-400">(optional)</span></label>
-        <input type="text" value={carrier} onChange={(e) => setCarrier(e.target.value)} placeholder="e.g. The Hartford" className="block w-full text-sm border border-gray-300 rounded-md px-3 py-2" />
+        <input type="text" value={carrier} onChange={(e) => setCarrier(e.target.value)} aria-label="Carrier" placeholder="e.g. The Hartford" className="block w-full text-sm border border-gray-300 rounded-md px-3 py-2" />
       </div>
 
       {error && <div className="text-sm text-red-700 bg-red-50 rounded-md px-3 py-2.5 mb-4">{error}</div>}

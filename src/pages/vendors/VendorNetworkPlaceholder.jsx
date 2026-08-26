@@ -277,6 +277,7 @@ export default function VendorNetworkPlaceholder() {
               style={{ color: '#5A6478' }}
             />
             <input
+              aria-label="Search vendors"
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -289,6 +290,7 @@ export default function VendorNetworkPlaceholder() {
           </div>
           <div className="relative">
             <select
+              aria-label="Sort vendors"
               value={sort.key}
               onChange={(e) => setSort({ key: e.target.value })}
               className="appearance-none pl-3 pr-7 py-2 rounded-md"
@@ -306,6 +308,7 @@ export default function VendorNetworkPlaceholder() {
         <div className="flex items-center gap-2 mb-3">
           <div className="relative flex-shrink-0">
             <select
+              aria-label="Filter by county"
               value={county}
               onChange={(e) => setCounty(e.target.value)}
               className="appearance-none pl-3 pr-7 py-1.5 rounded-full"

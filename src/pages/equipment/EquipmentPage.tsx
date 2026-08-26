@@ -143,6 +143,7 @@ export function EquipmentPage() {
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: TEXT_TERTIARY }} />
           <input
+            aria-label="Search equipment"
             value={localSearch}
             onChange={e => setLocalSearch(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -153,6 +154,7 @@ export function EquipmentPage() {
         </div>
 
         <select
+          aria-label="Filter by type"
           value={typeFilter}
           onChange={e => setParam('type', e.target.value)}
           className="px-3 py-2 text-sm rounded-xl border"
@@ -169,6 +171,7 @@ export function EquipmentPage() {
         </select>
 
         <select
+          aria-label="Filter by condition"
           value={conditionFilter}
           onChange={e => setParam('condition', e.target.value)}
           className="px-3 py-2 text-sm rounded-xl border"
@@ -178,6 +181,7 @@ export function EquipmentPage() {
         </select>
 
         <select
+          aria-label="Filter by status"
           value={statusFilter}
           onChange={e => setParam('status', e.target.value)}
           className="px-3 py-2 text-sm rounded-xl border"
@@ -189,6 +193,8 @@ export function EquipmentPage() {
         {/* View toggle */}
         <div className="flex rounded-xl border overflow-hidden ml-auto" style={{ borderColor: CARD_BORDER }}>
           <button
+            aria-label="Grid view"
+            aria-pressed={view === 'grid'}
             onClick={() => setParam('view', 'grid')}
             className="px-3 py-2 transition-colors"
             style={{ background: view === 'grid' ? '#1E2D4D' : CARD_BG, color: view === 'grid' ? 'white' : TEXT_TERTIARY }}
@@ -196,6 +202,8 @@ export function EquipmentPage() {
             <LayoutGrid className="w-4 h-4" />
           </button>
           <button
+            aria-label="List view"
+            aria-pressed={view === 'list'}
             onClick={() => setParam('view', 'list')}
             className="px-3 py-2 transition-colors"
             style={{ background: view === 'list' ? '#1E2D4D' : CARD_BG, color: view === 'list' ? 'white' : TEXT_TERTIARY }}

@@ -112,6 +112,7 @@ export function UserExceptionsTable({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#6B7F96' }} />
           <input
+            aria-label="Search users and permissions"
             type="text"
             placeholder="Search by user or permission..."
             value={search}

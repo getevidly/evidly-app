@@ -497,6 +497,7 @@ export default function FireProtection() {
         </p>
         {locations.length > 1 && (
           <select
+            aria-label="Filter by location"
             value={locationId || ''}
             onChange={handleLocationChange}
             style={{ marginTop: 6, fontSize: typography.size.sm, color: colors.textSecondary, border: 'none', background: 'transparent', cursor: 'pointer', padding: 0 }}

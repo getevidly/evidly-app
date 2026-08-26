@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { SkeletonList } from '../components/ui/Skeleton';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
@@ -290,7 +291,7 @@ export function DocumentsPage() {
   const renderTabContent = () => {
     if (asker) {
       if (loading) {
-        return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents…</div>;
+        return <SkeletonList items={5} />;
       }
       if (filtered.length === 0) {
         return (
@@ -302,7 +303,7 @@ export function DocumentsPage() {
       return <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />;
     }
     if (loading) {
-      return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents…</div>;
+      return <SkeletonList items={5} />;
     }
 
     // Kitchen tab: show intelligence banner above list when populated

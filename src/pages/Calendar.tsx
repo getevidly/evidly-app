@@ -1019,6 +1019,7 @@ export function Calendar() {
           {/* Left: Nav arrows + title */}
           <div data-demo-allow style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
+              aria-label="Previous period"
               onClick={() => navCalendar(-1)}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1032,6 +1033,7 @@ export function Calendar() {
               <ChevronLeft size={18} color="#374151" />
             </button>
             <button
+              aria-label="Next period"
               onClick={() => navCalendar(1)}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1111,6 +1113,7 @@ export function Calendar() {
               {/* Location filter select — primary axis */}
               <select
                 value={locationFilter}
+                aria-label="Filter by location"
                 onChange={(e) => setLocationFilter(e.target.value)}
                 style={selectStyle}
                 className="w-full sm:w-auto sm:min-w-[150px]"
@@ -1124,6 +1127,7 @@ export function Calendar() {
               {/* Vendor Service filter */}
               <select
                 value={categoryFilter}
+                aria-label="Filter by service category"
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 style={selectStyle}
                 className="w-full sm:w-auto sm:min-w-[150px]"

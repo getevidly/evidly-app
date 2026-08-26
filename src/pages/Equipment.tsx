@@ -845,6 +845,7 @@ export function Equipment() {
           <div data-demo-allow className="flex flex-wrap gap-3">
             <select
               value={locationFilter}
+              aria-label="Filter by location"
               onChange={e => setLocationFilter(e.target.value)}
               className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
@@ -853,6 +854,7 @@ export function Equipment() {
             </select>
             <select
               value={pillarFilter}
+              aria-label="Filter by pillar"
               onChange={e => setPillarFilter(e.target.value as 'all' | 'fire_safety' | 'food_safety')}
               className="w-full sm:w-auto px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
@@ -913,12 +915,13 @@ export function Equipment() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={t('pages.equipment.searchPlaceholder')}
+              aria-label="Search equipment"
               className="w-full pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             />
           </div>
           <div className="flex bg-[#1E2D4D]/5 rounded-lg p-1">
-            <button onClick={() => setViewMode('card')} className={`p-2 rounded ${viewMode === 'card' ? 'bg-white shadow-sm' : 'text-[#1E2D4D]/30'}`}><LayoutGrid className="h-4 w-4" /></button>
-            <button onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-white shadow-sm' : 'text-[#1E2D4D]/30'}`}><List className="h-4 w-4" /></button>
+            <button aria-label="Card view" aria-pressed={viewMode === 'card'} onClick={() => setViewMode('card')} className={`p-2 rounded ${viewMode === 'card' ? 'bg-white shadow-sm' : 'text-[#1E2D4D]/30'}`}><LayoutGrid className="h-4 w-4" /></button>
+            <button aria-label="Table view" aria-pressed={viewMode === 'table'} onClick={() => setViewMode('table')} className={`p-2 rounded ${viewMode === 'table' ? 'bg-white shadow-sm' : 'text-[#1E2D4D]/30'}`}><List className="h-4 w-4" /></button>
           </div>
         </div>
 

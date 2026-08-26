@@ -1110,3 +1110,55 @@ body {
 .prp-pdet { font-size: 11px; color: #9A93A6; line-height: 1.4; margin: 3px 0 0 40px; }
 .prp-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; vertical-align: middle; margin-left: 6px; }
 @media (max-width: 640px) { .prp-grid-2x2 { grid-template-columns: 1fr !important; } }
+
+/* ── Accessible muted text (WCAG AA) ──────────────────────────────
+   The app used navy at 40-60% alpha for all secondary copy. Composited
+   on cream (#FAF7F0) that lands at 2.9:1 (/50), 2.4:1 (/40) and 3.8:1
+   (/60) - all below the 4.5:1 AA floor for body text, and the source of
+   every colour-contrast failure Lighthouse reported.
+
+   Rather than rewrite 1,383 call sites, the three utilities are
+   redirected here to TEXT.muted (#5F6875) from src/design/tokens.ts,
+   which measures 5.3:1 on cream and 5.7:1 on white. These rules sit
+   after @tailwind utilities, so they win on source order at equal
+   specificity - no !important required. */
+.text-\[\#1E2D4D\]\/40,
+.text-\[\#1E2D4D\]\/50,
+.text-\[\#1E2D4D\]\/60 {
+  color: #5F6875;
+}
+
+/* The relative timestamp in the last-action banner rendered its own
+   colour at 70% alpha over the mint banner - 4.0:1 at 10.5px. Full
+   opacity on the same ink is 8.2:1. */
+.last-action .last-action-ago {
+  opacity: 1;
+  color: #085041;
+}
+
+/* ── Minimum touch target (WCAG 2.5.8) ────────────────────────────
+   Round-2 audit found 14 client screens where every interactive target
+   sat under 44px, clustered at 18/24/28/36/38/40 - a handful of shared
+   button, chip and select styles rather than hundreds of one-offs.
+   Raising the floor on the real controls covers all of them at once.
+
+   Scoped to the app content area so the shell is untouched. Buttons and
+   selects are inline-block, so min-height resolves without changing
+   their display and without any layout rewrite.
+
+   Deliberately excluded:
+   - checkbox / radio / colour inputs, which are hit via their label,
+     and which is what the notification preference matrix is built from
+     - that grid's narrow-screen layout is a separate design decision;
+   - anchors, because inline links inside running text are exempt from
+     2.5.8 and forcing a height on them would reflow prose. Anchors that
+     act as buttons already carry their own min-height. */
+main button,
+main select,
+main [role="button"] {
+  min-height: 44px;
+}
+
+main input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="hidden"]) {
+  min-height: 44px;
+}

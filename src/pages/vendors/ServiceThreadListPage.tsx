@@ -257,6 +257,7 @@ export default function ServiceThreadListPage() {
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
+          aria-label="Back to vendors"
           onClick={() => navigate('/vendors')}
           className="p-1.5 rounded-lg hover:bg-[#1E2D4D]/5 text-[#1E2D4D]/50 hover:text-[#1E2D4D]/80 transition-colors"
         >

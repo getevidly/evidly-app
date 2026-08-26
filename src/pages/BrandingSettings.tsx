@@ -180,36 +180,40 @@ export function BrandingSettings() {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Brand Name</label>
+              <label htmlFor="brand-name" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Brand Name</label>
               <input
                 type="text"
+                id="brand-name"
                 value={localBrandName}
                 onChange={e => setLocalBrandName(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Tagline</label>
+              <label htmlFor="brand-tagline" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Tagline</label>
               <input
                 type="text"
+                id="brand-tagline"
                 value={localTagline}
                 onChange={e => setLocalTagline(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Login Welcome Text</label>
+              <label htmlFor="brand-login-welcome" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Login Welcome Text</label>
               <input
                 type="text"
+                id="brand-login-welcome"
                 value={localWelcome}
                 onChange={e => setLocalWelcome(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Support Email</label>
+              <label htmlFor="brand-support-email" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Support Email</label>
               <input
                 type="email"
+                id="brand-support-email"
                 value={localSupport}
                 onChange={e => setLocalSupport(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl focus:ring-2 focus-visible:ring-[#B24A2E]/50 focus-visible:ring-offset-2/20 focus:border-[#1E2D4D]"
@@ -223,6 +227,9 @@ export function BrandingSettings() {
               <button
                 onClick={() => setLocalPoweredBy(!localPoweredBy)}
                 className="flex-shrink-0"
+                role="switch"
+                aria-checked={localPoweredBy}
+                aria-label={`Show "Powered by EvidLY" badge`}
               >
                 {localPoweredBy ? (
                   <ToggleRight className="h-7 w-7 text-blue-500" />
@@ -247,12 +254,14 @@ export function BrandingSettings() {
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
+                    aria-label={`${f.label} colour swatch`}
                     value={localColors[f.key]}
                     onChange={e => setLocalColors({ ...localColors, [f.key]: e.target.value })}
                     className="w-9 h-9 rounded-xl border border-[#1E2D4D]/10 cursor-pointer"
                   />
                   <input
                     type="text"
+                    aria-label={`${f.label} hex value`}
                     value={localColors[f.key]}
                     onChange={e => setLocalColors({ ...localColors, [f.key]: e.target.value })}
                     className="flex-1 px-2 py-1.5 text-xs border border-[#1E2D4D]/10 rounded-xl font-mono"
@@ -285,8 +294,9 @@ export function BrandingSettings() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">SSO Provider</label>
+            <label htmlFor="sso-provider" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">SSO Provider</label>
             <select
+              id="sso-provider"
               value={branding.sso.provider || ''}
               onChange={() => toast.info('SSO changes require admin approval')}
               className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]"
@@ -297,18 +307,20 @@ export function BrandingSettings() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Entity ID / Issuer</label>
+            <label htmlFor="sso-entity-id" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Entity ID / Issuer</label>
             <input
               type="text"
+              id="sso-entity-id"
               readOnly
               value={branding.sso.entityId || '—'}
               className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0] text-[#1E2D4D]/50"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">SSO Login URL</label>
+            <label htmlFor="sso-login-url" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">SSO Login URL</label>
             <input
               type="text"
+              id="sso-login-url"
               readOnly
               value={branding.sso.ssoUrl || '—'}
               className="w-full px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0] text-[#1E2D4D]/50"
@@ -341,9 +353,10 @@ export function BrandingSettings() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Custom Domain</label>
+            <label htmlFor="custom-domain" className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">Custom Domain</label>
             <input
               type="text"
+              id="custom-domain"
               value={localDomain}
               onChange={e => setLocalDomain(e.target.value)}
               placeholder="compliance.yourdomain.com"
@@ -351,7 +364,8 @@ export function BrandingSettings() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">SSL Status</label>
+            {/* Not a <label>: this heads a read-only status readout, not a form control. */}
+            <p className="block text-xs font-medium text-[#1E2D4D]/80 mb-1">SSL Status</p>
             <div className="flex items-center gap-2 px-3 py-2 text-sm border border-[#1E2D4D]/10 rounded-xl bg-[#FAF7F0]">
               {localDomain ? (
                 <>
@@ -395,6 +409,9 @@ export function BrandingSettings() {
               <button
                 onClick={() => setLocalFeatures({ ...localFeatures, [toggle.key]: !localFeatures[toggle.key] })}
                 className="flex-shrink-0"
+                role="switch"
+                aria-checked={!!localFeatures[toggle.key]}
+                aria-label={toggle.label}
               >
                 {localFeatures[toggle.key] ? (
                   <ToggleRight className="h-7 w-7 text-blue-500" />

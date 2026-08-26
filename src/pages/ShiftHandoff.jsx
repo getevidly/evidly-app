@@ -332,6 +332,7 @@ export function ShiftHandoff() {
       <div className="bg-white rounded-xl border border-[#1E2D4D]/10 p-6">
         <h3 className="text-sm font-semibold text-[#1E2D4D]/80 mb-2">Notes for next shift</h3>
         <textarea
+          aria-label="Handoff notes"
           value={notes}
           onChange={e => setNotes(e.target.value)}
           onFocus={e => { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }}

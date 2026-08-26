@@ -119,6 +119,7 @@ export function Alerts() {
         {/* Advanced filters */}
         <div className="flex flex-wrap gap-3">
           <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value as typeof severityFilter)}
+            aria-label="Filter by severity"
             className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
             <option value="all">All severities</option>
             <option value="urgent">Urgent</option>
@@ -127,6 +128,7 @@ export function Alerts() {
             <option value="low">Low</option>
           </select>
           <select value={pillarFilter} onChange={e => setPillarFilter(e.target.value as typeof pillarFilter)}
+            aria-label="Filter by pillar"
             className="px-3 py-2 border border-[#1E2D4D]/15 rounded-xl text-sm focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]">
             <option value="all">All pillars</option>
             <option value="fire_safety">Fire Safety</option>

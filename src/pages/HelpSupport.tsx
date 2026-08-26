@@ -312,6 +312,7 @@ export function HelpSupport() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search help articles..."
+            aria-label="Search help articles"
             style={{ ...inputStyle, padding: '14px 14px 14px 42px', fontSize: '15px', border: '2px solid #e5e7eb', borderRadius: '12px' }}
           />
           <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '18px' }}>{'\u{1F50D}'}</span>
@@ -410,7 +411,7 @@ export function HelpSupport() {
         {/* Category */}
         <div style={{ marginBottom: '16px' }}>
           <label style={labelStyle}>Category *</label>
-          <select value={ticketCat} onChange={e => setTicketCat(e.target.value)} style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' as const }}>
+          <select aria-label="Support ticket category" value={ticketCat} onChange={e => setTicketCat(e.target.value)} style={{ ...inputStyle, cursor: 'pointer', appearance: 'none' as const }}>
             <option value="">Select a category...</option>
             {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -444,7 +445,7 @@ export function HelpSupport() {
         {/* Subject */}
         <div style={{ marginBottom: '16px' }}>
           <label style={labelStyle}>Subject *</label>
-          <input type="text" value={ticketSubject} onChange={e => setTicketSubject(e.target.value)} placeholder="Brief summary of your issue" style={inputStyle} />
+          <input aria-label="Ticket subject" type="text" value={ticketSubject} onChange={e => setTicketSubject(e.target.value)} placeholder="Brief summary of your issue" style={inputStyle} />
         </div>
 
         {/* Description */}
@@ -458,7 +459,7 @@ export function HelpSupport() {
               onGenerated={(text) => { setTicketDesc(text); setAiFields(prev => new Set(prev).add('ticketDesc')); }}
             />
           </div>
-          <textarea value={ticketDesc} onChange={e => { setTicketDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('ticketDesc'); return n; }); }} placeholder="Describe your issue in detail. Include steps to reproduce if applicable..." rows={5} style={{ ...inputStyle, resize: 'vertical' }} />
+          <textarea aria-label="Ticket description" value={ticketDesc} onChange={e => { setTicketDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('ticketDesc'); return n; }); }} placeholder="Describe your issue in detail. Include steps to reproduce if applicable..." rows={5} style={{ ...inputStyle, resize: 'vertical' }} />
           {aiFields.has('ticketDesc') && <AIGeneratedIndicator />}
         </div>
 

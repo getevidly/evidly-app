@@ -530,11 +530,13 @@ export function Team() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search members..."
+                aria-label="Search team members"
                 className="pl-10 pr-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               />
             </div>
             <select
               value={roleFilter}
+              aria-label="Filter by role"
               onChange={(e) => setRoleFilter(e.target.value)}
               className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
             >
@@ -546,6 +548,7 @@ export function Team() {
             {isDemoMode && (
               <select
                 value={locationFilter}
+                aria-label="Filter by location"
                 onChange={(e) => setLocationFilter(e.target.value)}
                 className="px-4 py-2 border border-[#1E2D4D]/15 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus:ring-[#B24A2E]"
               >
@@ -910,6 +913,7 @@ export function Team() {
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                         <div className="relative">
                           <button
+                            aria-label={`Actions for ${member.full_name || 'team member'}`}
                             onClick={() => setOpenActionMenu(openActionMenu === member.id ? null : member.id)}
                             onBlur={() => setTimeout(() => setOpenActionMenu(null), 150)}
                             className="p-2 rounded-lg hover:bg-[#1E2D4D]/5 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"

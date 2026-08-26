@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { SkeletonList } from '../components/ui/Skeleton';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, AlertTriangle, Clock, CheckCircle2, XCircle, User, MapPin,
@@ -2350,12 +2351,8 @@ export function IncidentLog() {
           <IncidentsRecurringBar patterns={recurringPatterns} />
         )}
 
-        {/* Loading Spinner */}
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#1E2D4D]" />
-          </div>
-        )}
+        {/* Loading: the shared list skeleton, not a second spinner. */}
+        {loading && <SkeletonList items={4} />}
 
         {/* Incident Cards */}
         {!loading && (() => {
