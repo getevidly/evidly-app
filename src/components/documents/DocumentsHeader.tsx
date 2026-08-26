@@ -23,17 +23,6 @@ export function DocumentsHeader({ stats, onSendToThirdParty, prpEnabled, prpStat
       <div className="flex items-start justify-between flex-wrap gap-3 mb-4">
         <div>
           <h1 className="text-xl font-bold text-[#1E2D4D] tracking-tight">Documents</h1>
-          {prpEnabled ? (
-            <p className="text-xs text-[#8A93A6] mt-1">
-              <span className="font-semibold text-[#1E2D4D]">Predict</span> what's about to expire.{' '}
-              <span className="font-semibold text-[#1E2D4D]">Reduce</span> citation and re-inspection cost.{' '}
-              <span className="font-semibold text-[#1E2D4D]">Prove</span> every record on demand.
-            </p>
-          ) : (
-            <p className="text-xs text-[#8A93A6] mt-1">
-              One home for everything you need to prove how your kitchen runs.
-            </p>
-          )}
         </div>
         <button
           type="button"

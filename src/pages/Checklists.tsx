@@ -797,13 +797,6 @@ export function Checklists() {
       <div className="space-y-6 max-w-7xl mx-auto pb-8">
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Checklists' }]} />
 
-        {/* PRP subtitle */}
-        <p className="text-sm" style={{ color: colors.textSecondary }}>
-          <span className="font-semibold" style={{ color: colors.navy }}>Predict</span> the missed check.{' '}
-          <span className="font-semibold" style={{ color: colors.navy }}>Reduce</span> the failed item.{' '}
-          <span className="font-semibold" style={{ color: colors.navy }}>Prove</span> the completion.
-        </p>
-
         {/* PRP Band */}
         <ChecklistsPRPBand todayChecklists={computedTodayChecklists} loading={todayLoading} />
 

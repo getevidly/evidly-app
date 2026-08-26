@@ -369,9 +369,6 @@ export function Deficiencies() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#0B1628' }}>Deficiencies</h1>
-          <p className="text-sm mt-1" style={{ color: '#3D5068' }}>
-            Predict what's approaching deadline. Reduce open exposure. Prove every correction.
-          </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}

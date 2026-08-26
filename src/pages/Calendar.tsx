@@ -969,15 +969,7 @@ export function Calendar() {
               Schedule a service
             </button>
           </div>
-          {prpEnabled ? (
-            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
-              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Predict</span> what&rsquo;s due.{' '}
-              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Reduce</span> what slips.{' '}
-              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Prove</span> what was done.
-            </p>
-          ) : (
-            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
-          )}
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
         </div>
 
         {/* PRP Band — only when flag is on */}

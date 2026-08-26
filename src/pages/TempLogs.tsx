@@ -1486,11 +1486,6 @@ export function TempLogs() {
             <div className="flex items-center gap-3 flex-wrap">
               <h1 style={{ fontSize: typography.size.h1, fontWeight: typography.weight.bold, letterSpacing: '-0.02em', color: colors.navy }}>{t('tempLogs.title')}</h1>
               </div>
-            <p style={{ fontSize: typography.size.sm, color: colors.textSecondary, marginTop: 4 }}>
-              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Predict</span> the drift.{' '}
-              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Reduce</span> the loss.{' '}
-              <span style={{ fontWeight: 600, color: '#1E2D4D' }}>Prove</span> the temperature.
-            </p>
           </div>
           <button
             onClick={() => navigate('/temp-logs/scan')}
