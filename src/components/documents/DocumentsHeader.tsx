@@ -23,6 +23,7 @@ export function DocumentsHeader({ stats, onSendToThirdParty, prpEnabled, prpStat
       <div className="flex items-start justify-between flex-wrap gap-3 mb-4">
         <div>
           <h1 className="text-xl font-bold text-[#1E2D4D] tracking-tight">Documents</h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', marginTop: 4 }}>Every record on file, and what's still needed.</p>
         </div>
         <button
           type="button"
