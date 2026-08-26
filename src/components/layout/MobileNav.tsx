@@ -21,6 +21,8 @@ import {
   Thermometer,
   AlertTriangle,
   Wrench,
+  CalendarDays,
+  SlidersHorizontal,
   MoreHorizontal,
   X,
   LogOut,
@@ -32,6 +34,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useKeyboardOpen } from '../../hooks/useKeyboardOpen';
 import { useKitchenType } from '../../hooks/useKitchenType';
 import { getRoleConfig, type SidebarSection, type NavItem } from '../../config/sidebarConfig';
+import { useMobileNavSlots, type SlotKey } from '../../hooks/useMobileNavSlots';
+import { MobileNavCustomizer } from './MobileNavCustomizer';
 
 const EMBER = '#B24A2E';
 const NAVY = '#1E2D4D';
@@ -48,7 +52,7 @@ export interface NavSlot {
   icon: LucideIcon;
 }
 
-const SLOTS: Record<string, NavSlot> = {
+export const SLOTS: Record<string, NavSlot> = {
   home:       { id: 'home',       label: 'Home',       path: '/dashboard',      icon: Home },
   fire:       { id: 'fire',       label: 'Fire',       path: '/facility-safety', icon: Flame },
   food:       { id: 'food',       label: 'Food',       path: '/food-safety',    icon: UtensilsCrossed },
@@ -57,6 +61,7 @@ const SLOTS: Record<string, NavSlot> = {
   checklists: { id: 'checklists', label: 'Checklists', path: '/checklists',     icon: ClipboardList },
   temps:      { id: 'temps',      label: 'Temps',      path: '/temp-logs',      icon: Thermometer },
   report:     { id: 'report',     label: 'Report',     path: '/incidents',      icon: AlertTriangle },
+  calendar:   { id: 'calendar',   label: 'Calendar',   path: '/calendar',       icon: CalendarDays },
 };
 
 /**
@@ -127,8 +132,15 @@ export function MobileNav() {
   const isKeyboardOpen = useKeyboardOpen();
   const { kitchenType } = useKitchenType();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+  const { slots: override, loading: slotsLoading, save: saveSlots } = useMobileNavSlots();
 
-  const middle = getRoleSlots(userRole);
+  const roleDefault = getRoleSlots(userRole);
+  // Override wins once loaded. While loading, the role default renders, so the
+  // slots never flash empty; an unknown key cannot reach here (parseSlots drops it).
+  const middle = !slotsLoading && override
+    ? override.map(k => SLOTS[k]).filter(Boolean)
+    : roleDefault;
   const tabs = [SLOTS.home, ...middle];
 
   // Every destination for this role that is not already one of the five tabs.
@@ -241,6 +253,16 @@ export function MobileNav() {
               </div>
             );
           })}
+          <button
+            onClick={() => { setDrawerOpen(false); setCustomizeOpen(true); }}
+            data-testid="customize-tabs"
+            className="w-full flex items-center gap-3 px-2 rounded-lg active:bg-[#1E2D4D]/5"
+            style={{ minHeight: 44, borderTop: `1px solid ${LINE}`, marginTop: 4 }}
+          >
+            <SlidersHorizontal className="h-4 w-4 flex-shrink-0" style={{ color: EMBER }} />
+            <span className="flex-1 text-left text-[14px] font-medium" style={{ color: NAVY }}>Customize tabs</span>
+            <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: 'rgba(30,45,77,0.25)' }} />
+          </button>
         </div>
 
         <div className="px-4 py-3" style={{ borderTop: `1px solid ${LINE}`, paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)' }}>
@@ -303,6 +325,13 @@ export function MobileNav() {
           </button>
         </div>
       </nav>
+      {customizeOpen && (
+        <MobileNavCustomizer
+          current={middle.map(m => m.id as SlotKey)}
+          onClose={() => setCustomizeOpen(false)}
+          onSave={saveSlots}
+        />
+      )}
     </>
   );
 }

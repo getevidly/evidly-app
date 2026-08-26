@@ -1,5 +1,5 @@
 import type { UserRole } from '../contexts/RoleContext';
-import type { MobileQuickAction, MobileNavTab } from '../data/mobileDemoData';
+import type { MobileQuickAction } from '../data/mobileDemoData';
 
 // ── Quick Actions per Role ──────────────────────────────────
 
@@ -52,64 +52,6 @@ export function getMobileQuickActions(role: UserRole): MobileQuickAction[] {
         { id: 'checklist', label: 'Checklist', icon: '📋', path: '/checklists' },
         { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },
         { id: 'report', label: 'Report Issue', icon: '🔧', path: '/incidents' },
-      ];
-  }
-}
-
-// ── Bottom Nav per Role ─────────────────────────────────────
-
-export function getMobileBottomNav(role: UserRole): MobileNavTab[] {
-  switch (role) {
-    case 'platform_admin':
-    case 'owner_operator':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'scores', label: 'Scores', icon: '📊', path: '/scoring-breakdown' },
-        { id: 'sites', label: 'Sites', icon: '📍', path: '/org-hierarchy' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
-      ];
-    case 'executive':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
-        // { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
-      ];
-    case 'compliance_manager':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'docs', label: 'Docs', icon: '📄', path: '/documents' },
-        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
-        // { id: 'inspect', label: 'Inspect', icon: '🔍', path: '/reports/inspection-readiness' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
-      ];
-    case 'facilities_manager':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'vendors', label: 'Vendors', icon: '🤝', path: '/vendors' },
-        { id: 'equip', label: 'Equip', icon: '🔧', path: '/equipment' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
-      ];
-    case 'chef':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'temps', label: 'Temps', icon: '🌡️', path: '/temp-logs' },
-        { id: 'team', label: 'Team', icon: '👥', path: '/team' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
-      ];
-    case 'kitchen_manager':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'temps', label: 'Temps', icon: '🌡️', path: '/temp-logs' },
-        { id: 'staff', label: 'Staff', icon: '👥', path: '/team' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
-      ];
-    case 'kitchen_staff':
-      return [
-        { id: 'tasks', label: 'Tasks', icon: '✓', path: '/dashboard' },
-        { id: 'temps', label: 'Temps', icon: '🌡️', path: '/temp-logs' },
-        { id: 'docs', label: 'Docs', icon: '📄', path: '/documents' },
-        { id: 'more', label: 'More', icon: '☰', path: '#more' },
       ];
   }
 }
