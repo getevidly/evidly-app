@@ -34,12 +34,37 @@ const TAB_CATEGORIES: Record<DocumentTabId, string[]> = {
   business: ['business'],
 };
 
+// ─── Asker filter ───────────────────────────────────────────────
+// Dashboard chips route here as /documents?asker=<slug>. Each asker maps to
+// the document categories that asker can actually request. Askers with no
+// narrower mapping see every record rather than an invented category.
+const ASKER_FILTERS: Record<string, { label: string; categories: string[] | null }> = {
+  'fire-marshal':         { label: 'Fire Marshal',          categories: ['service'] },
+  'health-inspector':     { label: 'Health Inspector',      categories: ['kitchen', 'employee'] },
+  'insurer':              { label: 'Insurer',               categories: ['service', 'business'] },
+  'property-manager':     { label: 'Property Manager',      categories: ['service', 'business'] },
+  'compliance-officer':   { label: 'Compliance Officer',    categories: null },
+  'attorney':             { label: 'Attorney',              categories: null },
+  'buyer-or-lender':      { label: 'Buyer or Lender',       categories: null },
+  'franchisor':           { label: 'Franchisor',            categories: ['service', 'kitchen', 'employee'] },
+  'wastewater-inspector': { label: 'Wastewater Inspector',  categories: ['service'] },
+  'contract-client':      { label: 'Contract Client',       categories: ['kitchen', 'employee', 'business'] },
+  'osha-workers-comp':    { label: 'OSHA / Workers’ Comp',  categories: null },
+};
+
 export function DocumentsPage() {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
   const [searchParams, setSearchParams] = useSearchParams();
 
   const activeTab = (searchParams.get('tab') as DocumentTabId) || 'kitchen';
+
+  const askerSlug = searchParams.get('asker');
+  const asker = askerSlug ? ASKER_FILTERS[askerSlug] : undefined;
+
+  const clearAsker = useCallback(() => {
+    setSearchParams(prev => { const next = new URLSearchParams(prev); next.delete('asker'); return next; }, { replace: true });
+  }, [setSearchParams]);
 
   const { documents, loading, refetch } = useDocumentsByTab(orgId);
 
@@ -83,6 +108,13 @@ export function DocumentsPage() {
     setVendorFilter('all');
   }, [setSearchParams]);
 
+  // Deep-link: ?upload=1 opens the upload modal (dashboard "Upload it" link)
+  useEffect(() => {
+    if (searchParams.get('upload') !== '1') return;
+    setShowUpload(true);
+    setSearchParams(prev => { const next = new URLSearchParams(prev); next.delete('upload'); return next; }, { replace: true });
+  }, [searchParams, setSearchParams]);
+
   // Deep-link: ?doc=<id> opens detail modal and switches to correct tab
   useEffect(() => {
     const docId = searchParams.get('doc');
@@ -112,9 +144,15 @@ export function DocumentsPage() {
 
   // Split docs by tab
   const tabDocs = useMemo(() => {
+    // An asker filter spans tabs, so it replaces the tab split entirely.
+    if (asker) {
+      return asker.categories
+        ? documents.filter((d) => asker.categories!.includes(d.category))
+        : documents;
+    }
     const cats = TAB_CATEGORIES[activeTab];
     return documents.filter((d) => cats.includes(d.category));
-  }, [documents, activeTab]);
+  }, [documents, activeTab, asker]);
 
   // Filtered docs
   const filtered = useMemo(() => {
@@ -250,6 +288,19 @@ export function DocumentsPage() {
 
   // Render intelligence state for vendor tabs when no docs exist (replaces basic EmptyTabContent)
   const renderTabContent = () => {
+    if (asker) {
+      if (loading) {
+        return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents…</div>;
+      }
+      if (filtered.length === 0) {
+        return (
+          <div className="text-center py-12 text-[13px]" style={{ color: '#8A93A6' }}>
+            No records on file yet for what a {asker.label} can request.
+          </div>
+        );
+      }
+      return <DocumentsList documents={filtered} activeTab={activeTab} onDocClick={setOpenDoc} />;
+    }
     if (loading) {
       return <div className="text-center py-12 text-[13px] text-[#8A93A6]">Loading documents…</div>;
     }
@@ -339,6 +390,24 @@ export function DocumentsPage() {
         prpStats={prpStats}
         onPredictClick={handlePredictClick}
       />
+      {asker && (
+        <div
+          className="flex items-center justify-between gap-3 px-4 py-3 mb-3"
+          style={{ backgroundColor: '#F4F1E6', border: '1px solid #E6E1D3', borderRadius: 8 }}
+        >
+          <span className="text-[13px]" style={{ color: '#1E2D4D' }}>
+            Showing records a {asker.label} can request
+          </span>
+          <button
+            type="button"
+            onClick={clearAsker}
+            className="text-[12px] font-medium underline flex-shrink-0"
+            style={{ color: '#5F6875', minHeight: 44, paddingLeft: 8, paddingRight: 8 }}
+          >
+            Clear
+          </button>
+        </div>
+      )}
       <DocumentsTabs
         activeTab={activeTab}
         onTabChange={handleTabChange}

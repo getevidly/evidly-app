@@ -4,9 +4,9 @@
  * All data from live PROD hooks. No fake/sample data.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Utensils, AlertTriangle, Calendar, Bell, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users, Shield, ClipboardList } from 'lucide-react';
+import { Flame, Utensils, AlertTriangle, Calendar, Bell, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users } from 'lucide-react';
 import { FONT, TONE, PILLAR } from '../../design/tokens';
 import { useWhatsAtRisk } from '../../hooks/useWhatsAtRisk';
 import type { WhatsAtRisk } from '../../hooks/useWhatsAtRisk';
@@ -18,6 +18,7 @@ import { useDriftRouting } from '../../hooks/useDriftRouting';
 import { useAdvisorBriefings } from '../../hooks/useAdvisorBriefings';
 import { useUpcomingServicesList } from '../../hooks/useUpcomingServicesList';
 import { useProofStats } from '../../hooks/useProofStats';
+import { useRecordsOnFile } from '../../hooks/useRecordsOnFile';
 import { useFireChipStatus } from '../../hooks/dashboard/useFireChipStatus';
 import type { FireChip } from '../../hooks/dashboard/useFireChipStatus';
 import { useBusinessProofStatus } from '../../hooks/dashboard/useBusinessProofStatus';
@@ -39,9 +40,6 @@ const AMBER = '#B08A2E';
 const RUST = '#B85D22';
 const INK = '#0F1828';
 const EMBER = '#B24A2E';
-const SLATE = '#3E6B8A';
-const INK_SECONDARY = '#4A5566';
-const HOVER_EASE = 'cubic-bezier(.34,1.4,.64,1)';
 
 // ─── Explore catalog types ──────────────────────────────────────
 interface CatalogItem {
@@ -212,11 +210,11 @@ export function DashboardView() {
         locationName={heroLocationName}
         kitchenCount={locationCount}
         isMulti={isMultiLocation}
-        isAllLocations={selectedLocationId === null}
         watchingCount={watchingCount}
-        fireProof={fireProof}
-        foodProof={foodProof}
       />
+
+      {/* Records on file — replaces the old COMPLIANCE STATUS rings */}
+      <RecordsOnFile locationId={selectedLocationId} />
 
       {/* Quick Actions */}
       <QuickActions />
@@ -354,26 +352,11 @@ function LocationTabs({ locations, activeId, onChange, showAll }: {
 }
 
 // ─── Hero ────────────────────────────────────────────────────────
-function Hero({ alertCount, locationName, kitchenCount, isMulti, isAllLocations, watchingCount, fireProof, foodProof }: {
-  alertCount: number; locationName: string; kitchenCount: number; isMulti: boolean; isAllLocations: boolean; watchingCount: number;
-  fireProof: { filed: number; total: number };
-  foodProof: { filed: number; total: number };
+function Hero({ alertCount, locationName, kitchenCount, isMulti, watchingCount }: {
+  alertCount: number; locationName: string; kitchenCount: number; isMulti: boolean; watchingCount: number;
 }) {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const clean = alertCount === 0;
-
-  // Ring scope: when "All locations" is active, scale totals by kitchen count
-  const fireTotal = isAllLocations ? fireProof.total * kitchenCount : fireProof.total;
-  const foodTotal = isAllLocations ? foodProof.total * kitchenCount : foodProof.total;
-  const perKitchenBase = fireProof.total + foodProof.total;
-
-  const firePct = fireTotal > 0 ? Math.round((fireProof.filed / fireTotal) * 100) : 0;
-  const foodPct = foodTotal > 0 ? Math.round((foodProof.filed / foodTotal) * 100) : 0;
-
-  // Context line beneath rings
-  const contextLine = isAllLocations && kitchenCount > 1
-    ? `${perKitchenBase} per kitchen × ${kitchenCount} kitchens · fire ${fireTotal} + food ${foodTotal}`
-    : `${perKitchenBase} for this kitchen · fire ${fireProof.total} + food ${foodProof.total}`;
 
   return (
     <div className="py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -398,13 +381,94 @@ function Hero({ alertCount, locationName, kitchenCount, isMulti, isAllLocations,
         </p>
       </div>
 
-      {/* Right: proof rings */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-        <ComplianceStatusHeading contextLine={contextLine} />
-        <div style={{ display: 'flex', gap: 20 }}>
-          <RingColumn proven={fireProof.filed} total={fireTotal} color={EMBER} label="Fire" pct={firePct} />
-          <RingColumn proven={foodProof.filed} total={foodTotal} color={SLATE} label="Food" pct={foodPct} />
-        </div>
+    </div>
+  );
+}
+
+// ─── Records on file ────────────────────────────────────────────
+// Replaces the old COMPLIANCE STATUS rings. Counts only — no percentage,
+// and the word "compliance" does not appear in this block.
+function RecordsOnFile({ locationId }: { locationId: string | null }) {
+  const { onFile, required, gap, pillars, missing, loading } = useRecordsOnFile(locationId);
+
+  if (loading || required === 0) return null;
+
+  const empty = onFile === 0;
+  const inMotion = missing[0];
+
+  return (
+    <div className="bg-white border p-5 sm:p-6" style={{ borderColor: LINE }}>
+      <div className="text-[10px] tracking-[0.15em] font-semibold mb-2" style={{ color: MUTED, fontFamily: FONT.mono }}>
+        RECORDS ON FILE
+      </div>
+
+      <h2 className="text-xl sm:text-2xl leading-tight" style={{ color: NAVY, fontFamily: FONT.display, fontWeight: 600 }}>
+        {empty ? (
+          <>{required} records to collect — collection is underway</>
+        ) : (
+          <>{onFile} of {required} records on file — <span style={{ color: EMBER }}>{gap} to collect</span></>
+        )}
+      </h2>
+
+      <p className="text-sm mt-1.5" style={{ color: MUTED }}>
+        What an inspector, insurer, or landlord can be handed today.
+      </p>
+
+      {/* Per-pillar rows */}
+      <div className="mt-5 space-y-3">
+        {pillars.map(p => {
+          const complete = p.onFile >= p.required;
+          const near = !complete && p.required > 0 && p.onFile / p.required >= 0.8;
+          const barColor = complete || near ? GREEN : AMBER;
+          const widthPct = p.required > 0 ? Math.round((p.onFile / p.required) * 100) : 0;
+          return (
+            <div key={p.pillar}>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[13px] font-medium" style={{ color: NAVY }}>{p.label}</span>
+                <span className="text-[11px] font-semibold" style={{ color: MUTED, fontFamily: FONT.mono, letterSpacing: '0.08em' }}>
+                  {p.onFile} OF {p.required}
+                </span>
+              </div>
+              <div className="mt-1.5" style={{ height: 4, backgroundColor: '#F0EADC', borderRadius: 999 }}>
+                <div style={{
+                  height: '100%', width: `${widthPct}%`, backgroundColor: barColor,
+                  borderRadius: 999, transition: 'width 400ms ease',
+                }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* In motion */}
+      <div className="mt-5 pt-5" style={{ borderTop: `1px solid ${LINE}` }}>
+        {inMotion ? (
+          <>
+            <div className="text-[13px] leading-relaxed" style={{ color: NAVY }}>
+              <span className="font-semibold">In motion:</span> {inMotion.label} — requested from your vendor.
+              It files here automatically when it lands.
+            </div>
+            <Link
+              to={inMotion.actionType === 'identify_vendor' ? '/vendors' : '/documents'}
+              className="inline-flex items-center gap-1.5 mt-3 text-[13px] font-medium"
+              style={{
+                backgroundColor: NAVY, color: 'white', textDecoration: 'none',
+                padding: '0 16px', minHeight: 44, borderRadius: 8,
+              }}
+            >
+              View status <ArrowRight size={13} />
+            </Link>
+            <div className="text-[12px] mt-3" style={{ color: MUTED }}>
+              Have a copy already?{' '}
+              <Link to="/documents?upload=1" style={{ color: NAVY, textDecoration: 'underline' }}>
+                Upload it
+              </Link>{' '}
+              and we’ll file it now.
+            </div>
+          </>
+        ) : (
+          <div className="text-[13px]" style={{ color: NAVY }}>All required records are on file.</div>
+        )}
       </div>
     </div>
   );
@@ -598,34 +662,40 @@ function ExposureBand({ risk, locationCount, isAllLocations, projection }: {
 }
 
 // ─── Who Can Ask ────────────────────────────────────────────────
-const ASKER_CARDS: { slug: string; name: string; Icon: typeof Flame; when: string; tail: string }[] = [
-  { slug: 'insurance-broker', name: 'Insurance Broker', Icon: Shield, when: 'At renewal \u00b7 and whenever underwriting asks', tail: 'Adjuster, only if there\u2019s an incident' },
-  { slug: 'property-manager', name: 'Property Manager', Icon: Building2, when: 'Day to day \u00b7 and every renewal', tail: 'The lease is where the insurance and fire clauses start' },
-  { slug: 'fire-marshal', name: 'Fire Marshal', Icon: Flame, when: 'On inspection \u00b7 by schedule', tail: 'Wants the fire systems current to their NFPA standard' },
-  { slug: 'health-inspector', name: 'Health Inspector', Icon: ClipboardList, when: 'Unannounced \u00b7 during service', tail: 'Permits, logs and pest control, on the spot' },
-  { slug: 'compliance-officer', name: 'Compliance Officer', Icon: FileText, when: 'On audit \u00b7 and before every renewal', tail: 'Wants the whole set aligned \u2014 fire, food and the lease' },
+// Every chip routes to the records page with ?asker=<slug>. There is no
+// /records/* route — those five cards 404'd and are gone.
+export const ASKERS: { slug: string; name: string }[] = [
+  { slug: 'fire-marshal', name: 'Fire Marshal' },
+  { slug: 'health-inspector', name: 'Health Inspector' },
+  { slug: 'insurer', name: 'Insurer' },
+  { slug: 'property-manager', name: 'Property Manager' },
+  { slug: 'compliance-officer', name: 'Compliance Officer' },
+  { slug: 'attorney', name: 'Attorney' },
+  { slug: 'buyer-or-lender', name: 'Buyer or Lender' },
+  { slug: 'franchisor', name: 'Franchisor' },
+  { slug: 'wastewater-inspector', name: 'Wastewater Inspector' },
+  { slug: 'contract-client', name: 'Contract Client' },
+  { slug: 'osha-workers-comp', name: 'OSHA / Workers’ Comp' },
 ];
 
 function WhoCanAsk() {
   return (
     <div>
       <div className="text-[10px] tracking-[0.15em] font-semibold mb-3" style={{ color: MUTED, fontFamily: FONT.mono }}>
-        Who can ask
+        WHO CAN ASK FOR YOUR RECORDS
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {ASKER_CARDS.map(a => (
-          <Link key={a.slug} to={`/records/for/${a.slug}`}
-            className="bg-white border px-5 py-4 flex items-start gap-4 transition-shadow hover:shadow-sm"
-            style={{ borderColor: LINE, textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
-            <div className="p-2 flex-shrink-0" style={{ backgroundColor: '#F4F1E6' }}>
-              <a.Icon size={16} style={{ color: GOLD }} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold" style={{ color: NAVY, fontFamily: FONT.display }}>{a.name}</div>
-              <div className="text-[11px] mt-0.5" style={{ color: MUTED }}>{a.when}</div>
-              <div className="text-[11px] mt-1" style={{ color: INK_SECONDARY }}>{a.tail}</div>
-            </div>
-            <ArrowRight size={14} style={{ color: MUTED, flexShrink: 0, marginTop: 4 }} />
+      <div className="flex flex-wrap gap-2">
+        {ASKERS.map(a => (
+          <Link
+            key={a.slug}
+            to={`/documents?asker=${a.slug}`}
+            className="inline-flex items-center bg-white border text-[12.5px] transition-colors hover:bg-[#F4F1E6]"
+            style={{
+              borderColor: LINE, color: NAVY, textDecoration: 'none',
+              padding: '0 14px', minHeight: 44, borderRadius: 999,
+            }}
+          >
+            {a.name}
           </Link>
         ))}
       </div>
@@ -842,166 +912,6 @@ function buildEscalationText(recipients: DriftRecipient[]): string | null {
   const minutesLeft = Math.max(0, Math.round((new Date(soonest.escalation_deadline).getTime() - Date.now()) / 60_000));
   if (minutesLeft <= 0) return 'Escalation pending';
   return `Escalating in ${minutesLeft} min`;
-}
-
-// ─── Compliance Status heading with tooltip ─────────────────────
-function ComplianceStatusHeading({ contextLine }: { contextLine: string }) {
-  const [showTip, setShowTip] = useState(false);
-  return (
-    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-      <span className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: MUTED, fontFamily: FONT.mono }}>
-        Compliance Status
-      </span>
-      <span
-        onMouseEnter={() => setShowTip(true)}
-        onMouseLeave={() => setShowTip(false)}
-        style={{
-          width: 14, height: 14, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 9, fontWeight: 700, color: MUTED, border: `1px solid ${LINE}`, cursor: 'help', fontFamily: FONT.mono,
-        }}>
-        ?
-      </span>
-      {showTip && (
-        <div style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          marginTop: 6, padding: '6px 10px', borderRadius: 4,
-          backgroundColor: '#1C2A3A', color: '#E0DDD4',
-          fontSize: 11, fontFamily: FONT.mono, whiteSpace: 'nowrap', zIndex: 10,
-          pointerEvents: 'none',
-        }}>
-          {contextLine}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Ring + label column (shared hover for letter-spacing) ──────
-function RingColumn({ proven, total, color, label, pct }: {
-  proven: number; total: number; color: string; label: string; pct: number;
-}) {
-  const [hovered, setHovered] = useState(false);
-  const reduced = useRef(false);
-  useEffect(() => { reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }, []);
-
-  return (
-    <div className="flex flex-col items-center gap-2"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}>
-      <HeroRing proven={proven} total={total} color={color} label={label} />
-      <span className="text-xs font-semibold" style={{
-        color, fontFamily: FONT.mono,
-        letterSpacing: hovered && !reduced.current ? '0.2em' : '0.14em',
-        transition: reduced.current ? 'none' : `letter-spacing 300ms ${HOVER_EASE}`,
-      }}>{label}</span>
-      <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-semibold" style={{
-        letterSpacing: '0.1em',
-        color: pct === 100 ? GREEN : RED,
-      }}>
-        <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: pct === 100 ? GREEN : RED }} />
-        {pct === 100 ? 'Ready' : 'Not ready'}
-      </span>
-    </div>
-  );
-}
-
-// ─── Hero Proof Ring (132px animated donut) ─────────────────────
-function cubicBezierEase(t: number): number {
-  // Approximation of cubic-bezier(0.22, 1, 0.36, 1)
-  return t < 0.5
-    ? 4 * t * t * t
-    : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
-function HeroRing({ proven, total, color, label }: { proven: number; total: number; color: string; label: string }) {
-  const targetPct = total > 0 ? Math.round((proven / total) * 100) : 0;
-  const size = 132;
-  const r = 58;
-  const baseStroke = 7;
-  const c = 2 * Math.PI * r;
-
-  const [animPct, setAnimPct] = useState(0);
-  const [hovered, setHovered] = useState(false);
-  const prefersReduced = useRef(false);
-
-  useEffect(() => {
-    prefersReduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }, []);
-
-  useEffect(() => {
-    if (prefersReduced.current) {
-      setAnimPct(targetPct);
-      return;
-    }
-
-    const duration = 1150;
-    let start: number | null = null;
-    let raf: number;
-
-    const animate = (ts: number) => {
-      if (!start) start = ts;
-      const elapsed = ts - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = cubicBezierEase(progress);
-      setAnimPct(Math.round(eased * targetPct));
-      if (progress < 1) raf = requestAnimationFrame(animate);
-    };
-
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, [targetPct]);
-
-  const offset = c - (animPct / 100) * c;
-  const reduced = prefersReduced.current;
-  const stroke = hovered ? 9 : baseStroke;
-  const hoverTransition = reduced ? 'none' : `all 300ms ${HOVER_EASE}`;
-
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: 'relative',
-        width: size,
-        height: size,
-        transform: hovered && !reduced ? 'scale(1.045)' : 'scale(1)',
-        transition: hoverTransition,
-        cursor: 'default',
-      }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
-        xmlns="http://www.w3.org/2000/svg" role="img"
-        aria-label={`${label}: ${targetPct}% — ${proven} of ${total} on file`}
-        style={{ display: 'block', overflow: 'visible' }}>
-        {/* Halo — always rendered, opacity transitions */}
-        <circle cx={size / 2} cy={size / 2} r={r + 12} fill="none"
-          stroke={color} strokeWidth={16} strokeOpacity={hovered ? 1 : 0}
-          style={{ filter: 'blur(9px)', transition: hoverTransition }} />
-        {/* Track */}
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={LINE}
-          strokeWidth={stroke} style={{ transition: hoverTransition }} />
-        {/* Arc */}
-        {animPct > 0 && (
-          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color}
-            strokeWidth={stroke} strokeDasharray={`${c}`} strokeDashoffset={`${offset}`}
-            strokeLinecap="round" transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            style={{ transition: hoverTransition }} />
-        )}
-        {/* Percentage text — lifts 2px on hover */}
-        <text x={size / 2} y={hovered && !reduced ? size / 2 - 10 : size / 2 - 8}
-          textAnchor="middle" dominantBaseline="central"
-          fill={hovered ? color : NAVY} fontSize="28" fontWeight="700" fontFamily={FONT.body}
-          style={{ transition: hoverTransition }}>
-          {animPct}%
-        </text>
-        {/* Fraction text — brightens on hover */}
-        <text x={size / 2} y={size / 2 + 14} textAnchor="middle" dominantBaseline="central"
-          fill={hovered ? INK_SECONDARY : MUTED} fontSize="11" fontWeight="500" fontFamily={FONT.mono}
-          style={{ transition: hoverTransition }}>
-          {proven} / {total}
-        </text>
-      </svg>
-    </div>
-  );
 }
 
 // ─── Pillar Card ─────────────────────────────────────────────────
