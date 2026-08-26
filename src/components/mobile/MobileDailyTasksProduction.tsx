@@ -20,7 +20,7 @@ export function MobileDailyTasksProduction() {
   const firstName = profile?.full_name?.split(' ')[0] || 'User';
 
   const { tasks, isLoading: tasksLoading } = useMobileTasks(orgId, userRole);
-  const { alerts } = useMobileAlerts(orgId, userRole);
+  const { alerts, isLoading: alertsLoading } = useMobileAlerts(orgId, userRole);
 
   const quickActions = getMobileQuickActions(userRole);
   const dueCount = countDueTasks(tasks);
@@ -82,7 +82,7 @@ export function MobileDailyTasksProduction() {
           <MobileQuickActions actions={quickActions} />
 
           {/* Alerts */}
-          <AlertsBanner alerts={alerts} />
+          <AlertsBanner alerts={alerts} isLoading={alertsLoading} />
 
           {/* Records on file */}
           <MobileRecordsOnFile />
@@ -107,7 +107,15 @@ function MobileRecordsOnFile() {
   const navigate = useNavigate();
   const { onFile, required, gap, pillars, missing, loading } = useRecordsOnFile(null);
 
-  if (loading || required === 0) return null;
+  // Same reservation as the desktop block - hold the card box while counts load.
+  if (loading) {
+    return (
+      <div className="px-4">
+        <div className="rounded-2xl bg-white border border-[#1E2D4D]/5" style={{ minHeight: 484 }} aria-hidden="true" />
+      </div>
+    );
+  }
+  if (required === 0) return null;
 
   const empty = onFile === 0;
   const inMotion = missing[0];

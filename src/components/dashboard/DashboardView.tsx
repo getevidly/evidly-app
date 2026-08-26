@@ -195,7 +195,7 @@ export function DashboardView() {
   const heroLocationName = selectedLocation?.name || orgName || '';
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-16" style={{ minHeight: 1400 }}>
       {/* Location Tabs */}
       <LocationTabs
         locations={locations}
@@ -359,7 +359,7 @@ function Hero({ alertCount, locationName, kitchenCount, isMulti, watchingCount }
   const clean = alertCount === 0;
 
   return (
-    <div className="py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div className="py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6" style={{ minHeight: 168 }}>
       {/* Left: headline + sub-line */}
       <div className="flex-1 min-w-0">
         <div className="text-[10px] uppercase tracking-[0.2em] mb-2 font-semibold" style={{ color: GOLD, fontFamily: FONT.mono }}>
@@ -391,7 +391,12 @@ function Hero({ alertCount, locationName, kitchenCount, isMulti, watchingCount }
 function RecordsOnFile({ locationId }: { locationId: string | null }) {
   const { onFile, required, gap, pillars, missing, loading } = useRecordsOnFile(locationId);
 
-  if (loading || required === 0) return null;
+  // Reserve the card box while the counts load; otherwise this block pops in
+  // at ~460px and shoves every section below it down the page.
+  if (loading) {
+    return <div className="bg-white border" style={{ borderColor: LINE, minHeight: 461 }} aria-hidden="true" />;
+  }
+  if (required === 0) return null;
 
   const empty = onFile === 0;
   const inMotion = missing[0];
@@ -484,7 +489,7 @@ function QuickActions() {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3" style={{ minHeight: 100 }}>
       {actions.map(a => (
         <Link key={a.label} to={a.to}
           className="flex items-center gap-3 px-4 py-3 bg-white border text-sm font-medium transition hover:shadow-sm"

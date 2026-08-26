@@ -31,13 +31,14 @@ function formatRelativeTime(isoTimestamp: string): string {
 
 export { formatRelativeTime };
 
-export function useLastAction(): LastAction | null {
+export function useLastAction(): { action: LastAction | null; loading: boolean } {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const [lastAction, setLastAction] = useState<LastAction | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchLastAction = useCallback(async () => {
-    if (!profile?.organization_id) return;
+    if (!profile?.organization_id) { setLoading(false); return; }
     const orgId = profile.organization_id;
     const isStaff = userRole === 'kitchen_staff';
     const userId = profile.id;
@@ -197,6 +198,7 @@ export function useLastAction(): LastAction | null {
 
     if (candidates.length === 0) {
       setLastAction(null);
+      setLoading(false);
       return;
     }
 
@@ -224,6 +226,7 @@ export function useLastAction(): LastAction | null {
       location_name: locationName,
       timestamp: winner.timestamp,
     });
+    setLoading(false);
   }, [profile?.organization_id, profile?.id, userRole]);
 
   useEffect(() => {
@@ -232,5 +235,5 @@ export function useLastAction(): LastAction | null {
     return () => clearInterval(interval);
   }, [fetchLastAction]);
 
-  return lastAction;
+  return { action: lastAction, loading };
 }

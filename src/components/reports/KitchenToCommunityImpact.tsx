@@ -6,7 +6,6 @@ import { useDemo } from '../../contexts/DemoContext';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
 import { getK2CImpactData } from '../../data/reportsDemoData';
-import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawStatBox, saveReportPdf, MARGIN, CONTENT_W } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
@@ -19,7 +18,9 @@ export default function KitchenToCommunityImpact({ config }: { config: ReportTyp
 
   const data = getK2CImpactData();
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    // jspdf is ~580 kB; load it only when the user actually exports.
+    const { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawStatBox, saveReportPdf, MARGIN, CONTENT_W } = await import('../../lib/pdfExport');
     const doc = createReportPdf();
     let y = drawReportHeader(doc, 'Kitchen to Community Impact', 'Meals funded, donations, and referral activity', 'All Locations', 'All Time');
     const boxW = CONTENT_W / 3 - 3;

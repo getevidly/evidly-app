@@ -16,6 +16,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Vite's __vitePreload helper is a virtual module shared by every
+          // dynamic import. Left unassigned, Rollup co-located it inside
+          // vendor-pdf, so the entry chunk statically imported that 580 kB
+          // chunk just to get the helper - dragging jspdf onto the critical
+          // path of every page. Giving it its own tiny chunk keeps it out.
+          if (id.includes('vite/preload-helper')) return 'vendor-preload';
           // Core React runtime
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router')) {
             return 'vendor-react';

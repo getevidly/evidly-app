@@ -5,7 +5,6 @@ import { ReportFilters, type DateRange } from './ReportFilters';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
 import { getEquipmentServiceData } from '../../data/reportsDemoData';
-import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
@@ -18,7 +17,9 @@ export default function EquipmentServiceHistory({ config }: { config: ReportType
 
   const data = getEquipmentServiceData(location);
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    // jspdf is ~580 kB; load it only when the user actually exports.
+    const { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } = await import('../../lib/pdfExport');
     const doc = createReportPdf();
     let y = drawReportHeader(doc, 'Equipment Service History', 'Service records, certifications, and maintenance tracking', location === 'all' ? 'All Locations' : location, dateRange);
     y = drawSectionHeading(doc, 'Service Records', y);

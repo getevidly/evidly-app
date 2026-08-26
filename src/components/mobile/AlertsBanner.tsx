@@ -12,12 +12,16 @@ const TYPE_STYLES: Record<MobileAlert['type'], { bg: string; icon: string }> = {
 
 interface AlertsBannerProps {
   alerts: MobileAlert[];
+  isLoading?: boolean;
 }
 
-export function AlertsBanner({ alerts }: AlertsBannerProps) {
+export function AlertsBanner({ alerts, isLoading }: AlertsBannerProps) {
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
 
+  // Hold one banner row while alerts load so they fill a reserved box
+  // instead of pushing the task list down when they arrive.
+  if (isLoading) return <div className="px-4" style={{ minHeight: 60 }} aria-hidden="true" />;
   if (alerts.length === 0) return null;
 
   const visible = showAll ? alerts : alerts.slice(0, 3);

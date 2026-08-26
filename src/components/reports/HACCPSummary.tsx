@@ -5,7 +5,6 @@ import { ReportFilters, type DateRange } from './ReportFilters';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
 import { getHACCPSummaryData } from '../../data/reportsDemoData';
-import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
@@ -29,7 +28,9 @@ export default function HACCPSummary({ config }: { config: ReportTypeConfig }) {
 
   const data = getHACCPSummaryData(location);
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    // jspdf is ~580 kB; load it only when the user actually exports.
+    const { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } = await import('../../lib/pdfExport');
     const doc = createReportPdf();
     let y = drawReportHeader(doc, 'HACCP Summary', 'Control points, deviations, and corrective actions', location === 'all' ? 'All Locations' : location, dateRange);
     y = drawSectionHeading(doc, 'HACCP Compliance by Location', y);

@@ -5,7 +5,6 @@ import { SignalAlertBanner } from '../components/SignalAlertBanner';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { PushOptInBanner } from '../components/PushOptInBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
-import { DashboardSplash } from '../components/dashboard/DashboardSplash';
 import { DashboardView } from '../components/dashboard/DashboardView';
 import { DashboardLocationProvider } from '../contexts/DashboardLocationContext';
 import { PortfolioDataProvider } from '../contexts/PortfolioDataContext';
@@ -15,12 +14,6 @@ export function Dashboard() {
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   usePageTitle('Dashboard');
   const [showWelcome, setShowWelcome] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const seen = localStorage.getItem('evidly_welcome_seen');
@@ -32,8 +25,6 @@ export function Dashboard() {
   const welcomeFirstName = isDemoMode
     ? (demoFirstName || 'there')
     : (profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there');
-
-  if (showSplash) return <DashboardSplash />;
 
   return (
     <DashboardLocationProvider>

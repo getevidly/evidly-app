@@ -6,7 +6,6 @@ import { ReportFilters, type DateRange } from './ReportFilters';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
 import { getExecutiveSummaryData } from '../../data/reportsDemoData';
-import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
@@ -21,7 +20,9 @@ export default function ExecutiveSummary({ config }: { config: ReportTypeConfig 
 
   const data = getExecutiveSummaryData(location);
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    // jspdf is ~580 kB; load it only when the user actually exports.
+    const { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } = await import('../../lib/pdfExport');
     const doc = createReportPdf();
     const locName = location === 'all' ? 'All Locations' : data.locationScores.find(l => l.urlId === location)?.location || location;
     let y = drawReportHeader(doc, 'Where You Stand — Executive Summary', 'Top items and operational summary', locName, dateRange);

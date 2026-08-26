@@ -22,7 +22,7 @@ export function TaskList({ tasks, onTaskPress, isLoading }: TaskListProps) {
 
   if (isLoading) {
     return (
-      <div className="px-4 space-y-2 pb-4">
+      <div className="px-4 space-y-2 pb-4" style={{ minHeight: 248 }}>
         {[1, 2, 3].map(i => (
           <div
             key={i}

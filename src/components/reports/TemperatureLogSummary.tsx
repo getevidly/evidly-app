@@ -6,7 +6,6 @@ import { ReportFilters, type DateRange } from './ReportFilters';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
 import { getTempLogSummaryData } from '../../data/reportsDemoData';
-import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
@@ -20,7 +19,9 @@ export default function TemperatureLogSummary({ config }: { config: ReportTypeCo
   const data = getTempLogSummaryData(location);
   const avgCompliance = Math.round(data.tempCompliance.reduce((s, t) => s + t.compliance, 0) / data.tempCompliance.length);
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    // jspdf is ~580 kB; load it only when the user actually exports.
+    const { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, saveReportPdf } = await import('../../lib/pdfExport');
     const doc = createReportPdf();
     let y = drawReportHeader(doc, 'Temperature Log Summary', 'Compliance rates and deviation tracking', location === 'all' ? 'All Locations' : location, dateRange);
     y = drawSectionHeading(doc, 'Weekly Compliance', y);

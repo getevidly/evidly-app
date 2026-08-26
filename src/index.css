@@ -124,6 +124,15 @@
   border-bottom: 1px solid #C3E8D9;
 }
 
+/* Placeholder that holds the banner strip while useLastAction is in flight,
+   so the resolved banner fills a reserved box instead of pushing the page. */
+.last-action-reserve {
+  min-height: 34px;
+  flex-shrink: 0;
+  background: #E1F5EE;
+  border-bottom: 1px solid #C3E8D9;
+}
+
 .last-action .ti {
   font-size: 14px;
   color: #0F6E56;

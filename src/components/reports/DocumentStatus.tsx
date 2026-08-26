@@ -5,7 +5,6 @@ import { ReportFilters, type DateRange } from './ReportFilters';
 import { ReportPdfButton } from './ReportPdfButton';
 import { ReportEmptyState } from './ReportEmptyState';
 import { getDocumentStatusData } from '../../data/reportsDemoData';
-import { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawStatBox, saveReportPdf, MARGIN, CONTENT_W } from '../../lib/pdfExport';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, BODY_TEXT, MUTED } from '../dashboard/shared/constants';
 import type { ReportTypeConfig } from '../../config/reportConfig';
 
@@ -18,7 +17,9 @@ export default function DocumentStatus({ config }: { config: ReportTypeConfig })
 
   const data = getDocumentStatusData(location);
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    // jspdf is ~580 kB; load it only when the user actually exports.
+    const { createReportPdf, drawReportHeader, drawSectionHeading, drawTable, drawStatBox, saveReportPdf, MARGIN, CONTENT_W } = await import('../../lib/pdfExport');
     const doc = createReportPdf();
     let y = drawReportHeader(doc, 'Document Status', 'Every document across both pillars', location === 'all' ? 'All Locations' : location, dateRange);
     const boxW = CONTENT_W / 4 - 3;
