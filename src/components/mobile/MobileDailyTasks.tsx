@@ -4,7 +4,6 @@ import { MobileHeader } from './MobileHeader';
 import { MobileQuickActions } from './MobileQuickActions';
 import { AlertsBanner } from './AlertsBanner';
 import { TaskList, countDueTasks } from './TaskList';
-import { MobileBottomNav } from './MobileBottomNav';
 import { MobileRoleSwitcher } from './MobileRoleSwitcher';
 
 export function MobileDailyTasks() {
@@ -30,7 +29,7 @@ export function MobileDailyTasks() {
         className="flex-1 overflow-y-auto overscroll-y-contain"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4" style={{ paddingBottom: 'calc(56px + env(safe-area-inset-bottom, 0px) + 16px)' }}>
           {/* Role Switcher (demo only) */}
           <MobileRoleSwitcher />
 
@@ -44,9 +43,6 @@ export function MobileDailyTasks() {
           <TaskList tasks={data.tasks} />
         </div>
       </div>
-
-      {/* Bottom Nav */}
-      <MobileBottomNav tabs={data.bottomNav} />
     </div>
   );
 }

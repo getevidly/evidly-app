@@ -11,9 +11,7 @@ export function getMobileQuickActions(role: UserRole): MobileQuickAction[] {
         { id: 'scores', label: 'Scores', icon: '📊', path: '/scoring-breakdown' },
         { id: 'locations', label: 'Locations', icon: '📍', path: '/org-hierarchy' },
         // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
-        // { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-        { id: 'alerts', label: 'Alerts', icon: '🔔', path: '/action-items' },
-      ];
+        // { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },      ];
     case 'executive':
       return [
         { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
@@ -24,9 +22,7 @@ export function getMobileQuickActions(role: UserRole): MobileQuickAction[] {
     case 'compliance_manager':
       return [
         { id: 'audit', label: 'Audit', icon: '🔍', path: '/self-diagnosis' },
-        { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },
-        { id: 'violations', label: 'Violations', icon: '⚠️', path: '/action-items' },
-        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
+        { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },        // POST-LAUNCH: Reports hidden — backend not built. Restore when wired.
         // { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
       ];
     case 'facilities_manager':

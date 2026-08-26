@@ -1,34 +1,28 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRole } from '../../contexts/RoleContext';
 import { useMobileTasks } from '../../hooks/useMobileTasks';
 import { useRecordsOnFile } from '../../hooks/useRecordsOnFile';
 import { useMobileAlerts } from '../../hooks/useMobileAlerts';
-import { getMobileQuickActions, getMobileBottomNav, getRoleLabel } from '../../config/mobileProductionConfig';
+import { getMobileQuickActions, getRoleLabel } from '../../config/mobileProductionConfig';
 import { MobileHeader } from './MobileHeader';
 import { MobileQuickActions } from './MobileQuickActions';
 import { AlertsBanner } from './AlertsBanner';
 import { TaskList, countDueTasks } from './TaskList';
-import { MobileBottomNav } from './MobileBottomNav';
-import { MobileMoreMenu } from './MobileMoreMenu';
 import type { MobileTask } from '../../data/mobileDemoData';
 
 export function MobileDailyTasksProduction() {
   const navigate = useNavigate();
   const { profile } = useAuth();
-  const { userRole } = useRole();
-  const [moreOpen, setMoreOpen] = useState(false);
-
+  const { userRole } = useRole();
   const orgId = profile?.organization_id;
   const firstName = profile?.full_name?.split(' ')[0] || 'User';
 
   const { tasks, isLoading: tasksLoading } = useMobileTasks(orgId, userRole);
   const { alerts } = useMobileAlerts(orgId, userRole);
 
-  const quickActions = getMobileQuickActions(userRole);
-  const bottomNav = getMobileBottomNav(userRole);
-
+  const quickActions = getMobileQuickActions(userRole);
   const dueCount = countDueTasks(tasks);
 
   const handleTaskPress = useCallback((task: MobileTask) => {
@@ -36,10 +30,6 @@ export function MobileDailyTasksProduction() {
       navigate(task.path);
     }
   }, [navigate]);
-
-  const handleMorePress = useCallback(() => {
-    setMoreOpen(true);
-  }, []);
 
   // Empty state: no org configured
   if (!orgId) {
@@ -65,8 +55,6 @@ export function MobileDailyTasksProduction() {
             </p>
           </div>
         </div>
-        <MobileBottomNav tabs={bottomNav} onMorePress={handleMorePress} />
-        <MobileMoreMenu isOpen={moreOpen} onClose={() => setMoreOpen(false)} />
       </div>
     );
   }
@@ -89,7 +77,7 @@ export function MobileDailyTasksProduction() {
         className="flex-1 overflow-y-auto overscroll-y-contain"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4" style={{ paddingBottom: 'calc(56px + env(safe-area-inset-bottom, 0px) + 16px)' }}>
           {/* Quick Actions */}
           <MobileQuickActions actions={quickActions} />
 
@@ -107,12 +95,6 @@ export function MobileDailyTasksProduction() {
           />
         </div>
       </div>
-
-      {/* Bottom Nav */}
-      <MobileBottomNav tabs={bottomNav} onMorePress={handleMorePress} />
-
-      {/* More Menu */}
-      <MobileMoreMenu isOpen={moreOpen} onClose={() => setMoreOpen(false)} />
     </div>
   );
 }

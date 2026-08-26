@@ -63,9 +63,7 @@ const ownerOperator: MobileRoleData = {
   quickActions: [
     { id: 'scores', label: 'Scores', icon: '📊', path: '/scoring-breakdown' },
     { id: 'locations', label: 'Locations', icon: '📍', path: '/org-hierarchy' },
-    { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },
-    { id: 'alerts', label: 'Alerts', icon: '🔔', path: '/action-items' },
-  ],
+    { id: 'reports', label: 'Reports', icon: '📄', path: '/reports' },  ],
   alerts: [
     { id: 'a1', text: 'University Dining dropped below 75% — corrective action needed', type: 'critical', path: '/scoring-breakdown?location=university' },
     { id: 'a2', text: 'Annual fire inspection due in 21 days at Downtown Kitchen', type: 'warning', path: '/facility-safety' },
@@ -97,7 +95,7 @@ const executive: MobileRoleData = {
   ],
   alerts: [
     { id: 'a1', text: 'Q1 compliance average: 81% across all locations', type: 'info', path: '/scoring-breakdown' },
-    { id: 'a2', text: '2 locations flagged for reinspection this month', type: 'warning', path: '/action-items' },
+    { id: 'a2', text: '2 locations flagged for reinspection this month', type: 'warning', path: '/org-hierarchy' },
   ],
   tasks: [
     { id: 't1', title: 'Review Multi-Location Summary', subtitle: 'All locations — weekly rollup', icon: '📊', status: 'due', time: 'Weekly review' },
@@ -118,9 +116,7 @@ const complianceManager: MobileRoleData = {
   roleLabel: 'Compliance Officer',
   quickActions: [
     { id: 'audit', label: 'Audit', icon: '🔍', path: '/self-diagnosis' },
-    { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },
-    { id: 'violations', label: 'Violations', icon: '⚠️', path: '/action-items' },
-    { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
+    { id: 'upload', label: 'Upload Doc', icon: '📄', path: '/documents' },    { id: 'inspection', label: 'Inspection', icon: '📋', path: '/reports/inspection-readiness' },
   ],
   alerts: [
     { id: 'a1', text: 'Health dept inspection scheduled — Airport Cafe, March 8', type: 'critical', path: '/reports/inspection-readiness' },
