@@ -71,12 +71,14 @@ export function useProofStats(
           if (cancelled) return;
           hasEvidence = (count ?? 0) > 0;
         } else {
-          // Check compliance_documents for an uploaded record
+          // Check compliance_documents for an uploaded record.
+          // The requirement code lives in TYPE; CATEGORY holds the document-tab
+          // bucket (kitchen / service / business), so matching on category never hit.
           const { count } = await supabase
             .from('compliance_documents')
             .select('id', { count: 'exact', head: true })
             .eq('organization_id', orgId)
-            .eq('category', req.requirement_code);
+            .eq('type', req.requirement_code);
           if (cancelled) return;
           hasEvidence = (count ?? 0) > 0;
         }
