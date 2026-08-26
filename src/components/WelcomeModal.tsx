@@ -1,32 +1,49 @@
 import { useState, useEffect } from 'react';
-import { Mail, Phone, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { EvidlyLogo } from './ui/EvidlyLogo';
-import { FOUNDER } from '../lib/founderConfig';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
-import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
-import { WELCOME_SUBTEXT } from '../config/emotionalCopy';
+import { FONT } from '../design/tokens';
+
+const NAVY = '#1E2D4D';
+const EMBER = '#B24A2E';
+const CREAM = '#F7F1E6';
+const MUTED = '#5F6875';
 
 interface WelcomeModalProps {
-  firstName: string;
+  /** Passed by Dashboard; the approved copy is name-free, so it is intentionally unused. */
+  firstName?: string;
   onDismiss: () => void;
 }
 
-export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
+const STEPS: { title: string; sub: string }[] = [
+  {
+    title: 'Your record wall',
+    sub: 'Every fire, food, and vendor record for each kitchen, in one place.',
+  },
+  {
+    title: "What's on file, what's in motion",
+    sub: "We track what's collected and chase what's still coming — you just watch it fill.",
+  },
+  {
+    title: 'Hand it to anyone in seconds',
+    sub: 'Inspector, insurer, landlord — a ready report whenever someone asks.',
+  },
+];
+
+export function WelcomeModal({ onDismiss }: WelcomeModalProps) {
   const [visible, setVisible] = useState(false);
   const { isDemoMode } = useDemo();
   const { profile } = useAuth();
-  const { userRole } = useRole();
-  const roleSubtext = WELCOME_SUBTEXT[userRole] || WELCOME_SUBTEXT.owner_operator;
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 50);
     return () => clearTimeout(t);
   }, []);
 
-  const handleGetStarted = async () => {
+  const handleClose = async () => {
     setVisible(false);
     localStorage.setItem('evidly_welcome_seen', 'true');
 
@@ -41,100 +58,89 @@ export function WelcomeModal({ firstName, onDismiss }: WelcomeModalProps) {
   };
 
   return (
-    <Modal isOpen={visible} onClose={handleGetStarted} size="lg" closeOnBackdrop={false}>
-      <div data-testid="welcome-modal" className="relative">
-        <button
-          onClick={handleGetStarted}
-          className="absolute top-4 right-4 p-1 text-[#1E2D4D]/30 hover:text-[#1E2D4D]/70 transition-colors z-10"
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        {/* Header with logo */}
-        <div className="text-center pt-8 pb-4 px-6 sm:px-10">
-          <div className="flex justify-center mb-4">
-            <EvidlyLogo onDark={false} showTagline={false} />
-          </div>
-          <h2 className="text-2xl sm:text-[28px] font-bold text-[#1E2D4D] leading-tight">
-            Your kitchen. Your standards.<br />Always protected.
-          </h2>
-          <p className="text-sm text-[#1E2D4D]/70 mt-2 leading-relaxed">
-            {roleSubtext}
-          </p>
-        </div>
-
-        {/* Body */}
-        <div className="px-6 sm:px-10 pb-6 text-sm leading-relaxed text-[#1E2D4D]/80">
-          <p className="mb-4">
-            I'm {FOUNDER.name}, the founder of EvidLY. I built EvidLY because I've spent 3 years
-            servicing over 90 commercial kitchens and saw the same problem everywhere: compliance runs on
-            paper, spreadsheets, and hope.
-          </p>
-          <p className="mb-5 font-medium text-[#1E2D4D]">Not anymore.</p>
-          <p className="mb-6">
-            EvidLY gives you one place to manage fire safety, food safety, and vendor compliance — with
-            real-time scoring, photo evidence, and reports you can hand to any inspector in 10 seconds.
-          </p>
-
-          {/* Quick-start steps */}
-          <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-            <h3 className="text-sm font-bold text-[#1E2D4D] uppercase tracking-wider mb-3">
-              Here's how to get started:
-            </h3>
-            <div className="space-y-2.5">
-              {[
-                'Add your equipment (coolers, hoods, fryers)',
-                'Upload your existing compliance documents',
-                'Start logging daily temperatures',
-                'Complete your first daily checklist',
-              ].map((step, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#1E2D4D] text-white text-xs font-bold flex items-center justify-center mt-0.5">
-                    {i + 1}
-                  </span>
-                  <span className="text-sm text-[#1E2D4D]/80">{step}</span>
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-[#1E2D4D]/70 mt-3">
-              You'll see your compliance score climb in real time.
-            </p>
-          </div>
-
-          {/* Founder's contact */}
-          <p className="mb-3 text-sm">
-            If you need anything — and I mean anything — reach out directly:
-          </p>
-          <div className="flex flex-wrap gap-4 mb-5">
-            <a href={`mailto:${FOUNDER.email}`} className="flex items-center gap-2 text-sm text-[#1E2D4D] hover:text-[#2A3F6B] transition-colors">
-              <Mail className="w-4 h-4" />
-              {FOUNDER.email}
-            </a>
-            <a href={`tel:${FOUNDER.phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-sm text-[#1E2D4D] hover:text-[#2A3F6B] transition-colors">
-              <Phone className="w-4 h-4" />
-              {FOUNDER.phone}
-            </a>
-          </div>
-
-          <p className="text-sm text-[#1E2D4D]/70 mb-1">
-            Welcome aboard. Let's simplify compliance together.
-          </p>
-          <p className="text-sm font-semibold text-[#1E2D4D]">
-            — {FOUNDER.name}
-          </p>
-          <p className="text-xs text-[#1E2D4D]/50">
-            {FOUNDER.title}
-          </p>
-        </div>
-
-        {/* CTA */}
-        <div className="px-6 sm:px-10 pb-8">
+    <Modal
+      isOpen={visible}
+      onClose={handleClose}
+      size="md"
+      closeOnBackdrop={false}
+      className="overflow-hidden"
+    >
+      <div data-testid="welcome-modal">
+        {/* Navy header */}
+        <div className="relative px-6 pt-6 pb-6" style={{ backgroundColor: NAVY }}>
           <button
-            onClick={handleGetStarted}
-            className="w-full py-3.5 px-6 rounded-xl font-semibold text-base transition-all bg-[#1E2D4D] text-white hover:bg-[#162340] shadow-sm hover:shadow-lg transform hover:-translate-y-0.5"
+            onClick={handleClose}
+            aria-label="Close"
+            className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center rounded-full transition-colors hover:bg-white/10"
+            style={{ color: 'rgba(255,255,255,0.75)' }}
           >
-            Let's build your kitchen's foundation
+            <X className="h-5 w-5" />
+          </button>
+
+          <EvidlyLogo onDark showTagline={false} />
+
+          <h2
+            className="mt-4 text-[22px] leading-[1.25] text-white"
+            style={{ fontFamily: FONT.display, fontWeight: 600 }}
+          >
+            Your account is ready. We set it up for you.
+          </h2>
+          <p
+            className="mt-2 text-[13px] leading-[1.5]"
+            style={{ color: 'rgba(255,255,255,0.72)' }}
+          >
+            Your locations, your required records, and your vendors are already configured — nothing to build.
+          </p>
+        </div>
+
+        {/* Three numbered rows */}
+        <div className="px-6 py-5 space-y-4">
+          {STEPS.map((step, i) => (
+            <div key={step.title} className="flex items-start gap-3.5">
+              <span
+                className="flex-shrink-0 flex items-center justify-center rounded-full"
+                style={{
+                  width: 26,
+                  height: 26,
+                  backgroundColor: CREAM,
+                  color: EMBER,
+                  fontFamily: FONT.mono,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  lineHeight: 1,
+                  marginTop: 1,
+                }}
+              >
+                {i + 1}
+              </span>
+              <div className="min-w-0">
+                <div className="text-sm font-semibold leading-snug" style={{ color: NAVY }}>
+                  {step.title}
+                </div>
+                <div className="text-[12.5px] leading-[1.45] mt-0.5" style={{ color: MUTED }}>
+                  {step.sub}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Ember CTA + skip */}
+        <div className="px-6 pb-5">
+          <button
+            onClick={handleClose}
+            className="w-full rounded-xl text-white text-[15px] font-semibold transition-colors hover:brightness-95"
+            style={{ backgroundColor: EMBER, minHeight: 48 }}
+          >
+            Show me my kitchen
+          </button>
+
+          <button
+            onClick={handleClose}
+            className="w-full mt-1 text-[13px] underline underline-offset-2 transition-colors hover:opacity-80"
+            style={{ color: MUTED, minHeight: 44 }}
+          >
+            I'll look around myself
           </button>
         </div>
       </div>
