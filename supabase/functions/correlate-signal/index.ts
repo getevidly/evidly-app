@@ -18,7 +18,19 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 
 // ── Category → Requirement code mapping ──────────────────────
 // Maps signal categories to service_type_definition codes.
-// Deliberately unmapped: food_handler, legislative, info (informational only).
+//
+// Deliberately unmapped, and each for a reason:
+//   seasonal_risk — retired. Weather is ruled out as a correlation basis, so
+//     with it also off the national whitelist it now produces no correlation
+//     of any type. It previously mapped to KEC/HVAC/REFR and reached every org
+//     holding any of those three schedules.
+//   food_handler  — no canonical code exists for it. service_type_definitions
+//     is a vendor-service taxonomy (24 codes, all schedulable services); its
+//     food_safety category holds only BFT, GT and PC. Staff certification is
+//     not a service schedule, and FS is Fire Suppression System, not food
+//     safety — mapping to it would correlate handler-certification signals to
+//     fire suppression cadences. Left unmapped rather than forced.
+//   legislative, info — informational only.
 const CATEGORY_TO_REQUIREMENTS: Record<string, string[]> = {
   nfpa_update:          ["KEC", "FS", "FA", "FPM", "GFX", "RGC", "SP", "FE"],
   fire_safety:          ["KEC", "FS", "FA", "FPM", "GFX", "RGC", "SP", "FE"],
@@ -27,7 +39,6 @@ const CATEGORY_TO_REQUIREMENTS: Record<string, string[]> = {
   enforcement_surge:    ["KEC", "FS", "GT"],
   outbreak_alert:       ["GT", "REFR", "PC"],
   adverse_event_alert:  ["GT", "REFR"],
-  seasonal_risk:        ["KEC", "HVAC", "REFR"],
   food_code_update:     ["GT", "REFR", "PC"],
   grease_trap:          ["GT"],
   hood_cleaning:        ["KEC", "GFX", "FPM", "RGC"],
@@ -50,9 +61,11 @@ const REQUIREMENT_NAMES: Record<string, string> = {
  *
  * The rule: a signal reaches an org through a county match, a requirement
  * match, or membership of this list. Nothing else broadcasts. A category
- * absent here (regulatory_updates, regulatory_change, info, legislative,
- * seasonal_risk, food_handler, and anything unlisted) can still reach an org
- * — but only via county or requirement, where the relevance is demonstrable.
+ * absent here (regulatory_updates, regulatory_change, info, legislative, and
+ * anything unlisted) can still reach an org via requirement — and via county
+ * only if COUNTY_CORRELATABLE_CATEGORIES admits it, which for those four it
+ * does not. seasonal_risk and food_handler are absent from every list, so
+ * they now correlate through nothing at all.
  *
  * Membership means the category impacts kitchen operations directly enough
  * that every operator should see it regardless of jurisdiction.
@@ -68,6 +81,32 @@ const NATIONAL_BROADCAST_CATEGORIES = new Set<string>([
   "grease_trap",
   "enforcement_surge",
 ]);
+
+/**
+ * The only categories permitted to correlate by county.
+ *
+ * The rule: a county match is evidence that a signal reaches THIS kitchen's
+ * jurisdiction — it is not evidence that the signal is about kitchens at all.
+ * Gating it on the same categories that already earn a national or requirement
+ * match keeps geography from becoming a side door for unfiltered content.
+ *
+ * Derived from the two lists above rather than restated, so it cannot drift
+ * out of step with them. Anything outside it — regulatory_updates,
+ * regulatory_change, info, legislative, and anything unlisted — creates no
+ * county correlation. After a relabel pass, correctly-labeled content
+ * re-enters through its real category.
+ */
+export const COUNTY_CORRELATABLE_CATEGORIES: ReadonlySet<string> = new Set([
+  ...NATIONAL_BROADCAST_CATEGORIES,
+  ...Object.keys(CATEGORY_TO_REQUIREMENTS),
+]);
+
+/**
+ * Titles the analyzer itself marks as non-applicable. These are signals whose
+ * own headline states they do not apply to commercial kitchens, so they are
+ * skipped before any correlation is computed.
+ */
+const NOT_APPLICABLE_TITLE = /^\s*(recall\s+)?not\s+(applicable|relevant)\b/i;
 
 // System/template org IDs to exclude
 const EXCLUDED_ORG_IDS = new Set([
@@ -97,7 +136,7 @@ Deno.serve(async (req) => {
     // ── 1. Load the signal ──────────────────────────────────
     const { data: signal, error: sigErr } = await supabase
       .from("intelligence_signals")
-      .select("id, scope, category, signal_type, counties_affected, target_industries, target_all_industries, target_counties, signal_scope")
+      .select("id, title, scope, category, signal_type, counties_affected, target_industries, target_all_industries, target_counties, signal_scope")
       .eq("id", signal_id)
       .single();
 
@@ -105,6 +144,22 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ error: `Signal not found: ${sigErr?.message || signal_id}` }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // ── 1b. Belt: the signal declares its own irrelevance ────
+    if (NOT_APPLICABLE_TITLE.test(signal.title || "")) {
+      console.log(
+        `[correlate-signal] skipped as non-applicable: "${signal.title}" (id=${signal.id})`,
+      );
+      return new Response(
+        JSON.stringify({
+          success: true,
+          correlations_created: 0,
+          skipped: "not_applicable_title",
+          matches: { national: 0, county: 0, industry: 0, requirement: 0 },
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -196,6 +251,15 @@ Deno.serve(async (req) => {
       (effectiveScope === "national" || effectiveScope === "statewide") &&
       NATIONAL_BROADCAST_CATEGORIES.has(signal.category);
 
+    // Geography alone no longer correlates — see COUNTY_CORRELATABLE_CATEGORIES.
+    const countyAllowed = COUNTY_CORRELATABLE_CATEGORIES.has(signal.category);
+    if (!countyAllowed && effectiveCounties.length > 0) {
+      console.log(
+        `[correlate-signal] county match suppressed: category="${signal.category}" ` +
+        `carries ${effectiveCounties.length} county(ies) but is not correlatable`,
+      );
+    }
+
     if (!nationalAllowed && (effectiveScope === "national" || effectiveScope === "statewide")) {
       console.log(
         `[correlate-signal] national match suppressed: category="${signal.category}" ` +
@@ -224,7 +288,8 @@ Deno.serve(async (req) => {
       }
 
       // ── 5b. COUNTY match ────────────────────────────────
-      if (effectiveCounties.length > 0) {
+      // Gated on category as well as geography.
+      if (countyAllowed && effectiveCounties.length > 0) {
         for (const county of effectiveCounties) {
           const entries = countyOrgLocations.get(county) || [];
           for (const entry of entries) {
