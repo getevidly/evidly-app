@@ -14,6 +14,7 @@ import {
   BookOpen,
   PenLine,
   Shield,
+  ShieldCheck,
   ArrowDown,
   Download,
   Sparkles,
@@ -175,6 +176,8 @@ export function CorrectiveActions() {
 
   // Local actions state — seeded from DB in live mode
   const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
+  /** Ids of actions carrying a seal — kept beside the list so the shared item type stays untouched. */
+  const [sealedIds, setSealedIds] = useState<Set<string>>(new Set());
   const [caFetched, setCaFetched] = useState(false);
 
   // Fetch existing CAs from DB (live mode)
@@ -182,7 +185,7 @@ export function CorrectiveActions() {
     if (isDemoMode || !profile?.organization_id || caFetched) return;
     setCaFetched(true);
     supabase.from('corrective_actions')
-      .select('id, title, description, category, severity, status, source, source_type, source_id, assignee_id, assignee_name, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id')
+      .select('seal_id, id, title, description, category, severity, status, source, source_type, source_id, assignee_id, assignee_name, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id')
       .eq('organization_id', profile.organization_id)
       .is('archived_at', null)
       .order('created_at', { ascending: false })
@@ -190,6 +193,7 @@ export function CorrectiveActions() {
         if (error || !data) return;
         const locs = dbLocations ?? [];
         const members = orgMembers ?? [];
+        setSealedIds(new Set(data.filter((r: any) => r.seal_id).map((r: any) => r.id as string)));
         setLocalActions(data.map((row: any) => ({
           id: row.id,
           title: row.title || '',
@@ -821,11 +825,21 @@ export function CorrectiveActions() {
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <h3 className="text-sm font-semibold text-[#1E2D4D]">{item.title}</h3>
                         <span
-                          className="text-xs font-bold px-2 py-0.5 rounded-full uppercase"
+                          className="text-xs font-bold px-2 py-0.5 rounded-full"
                           style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
                         >
                           {sev.label}
                         </span>
+                        {sealedIds.has(item.id) && (
+                          <span
+                            className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
+                            style={{ color: '#FAF7F0', backgroundColor: '#1E2D4D' }}
+                            title="Sealed evidence record — cannot be edited or deleted"
+                          >
+                            <ShieldCheck size={11} />
+                            Sealed
+                          </span>
+                        )}
                         <span
                           className="text-xs font-semibold px-2 py-0.5 rounded-full"
                           style={{ color: stat.color, backgroundColor: stat.bg }}

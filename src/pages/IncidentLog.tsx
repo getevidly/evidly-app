@@ -17,6 +17,7 @@ import { useTranslation } from '../contexts/LanguageContext';
 import { PhotoEvidence, PhotoButton, type PhotoRecord, type PhotoUploadTarget } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { useResolvedPhotos, type PhotoEntry } from '../lib/incidentPhotos';
+import { SealBand } from '../components/seals/SealBand';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -95,6 +96,8 @@ interface Incident {
   regulatoryReportRequired?: boolean;
   regulatoryReportFiledAt?: string;
   linkedCorrectiveActionId?: string;
+  /** Set once the incident has been sealed. Presence alone means locked. */
+  sealId?: string | null;
   photos: PhotoRecord[];
   resolutionPhotos: PhotoRecord[];
   timeline: TimelineEntry[];
@@ -678,6 +681,10 @@ export function IncidentLog() {
   const [resolutionPhotos, setResolutionPhotos] = useState<PhotoRecord[]>([]);
   const [managerPhotoOverride, setManagerPhotoOverride] = useState(false);
 
+  // Seal metadata keyed by incident_seals.id
+  const [sealMeta, setSealMeta] = useState<Record<string, { content_hash: string; sealed_at: string; sealed_by: string }>>({});
+  const [sealing, setSealing] = useState(false);
+
   // Comment
   const [commentText, setCommentText] = useState('');
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
@@ -736,6 +743,7 @@ export function IncidentLog() {
         sourceId: row.source_id || undefined,
         sourceLabel: row.source_label || undefined,
         linkedCorrectiveActionId: row.linked_corrective_action_id || undefined,
+        sealId: row.seal_id || null,
         photos: row.photos || [],
         resolutionPhotos: row.resolution_photos || [],
         timeline: (row.incident_timeline || [])
@@ -1260,6 +1268,105 @@ export function IncidentLog() {
     showToast('Incident resolved.');
   };
 
+  // Pull the seal row whenever a sealed incident is opened, so the band shows
+  // on load and not only in the session that sealed it.
+  useEffect(() => {
+    const sealId = selectedIncident?.sealId;
+    if (!sealId || sealMeta[sealId]) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from('incident_seals')
+        .select('id, content_hash, sealed_at, sealed_by')
+        .eq('id', sealId)
+        .maybeSingle();
+      if (cancelled || error || !data) return;
+      setSealMeta(prev => ({
+        ...prev,
+        [data.id]: { content_hash: data.content_hash, sealed_at: data.sealed_at, sealed_by: data.sealed_by },
+      }));
+    })();
+    return () => { cancelled = true; };
+  }, [selectedIncident?.sealId, sealMeta]);
+
+  /**
+   * Verify and seal in one act. The edge function hashes every photo before it
+   * transitions anything, so a failure here leaves the incident exactly as it
+   * was — the UI reports and stops rather than reconciling a half-applied state.
+   */
+  const handleVerifyAndSeal = async () => {
+    if (!selectedIncident) return;
+
+    if (isDemoMode) {
+      guardAction('seal', 'evidence sealing', () => {});
+      return;
+    }
+    if (!selectedIncident.dbId) {
+      toast.error('This incident has no database id — it cannot be sealed.');
+      return;
+    }
+
+    setSealing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('seal-incident', {
+        body: { incident_id: selectedIncident.dbId },
+      });
+
+      if (error) {
+        // The function encodes the reason in the body; surface it verbatim
+        // rather than a generic failure.
+        let detail = '';
+        let status = 0;
+        const ctx = (error as { context?: Response }).context;
+        if (ctx && typeof ctx.json === 'function') {
+          status = ctx.status;
+          try {
+            const parsed = await ctx.json();
+            detail = parsed?.error || '';
+          } catch { /* non-JSON body — fall through to the generic message */ }
+        }
+        if (status === 422) {
+          toast.error(`${detail || 'A photo could not be read from storage.'} Fix the photo and seal again — nothing was changed.`);
+        } else if (status === 409) {
+          toast.error(detail || 'This incident is not in a state that can be sealed.');
+        } else {
+          toast.error(detail || 'Sealing failed — the incident is unchanged.');
+        }
+        return;
+      }
+
+      const sealId: string = data.seal_id;
+      setSealMeta(prev => ({
+        ...prev,
+        [sealId]: { content_hash: data.content_hash, sealed_at: data.sealed_at, sealed_by: user?.id ?? '' },
+      }));
+
+      // Re-read the row the function just wrote, so status/verified_at/seal_id
+      // on screen are the persisted values, not an optimistic guess.
+      const { data: fresh } = await supabase
+        .from('incidents')
+        .select('status, verified_at, verified_by, seal_id')
+        .eq('id', selectedIncident.dbId)
+        .maybeSingle();
+
+      const sealedIncident: Incident = {
+        ...selectedIncident,
+        status: (fresh?.status as IncidentStatus) ?? 'verified',
+        verifiedAt: fresh?.verified_at ?? new Date().toISOString(),
+        verifiedBy: fresh?.verified_by ?? (user?.id ?? ''),
+        sealId: fresh?.seal_id ?? sealId,
+      };
+      setIncidents(prev => prev.map(i => (i.id === sealedIncident.id ? sealedIncident : i)));
+      setSelectedIncident(sealedIncident);
+      showToast('Incident verified and sealed.');
+    } catch (err) {
+      console.error('[IncidentLog] Seal invoke threw:', err);
+      toast.error('Sealing failed — the incident is unchanged.');
+    } finally {
+      setSealing(false);
+    }
+  };
+
   const handleVerify = async (approved: boolean) => {
     if (!selectedIncident) return;
     const nowIso = new Date().toISOString();
@@ -1395,6 +1502,17 @@ export function IncidentLog() {
     const resTime = getResolutionTime(inc);
     const overdue = isOverdue(inc);
 
+    // A seal pointer is the lock. Every edit affordance below keys off this.
+    const isSealed = !!inc.sealId;
+    const sealRow = inc.sealId ? sealMeta[inc.sealId] : undefined;
+    const photoCount = inc.photos.length + inc.resolutionPhotos.length;
+    const sealContents = [
+      'Incident record',
+      `${inc.timeline.length} timeline ${inc.timeline.length === 1 ? 'entry' : 'entries'}`,
+      `${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}, hashed`,
+      ...(inc.linkedCorrectiveActionId ? ['Corrective action referenced'] : []),
+    ].join(' · ');
+
     return (
       <>
         <Breadcrumb items={[
@@ -1426,7 +1544,7 @@ export function IncidentLog() {
                 <h2 className="text-lg text-[#1E2D4D]/80">{inc.title}</h2>
               </div>
               <div className="flex gap-2 flex-wrap">
-                {inc.status === 'open' && (
+                {!isSealed && inc.status === 'open' && (
                   <button
                     onClick={() => setShowActionForm(true)}
                     className="px-4 py-2 min-h-[44px] bg-[#1E2D4D] text-white rounded-lg hover:bg-[#162340] text-sm font-medium"
@@ -1434,7 +1552,7 @@ export function IncidentLog() {
                     {t('incidents.takeAction')}
                   </button>
                 )}
-                {inc.status === 'investigating' && (
+                {!isSealed && inc.status === 'investigating' && (
                   <button
                     onClick={() => setShowResolveForm(true)}
                     className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
@@ -1442,17 +1560,22 @@ export function IncidentLog() {
                     {t('incidents.resolve')}
                   </button>
                 )}
-                {inc.status === 'resolved' && canVerify && (
+                {!isSealed && inc.status === 'resolved' && canVerify && (
                   <>
                     <button
-                      onClick={() => handleVerify(true)}
-                      className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                      onClick={handleVerifyAndSeal}
+                      disabled={sealing}
+                      className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium disabled:opacity-50"
                     >
-                      <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4" /> {t('incidents.verify')}</span>
+                      <span className="flex items-center gap-1">
+                        <Shield className="h-4 w-4" />
+                        {sealing ? 'Sealing…' : 'Verify & seal record'}
+                      </span>
                     </button>
                     <button
                       onClick={() => handleVerify(false)}
-                      className="px-4 py-2 min-h-[44px] bg-red-50 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium"
+                      disabled={sealing}
+                      className="px-4 py-2 min-h-[44px] bg-red-50 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium disabled:opacity-50"
                     >
                       <span className="flex items-center gap-1"><XCircle className="h-4 w-4" /> {t('incidents.reject')}</span>
                     </button>
@@ -1461,6 +1584,15 @@ export function IncidentLog() {
               </div>
             </div>
           </div>
+
+          {isSealed && sealRow && (
+            <SealBand
+              contentHash={sealRow.content_hash}
+              sealedAt={sealRow.sealed_at}
+              sealedByName={displayName(sealRow.sealed_by)}
+              contents={sealContents}
+            />
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Left column — details & timeline */}
@@ -1626,6 +1758,11 @@ export function IncidentLog() {
                     </div>
                   ))}
                 </div>
+                {isSealed ? (
+                  <p className="text-xs text-[#1E2D4D]/50 italic">
+                    This record is sealed — comments are closed. Existing comments remain part of the record.
+                  </p>
+                ) : (
                 <div className="flex gap-2">
                   <input
                     value={commentText}
@@ -1642,6 +1779,7 @@ export function IncidentLog() {
                     {t('common.post')}
                   </button>
                 </div>
+                )}
               </div>
             </div>
 

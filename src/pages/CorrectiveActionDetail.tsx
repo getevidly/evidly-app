@@ -11,6 +11,7 @@ import {
   MapPin,
   Calendar,
   Shield,
+  ShieldCheck,
   Paperclip,
   MessageSquare,
   Send,
@@ -37,6 +38,7 @@ import {
   type CAStatus,
 } from '../constants/correctiveActionStatus';
 import { useOrgMembers } from '../hooks/useOrgMembers';
+import { SealBand } from '../components/seals/SealBand';
 import {
   CATEGORY_LABELS,
   SEVERITY_LABELS,
@@ -96,7 +98,7 @@ export function CorrectiveActionDetail() {
     (async () => {
       const { data: row, error } = await supabase
         .from('corrective_actions')
-        .select('id, title, description, category, severity, status, source, source_type, source_id, assignee_id, assignee_name, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id, notes, attachments, history, corrective_steps, preventive_measures, assigned_at, assigned_by_user_id')
+        .select('id, title, description, category, severity, status, source, source_type, source_id, assignee_id, assignee_name, due_date, root_cause, regulation_reference, template_id, created_at, resolved_at, resolved_by, verified_at, verified_by, resolution_note, verification_note, ai_draft, location_id, notes, attachments, history, corrective_steps, preventive_measures, seal_id, assigned_at, assigned_by_user_id')
         .eq('id', actionId)
         .eq('organization_id', profile.organization_id)
         .single();
@@ -162,12 +164,19 @@ export function CorrectiveActionDetail() {
       };
 
       setLocalAction(mapped);
+      setSealId(row.seal_id || null);
     })();
   }, [actionId, localAction, isDemoMode, profile?.organization_id, fetchAttempted, orgMembers]);
 
   const [newNote, setNewNote] = useState('');
   const [resolutionNote, setResolutionNote] = useState('');
   const [verificationNote, setVerificationNote] = useState('');
+
+  // Seal state. sealId comes from the row; sealRow is the seal itself, fetched
+  // so an already-sealed action shows its band on load.
+  const [sealId, setSealId] = useState<string | null>(null);
+  const [sealRow, setSealRow] = useState<{ content_hash: string; sealed_at: string; sealed_by: string } | null>(null);
+  const [sealing, setSealing] = useState(false);
 
   const item = localAction;
 
@@ -327,6 +336,78 @@ export function CorrectiveActionDetail() {
     });
   }, [guardAction, localAction, actionId, user, profile, isDemoMode]);
 
+  // Load the seal itself once we know its id.
+  useEffect(() => {
+    if (!sealId || sealRow) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from('corrective_action_seals')
+        .select('content_hash, sealed_at, sealed_by')
+        .eq('id', sealId)
+        .maybeSingle();
+      if (cancelled || error || !data) return;
+      setSealRow({ content_hash: data.content_hash, sealed_at: data.sealed_at, sealed_by: data.sealed_by });
+    })();
+    return () => { cancelled = true; };
+  }, [sealId, sealRow]);
+
+  /**
+   * Verify and seal in one act, carrying the verification note the form has
+   * already collected. On failure nothing is changed — the edge function does
+   * its precondition checks before it writes.
+   */
+  const handleVerifyAndSeal = useCallback(() => {
+    guardAction('seal', 'evidence sealing', async () => {
+      if (!actionId) return;
+      setSealing(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('seal-corrective-action', {
+          body: { corrective_action_id: actionId, verification_note: verificationNote || undefined },
+        });
+
+        if (error) {
+          let detail = '';
+          let status = 0;
+          const ctx = (error as { context?: Response }).context;
+          if (ctx && typeof ctx.json === 'function') {
+            status = ctx.status;
+            try {
+              const parsed = await ctx.json();
+              detail = parsed?.error || '';
+            } catch { /* non-JSON body — fall through */ }
+          }
+          if (status === 409) {
+            toast.error(detail || 'This corrective action is not in a state that can be sealed.');
+          } else {
+            toast.error(detail || 'Sealing failed — the corrective action is unchanged.');
+          }
+          return;
+        }
+
+        setSealRow({
+          content_hash: data.content_hash,
+          sealed_at: data.sealed_at,
+          sealed_by: user?.id ?? '',
+        });
+        setSealId(data.seal_id);
+        setLocalAction(prev => (prev ? {
+          ...prev,
+          status: 'verified',
+          verifiedAt: new Date().toISOString().slice(0, 10),
+          verified_by: profile?.full_name || user?.email || '',
+          verification_note: verificationNote || prev.verification_note,
+        } : prev));
+        toast.success('Corrective action verified and sealed.');
+      } catch (err) {
+        console.error('[CorrectiveActionDetail] Seal invoke threw:', err);
+        toast.error('Sealing failed — the corrective action is unchanged.');
+      } finally {
+        setSealing(false);
+      }
+    });
+  }, [guardAction, actionId, verificationNote, user, profile]);
+
   const handleAddNote = useCallback(() => {
     if (!newNote.trim()) return;
     guardAction('update', 'Corrective Actions', async () => {
@@ -423,6 +504,13 @@ export function CorrectiveActionDetail() {
   const sev = SEVERITY_CONFIG[item.severity];
   const stat = CA_STATUS_MAP[item.status];
   const overdue = isOverdue(item);
+  // A seal pointer is the lock. Every edit affordance below keys off this.
+  const isSealed = !!sealId;
+  const sealContents = [
+    'Action record',
+    `${item.history.length} history ${item.history.length === 1 ? 'entry' : 'entries'}`,
+    `${item.notes.length} ${item.notes.length === 1 ? 'note' : 'notes'}`,
+  ].join(' · ');
   const currentStepIdx = CA_STATUS_ORDER[item.status] ?? 0;
   const lifecycle = stat.nextStatus ? { next: stat.nextStatus, label: stat.nextLabel! } : null;
   const canAdvance = stat.allowedRoles.includes(userRole);
@@ -743,6 +831,11 @@ export function CorrectiveActionDetail() {
         </div>
 
         {/* Add note form */}
+        {isSealed ? (
+          <p className="text-xs text-[#1E2D4D]/50 italic">
+            This record is sealed — notes are closed. Existing notes remain part of the record.
+          </p>
+        ) : (
         <div className="flex gap-2">
           <GhostInput
             value={newNote}
@@ -763,6 +856,7 @@ export function CorrectiveActionDetail() {
             <Send size={14} />
           </button>
         </div>
+        )}
       </div>
 
       {/* Attachments Section */}
@@ -836,18 +930,39 @@ export function CorrectiveActionDetail() {
         )}
       </div>
 
+      {isSealed && sealRow && (
+        <SealBand
+          contentHash={sealRow.content_hash}
+          sealedAt={sealRow.sealed_at}
+          sealedByName={orgMembers.find(m => m.id === sealRow.sealed_by)?.full_name || item.verified_by || 'Unknown'}
+          contents={sealContents}
+        />
+      )}
+
       {/* Lifecycle Action Buttons */}
-      {lifecycle && canAdvance && (
+      {!isSealed && lifecycle && canAdvance && (
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => handleAdvanceStatus(lifecycle.next)}
-            disabled={advanceBlocked}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1.5 disabled:opacity-50"
-            style={{ backgroundColor: NAVY }}
-          >
-            <ArrowRight size={14} />
-            {lifecycle.label}
-          </button>
+          {lifecycle.next === 'verified' ? (
+            <button
+              onClick={handleVerifyAndSeal}
+              disabled={advanceBlocked || sealing}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1.5 disabled:opacity-50"
+              style={{ backgroundColor: NAVY }}
+            >
+              <ShieldCheck size={14} />
+              {sealing ? 'Sealing…' : 'Verify & seal record'}
+            </button>
+          ) : (
+            <button
+              onClick={() => handleAdvanceStatus(lifecycle.next)}
+              disabled={advanceBlocked}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-1.5 disabled:opacity-50"
+              style={{ backgroundColor: NAVY }}
+            >
+              <ArrowRight size={14} />
+              {lifecycle.label}
+            </button>
+          )}
           {advanceBlocked && noAssignee && (lifecycle.next === 'resolved' || lifecycle.next === 'verified') && (
             <span className="text-xs text-red-500/70">Assign someone to this corrective action before it can be resolved</span>
           )}
@@ -859,7 +974,7 @@ export function CorrectiveActionDetail() {
           )}
         </div>
       )}
-      {lifecycle && !canAdvance && (
+      {!isSealed && lifecycle && !canAdvance && (
         <div className="text-xs text-[#1E2D4D]/30">
           Only authorized roles can advance this status.
         </div>
