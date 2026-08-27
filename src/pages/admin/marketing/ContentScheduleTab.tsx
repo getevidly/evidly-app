@@ -47,6 +47,12 @@ const OVERDUE_DOT = '#DC2626';
 
 const DISPLAY_STATUS_OPTIONS = ['planned', 'drafted', 'scheduled', 'published', 'overdue'] as const;
 
+/** Sentinel filter value for the "Unscheduled" pill — rows whose DERIVED status
+ *  is 'planned' or 'drafted' (a past-dated row derives to overdue/published and
+ *  is therefore not unscheduled). Not a stored status. */
+const UNSCHEDULED_KEY = 'unscheduled';
+const UNSCHEDULED_STATUSES: string[] = ['planned', 'drafted'];
+
 const DISPLAY_STATUS_DOT: Record<string, string> = {
   ...STATUS_DOT,
   overdue: OVERDUE_DOT,
@@ -402,11 +408,20 @@ export default function ContentScheduleTab() {
     return counts;
   }, [baseFiltered]);
 
+  const unscheduledCount = useMemo(
+    () => UNSCHEDULED_STATUSES.reduce((n, s) => n + (statusCounts[s] || 0), 0),
+    [statusCounts],
+  );
+
   // ── Filtered + sorted list (all filters including status) ─────
 
   const displayed = useMemo(() => {
     let list = [...baseFiltered];
-    if (fStatus) list = list.filter(p => derivedStatusKey(p) === fStatus);
+    if (fStatus === UNSCHEDULED_KEY) {
+      list = list.filter(p => UNSCHEDULED_STATUSES.includes(derivedStatusKey(p)));
+    } else if (fStatus) {
+      list = list.filter(p => derivedStatusKey(p) === fStatus);
+    }
 
     list.sort((a, b) => {
       const av = (a[sortKey] || '') as string;
@@ -849,15 +864,15 @@ export default function ContentScheduleTab() {
 
             <div className="flex items-center gap-1">
               <button
-                onClick={() => setFStatus('')}
+                onClick={() => setFStatus(fStatus === UNSCHEDULED_KEY ? '' : UNSCHEDULED_KEY)}
                 className="py-[4px] px-3 text-[11px] font-semibold rounded-full cursor-pointer border"
                 style={{
-                  borderColor: !fStatus ? EV_NAVY : EV_LINE,
-                  backgroundColor: !fStatus ? EV_NAVY : '#fff',
-                  color: !fStatus ? '#fff' : EV_MUTED,
+                  borderColor: fStatus === UNSCHEDULED_KEY ? EV_NAVY : EV_LINE,
+                  backgroundColor: fStatus === UNSCHEDULED_KEY ? EV_NAVY : '#fff',
+                  color: fStatus === UNSCHEDULED_KEY ? '#fff' : EV_MUTED,
                 }}
               >
-                All ({baseFiltered.length})
+                Unscheduled ({unscheduledCount})
               </button>
               {DISPLAY_STATUS_OPTIONS.map(s => (
                 <button
