@@ -92,7 +92,7 @@ export function CreateCorrectiveActionModal({
   onCreated,
 }: Props) {
   const { user, profile } = useAuth();
-  const { members } = useOrgMembers();
+  const { members, loading: membersLoading, error: membersError } = useOrgMembers();
 
   const [title, setTitle] = useState(initialTitle);
   const [severity, setSeverity] = useState<Severity>(suggestedSeverity);
@@ -156,9 +156,15 @@ export function CreateCorrectiveActionModal({
         .single();
 
       if (error || !data?.id) {
-        console.error('[CreateCorrectiveActionModal] insert failed:', error);
-        toast.error('Could not create the corrective action.');
-        return;
+        // Full object to the console, the Postgres message to the operator —
+        // a generic failure string gives them nothing to report or act on.
+        console.error('[CreateCorrectiveActionModal] insert failed:', error, { category: effectiveCategory, sourceType: source.sourceType });
+        toast.error(
+          error?.message
+            ? `Could not create the corrective action — ${error.message}`
+            : 'Could not create the corrective action — the insert returned no row.',
+        );
+        return; // modal stays open so the entry is not lost
       }
 
       toast.success(
@@ -173,7 +179,7 @@ export function CreateCorrectiveActionModal({
       onClose();
     } catch (err) {
       console.error('[CreateCorrectiveActionModal] insert threw:', err);
-      toast.error('Could not create the corrective action.');
+      toast.error(`Could not create the corrective action — ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setSaving(false);
     }
@@ -267,23 +273,46 @@ export function CreateCorrectiveActionModal({
 
           <div>
             <label style={labelStyle} htmlFor="ca-assignee">Assignee <span style={{ color: '#B3261E' }}>*</span></label>
-            <select
-              id="ca-assignee"
-              value={assignee}
-              onChange={e => setAssignee(e.target.value)}
-              style={fieldStyle}
-            >
-              <option value="">Choose someone…</option>
-              {members.map(m => (
-                <option key={m.id} value={m.id}>{m.full_name || m.email || m.id}</option>
-              ))}
-            </select>
-            {members.length === 0 && (
-              <p className="text-[11px] mt-1" style={{ color: MUTED }}>
-                No team members available to assign.
-              </p>
+            {membersLoading ? (
+              <p className="text-[12px]" style={{ color: MUTED }}>Loading team…</p>
+            ) : members.length === 0 ? (
+              // An empty required select silently dead-ends the whole flow, so
+              // replace it outright and name what came back empty.
+              <>
+                <p className="text-[13px]" style={{ color: NAVY }}>
+                  No team members found for this organization
+                </p>
+                <p className="text-[11px] mt-1" style={{ color: MUTED }}>
+                  {membersError
+                    ? `user_profiles lookup failed — ${membersError}`
+                    : 'user_profiles returned no rows for this organization.'}
+                </p>
+              </>
+            ) : (
+              <select
+                id="ca-assignee"
+                value={assignee}
+                onChange={e => setAssignee(e.target.value)}
+                style={fieldStyle}
+              >
+                <option value="">Choose someone…</option>
+                {members.map(m => (
+                  <option key={m.id} value={m.id}>{m.full_name || m.email || m.id}</option>
+                ))}
+              </select>
             )}
           </div>
+
+          {/* (b) Create is disabled until these are satisfied — say which. */}
+          {!canCreate && !saving && (
+            <p className="text-[11px]" style={{ color: MUTED }}>
+              {!title.trim()
+                ? 'Add a title to create'
+                : members.length === 0
+                  ? 'Cannot create without a team member to assign'
+                  : 'Choose an assignee to create'}
+            </p>
+          )}
         </div>
 
         <div

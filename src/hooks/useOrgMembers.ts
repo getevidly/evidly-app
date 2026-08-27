@@ -1,12 +1,28 @@
 /**
  * useOrgMembers.ts
  *
- * Fetches org members (user_location_access rows joined to profiles)
- * for the current org. Used by assignment + escalation pickers across
- * TaskDefinitionForm, IncidentLog, and other surfaces that target a
- * specific person rather than a role.
+ * Fetches org members for the current org. Used by assignment + escalation
+ * pickers across TaskDefinitionForm, IncidentLog, CorrectiveActions and other
+ * surfaces that target a specific person rather than a role.
  *
- * Demo mode → empty array.
+ * Reads user_profiles directly, org-scoped — the pattern useRolePermissions,
+ * useTeamGrid and useTeamRoles already use. It previously read
+ * user_location_access with a user_profiles embed, which could not work:
+ *
+ *   1. RLS. The ULA SELECT policy is USING (auth.uid() = user_id) — "Users can
+ *      view their own access", 20260204500000, never widened. The org filter
+ *      was irrelevant; a viewer could only ever see their own row, so the
+ *      picker could never list the team.
+ *   2. The embed. user_location_access.user_id REFERENCES auth.users(id) and
+ *      there is no FK from ULA to user_profiles, so PostgREST could not resolve
+ *      user_profiles:user_id(...) and returned PGRST200.
+ *
+ * user_profiles has an org-wide SELECT policy ("Users can view profiles in
+ * their organization", 20260205003451), so the direct read is the one that
+ * actually returns the team.
+ *
+ * Failures are reported through `error` rather than collapsing to an empty
+ * list: callers must be able to tell "no members" from "lookup failed".
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -28,42 +44,46 @@ export function useOrgMembers() {
 
   const [members, setMembers] = useState<OrgMember[]>([]);
   const [loading, setLoading] = useState(false);
+  /** Why the list is empty, when it is empty for a reason other than "none". */
+  const [error, setError] = useState<string | null>(null);
 
   const fetchMembers = useCallback(async () => {
-    if (isDemoMode || !orgId) {
+    // Both guards used to empty the list silently, which is indistinguishable
+    // from an org with no team. Say which one fired.
+    if (isDemoMode) {
       setMembers([]);
+      setError('Demo mode — org members are not loaded.');
+      return;
+    }
+    if (!orgId) {
+      setMembers([]);
+      setError('No organization on your profile.');
       return;
     }
     setLoading(true);
+    setError(null);
     try {
-      const { data, error } = await supabase
-        .from('user_location_access')
-        .select('user_id, role, user_profiles:user_id(full_name, email)')
+      const { data, error: queryErr } = await supabase
+        .from('user_profiles')
+        .select('id, full_name, email, role')
         .eq('organization_id', orgId);
 
-      if (error) {
-        console.warn('[useOrgMembers] Fetch error:', error.message);
+      if (queryErr) {
+        console.error('[useOrgMembers] user_profiles fetch failed:', queryErr);
         setMembers([]);
+        setError(queryErr.message);
         return;
       }
 
-      // Dedupe by user_id (a user may have multiple location rows)
-      const seen = new Set<string>();
-      const result: OrgMember[] = [];
-      for (const row of (data ?? []) as Array<{
-        user_id: string;
-        role: string | null;
-        user_profiles: { full_name: string | null; email: string | null } | null;
-      }>) {
-        if (seen.has(row.user_id)) continue;
-        seen.add(row.user_id);
-        result.push({
-          id: row.user_id,
-          full_name: row.user_profiles?.full_name ?? null,
-          email: row.user_profiles?.email ?? null,
-          role: row.role,
-        });
-      }
+      const result: OrgMember[] = (data ?? []).map(row => {
+        const r = row as { id: string; full_name: string | null; email: string | null; role: string | null };
+        return {
+          id: r.id,
+          full_name: r.full_name ?? null,
+          email: r.email ?? null,
+          role: r.role,
+        };
+      });
 
       // Sort alphabetically by display name
       result.sort((a, b) => {
@@ -85,6 +105,7 @@ export function useOrgMembers() {
   return {
     members,
     loading,
+    error,
     refetch: fetchMembers,
   };
 }
