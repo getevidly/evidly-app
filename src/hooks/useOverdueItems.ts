@@ -13,9 +13,14 @@ import { useRole } from '../contexts/RoleContext';
 export interface OverdueItem {
   id: string;
   source: 'task' | 'corrective_action' | 'document';
+  /** Display title, prefixed for corrective actions and documents. */
   title: string;
+  /** The record title with no display prefix — what a spawned action is named after. */
+  raw_title: string;
   detail_text: string;
   days_late: number;
+  /** Needed so a spawned corrective action lands on the right location. */
+  location_id: string | null;
 }
 
 interface UseOverdueItemsResult {
@@ -61,19 +66,19 @@ export function useOverdueItems(options?: { locationIdFilter?: string }): UseOve
 
         const [tasksRes, caRes, docsRes] = await Promise.all([
           (() => {
-            let q = supabase.from('task_instances').select('id, title, due_at')
+            let q = supabase.from('task_instances').select('id, title, due_at, location_id')
               .eq('organization_id', orgId!).eq('status', 'pending').lt('due_at', now);
             if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
             return q;
           })(),
           (() => {
-            let q = supabase.from('corrective_actions').select('id, title, due_date')
+            let q = supabase.from('corrective_actions').select('id, title, due_date, location_id')
               .eq('organization_id', orgId!).not('status', 'in', '("closed","archived","verified","dismissed")').lt('due_date', today);
             if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
             return q;
           })(),
           (() => {
-            let q = supabase.from('documents').select('id, title, expiration_date')
+            let q = supabase.from('documents').select('id, title, expiration_date, location_id')
               .eq('organization_id', orgId!).eq('status', 'active').lt('expiration_date', today);
             if (locationIdFilter) q = q.or(`location_id.eq.${locationIdFilter},location_id.is.null`);
             return q;
@@ -91,8 +96,10 @@ export function useOverdueItems(options?: { locationIdFilter?: string }): UseOve
             id: r.id as string,
             source: 'task',
             title: (r.title as string) || 'Task',
+            raw_title: (r.title as string) || 'Task',
             detail_text: lateSuffix(late),
             days_late: late,
+            location_id: (r.location_id as string) ?? null,
           });
         }
 
@@ -103,8 +110,10 @@ export function useOverdueItems(options?: { locationIdFilter?: string }): UseOve
             id: r.id as string,
             source: 'corrective_action',
             title: `CA: ${(r.title as string) || 'Corrective action'}`,
+            raw_title: (r.title as string) || 'Corrective action',
             detail_text: lateSuffix(late),
             days_late: late,
+            location_id: (r.location_id as string) ?? null,
           });
         }
 
@@ -115,8 +124,10 @@ export function useOverdueItems(options?: { locationIdFilter?: string }): UseOve
             id: r.id as string,
             source: 'document',
             title: `Document expired: ${(r.title as string) || 'Untitled'}`,
+            raw_title: (r.title as string) || 'Untitled',
             detail_text: lateSuffix(late),
             days_late: late,
+            location_id: (r.location_id as string) ?? null,
           });
         }
 

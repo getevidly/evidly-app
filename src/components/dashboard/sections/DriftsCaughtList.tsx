@@ -5,10 +5,12 @@
  * Shows section header with count chip, catch list, and empty state.
  */
 
+import { useCallback, useEffect, useState } from 'react';
+import { supabase } from '../../../lib/supabase';
 import { useDashboardLocation } from '../../../contexts/DashboardLocationContext';
 import { useDriftCatches } from '../../../hooks/useDriftCatches';
 import { useDriftRouting } from '../../../hooks/useDriftRouting';
-import { DriftCatchCard } from './DriftCatchCard';
+import { DriftCatchCard, type LinkedCorrectiveAction } from './DriftCatchCard';
 
 interface DriftsCaughtListProps {
   variant: 'standard' | 'audit';
@@ -25,6 +27,33 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
   const { catches, totalSaved, loading, error, acknowledge } = useDriftCatches({ pillarFilter, locationIdFilter: selectedLocationId || undefined });
   const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
   const routingMap = useDriftRouting(openCatches.map(c => c.id));
+
+  // Whether a catch already has a corrective action is DERIVED from
+  // corrective_actions.source_id — drift_catches is never written to here.
+  const [actionMap, setActionMap] = useState<Record<string, LinkedCorrectiveAction>>({});
+  const [actionsVersion, setActionsVersion] = useState(0);
+  const refreshActions = useCallback(() => setActionsVersion(v => v + 1), []);
+
+  const catchIdsKey = openCatches.map(c => c.id).sort().join(',');
+
+  useEffect(() => {
+    if (!catchIdsKey) { setActionMap({}); return; }
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from('corrective_actions')
+        .select('id, source_id, status, seal_id')
+        .eq('source_type', 'drift')
+        .in('source_id', catchIdsKey.split(','));
+      if (cancelled || error || !data) return;
+      const next: Record<string, LinkedCorrectiveAction> = {};
+      for (const row of data as { id: string; source_id: string; status: string; seal_id: string | null }[]) {
+        if (row.source_id) next[row.source_id] = { id: row.id, status: row.status, seal_id: row.seal_id };
+      }
+      setActionMap(next);
+    })();
+    return () => { cancelled = true; };
+  }, [catchIdsKey, actionsVersion]);
 
   if (loading) {
     return (
@@ -82,6 +111,8 @@ export function DriftsCaughtList({ variant, pillarFilter }: DriftsCaughtListProp
             variant={variant}
             onAcknowledge={acknowledge}
             recipients={routingMap[drift.id] || []}
+            linkedAction={actionMap[drift.id]}
+            onActionCreated={refreshActions}
           />
         ))}
       </div>

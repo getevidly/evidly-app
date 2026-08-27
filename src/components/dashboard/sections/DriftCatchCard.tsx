@@ -6,17 +6,31 @@
  * Coral dot + "Open" label, duration, stakes line, inline ack button.
  */
 
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useRole } from '../../../contexts/RoleContext';
+import { classify } from '../../../lib/severityEngine';
+import { CreateCorrectiveActionModal } from '../../correctiveActions/CreateCorrectiveActionModal';
 import { getDriftLabel, getSourceTableLabel } from '../../../constants/driftTypeLabels';
 import { daysSince } from '../../../lib/daysSince';
 import type { DriftCatchWithAcks } from '../../../hooks/useDriftCatches';
 import type { DriftRecipient } from '../../../hooks/useDriftRouting';
+
+/** The corrective action already spawned from this catch, if any. */
+export interface LinkedCorrectiveAction {
+  id: string;
+  status: string;
+  seal_id: string | null;
+}
 
 interface DriftCatchCardProps {
   drift: DriftCatchWithAcks;
   variant: 'standard' | 'audit';
   onAcknowledge: (id: string) => void;
   recipients?: DriftRecipient[];
+  /** Derived by the list from corrective_actions — the catch itself is never written. */
+  linkedAction?: LinkedCorrectiveAction;
+  onActionCreated?: () => void;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -87,13 +101,20 @@ function buildRoutingText(recipients: DriftRecipient[]): string | null {
   return null;
 }
 
-export function DriftCatchCard({ drift, variant, onAcknowledge, recipients = [] }: DriftCatchCardProps) {
+export function DriftCatchCard({
+  drift, variant, onAcknowledge, recipients = [], linkedAction, onActionCreated,
+}: DriftCatchCardProps) {
   const { userRole } = useRole();
+  const [showCreate, setShowCreate] = useState(false);
   const roleLabel = ROLE_LABELS[userRole] || userRole;
   const days = daysSince(drift.detected_at);
   const stakesText = STAKES[drift.drift_type] || 'A gap here becomes a finding when an inspector arrives.';
   const ackNames = drift.acknowledgments.map(a => a.user_full_name);
   const routingText = buildRoutingText(recipients);
+
+  const driftLabel = getDriftLabel(drift.drift_type, { form: 'noun' });
+  // drift_catches stores low|medium|high|critical; the engine also accepts "urgent".
+  const rating = classify({ kind: 'drift', priority: drift.severity, title: driftLabel });
 
   return (
     <div className="catch">
@@ -118,16 +139,57 @@ export function DriftCatchCard({ drift, variant, onAcknowledge, recipients = [] 
               ? `Acknowledged by ${ackNames.join(', ')}`
               : 'Awaiting acknowledgment'}
           </span>
-          <button
-            type="button"
-            className="catch-ack-btn"
-            onClick={() => onAcknowledge(drift.id)}
-            style={{ background: '#1E2D4D', color: '#ffffff', border: '1px solid #1E2D4D', fontWeight: 600, padding: '4px 12px', borderRadius: 6, fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >
-            Acknowledge as {roleLabel}
-          </button>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+            {linkedAction ? (
+              // Already spawned — show where it went instead of offering it again.
+              <Link
+                to={`/corrective-actions/${linkedAction.id}`}
+                style={{
+                  fontWeight: 600, padding: '4px 12px', borderRadius: 6, fontSize: 11,
+                  whiteSpace: 'nowrap', textDecoration: 'none',
+                  color: linkedAction.seal_id ? '#FAF7F0' : '#1E2D4D',
+                  background: linkedAction.seal_id ? '#1E2D4D' : 'transparent',
+                  border: '1px solid #1E2D4D',
+                }}
+              >
+                {linkedAction.seal_id ? 'Corrective action sealed' : 'Corrective action open'}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowCreate(true)}
+                style={{ background: 'transparent', color: '#1E2D4D', border: '1px solid #1E2D4D', fontWeight: 600, padding: '4px 12px', borderRadius: 6, fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Create corrective action
+              </button>
+            )}
+            <button
+              type="button"
+              className="catch-ack-btn"
+              onClick={() => onAcknowledge(drift.id)}
+              style={{ background: '#1E2D4D', color: '#ffffff', border: '1px solid #1E2D4D', fontWeight: 600, padding: '4px 12px', borderRadius: 6, fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              Acknowledge as {roleLabel}
+            </button>
+          </div>
         </div>
       </div>
+
+      <CreateCorrectiveActionModal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        source={{
+          sourceType: 'drift',
+          sourceId: drift.id,
+          sourceLabel: `Drift catch — ${driftLabel}`,
+          category: drift.pillar,
+          locationId: drift.location_id,
+        }}
+        initialTitle={driftLabel}
+        suggestedSeverity={rating.severity}
+        suggestedDueDate={rating.dueSuggestion}
+        onCreated={() => onActionCreated?.()}
+      />
     </div>
   );
 }
