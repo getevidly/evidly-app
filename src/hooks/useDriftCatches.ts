@@ -195,8 +195,17 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
 
         setCatches(result);
       } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
+        if (!cancelled) {
+          const e = err instanceof Error ? err : new Error(String(err));
+          console.error('[useDriftCatches] catches query failed; clearing catches:', e.message);
+          setError(e);
+          // Drop stale rows. Without this a failed refetch leaves the previous
+          // org's or previous filter's catches on screen, presented as current
+          // — worse than an empty feed, because nothing marks them as stale.
+          setCatches([]);
+        }
       } finally {
+        // Always settle, including the cancelled-unmount path's no-op.
         if (!cancelled) setLoading(false);
       }
     }
