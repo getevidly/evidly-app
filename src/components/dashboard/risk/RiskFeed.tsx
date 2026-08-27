@@ -24,6 +24,8 @@ interface Props {
   /** Passed through to drift rows — the acknowledge path AlertsSection held. */
   onAcknowledge?: (id: string) => void;
   roleLabel?: string;
+  /** Raw viewer role — drift rows gate the acknowledge affordance on it. */
+  viewerRole?: string;
   /**
    * A source query failed. The feed may still hold items from the sources that
    * succeeded, so this is a caveat on the list rather than a replacement for
@@ -33,7 +35,7 @@ interface Props {
   loadFailed?: boolean;
 }
 
-export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge, roleLabel, loadFailed }: Props) {
+export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge, roleLabel, viewerRole, loadFailed }: Props) {
   const bands = [...SEVERITY_ASC].reverse();
   const failureLine = "Some items couldn't load — refresh to retry.";
 
@@ -84,6 +86,7 @@ export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge,
                       onCreated={onCreated}
                       onAcknowledge={onAcknowledge}
                       roleLabel={roleLabel}
+                      viewerRole={viewerRole}
                     />
                   ))}
                 </div>

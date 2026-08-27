@@ -100,6 +100,8 @@ const ROLE_LABELS: Record<string, string> = {
   facilities_manager: 'Facilities',
   chef: 'Chef',
   kitchen_manager: 'Manager',
+  platform_admin: 'Platform Admin',
+  kitchen_staff: 'Kitchen Staff',
 };
 
 // ─── Main export ─────────────────────────────────────────────────
@@ -281,6 +283,7 @@ export function DashboardView() {
         onCreated={() => setRiskVersion(v => v + 1)}
         onAcknowledge={acknowledge}
         roleLabel={roleLabel}
+        viewerRole={userRole}
         loadFailed={!!driftError}
       />
 

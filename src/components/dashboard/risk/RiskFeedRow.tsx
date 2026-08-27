@@ -22,7 +22,25 @@ const ROLE_LABELS: Record<string, string> = {
   facilities_manager: 'Facilities',
   chef: 'Chef',
   kitchen_manager: 'Manager',
+  platform_admin: 'Platform Admin',
+  kitchen_staff: 'Kitchen Staff',
 };
+
+/**
+ * The roles drift_acknowledgments.role accepts — its CHECK constraint,
+ * 20260519100000:205-208. The table records per-decision-maker sign-off
+ * ("Owner ack != Compliance ack != Facilities ack"), so the set is deliberate,
+ * not an oversight. platform_admin and kitchen_staff sit outside it and their
+ * inserts are rejected outright, so they are not offered the affordance.
+ */
+const ACK_ROLES: ReadonlySet<string> = new Set([
+  'owner_operator',
+  'executive',
+  'compliance_manager',
+  'facilities_manager',
+  'chef',
+  'kitchen_manager',
+]);
 
 /** Lifted verbatim from AlertsSection so routing reads identically. */
 function buildRoutingText(recipients: DriftRecipient[]): string | null {
@@ -83,6 +101,8 @@ interface Props {
   /** Drift rows only — same handler semantics AlertsSection was given. */
   onAcknowledge?: (id: string) => void;
   roleLabel?: string;
+  /** Raw viewer role, gated against ACK_ROLES. Absent hides the affordance. */
+  viewerRole?: string;
 }
 
 function Chip({ children }: { children: React.ReactNode }) {
@@ -109,7 +129,7 @@ const actionStyle: React.CSSProperties = {
   textDecoration: 'none',
 };
 
-export function RiskFeedRow({ item, onCreated, onAcknowledge, roleLabel }: Props) {
+export function RiskFeedRow({ item, onCreated, onAcknowledge, roleLabel, viewerRole }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const color = SEVERITY_COLORS[item.severity];
   const spawnType = SPAWNABLE[item.kind];
@@ -121,7 +141,15 @@ export function RiskFeedRow({ item, onCreated, onAcknowledge, roleLabel }: Props
   const escalationText = item.kind === 'drift' ? buildEscalationText(item.recipients || []) : null;
   // Acknowledge is an open-drift affordance only. A 'reduced' catch has
   // already been acted on, so it carries the spawn / open-action path alone.
-  const canAcknowledge = item.kind === 'drift' && item.driftStatus === 'open' && !!onAcknowledge;
+  // It also belongs to the decision-maker roles: outside ACK_ROLES the insert
+  // can never succeed, so the button is not rendered rather than shown and
+  // left to fail. Create corrective action and open-action are unaffected.
+  const canAcknowledge =
+    item.kind === 'drift' &&
+    item.driftStatus === 'open' &&
+    !!onAcknowledge &&
+    !!viewerRole &&
+    ACK_ROLES.has(viewerRole);
 
   const category: CACategory =
     item.pillar === 'food_safety' || item.pillar === 'fire_safety' ? item.pillar : 'facility_services';
