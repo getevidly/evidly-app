@@ -11,6 +11,11 @@
 //
 // Both writes (INSERT corrective_action_seals + UPDATE corrective_actions
 // .seal_id) must succeed before returning success. No success-on-unconfirmed.
+//
+// A corrective action spawned from a drift catch closes that catch on seal -
+// the loop ends on the flag that raised it. That write is deliberately one-way:
+// the seal already stands, so a failed catch update is reported as a warning on
+// a successful response, never a rollback and never a failed seal.
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -286,7 +291,36 @@ serve(async (req) => {
     );
   }
 
-  // ── STEP 11: CONFIRMED SUCCESS ────────────────────────────────────
+  // ── STEP 11: CLOSE THE DRIFT CATCH THAT RAISED THIS ────────────────────────────────────
+  // Only for drift-sourced actions - every other source leaves its origin alone.
+  // The seal is already durable here, so a failure degrades to a warning.
+  let warning: string | undefined;
+
+  if (sealed.source_type === 'drift' && sealed.source_id) {
+    const { error: catchErr } = await supabase
+      .from('drift_catches')
+      .update({
+        status: 'resolved',
+        resolution_type: 'corrective_action',
+        resolving_corrective_action_id: sealed.id,
+        resolved_by: sealedBy,
+        resolved_at: seal.sealed_at,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sealed.source_id);
+
+    if (catchErr) {
+      console.error(
+        `[seal-corrective-action] Drift catch closure failed: catch=${sealed.source_id} ` +
+        `seal=${seal.id} - ${catchErr.message}`,
+      );
+      warning = `Seal written. Drift catch ${sealed.source_id} could not be closed: ${catchErr.message}`;
+    } else {
+      console.log(`[seal-corrective-action] Drift catch closed: catch=${sealed.source_id} action=${sealed.id}`);
+    }
+  }
+
+  // ── STEP 12: CONFIRMED SUCCESS ────────────────────────────────────
   console.log(
     `[seal-corrective-action] Sealed: action=${sealed.id} seal=${seal.id} ` +
     `hash=${contentHash.substring(0, 16)}… history=${(history ?? []).length}`,
@@ -296,5 +330,6 @@ serve(async (req) => {
     seal_id: seal.id,
     content_hash: seal.content_hash,
     sealed_at: seal.sealed_at,
+    ...(warning ? { warning } : {}),
   });
 });
