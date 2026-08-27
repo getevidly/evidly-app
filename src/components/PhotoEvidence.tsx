@@ -1,15 +1,28 @@
 import { useState, useRef, useCallback } from 'react';
 import { Camera, X, RotateCcw, MapPin, Clock, Plus } from 'lucide-react';
+import { toast } from 'sonner';
+import { uploadCompliancePhoto, type PhotoUploadParams } from '../lib/photoUpload';
 
 // ── Types ──────────────────────────────────────────────────────────
 export interface PhotoRecord {
   id: string;
+  /** Local preview for this session. Not what gets persisted once uploadTarget is set. */
   dataUrl: string;
+  /** compliance-photos object path, present once the capture has been uploaded. */
+  storagePath?: string;
   timestamp: string;
   displayTime: string;
   lat: number | null;
   lng: number | null;
   address: string;
+}
+
+/** Set this to push each capture into the compliance-photos bucket as it is taken. */
+export interface PhotoUploadTarget {
+  orgId: string;
+  locationId: string;
+  recordType: PhotoUploadParams['recordType'];
+  recordId?: string;
 }
 
 interface PhotoEvidenceProps {
@@ -23,11 +36,14 @@ interface PhotoEvidenceProps {
   compact?: boolean;
   /** Enhances contrast/brightness and desaturates — ideal for photographing physical documents */
   documentMode?: boolean;
+  /**
+   * When provided, each capture is uploaded to the compliance-photos bucket and the
+   * resulting object path is set on the PhotoRecord. Callers persist that path rather
+   * than the inline dataUrl. Omitted (the default) the component behaves as before and
+   * keeps everything in memory.
+   */
+  uploadTarget?: PhotoUploadTarget;
 }
-
-// TODO: Production — upload to Supabase Storage bucket "compliance-photos"
-// Path: /{org_id}/{location_id}/{record_type}/{record_id}/{filename}
-// Replace dataUrl with public URL from Supabase after upload.
 
 // ── Font ───────────────────────────────────────────────────────────
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
@@ -193,6 +209,23 @@ interface OverlayInfo {
   lng?: number;
 }
 
+interface CompressedImage {
+  /** For the in-session thumbnail. */
+  dataUrl: string;
+  /** What actually gets uploaded - no base64 round-trip. */
+  blob: Blob;
+}
+
+/** Last-resort conversion if canvas.toBlob yields null. */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [header, base64] = dataUrl.split(',');
+  const mime = header.match(/:(.*?);/)?.[1] ?? 'image/jpeg';
+  const bytes = atob(base64);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
 /**
  * Compress image via canvas. Overlays timestamp + GPS bar at bottom.
  * Targets max 1 MB by scaling down and reducing JPEG quality.
@@ -202,7 +235,7 @@ function compressImage(
   file: File,
   overlay: OverlayInfo,
   opts: { maxSizeKB?: number; documentMode?: boolean } = {},
-): Promise<string> {
+): Promise<CompressedImage> {
   const { maxSizeKB = 1024, documentMode = false } = opts;
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -253,7 +286,12 @@ function compressImage(
           quality -= 0.1;
           result = canvas.toDataURL('image/jpeg', quality);
         }
-        resolve(result);
+        // Same canvas, same settled quality - so the bytes match the preview exactly.
+        canvas.toBlob(
+          (blob) => resolve({ dataUrl: result, blob: blob ?? dataUrlToBlob(result) }),
+          'image/jpeg',
+          quality,
+        );
       };
       img.src = e.target?.result as string;
     };
@@ -265,7 +303,7 @@ function compressImage(
 export function PhotoEvidence({
   photos, onChange, maxPhotos = 5, required = false,
   highlight = false, highlightText, label = 'Photo Evidence',
-  compact = false, documentMode = false,
+  compact = false, documentMode = false, uploadTarget,
 }: PhotoEvidenceProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [capturing, setCapturing] = useState(false);
@@ -298,14 +336,40 @@ export function PhotoEvidence({
       }
 
       // 4) Compress with timestamp + GPS overlay baked into image
-      const dataUrl = await compressImage(
+      const { dataUrl, blob } = await compressImage(
         file,
         { timestamp: photoDate, lat: lat ?? undefined, lng: lng ?? undefined },
         { documentMode },
       );
 
+      // 5) Upload to compliance-photos when the caller asked for it. A failure is
+      //    surfaced and the capture is dropped - never silently kept as inline base64,
+      //    which would put an unbounded data URL back into the column.
+      let storagePath: string | undefined;
+      if (uploadTarget) {
+        try {
+          const uploaded = await uploadCompliancePhoto({
+            blob,
+            orgId: uploadTarget.orgId,
+            locationId: uploadTarget.locationId,
+            recordType: uploadTarget.recordType,
+            recordId: uploadTarget.recordId,
+            latitude: lat,
+            longitude: lng,
+            address,
+            overlayTimestamp: photoDate.toISOString(),
+            overlayGps: lat != null && lng != null ? formatCoords(lat, lng) : undefined,
+          });
+          storagePath = uploaded.storagePath;
+        } catch (err) {
+          const message = err instanceof Error ? err.message : 'Photo upload failed';
+          toast.error(message + ' - the photo was not attached. Try again.');
+          return;
+        }
+      }
+
       const newPhoto: PhotoRecord = {
-        id: generateId(), dataUrl, timestamp: photoDate.toISOString(),
+        id: generateId(), dataUrl, storagePath, timestamp: photoDate.toISOString(),
         displayTime, lat: lat ?? null, lng: lng ?? null, address,
       };
       onChange([...photos, newPhoto]);
@@ -313,7 +377,7 @@ export function PhotoEvidence({
       setCapturing(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
-  }, [photos, onChange, documentMode]);
+  }, [photos, onChange, documentMode, uploadTarget]);
 
   const removePhoto = (id: string) => {
     onChange(photos.filter(p => p.id !== id));
@@ -460,11 +524,13 @@ export function PhotoButton({
   onChange,
   highlight = false,
   highlightText,
+  uploadTarget,
 }: {
   photos: PhotoRecord[];
   onChange: (photos: PhotoRecord[]) => void;
   highlight?: boolean;
   highlightText?: string;
+  uploadTarget?: PhotoUploadTarget;
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -502,6 +568,7 @@ export function PhotoButton({
             compact
             highlight={highlight}
             highlightText={highlightText}
+            uploadTarget={uploadTarget}
           />
         </div>
       )}

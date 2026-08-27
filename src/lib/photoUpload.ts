@@ -3,7 +3,12 @@ import { BUCKETS } from './storage';
 
 // ── Types ──────────────────────────────────────────────────
 export interface PhotoUploadParams {
-  dataUrl: string;
+  /**
+   * Source image. Supply `blob` (preferred - canvas.toBlob avoids a base64
+   * round-trip) or `dataUrl`. `blob` wins when both are present.
+   */
+  blob?: Blob;
+  dataUrl?: string;
   orgId: string;
   locationId: string;
   recordType: 'temp_log' | 'checklist' | 'incident' | 'vendor_delivery' | 'equipment' | 'self_inspection' | 'inspection' | 'corrective_action' | 'general';
@@ -47,7 +52,8 @@ function generatePath(orgId: string, locationId: string, recordType: string, rec
 // ── Upload ─────────────────────────────────────────────────
 
 export async function uploadCompliancePhoto(params: PhotoUploadParams): Promise<PhotoUploadResult> {
-  const blob = dataUrlToBlob(params.dataUrl);
+  const blob = params.blob ?? (params.dataUrl ? dataUrlToBlob(params.dataUrl) : null);
+  if (!blob) throw new Error('Photo upload failed: no image data (blob or dataUrl required)');
   const storagePath = generatePath(params.orgId, params.locationId, params.recordType, params.recordId);
 
   // 1. Upload to Supabase Storage

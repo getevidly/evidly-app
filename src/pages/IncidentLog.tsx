@@ -13,8 +13,9 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { Modal } from '../components/ui/Modal';
 import { useRole } from '../contexts/RoleContext';
 import { useTranslation } from '../contexts/LanguageContext';
-import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoEvidence, PhotoButton, type PhotoRecord, type PhotoUploadTarget } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
+import { useResolvedPhotos, type PhotoEntry } from '../lib/incidentPhotos';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -448,6 +449,28 @@ function isOverdue(incident: Incident): boolean {
 
 // ── Component ──────────────────────────────────────────────────────
 
+/**
+ * The columns hold storage paths now, so a capture that never made it to the bucket
+ * is dropped rather than degraded back into an inline data URL. PhotoEvidence has
+ * already surfaced the upload error by this point.
+ */
+function storagePaths(photos: PhotoRecord[]): string[] {
+  return photos.map(ph => ph.storagePath).filter((path): path is string => !!path);
+}
+
+/** Timeline thumbnails: same dual-mode resolution as the main gallery. */
+function TimelinePhotoStrip({ photos }: { photos: PhotoEntry[] }) {
+  const resolved = useResolvedPhotos(photos);
+  if (resolved.length === 0) return null;
+  return (
+    <div className="mt-2 flex gap-2">
+      {resolved.map(ph => (
+        <img key={ph.id} src={ph.src} alt="" loading="lazy" className="w-12 h-12 rounded object-cover border" />
+      ))}
+    </div>
+  );
+}
+
 export function IncidentLog() {
   const navigate = useNavigate();
   const { userRole, getAccessibleLocations } = useRole();
@@ -508,6 +531,18 @@ export function IncidentLog() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Demo mode never writes to Supabase, so captures stay in memory there and no
+  // upload target is handed down.
+  const orgId = profile?.organization_id;
+
+  const buildUploadTarget = useCallback(
+    (locationId: string | undefined, recordId?: string): PhotoUploadTarget | undefined => {
+      if (isDemoMode || !orgId || !locationId) return undefined;
+      return { orgId, locationId, recordType: 'incident', recordId };
+    },
+    [isDemoMode, orgId],
+  );
+
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -559,6 +594,11 @@ export function IncidentLog() {
   const [newCategory, setNewCategory] = useState<IncidentCategory>(TYPE_CATEGORY_MAP['temperature_violation']!);
   const [newSeverity, setNewSeverity] = useState<Severity>('major');
   const [newLocation, setNewLocation] = useState(locationOptions[0] || '');
+  // The create form picks a location by name; the uploader keys its path on the id.
+  const newLocationId = useMemo(
+    () => getAccessibleLocations().find(l => l.locationName === newLocation)?.locationId,
+    [getAccessibleLocations, newLocation],
+  );
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newPhotos, setNewPhotos] = useState<PhotoRecord[]>([]);
@@ -886,7 +926,7 @@ export function IncidentLog() {
         status: 'open',
         assigned_to: assignee,
         reported_by: user?.id ?? null,
-        photos: newPhotos.map(p => p.dataUrl),
+        photos: storagePaths(newPhotos),
         resolution_photos: [],
       };
       console.log('[IncidentLog] incidents INSERT payload:', JSON.stringify(incPayload));
@@ -991,7 +1031,7 @@ export function IncidentLog() {
           action: `Corrective action: ${actionText}${estLabel}`,
           status: 'investigating',
           performed_by: user?.id ?? null,
-          photos: actionPhotos.length > 0 ? actionPhotos.map(p => p.dataUrl) : [],
+          photos: storagePaths(actionPhotos),
         });
       } catch (tlErr) {
         console.error('[IncidentLog] Timeline insert failed (action saved):', tlErr);
@@ -1112,7 +1152,7 @@ export function IncidentLog() {
         resolved_at: nowIso,
         resolution_summary: resolutionSummary,
         root_cause: rootCause,
-        resolution_photos: resolutionPhotos.map(p => p.dataUrl),
+        resolution_photos: storagePaths(resolutionPhotos),
         updated_at: nowIso,
       }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
 
@@ -1122,7 +1162,7 @@ export function IncidentLog() {
           action: `Resolved: ${resolutionSummary}`,
           status: 'resolved',
           performed_by: user?.id ?? null,
-          photos: resolutionPhotos.length > 0 ? resolutionPhotos.map(p => p.dataUrl) : [],
+          photos: storagePaths(resolutionPhotos),
         });
       } catch (tlErr) {
         console.error('[IncidentLog] Timeline insert failed (resolve saved):', tlErr);
@@ -1559,11 +1599,7 @@ export function IncidentLog() {
                             <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(entry.timestamp), 'MMM d, h:mm a')}</span>
                           </div>
                           {entry.photos && entry.photos.length > 0 && (
-                            <div className="mt-2 flex gap-2">
-                              {entry.photos.map(p => (
-                                <img key={p.id} src={p.dataUrl} alt="" loading="lazy" className="w-12 h-12 rounded object-cover border" />
-                              ))}
-                            </div>
+                            <TimelinePhotoStrip photos={entry.photos} />
                           )}
                         </div>
                       </div>
@@ -1802,6 +1838,7 @@ export function IncidentLog() {
                   photos={actionPhotos}
                   onChange={setActionPhotos}
                   label={t('incidents.photoProof')}
+                  uploadTarget={buildUploadTarget(inc.locationId, inc.dbId)}
                 />
                 <div className="flex gap-3">
                   <button
@@ -1869,6 +1906,7 @@ export function IncidentLog() {
                   required
                   highlight
                   highlightText={t('incidents.showTheFix')}
+                  uploadTarget={buildUploadTarget(inc.locationId, inc.dbId)}
                 />
                 {resolutionPhotos.length === 0 && (
                   <label className="flex items-center gap-2 text-xs text-[#1E2D4D]/50 cursor-pointer">
@@ -2201,6 +2239,7 @@ export function IncidentLog() {
               photos={newPhotos}
               onChange={setNewPhotos}
               label={t('incidents.photoOfIncident')}
+              uploadTarget={buildUploadTarget(newLocationId)}
             />
 
             <label className="flex items-start gap-3 p-3 border border-[#1E2D4D]/10 rounded-xl cursor-pointer hover:bg-[#FAF7F0]">

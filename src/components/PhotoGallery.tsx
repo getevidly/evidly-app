@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Download, MapPin, Clock, Camera } from 'lucide-react';
 import { useRole } from '../contexts/RoleContext';
-import type { PhotoRecord } from './PhotoEvidence';
 import { toast } from 'sonner';
+import { useResolvedPhotos, type DisplayPhoto, type PhotoEntry } from '../lib/incidentPhotos';
 
 interface PhotoGalleryProps {
-  photos: PhotoRecord[];
+  /**
+   * Either in-memory PhotoRecords or raw stored strings (legacy inline data: URLs
+   * and compliance-photos object paths both occur). useResolvedPhotos normalizes
+   * all three forms and signs storage paths for the private bucket.
+   */
+  photos: PhotoEntry[];
   title?: string;
 }
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
 export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryProps) {
+  const resolved = useResolvedPhotos(photos);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { userRole } = useRole();
   const canDownload = userRole === 'executive';
@@ -46,7 +52,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
 
   if (photos.length === 0) return null;
 
-  const selected = selectedIndex !== null ? photos[selectedIndex] : null;
+  const selected = selectedIndex !== null ? resolved[selectedIndex] ?? null : null;
 
   // Touch swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -67,13 +73,13 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
     touchStartY.current = null;
   };
 
-  const handleDownload = (photo: PhotoRecord) => {
+  const handleDownload = (photo: DisplayPhoto) => {
     if (!canDownload) {
       toast.warning('Download restricted to executive accounts');
       return;
     }
     const link = document.createElement('a');
-    link.href = photo.dataUrl;
+    link.href = photo.src;
     link.download = `evidence-${photo.timestamp}.jpg`;
     link.click();
   };
@@ -89,7 +95,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
 
       {/* Thumbnail Grid */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-        {photos.map((photo, idx) => (
+        {resolved.map((photo, idx) => (
           <div
             key={photo.id}
             onClick={() => setSelectedIndex(idx)}
@@ -104,7 +110,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
             }}
           >
             <img
-              src={photo.dataUrl}
+              src={photo.src}
               alt={`Evidence ${idx + 1}`}
               loading="lazy"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -182,7 +188,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
 
             {/* Image */}
             <img
-              src={selected.dataUrl}
+              src={selected.src}
               alt="Evidence full size"
               loading="lazy"
               style={{ maxWidth: '100%', maxHeight: '75vh', borderRadius: '8px', objectFit: 'contain' }}
