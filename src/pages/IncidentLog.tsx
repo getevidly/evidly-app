@@ -2548,15 +2548,15 @@ export function IncidentLog() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 max-w-[720px] w-full mb-6">
                   <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: `3px solid ${prp.predict.accent}` }}>
-                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.predict.accent }}>PREDICT</div>
+                    <div className="text-[10px] font-bold tracking-[0.12em]" style={{ color: prp.predict.accent }}>Predict</div>
                     <p className="text-[11px] text-[#6B7F96] mt-1">Recurring patterns and aging incidents get flagged before they become citations.</p>
                   </div>
                   <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: `3px solid ${prp.reduce.accent}` }}>
-                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.reduce.accent }}>REDUCE</div>
+                    <div className="text-[10px] font-bold tracking-[0.12em]" style={{ color: prp.reduce.accent }}>Reduce</div>
                     <p className="text-[11px] text-[#6B7F96] mt-1">Open-incident exposure stays visible until resolved and documented.</p>
                   </div>
                   <div className="bg-white border border-[#E2DDD4] rounded-lg p-3 text-left" style={{ borderTop: `3px solid ${prp.prove.accent}` }}>
-                    <div className="text-[10px] uppercase font-bold tracking-[0.12em]" style={{ color: prp.prove.accent }}>PROVE</div>
+                    <div className="text-[10px] font-bold tracking-[0.12em]" style={{ color: prp.prove.accent }}>Prove</div>
                     <p className="text-[11px] text-[#6B7F96] mt-1">Every resolution is timestamped, assigned, and ready to send to inspectors or insurers.</p>
                   </div>
                 </div>

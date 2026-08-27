@@ -1,7 +1,7 @@
 import type { TodayChecklist } from '../../hooks/checklists';
 import { prp } from '../../lib/designSystem';
 
-const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
+const PILLAR_LABEL = 'text-[10px] font-bold tracking-[0.12em]';
 
 interface ChecklistsPRPBandProps {
   todayChecklists: TodayChecklist[];
@@ -54,12 +54,12 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
         style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.predict.text }}>Predict</span>
           <span
-            className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+            className="text-[8px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
             style={{ backgroundColor: `${prp.predict.accent}20`, color: prp.predict.accent }}
           >
-            LIVE
+            Live
           </span>
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Checklists due today</div>
@@ -88,12 +88,12 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
         style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>Reduce</span>
           <span
-            className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+            className="text-[8px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
             style={{ backgroundColor: `${prp.reduce.accent}20`, color: prp.reduce.accent }}
           >
-            LIVE
+            Live
           </span>
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
@@ -116,12 +116,12 @@ export function ChecklistsPRPBand({ todayChecklists, loading }: ChecklistsPRPBan
         style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
         <div className="flex items-center gap-1.5">
-          <span className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</span>
+          <span className={PILLAR_LABEL} style={{ color: prp.prove.text }}>Prove</span>
           <span
-            className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+            className="text-[8px] font-bold tracking-wider px-1.5 py-0.5 rounded-full"
             style={{ backgroundColor: `${prp.prove.accent}20`, color: prp.prove.accent }}
           >
-            LIVE
+            Live
           </span>
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Completed today</div>

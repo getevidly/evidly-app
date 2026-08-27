@@ -7,7 +7,7 @@ interface PRPBandProps {
   onSendToThirdParty: () => void;
 }
 
-const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
+const PILLAR_LABEL = 'text-[10px] font-bold tracking-[0.12em]';
 
 export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandProps) {
   return (
@@ -20,7 +20,7 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
         style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
         <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>
-          PREDICT
+          Predict
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Renewal Radar</div>
         <div className="text-2xl font-bold mt-2" style={{ color: prp.predict.accent }}>
@@ -45,7 +45,7 @@ export function PRPBand({ stats, onPredictClick, onSendToThirdParty }: PRPBandPr
         style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
         <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>
-          PROVE
+          Prove
         </div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Ready to Send</div>
         <div className="text-2xl font-bold mt-2" style={{ color: prp.prove.accent }}>

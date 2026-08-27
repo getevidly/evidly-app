@@ -5,7 +5,7 @@ interface CalendarPRPBandProps {
   stats: CalendarPRPStats;
 }
 
-const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
+const PILLAR_LABEL = 'text-[10px] font-bold tracking-[0.12em]';
 
 export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
   return (
@@ -15,7 +15,7 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
         style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>Predict</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Services due, not scheduled</div>
         <div className="text-2xl font-bold mt-2" style={{ color: prp.predict.accent }}>
           {stats.predictCount}
@@ -41,7 +41,7 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
         style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>Reduce</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
         <div className="mt-2 font-normal" style={{ color: prp.reduce.accent, fontSize: '18px' }}>
           Exposure pending
@@ -59,7 +59,7 @@ export function CalendarPRPBand({ stats }: CalendarPRPBandProps) {
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
         style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>Prove</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Completed with records</div>
         <div className="text-2xl font-bold mt-2" style={{ color: prp.prove.accent }}>
           {stats.proveCount} of {stats.proveTotal}

@@ -1,7 +1,7 @@
 import type { IncidentsPRPStats } from '../../hooks/incidents/useIncidentsPRPStats';
 import { prp } from '../../lib/designSystem';
 
-const PILLAR_LABEL = 'text-[10px] uppercase font-bold tracking-[0.12em]';
+const PILLAR_LABEL = 'text-[10px] font-bold tracking-[0.12em]';
 
 interface IncidentsPRPBandProps {
   stats: IncidentsPRPStats;
@@ -23,7 +23,7 @@ export function IncidentsPRPBand({
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
         style={{ borderTop: `3px solid ${prp.predict.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>PREDICT</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.predict.text }}>Predict</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Risk signals</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
@@ -60,7 +60,7 @@ export function IncidentsPRPBand({
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
         style={{ borderTop: `3px solid ${prp.reduce.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>REDUCE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.reduce.text }}>Reduce</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Exposure range</div>
         <div
           className="mt-2 font-normal"
@@ -81,7 +81,7 @@ export function IncidentsPRPBand({
         className="bg-white border border-[#E2DDD4] rounded-lg p-4 text-left"
         style={{ borderTop: `3px solid ${prp.prove.accent}` }}
       >
-        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>PROVE</div>
+        <div className={PILLAR_LABEL} style={{ color: prp.prove.text }}>Prove</div>
         <div className="text-[11px] text-[#8A93A6] mt-0.5">Resolved this week</div>
         {loading ? (
           <div className="h-8 w-16 mt-2 rounded bg-[#1E2D4D]/5 animate-pulse" />
