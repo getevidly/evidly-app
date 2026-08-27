@@ -1477,7 +1477,7 @@ export function IncidentLog() {
     return (
       <span style={{
         fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px',
-        color: config.color, backgroundColor: config.bg, textTransform: 'uppercase',
+        color: config.color, backgroundColor: config.bg,
       }}>
         {severityLabels[config.label] || config.label}
       </span>
@@ -1792,13 +1792,13 @@ export function IncidentLog() {
                   <div className={`grid gap-4 ${inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
                     {inc.photos.length > 0 && (
                       <div className={inc.resolutionPhotos.length > 0 ? 'sm:border-r sm:border-[#1E2D4D]/10 sm:pr-3' : ''}>
-                        <span className="text-xs font-semibold uppercase mb-2 block" style={{ color: '#ef4444' }}>{t('incidents.beforeIncident')}</span>
+                        <span className="text-xs font-semibold mb-2 block" style={{ color: '#ef4444' }}>{t('incidents.beforeIncident')}</span>
                         <PhotoGallery photos={inc.photos} title="Incident Photos" />
                       </div>
                     )}
                     {inc.resolutionPhotos.length > 0 && (
                       <div>
-                        <span className="text-xs font-semibold uppercase mb-2 block" style={{ color: '#22c55e' }}>{t('incidents.afterResolution')}</span>
+                        <span className="text-xs font-semibold mb-2 block" style={{ color: '#22c55e' }}>{t('incidents.afterResolution')}</span>
                         <PhotoGallery photos={inc.resolutionPhotos} title="Resolution Photos" />
                       </div>
                     )}
@@ -2211,7 +2211,7 @@ export function IncidentLog() {
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="text-sm font-semibold text-[#1E2D4D] truncate">{tpl.title}</h4>
                             <span
-                              className="text-xs font-bold px-1.5 py-0.5 rounded-full uppercase shrink-0"
+                              className="text-xs font-bold px-1.5 py-0.5 rounded-full shrink-0"
                               style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
                             >
                               {sev.label}
@@ -2666,11 +2666,11 @@ export function IncidentLog() {
             <div className="space-y-3">
               {hasAgingSection && (
                 <>
-                  <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-1">
+                  <p className="text-[10px] font-bold tracking-[0.12em] text-[#8A93A6] pt-1">
                     Aging beyond 24h · Predict signal
                   </p>
                   {agingList.map(renderIncidentCard)}
-                  <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-3">
+                  <p className="text-[10px] font-bold tracking-[0.12em] text-[#8A93A6] pt-3">
                     All incidents
                   </p>
                 </>

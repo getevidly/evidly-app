@@ -448,7 +448,7 @@ export function Deficiencies() {
       <div className="space-y-3">
         {approachingItems.length > 0 && (
           <>
-            <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+            <p className="text-[10px] font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
               Approaching correction deadline
             </p>
             {approachingItems.map(renderDeficiencyCard)}
@@ -456,14 +456,14 @@ export function Deficiencies() {
         )}
         {recurringOnlyItems.length > 0 && (
           <>
-            <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+            <p className="text-[10px] font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
               Recurring violations
             </p>
             {recurringOnlyItems.map(renderDeficiencyCard)}
           </>
         )}
         {remainingItems.length > 0 && (approachingItems.length > 0 || recurringOnlyItems.length > 0) && (
-          <p className="text-[10px] uppercase font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
+          <p className="text-[10px] font-bold tracking-[0.12em] text-[#8A93A6] pt-2">
             All deficiencies
           </p>
         )}
