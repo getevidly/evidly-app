@@ -14,6 +14,11 @@ import { useDashboardLocation } from '../../contexts/DashboardLocationContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOrgSummary } from '../../hooks/useOrgSummary';
 import { useDriftCatches } from '../../hooks/useDriftCatches';
+import { useRiskFeed } from '../../hooks/useRiskFeed';
+import { PortfolioSnapshot as RiskPortfolioSnapshot } from './risk/PortfolioSnapshot';
+import { KitchenOverviewCards } from './risk/KitchenOverviewCards';
+import { RiskFeed } from './risk/RiskFeed';
+import { TreatProveStrips } from './risk/TreatProveStrips';
 import { useDriftRouting } from '../../hooks/useDriftRouting';
 import { useAdvisorBriefings } from '../../hooks/useAdvisorBriefings';
 import { useUpcomingServicesList } from '../../hooks/useUpcomingServicesList';
@@ -130,6 +135,20 @@ export function DashboardView() {
   const businessProof = useBusinessProofStatus(selectedLocationId || undefined);
   const risk = useWhatsAtRisk(selectedLocationId);
 
+  // One severity-ordered view of everything open. Loaded org-wide so switching
+  // the location tab re-scopes without a refetch.
+  const [riskVersion, setRiskVersion] = useState(0);
+  const { items: riskItems, byLocation, portfolioNextDue, counts: riskCounts, loading: riskLoading } = useRiskFeed();
+  void riskVersion;
+
+  // Org-level items (business records, vendor docs) stay visible on every tab.
+  const scopedRiskItems = selectedLocationId
+    ? riskItems.filter(i => i.locationId === selectedLocationId || i.orgLevel)
+    : riskItems;
+  const scopeName = selectedLocationId
+    ? locations.find(l => l.id === selectedLocationId)?.name ?? null
+    : null;
+
   // Explore: requirement catalog + what-if toggle state
   const [reqCatalog, setReqCatalog] = useState<CatalogItem[]>([]);
   const [catalogReady, setCatalogReady] = useState(false);
@@ -213,6 +232,21 @@ export function DashboardView() {
         watchingCount={watchingCount}
       />
 
+      {/* Portfolio snapshot + kitchen cards — the org layer, all-locations only */}
+      {selectedLocationId === null && isMultiLocation && !riskLoading && (
+        <>
+          <RiskPortfolioSnapshot
+            counts={riskCounts}
+            byLocation={byLocation}
+            nextDue={portfolioNextDue}
+          />
+          <KitchenOverviewCards
+            byLocation={byLocation}
+            onViewKitchen={setSelectedLocationId}
+          />
+        </>
+      )}
+
       {/* Records on file — replaces the old COMPLIANCE STATUS rings */}
       <RecordsOnFile locationId={selectedLocationId} />
 
@@ -221,6 +255,17 @@ export function DashboardView() {
 
       {/* Exposure Band — real at-risk figures from useWhatsAtRisk */}
       <ExposureBand risk={risk} locationCount={locationCount} isAllLocations={selectedLocationId === null} projection={projection} />
+
+      {/* One severity-ordered feed — drift, records, incidents, actions */}
+      <RiskFeed
+        items={scopedRiskItems}
+        loading={riskLoading}
+        scopeLabel={scopeName}
+        onCreated={() => setRiskVersion(v => v + 1)}
+      />
+
+      {/* Treat + prove */}
+      <TreatProveStrips locationId={selectedLocationId} />
 
       {/* Who can ask — five asker cards */}
       <WhoCanAsk />
