@@ -85,10 +85,20 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
 
     async function load() {
       try {
-        // Fetch catches
+        // Fetch catches.
+        //
+        // The locations embed is a LEFT join on purpose — never !inner.
+        // RLS on locations is strictly narrower than RLS on drift_catches:
+        // drift_catches_select_org scopes by org_id alone, while the locations
+        // SELECT policy runs can_access_location(), which requires a
+        // user_location_access row covering that location (20260914000000).
+        // Under !inner, any catch whose location the viewer cannot see is
+        // dropped from the result entirely rather than merely losing its name,
+        // so a viewer without a covering ULA row sees zero drift despite the
+        // org holding many. The name is optional here; callers fall back.
         let catchQ = supabase
           .from('drift_catches')
-          .select('*, locations!inner(name)')
+          .select('*, locations(name)')
           .eq('org_id', orgId)
           .order('detected_at', { ascending: false });
 
