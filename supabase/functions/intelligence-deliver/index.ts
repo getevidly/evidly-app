@@ -619,22 +619,34 @@ async function sendEmailNotifications(
             html,
           });
 
-          // Log to admin_event_log (audit trail)
-          await supabase.from('admin_event_log').insert({
-            event_type: 'intelligence_email_sent',
-            entity_type: entityType,
-            entity_id: entityId,
-            description: result
+          // Log to admin_event_log (audit trail).
+          // The table's columns are level | category | message | metadata —
+          // it has no event_type, entity_type, entity_id or description. The
+          // previous insert named all four, so every send failed to write its
+          // audit row and the failure was swallowed (the insert is not awaited
+          // for its error). The event name lives in `category`, matching
+          // crawl-monitor and k2c-processor; the semantic detail moves into
+          // the metadata jsonb.
+          const { error: logErr } = await supabase.from('admin_event_log').insert({
+            level: result ? 'INFO' : 'ERROR',
+            category: 'intelligence_email_sent',
+            message: result
               ? `"${title}" emailed to ${email}`
               : `"${title}" email FAILED to ${email}`,
             metadata: {
+              entity_type: entityType,
+              entity_id: entityId,
               recipient: email,
               recipient_name: user.full_name,
               org_id: orgId,
               resend_id: result?.id || null,
               priority,
+              delivered: !!result,
             },
           });
+          if (logErr) {
+            console.error('[intelligence-deliver] admin_event_log insert failed:', logErr.message);
+          }
 
           if (result) emailed++;
         } catch (userErr) {

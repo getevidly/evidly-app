@@ -202,7 +202,7 @@ Return a JSON object with these exact fields:
 {
   "title": "string — clear, specific, newsworthy headline (max 100 chars)",
   "summary": "string — 2-3 sentence executive summary of what happened and why it matters",
-  "category": "recall_alert|outbreak_alert|enforcement_surge|nfpa_update|fire_safety|food_code_update|food_handler|grease_trap|hood_cleaning|ventilation|seasonal_risk|legislative|info",
+  "category": "recall_alert|outbreak_alert|food_code_update|nfpa_update|fire_safety|hood_cleaning|ventilation|grease_trap|enforcement_surge|food_handler|legislative|info|not_applicable",
 
 CATEGORY ASSIGNMENT RULES:
 - nfpa_update: NFPA 96, NFPA 72, fire code adoptions, Title 24 Part 9
@@ -215,10 +215,11 @@ CATEGORY ASSIGNMENT RULES:
 - recall_alert: FDA/CPSC product recall with confirmed or potential CA distribution
 - outbreak_alert: CDC/CDPH foodborne outbreak with traced or suspected CA source
 - enforcement_surge: Cal/OSHA, county health inspection campaigns, enforcement actions
-- seasonal_risk: heat advisories, wildfire smoke, drought water restriction, pest season
 - legislative: pending bills, rulemaking calendars, legislative session tracking
-- info: insufficient data, system maintenance, market data, no actionable intelligence
-- Never use a generic "regulatory" category — always pick the most specific match above.
+- info: genuinely regulatory or advisory but general — no operational action for a kitchen
+- not_applicable: the item declares its own irrelevance, covers a non-kitchen consumer product, is an empty-scrape or bill-tracker artifact with no identified bill, or is a website-maintenance/outage notice
+- Never use a generic "regulatory" category — regulatory_updates and regulatory_change are NOT valid values. Always pick the most specific match above.
+- seasonal_risk is retired — weather and seasonal conditions are not a category. Classify such items as info, or not_applicable when there is no kitchen action.
 
   "severity": "critical|high|medium|low|info",
   "revenue_risk": "critical|high|moderate|low|none — critical: mandatory closure or recall with confirmed CA distribution; high: voluntary recall or service disruption >1 week; moderate: menu changes or supplier switch needed; low: monitoring only; none: no revenue impact",
@@ -686,6 +687,43 @@ function mapScope(scope: string): string {
   return map[scope] || "moderate";
 }
 
+/**
+ * The ONLY categories that may reach intelligence_signals.category.
+ * Identical to the list intelligence-recategorize classified against, so the
+ * crawler cannot reopen the catch-all the relabel pass just closed.
+ * regulatory_updates, regulatory_change and seasonal_risk are retired.
+ */
+const ALLOWED_CATEGORIES = new Set([
+  "recall_alert",
+  "outbreak_alert",
+  "food_code_update",
+  "nfpa_update",
+  "fire_safety",
+  "hood_cleaning",
+  "ventilation",
+  "grease_trap",
+  "enforcement_surge",
+  "food_handler",
+  "legislative",
+  "info",
+  "not_applicable",
+]);
+
+/**
+ * Normalize whatever category is about to be written — the AI's value or the
+ * source catalog's default, since several SOURCE_CATALOG entries still carry
+ * retired values. Anything outside the list falls back to 'info' rather than
+ * being written through.
+ */
+function normalizeCategory(raw: string | null | undefined, sourceId: string): string {
+  const cat = (raw || "").trim().toLowerCase();
+  if (ALLOWED_CATEGORIES.has(cat)) return cat;
+  console.warn(
+    `[intelligence-collect] category "${raw}" from ${sourceId} is not in the allowed list — falling back to "info"`,
+  );
+  return "info";
+}
+
 /** Map source.category → DB signal_type (must match CHECK constraint) */
 function mapSourceType(category: string): string {
   // CHECK constraint values: recall, regulatory_change, inspection_result,
@@ -964,12 +1002,19 @@ Deno.serve(async (req: Request) => {
         countiesAffected = [sourceScoping.county.toLowerCase()];
       }
 
+      const resolvedCategory = normalizeCategory(
+        insight.category || fi.source.category,
+        fi.source.id,
+      );
+
       return {
         original_url: fi.item.source_url,
         source_name: insight.source_name || fi.source.name,
         source_key: fi.source.id, // Map source ID to source_key column
-        signal_type: mapSourceType(insight.category || fi.source.category),
-        category: insight.category || fi.source.category,
+        signal_type: mapSourceType(resolvedCategory),
+        category: resolvedCategory,
+        // Junk never enters the routing ladder — held at insert.
+        routing_tier: resolvedCategory === "not_applicable" ? "hold" : undefined,
         title: (insight.title || fi.item.title || "").slice(0, 200),
         content_summary: (insight.summary || "").slice(0, 2000),
         counties_affected: countiesAffected,
@@ -1098,7 +1143,7 @@ Deno.serve(async (req: Request) => {
       const recentCutoff = new Date(startTime).toISOString();
       const { data: recentSignals } = await supabase
         .from("intelligence_signals")
-        .select("id, signal_type, revenue_risk_level, liability_risk_level, cost_risk_level, operational_risk_level")
+        .select("id, category, signal_type, revenue_risk_level, liability_risk_level, cost_risk_level, operational_risk_level")
         .gte("created_at", recentCutoff);
 
       if (recentSignals && recentSignals.length > 0) {
@@ -1122,7 +1167,10 @@ Deno.serve(async (req: Request) => {
           let reason: string;
           let reviewDeadline: string | null = null;
 
-          if (sig.signal_type && holdTypes.has(sig.signal_type)) {
+          if (sig.category === "not_applicable") {
+            // Set at insert; restated here so the ladder cannot promote it.
+            tier = "hold"; reason = "Category not_applicable — no kitchen relevance";
+          } else if (sig.signal_type && holdTypes.has(sig.signal_type)) {
             tier = "hold"; reason = `Signal type "${sig.signal_type}" requires review`;
             reviewDeadline = new Date(now + 24 * 3600000).toISOString();
           } else if (hasCriticalRisk) {
