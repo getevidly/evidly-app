@@ -113,7 +113,21 @@ export function CreateCorrectiveActionModal({
       ? source.category
       : inferPillar(initialTitle) ?? inferPillar(source.sourceLabel) ?? 'facility_services';
 
-  const canCreate = !!title.trim() && !!assignee && !saving;
+  // Second guard, independent of the hook's: an option whose value is empty is
+  // indistinguishable from the placeholder, so choosing it sets '' and Create
+  // stays disabled with no explanation. Never render one.
+  const selectableMembers = members.filter(m => !!m.id);
+  if (selectableMembers.length !== members.length) {
+    console.error(
+      '[CreateCorrectiveActionModal] members without an id were passed to the assignee picker and skipped:',
+      members.filter(m => !m.id),
+    );
+  }
+
+  // assignee holds user_profiles.id — PRIMARY KEY REFERENCES auth.users(id) —
+  // which is the id space corrective_actions.assignee_id is written from.
+  const selectedMember = selectableMembers.find(m => m.id === assignee) ?? null;
+  const canCreate = !!title.trim() && !!selectedMember && !saving;
 
   const handleCreate = async () => {
     if (!profile?.organization_id) {
@@ -127,8 +141,7 @@ export function CreateCorrectiveActionModal({
 
     setSaving(true);
     try {
-      const member = members.find(m => m.id === assignee);
-      const assigneeName = member?.full_name || member?.email || null;
+      const assigneeName = selectedMember?.full_name || selectedMember?.email || null;
 
       // facility_services has no pillar — the CHECK only allows the two pillars.
       const pillar = effectiveCategory === 'facility_services' ? null : effectiveCategory;
@@ -275,7 +288,7 @@ export function CreateCorrectiveActionModal({
             <label style={labelStyle} htmlFor="ca-assignee">Assignee <span style={{ color: '#B3261E' }}>*</span></label>
             {membersLoading ? (
               <p className="text-[12px]" style={{ color: MUTED }}>Loading team…</p>
-            ) : members.length === 0 ? (
+            ) : selectableMembers.length === 0 ? (
               // An empty required select silently dead-ends the whole flow, so
               // replace it outright and name what came back empty.
               <>
@@ -296,7 +309,7 @@ export function CreateCorrectiveActionModal({
                 style={fieldStyle}
               >
                 <option value="">Choose someone…</option>
-                {members.map(m => (
+                {selectableMembers.map(m => (
                   <option key={m.id} value={m.id}>{m.full_name || m.email || m.id}</option>
                 ))}
               </select>
@@ -308,7 +321,7 @@ export function CreateCorrectiveActionModal({
             <p className="text-[11px]" style={{ color: MUTED }}>
               {!title.trim()
                 ? 'Add a title to create'
-                : members.length === 0
+                : selectableMembers.length === 0
                   ? 'Cannot create without a team member to assign'
                   : 'Choose an assignee to create'}
             </p>

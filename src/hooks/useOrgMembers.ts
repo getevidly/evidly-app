@@ -31,6 +31,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 
 export interface OrgMember {
+  /**
+   * user_profiles.id, which is `PRIMARY KEY REFERENCES auth.users(id)` — the
+   * auth user id, the same id space corrective_actions.assignee_id holds.
+   * Guaranteed non-empty: rows without one are dropped in fetchMembers, since
+   * an <option> whose value is empty is indistinguishable from the "choose
+   * someone" placeholder and can never register a selection.
+   */
   id: string;
   full_name: string | null;
   email: string | null;
@@ -75,15 +82,32 @@ export function useOrgMembers() {
         return;
       }
 
-      const result: OrgMember[] = (data ?? []).map(row => {
-        const r = row as { id: string; full_name: string | null; email: string | null; role: string | null };
-        return {
+      const rows = (data ?? []) as Array<{
+        id: string | null;
+        full_name: string | null;
+        email: string | null;
+        role: string | null;
+      }>;
+
+      // A member with no id renders a name but carries no value, so selecting
+      // it sets the empty string — same as the placeholder. Drop those rather
+      // than render an option that cannot be chosen, and say so loudly.
+      const unusable = rows.filter(r => !r.id);
+      if (unusable.length > 0) {
+        console.error(
+          `[useOrgMembers] dropped ${unusable.length} user_profiles row(s) with no id — an option with an empty value cannot register a selection:`,
+          unusable,
+        );
+      }
+
+      const result: OrgMember[] = rows
+        .filter((r): r is typeof r & { id: string } => !!r.id)
+        .map(r => ({
           id: r.id,
           full_name: r.full_name ?? null,
           email: r.email ?? null,
           role: r.role,
-        };
-      });
+        }));
 
       // Sort alphabetically by display name
       result.sort((a, b) => {
