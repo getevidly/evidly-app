@@ -43,6 +43,16 @@ export interface DriftCatchWithAcks extends DriftCatchRow {
 interface UseDriftCatchesOptions {
   pillarFilter?: 'food_safety' | 'fire_safety';
   locationIdFilter?: string;
+  /**
+   * Statuses to fetch. Omitted means no status filter at all — the historical
+   * behavior every consumer but the risk feed still relies on (the Alerts page
+   * has a Resolved tab; PrpHeader counts status 'ack').
+   */
+  statuses?: string[];
+  /** Detection window in days; null fetches the full history. Default 90. */
+  windowDays?: number | null;
+  /** Row cap; null fetches unbounded. Default 10. */
+  limit?: number | null;
 }
 
 interface UseDriftCatchesResult {
@@ -59,6 +69,12 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
   const orgId = profile?.organization_id;
   const userId = profile?.id;
 
+  // Defaults preserve today's query exactly: no status filter, 90 days, 10 rows.
+  const statuses = options?.statuses;
+  const statusKey = statuses ? statuses.join(',') : null;
+  const windowDays = options?.windowDays === undefined ? 90 : options.windowDays;
+  const rowLimit = options?.limit === undefined ? 10 : options.limit;
+
   const [catches, setCatches] = useState<DriftCatchWithAcks[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -69,18 +85,24 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
 
     async function load() {
       try {
-        const ninetyDaysAgo = new Date();
-        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-
         // Fetch catches
         let catchQ = supabase
           .from('drift_catches')
           .select('*, locations!inner(name)')
           .eq('org_id', orgId)
-          .gte('detected_at', ninetyDaysAgo.toISOString())
-          .order('detected_at', { ascending: false })
-          .limit(10);
+          .order('detected_at', { ascending: false });
 
+        if (windowDays !== null) {
+          const windowStart = new Date();
+          windowStart.setDate(windowStart.getDate() - windowDays);
+          catchQ = catchQ.gte('detected_at', windowStart.toISOString());
+        }
+        if (rowLimit !== null) {
+          catchQ = catchQ.limit(rowLimit);
+        }
+        if (statuses && statuses.length > 0) {
+          catchQ = catchQ.in('status', statuses);
+        }
         if (options?.pillarFilter) {
           catchQ = catchQ.eq('pillar', options.pillarFilter);
         }
@@ -158,7 +180,7 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
 
     load();
     return () => { cancelled = true; };
-  }, [orgId, userId, userRole, options?.pillarFilter, options?.locationIdFilter]);
+  }, [orgId, userId, userRole, options?.pillarFilter, options?.locationIdFilter, statusKey, windowDays, rowLimit]);
 
   const totalSaved = catches.reduce((sum, c) => sum + c.estimated_savings_cents, 0) / 100;
 

@@ -119,7 +119,9 @@ export function RiskFeedRow({ item, onCreated, onAcknowledge, roleLabel }: Props
 
   const routingText = item.kind === 'drift' ? buildRoutingText(item.recipients || []) : null;
   const escalationText = item.kind === 'drift' ? buildEscalationText(item.recipients || []) : null;
-  const canAcknowledge = item.kind === 'drift' && !!onAcknowledge;
+  // Acknowledge is an open-drift affordance only. A 'reduced' catch has
+  // already been acted on, so it carries the spawn / open-action path alone.
+  const canAcknowledge = item.kind === 'drift' && item.driftStatus === 'open' && !!onAcknowledge;
 
   const category: CACategory =
     item.pillar === 'food_safety' || item.pillar === 'fire_safety' ? item.pillar : 'facility_services';

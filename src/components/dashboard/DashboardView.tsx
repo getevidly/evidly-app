@@ -31,6 +31,11 @@ import { useRole } from '../../contexts/RoleContext';
 import { daysSince } from '../../lib/daysSince';
 import { supabase } from '../../lib/supabase';
 
+// The feed's drift inputs: open + reduced, org-wide, full history, uncapped.
+// Every other useDriftCatches consumer passes nothing and keeps the hook's
+// historical defaults (no status filter, 90 days, 10 rows).
+const DRIFT_FEED_OPTIONS = { statuses: ['open', 'reduced'], windowDays: null, limit: null };
+
 // ─── Brand tokens ────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
 const GOLD = '#B24A2E';
@@ -116,11 +121,14 @@ export function DashboardView() {
   // Suppress lint: refetchKey forces re-mount of hooks below
   void refetchKey;
 
-  // Loaded org-wide: the feed's portfolio snapshot and kitchen cards aggregate
-  // drift across every kitchen, so the tab scope is applied client-side below.
-  const { catches, acknowledge } = useDriftCatches();
-  const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
-  const routingMap = useDriftRouting(openCatches.map(c => c.id));
+  // Loaded org-wide and unbounded: the feed's spec is open + reduced across the
+  // full history, and its portfolio snapshot and kitchen cards aggregate drift
+  // across every kitchen, so the tab scope is applied client-side below.
+  const { catches, acknowledge } = useDriftCatches(DRIFT_FEED_OPTIONS);
+  const feedCatches = catches.filter(
+    c => (c.status === 'open' || c.status === 'reduced') && !c.userHasAcked,
+  );
+  const routingMap = useDriftRouting(feedCatches.map(c => c.id));
 
   const { food_safety: foodBriefing, fire_safety: fireBriefing } = useAdvisorBriefings({ locationIdFilter: selectedLocationId || undefined });
 
@@ -137,7 +145,7 @@ export function DashboardView() {
   // the location tab re-scopes without a refetch.
   const [riskVersion, setRiskVersion] = useState(0);
   const { items: riskItems, byLocation, portfolioNextDue, counts: riskCounts, loading: riskLoading } =
-    useRiskFeed({ driftCatches: openCatches, routingMap });
+    useRiskFeed({ driftCatches: feedCatches, routingMap });
   void riskVersion;
 
   // Org-level items (business records, vendor docs) stay visible on every tab.
@@ -203,9 +211,17 @@ export function DashboardView() {
     };
   })() : null;
 
-  const alertCount = selectedLocationId
-    ? openCatches.filter(c => c.location_id === selectedLocationId).length
-    : openCatches.length;
+  // Hero keeps its original definition — open catches inside the 90-day window,
+  // tab-scoped — so its number still means what it meant. The hook's old
+  // limit(10) no longer truncates it, so orgs carrying more than ten catches
+  // now see the true (higher) count instead of a capped one.
+  const heroWindowStart = Date.now() - 90 * 24 * 60 * 60 * 1000;
+  const alertCount = feedCatches.filter(
+    c =>
+      c.status === 'open' &&
+      new Date(c.detected_at).getTime() >= heroWindowStart &&
+      (!selectedLocationId || c.location_id === selectedLocationId),
+  ).length;
 
   // Watching bar: total requirement count across all locations
   const watchingCount = (fireProof.total + foodProof.total) * Math.max(locationCount, 1);

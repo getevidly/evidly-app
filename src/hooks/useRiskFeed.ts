@@ -57,6 +57,8 @@ export interface RiskFeedItem {
   pillar?: 'food_safety' | 'fire_safety' | null;
   /** Drift rows only — who the catch was routed to, for the escalation line. */
   recipients?: DriftRecipient[];
+  /** Drift rows only — 'open' or 'reduced'. Gates the acknowledge affordance. */
+  driftStatus?: string;
 }
 
 export interface LocationRisk {
@@ -228,6 +230,7 @@ export function useRiskFeed(options?: UseRiskFeedOptions): UseRiskFeedResult {
           href: '',
           pillar: d.pillar,
           recipients: routingRef.current?.[d.id] || [],
+          driftStatus: d.status,
         });
       }
 
