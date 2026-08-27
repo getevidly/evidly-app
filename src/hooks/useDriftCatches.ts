@@ -136,9 +136,22 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
           .in('drift_catch_id', catchIds);
 
         if (cancelled) return;
-        if (ackErr) throw new Error(ackErr.message);
 
-        // Group acks by drift_catch_id
+        // Non-fatal on purpose. The catches query already succeeded, so those
+        // rows must reach the UI. Throwing here skipped setCatches entirely and
+        // rendered an empty feed with nothing surfaced — the error state is the
+        // only signal, and DashboardView discards it. Losing acks costs only
+        // acknowledgment state: every catch reads as un-acked, so the
+        // acknowledge affordance shows and a duplicate insert is caught by the
+        // 'duplicate' branch in acknowledge() below.
+        if (ackErr) {
+          console.error('[useDriftCatches] acknowledgments fetch failed; rendering catches without ack state:', ackErr.message);
+          setError(new Error(ackErr.message));
+        }
+
+        // Group acks by drift_catch_id. Empty when the fetch above failed —
+        // ackRows is null on error, so this loop is a no-op and every catch
+        // falls through with an empty ack list.
         const ackMap = new Map<string, DriftAck[]>();
         for (const ack of ackRows || []) {
           const a = ack as Record<string, unknown>;
