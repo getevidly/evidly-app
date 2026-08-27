@@ -124,7 +124,7 @@ export function DashboardView() {
   // Loaded org-wide and unbounded: the feed's spec is open + reduced across the
   // full history, and its portfolio snapshot and kitchen cards aggregate drift
   // across every kitchen, so the tab scope is applied client-side below.
-  const { catches, acknowledge } = useDriftCatches(DRIFT_FEED_OPTIONS);
+  const { catches, acknowledge, error: driftError } = useDriftCatches(DRIFT_FEED_OPTIONS);
   const feedCatches = catches.filter(
     c => (c.status === 'open' || c.status === 'reduced') && !c.userHasAcked,
   );
@@ -281,6 +281,7 @@ export function DashboardView() {
         onCreated={() => setRiskVersion(v => v + 1)}
         onAcknowledge={acknowledge}
         roleLabel={roleLabel}
+        loadFailed={!!driftError}
       />
 
       {/* Treat + prove */}

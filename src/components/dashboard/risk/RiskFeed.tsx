@@ -24,10 +24,18 @@ interface Props {
   /** Passed through to drift rows — the acknowledge path AlertsSection held. */
   onAcknowledge?: (id: string) => void;
   roleLabel?: string;
+  /**
+   * A source query failed. The feed may still hold items from the sources that
+   * succeeded, so this is a caveat on the list rather than a replacement for
+   * it — but it must suppress the all-clear copy, which would otherwise report
+   * a failed load as a clean kitchen.
+   */
+  loadFailed?: boolean;
 }
 
-export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge, roleLabel }: Props) {
+export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge, roleLabel, loadFailed }: Props) {
   const bands = [...SEVERITY_ASC].reverse();
+  const failureLine = "Some items couldn't load — refresh to retry.";
 
   if (loading) {
     return (
@@ -47,10 +55,16 @@ export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge,
 
       {items.length === 0 ? (
         <div className="bg-white border rounded-xl p-5 text-center" style={{ borderColor: LINE }}>
-          <p className="text-[13px]" style={{ color: NAVY }}>Nothing open.</p>
-          <p className="text-[12px] mt-1" style={{ color: MUTED }}>
-            Records current — EvidLY is watching the schedule.
-          </p>
+          {loadFailed ? (
+            <p className="text-[13px]" style={{ color: MUTED }}>{failureLine}</p>
+          ) : (
+            <>
+              <p className="text-[13px]" style={{ color: NAVY }}>Nothing open.</p>
+              <p className="text-[12px] mt-1" style={{ color: MUTED }}>
+                Records current — EvidLY is watching the schedule.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
@@ -76,6 +90,9 @@ export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge,
               </div>
             );
           })}
+          {loadFailed && (
+            <p className="text-[12px]" style={{ color: MUTED }}>{failureLine}</p>
+          )}
         </div>
       )}
     </div>
