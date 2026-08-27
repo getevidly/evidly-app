@@ -363,3 +363,225 @@ export async function sha256(data: ArrayBuffer): Promise<string> {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
+
+// ---------------------------------------------------------------------------
+// 6. TIMESTAMP FIELD CANONICALIZATION (additive - used by 3e/3f only)
+//
+// Every timestamptz that enters a canonical JSON goes through canonicalTimestamp,
+// so a value read back from Postgres re-canonicalizes to the identical 20-char
+// string no matter what fractional-second precision the driver hands back.
+//
+// null / undefined / empty  ->  null (JSON null literal)
+// unparseable               ->  the raw value, unchanged (never silently drops data)
+// ---------------------------------------------------------------------------
+export function canonicalTimestampField(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
+  const d = new Date(value as string);
+  if (isNaN(d.getTime())) return String(value);
+  return canonicalTimestamp(d);
+}
+
+// ---------------------------------------------------------------------------
+// Shared row normalizer for the two history arrays (timeline / CA history).
+//
+// Sorts by (created_at, id) ascending - a total order - and canonicalizes each
+// row created_at. Anything that is not an array comes back as an empty array,
+// so a null column and an empty column hash identically.
+//
+// sortedJsonStringify sorts object KEYS, not array elements, so this explicit
+// sort is what makes array order reproducible between seal and verify.
+// ---------------------------------------------------------------------------
+function canonicalizeHistoryRows(value: unknown): Record<string, unknown>[] {
+  if (!Array.isArray(value)) return [];
+  const rows = value.map((row) => {
+    const r = { ...(row as Record<string, unknown>) };
+    if ("created_at" in r) r.created_at = canonicalTimestampField(r.created_at);
+    return r;
+  });
+  rows.sort((a, b) => {
+    const at = String(a.created_at ?? "");
+    const bt = String(b.created_at ?? "");
+    if (at !== bt) return at < bt ? -1 : 1;
+    const ai = String(a.id ?? "");
+    const bi = String(b.id ?? "");
+    return ai < bi ? -1 : ai > bi ? 1 : 0;
+  });
+  return rows;
+}
+
+// ---------------------------------------------------------------------------
+// 3e. CANONICAL INCIDENT JSON
+//
+// FIXED KEY ORDER - this is the contract. Thirty keys: the twenty-eight
+// substantive incident columns, then timeline, then photo_hashes.
+// Do NOT sort the top-level keys. Do NOT use JSON.stringify on an object literal.
+//
+// Key order (immutable):
+//    1. id                            16. assigned_to
+//    2. organization_id               17. reported_by
+//    3. location_id                   18. requires_regulatory_report
+//    4. location_name                 19. regulatory_citation
+//    5. incident_number               20. root_cause
+//    6. category                      21. corrective_action
+//    7. type                          22. resolution_summary
+//    8. severity                      23. resolved_at    (canonical ts)
+//    9. status                        24. resolved_by
+//   10. title                         25. verified_at    (canonical ts)
+//   11. description                   26. verified_by
+//   12. urgency_label                 27. linked_corrective_action_id
+//   13. source_type                   28. created_at     (canonical ts)
+//   14. source_id                     29. timeline       (jsonb array)
+//   15. source_label                  30. photo_hashes   (jsonb array)
+//
+// timeline: incident_timeline rows, each {id, action, status, performed_by,
+//   notes, created_at}, normalized by canonicalizeHistoryRows - total ordering
+//   on (created_at, id) and per-row timestamp canonicalization.
+//
+// photo_hashes: the array written to incident_seals.photo_hashes verbatim -
+//   {mode:"storage", path, sha256} or {mode:"inline", index, sha256}. The caller
+//   supplies it already in photos-then-resolution_photos order.
+// ---------------------------------------------------------------------------
+export function buildCanonicalIncidentJson(
+  fields: Record<string, unknown>,
+): string {
+  const CANONICAL_KEYS: string[] = [
+    "id",
+    "organization_id",
+    "location_id",
+    "location_name",
+    "incident_number",
+    "category",
+    "type",
+    "severity",
+    "status",
+    "title",
+    "description",
+    "urgency_label",
+    "source_type",
+    "source_id",
+    "source_label",
+    "assigned_to",
+    "reported_by",
+    "requires_regulatory_report",
+    "regulatory_citation",
+    "root_cause",
+    "corrective_action",
+    "resolution_summary",
+    "resolved_at",
+    "resolved_by",
+    "verified_at",
+    "verified_by",
+    "linked_corrective_action_id",
+    "created_at",
+    "timeline",
+    "photo_hashes",
+  ];
+
+  const TIMESTAMP_KEYS = new Set<string>([
+    "resolved_at",
+    "verified_at",
+    "created_at",
+  ]);
+
+  const parts: string[] = [];
+  for (const key of CANONICAL_KEYS) {
+    const val = fields[key] ?? null;
+    let serialized: string;
+    if (key === "timeline") {
+      serialized = sortedJsonStringify(canonicalizeHistoryRows(val));
+    } else if (key === "photo_hashes") {
+      serialized = sortedJsonStringify(val);
+    } else if (TIMESTAMP_KEYS.has(key)) {
+      serialized = JSON.stringify(canonicalTimestampField(val));
+    } else {
+      serialized = JSON.stringify(val);
+    }
+    parts.push(JSON.stringify(key) + ":" + serialized);
+  }
+  return "{" + parts.join(",") + "}";
+}
+
+// ---------------------------------------------------------------------------
+// 3f. CANONICAL CORRECTIVE ACTION JSON
+//
+// FIXED KEY ORDER - this is the contract. Thirty-two keys: the thirty
+// substantive corrective_actions columns, then history, then notes.
+// Do NOT sort the top-level keys.
+//
+// Timestamp columns (canonicalized): assigned_at, completed_at, resolved_at,
+//   verified_at, created_at.
+//
+// due_date is a DATE column, not timestamptz. It is serialized as the plain
+//   "YYYY-MM-DD" string Postgres returns and is never widened to a timestamp,
+//   so a date cannot drift by a timezone hour between seal and verify.
+//
+// history: corrective_action_history rows, each {id, action, from_value,
+//   to_value, performed_by, performed_by_name, detail, created_at}, normalized
+//   by canonicalizeHistoryRows - the same total ordering used for 3e timeline.
+//
+// notes: the jsonb column exactly as stored. sortedJsonStringify sorts its keys
+//   recursively, so insertion order inside the blob cannot move the hash.
+// ---------------------------------------------------------------------------
+export function buildCanonicalCorrectiveActionJson(
+  fields: Record<string, unknown>,
+): string {
+  const CANONICAL_KEYS: string[] = [
+    "id",
+    "organization_id",
+    "location_id",
+    "title",
+    "description",
+    "category",
+    "pillar",
+    "severity",
+    "status",
+    "source",
+    "source_type",
+    "source_id",
+    "assignee_id",
+    "assignee_name",
+    "assigned_by_user_id",
+    "assigned_at",
+    "root_cause",
+    "corrective_steps",
+    "preventive_measures",
+    "regulation_reference",
+    "due_date",
+    "completed_at",
+    "resolved_at",
+    "resolved_by",
+    "resolution_note",
+    "verified_at",
+    "verified_by",
+    "verification_note",
+    "created_by",
+    "created_at",
+    "history",
+    "notes",
+  ];
+
+  const TIMESTAMP_KEYS = new Set<string>([
+    "assigned_at",
+    "completed_at",
+    "resolved_at",
+    "verified_at",
+    "created_at",
+  ]);
+
+  const parts: string[] = [];
+  for (const key of CANONICAL_KEYS) {
+    const val = fields[key] ?? null;
+    let serialized: string;
+    if (key === "history") {
+      serialized = sortedJsonStringify(canonicalizeHistoryRows(val));
+    } else if (key === "notes") {
+      serialized = sortedJsonStringify(val);
+    } else if (TIMESTAMP_KEYS.has(key)) {
+      serialized = JSON.stringify(canonicalTimestampField(val));
+    } else {
+      serialized = JSON.stringify(val);
+    }
+    parts.push(JSON.stringify(key) + ":" + serialized);
+  }
+  return "{" + parts.join(",") + "}";
+}
