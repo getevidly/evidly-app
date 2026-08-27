@@ -6,6 +6,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
@@ -217,7 +218,13 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
   const totalSaved = catches.reduce((sum, c) => sum + c.estimated_savings_cents, 0) / 100;
 
   const acknowledge = useCallback((driftCatchId: string) => {
-    if (!orgId || !userId || !userRole) return;
+    // Used to return silently, so a click with an incomplete session looked
+    // identical to a click that worked.
+    if (!orgId || !userId || !userRole) {
+      console.error('[useDriftCatches] acknowledge blocked:', { orgId, userId, userRole });
+      toast.error('Could not acknowledge — your session is missing an organization or role.');
+      return;
+    }
 
     // Optimistic update
     setCatches(prev => prev.map(c => {
@@ -236,17 +243,39 @@ export function useDriftCatches(options?: UseDriftCatchesOptions): UseDriftCatch
       .from('drift_acknowledgments')
       .insert({ org_id: orgId, drift_catch_id: driftCatchId, user_id: userId, role: userRole })
       .then(({ error: insertErr }) => {
-        if (insertErr && !insertErr.message.includes('duplicate')) {
-          // Rollback
-          setCatches(prev => prev.map(c => {
-            if (c.id !== driftCatchId) return c;
-            return {
-              ...c,
-              userHasAcked: false,
-              acknowledgments: c.acknowledgments.filter(a => !(a.user_id === userId && a.role === userRole)),
-            };
-          }));
-        }
+        if (!insertErr) return;
+
+        // Already acknowledged by this user in this role — uq_drift_ack_user_role.
+        // Keyed on the Postgres code, not a substring of the message: matching
+        // on 'duplicate' silently absorbed every OTHER rejection too, which is
+        // why a failed acknowledge looked like nothing happening at all.
+        const code = (insertErr as { code?: string }).code;
+        if (code === '23505') return;
+
+        console.error('[useDriftCatches] acknowledge insert failed:', insertErr, {
+          driftCatchId,
+          role: userRole,
+        });
+
+        // 23514 = check constraint. drift_acknowledgments.role only permits
+        // owner_operator | executive | compliance_manager | facilities_manager |
+        // chef | kitchen_manager, so platform_admin and kitchen_staff — both
+        // valid UserRole values — are rejected outright.
+        toast.error(
+          code === '23514'
+            ? `Could not acknowledge — the "${userRole}" role is not accepted by drift_acknowledgments.`
+            : `Could not acknowledge — ${insertErr.message}`,
+        );
+
+        // Rollback: the row returns to the feed rather than appearing handled.
+        setCatches(prev => prev.map(c => {
+          if (c.id !== driftCatchId) return c;
+          return {
+            ...c,
+            userHasAcked: false,
+            acknowledgments: c.acknowledgments.filter(a => !(a.user_id === userId && a.role === userRole)),
+          };
+        }));
       });
   }, [orgId, userId, userRole, profile?.full_name]);
 
