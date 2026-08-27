@@ -12,6 +12,51 @@ import { SEVERITY_COLORS } from '../../../lib/severityEngine';
 import { CreateCorrectiveActionModal, type CACategory } from '../../correctiveActions/CreateCorrectiveActionModal';
 import { classify } from '../../../lib/severityEngine';
 import type { RiskFeedItem } from '../../../hooks/useRiskFeed';
+import type { DriftRecipient } from '../../../hooks/useDriftRouting';
+
+/** Role display names — the same map AlertsSection used for routing lines. */
+const ROLE_LABELS: Record<string, string> = {
+  owner_operator: 'Owner',
+  executive: 'Executive',
+  compliance_manager: 'Compliance',
+  facilities_manager: 'Facilities',
+  chef: 'Chef',
+  kitchen_manager: 'Manager',
+};
+
+/** Lifted verbatim from AlertsSection so routing reads identically. */
+function buildRoutingText(recipients: DriftRecipient[]): string | null {
+  if (recipients.length === 0) return null;
+  const unacked = recipients.filter(r => !r.acknowledged_at && !r.escalated_at);
+  const escalated = recipients.filter(r => r.escalated_at);
+  if (escalated.length > 0) {
+    const targets = recipients.filter(r => !r.escalated_at && !r.acknowledged_at);
+    if (targets.length > 0) {
+      return `Escalated to ${targets.map(t => `${t.full_name} (${ROLE_LABELS[t.role] || t.role})`).join(', ')}`;
+    }
+    return 'Escalated — awaiting response';
+  }
+  if (unacked.length > 0) {
+    return `Routed to ${unacked.map(r => `${r.full_name} (${ROLE_LABELS[r.role] || r.role})`).join(', ')}`;
+  }
+  const acked = recipients.filter(r => r.acknowledged_at);
+  if (acked.length > 0) {
+    return `Acknowledged by ${acked.map(r => r.full_name).join(', ')}`;
+  }
+  return null;
+}
+
+function buildEscalationText(recipients: DriftRecipient[]): string | null {
+  const unacked = recipients.filter(r => !r.acknowledged_at && !r.escalated_at);
+  if (unacked.length === 0) return null;
+  const soonest = unacked
+    .filter(r => r.escalation_deadline)
+    .sort((a, b) => (a.escalation_deadline! < b.escalation_deadline! ? -1 : 1))[0];
+  if (!soonest?.escalation_deadline) return null;
+  const minutesLeft = Math.max(0, Math.round((new Date(soonest.escalation_deadline).getTime() - Date.now()) / 60_000));
+  if (minutesLeft <= 0) return 'Escalation pending';
+  return `Escalating in ${minutesLeft} min`;
+}
 
 const NAVY = '#1E2D4D';
 const MUTED = '#6B7F96';
@@ -35,6 +80,9 @@ const SPAWNABLE: Record<string, 'drift' | 'record_expiry'> = {
 interface Props {
   item: RiskFeedItem;
   onCreated?: () => void;
+  /** Drift rows only — same handler semantics AlertsSection was given. */
+  onAcknowledge?: (id: string) => void;
+  roleLabel?: string;
 }
 
 function Chip({ children }: { children: React.ReactNode }) {
@@ -61,13 +109,17 @@ const actionStyle: React.CSSProperties = {
   textDecoration: 'none',
 };
 
-export function RiskFeedRow({ item, onCreated }: Props) {
+export function RiskFeedRow({ item, onCreated, onAcknowledge, roleLabel }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const color = SEVERITY_COLORS[item.severity];
   const spawnType = SPAWNABLE[item.kind];
 
   // The severity shown is already rated; the modal reuses it for its due date.
   const suggestion = classify({ kind: 'corrective_action', storedSeverity: item.severity.toLowerCase() });
+
+  const routingText = item.kind === 'drift' ? buildRoutingText(item.recipients || []) : null;
+  const escalationText = item.kind === 'drift' ? buildEscalationText(item.recipients || []) : null;
+  const canAcknowledge = item.kind === 'drift' && !!onAcknowledge;
 
   const category: CACategory =
     item.pillar === 'food_safety' || item.pillar === 'fire_safety' ? item.pillar : 'facility_services';
@@ -98,6 +150,13 @@ export function RiskFeedRow({ item, onCreated }: Props) {
             {item.reason}
           </p>
 
+          {(routingText || escalationText) && (
+            <div className="text-[11px] flex items-center gap-2 flex-wrap mt-1" style={{ color: MUTED }}>
+              {routingText && <span>{routingText}</span>}
+              {escalationText && <span style={{ color }}>· {escalationText}</span>}
+            </div>
+          )}
+
           <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
             <Chip>{item.orgLevel ? 'Organization' : item.locationName || 'Unassigned'}</Chip>
             {item.pillar && <Chip>{PILLAR_LABELS[item.pillar]}</Chip>}
@@ -120,7 +179,16 @@ export function RiskFeedRow({ item, onCreated }: Props) {
           </div>
         </div>
 
-        <div className="shrink-0">
+        <div className="shrink-0 flex items-center gap-2">
+          {canAcknowledge && (
+            <button
+              type="button"
+              onClick={() => onAcknowledge!(item.id)}
+              style={{ ...actionStyle, background: NAVY, color: '#FFFFFF' }}
+            >
+              Acknowledge as {roleLabel}
+            </button>
+          )}
           {item.kind === 'incident' ? (
             <Link to={item.href} style={actionStyle}>Open incident</Link>
           ) : item.kind === 'corrective_action' ? (

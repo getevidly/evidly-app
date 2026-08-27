@@ -21,9 +21,12 @@ interface Props {
   /** Heading changes when the page is scoped to one kitchen. */
   scopeLabel?: string | null;
   onCreated?: () => void;
+  /** Passed through to drift rows — the acknowledge path AlertsSection held. */
+  onAcknowledge?: (id: string) => void;
+  roleLabel?: string;
 }
 
-export function RiskFeed({ items, loading, scopeLabel, onCreated }: Props) {
+export function RiskFeed({ items, loading, scopeLabel, onCreated, onAcknowledge, roleLabel }: Props) {
   const bands = [...SEVERITY_ASC].reverse();
 
   if (loading) {
@@ -61,7 +64,13 @@ export function RiskFeed({ items, loading, scopeLabel, onCreated }: Props) {
                 </p>
                 <div className="space-y-2">
                   {inBand.map(item => (
-                    <RiskFeedRow key={`${item.kind}-${item.id}`} item={item} onCreated={onCreated} />
+                    <RiskFeedRow
+                      key={`${item.kind}-${item.id}`}
+                      item={item}
+                      onCreated={onCreated}
+                      onAcknowledge={onAcknowledge}
+                      roleLabel={roleLabel}
+                    />
                   ))}
                 </div>
               </div>

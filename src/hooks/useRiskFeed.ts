@@ -15,9 +15,10 @@
  * uses. Nothing new is invented.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { getDriftLabel } from '../constants/driftTypeLabels';
 import {
   classify,
   fromStoredSeverity,
@@ -25,6 +26,8 @@ import {
   SEVERITY_RANK,
   type Severity,
 } from '../lib/severityEngine';
+import type { DriftCatchWithAcks } from './useDriftCatches';
+import type { DriftRecipient } from './useDriftRouting';
 
 export type RiskKind = 'drift' | 'service' | 'document' | 'task' | 'incident' | 'corrective_action';
 
@@ -52,6 +55,8 @@ export interface RiskFeedItem {
   /** Record id shown in mono for incidents and actions. */
   recordId?: string;
   pillar?: 'food_safety' | 'fire_safety' | null;
+  /** Drift rows only — who the catch was routed to, for the escalation line. */
+  recipients?: DriftRecipient[];
 }
 
 export interface LocationRisk {
@@ -63,6 +68,16 @@ export interface LocationRisk {
   /** Next scheduled service due date, "YYYY-MM-DD". */
   nextDue: string | null;
   openCount: number;
+}
+
+interface UseRiskFeedOptions {
+  /**
+   * Drift catches and their routing come from the page, which already holds the
+   * useDriftCatches subscription and its acknowledge handler. Passing them in
+   * keeps one drift query for the whole dashboard rather than two.
+   */
+  driftCatches?: DriftCatchWithAcks[];
+  routingMap?: Record<string, DriftRecipient[]>;
 }
 
 interface UseRiskFeedResult {
@@ -98,9 +113,29 @@ function sortItems(a: RiskFeedItem, b: RiskFeedItem): number {
   return b.daysOverdue - a.daysOverdue;
 }
 
-export function useRiskFeed(): UseRiskFeedResult {
+export function useRiskFeed(options?: UseRiskFeedOptions): UseRiskFeedResult {
   const { profile } = useAuth();
   const orgId = profile?.organization_id;
+  const driftCatches = options?.driftCatches;
+  const routingMap = options?.routingMap;
+
+  // The page rebuilds these on every render, so they can never be effect deps by
+  // identity — that refires the whole feed query on each paint. Read them through
+  // refs and key the effect on a content signature instead.
+  const driftRef = useRef(driftCatches);
+  driftRef.current = driftCatches;
+  const routingRef = useRef(routingMap);
+  routingRef.current = routingMap;
+
+  const driftKey = (driftCatches || [])
+    .map(d => `${d.id}:${d.status}:${d.severity}:${d.detected_at}`)
+    .join(',');
+  const routingKey = Object.keys(routingMap || {})
+    .sort()
+    .map(id => `${id}:${(routingMap?.[id] || [])
+      .map(r => `${r.user_id}|${r.acknowledged_at || ''}|${r.escalated_at || ''}|${r.escalation_deadline || ''}`)
+      .join('~')}`)
+    .join(',');
 
   const [items, setItems] = useState<RiskFeedItem[]>([]);
   const [schedules, setSchedules] = useState<{ location_id: string | null; next_due_date: string | null }[]>([]);
@@ -116,15 +151,8 @@ export function useRiskFeed(): UseRiskFeedResult {
       const today = now.toISOString().slice(0, 10);
       const nowIso = now.toISOString();
 
-      const [locRes, driftRes, schedRes, taskRes, docRes, caRes, incRes] = await Promise.all([
+      const [locRes, schedRes, taskRes, docRes, caRes, incRes] = await Promise.all([
         supabase.from('locations').select('id, name').eq('organization_id', orgId),
-
-        // (a) open drift catches
-        supabase
-          .from('drift_catches')
-          .select('id, drift_type, pillar, severity, location_id, detected_at, status')
-          .eq('org_id', orgId)
-          .in('status', ['open', 'reduced']),
 
         // service schedules: overdue services AND the next-due line
         supabase
@@ -180,25 +208,26 @@ export function useRiskFeed(): UseRiskFeedResult {
 
       const out: RiskFeedItem[] = [];
 
-      // ── (a) drift ──
-      for (const d of (driftRes.data || []) as Record<string, unknown>[]) {
-        const title = String(d.drift_type || 'Drift').replace(/_/g, ' ');
-        const rated = classify({ kind: 'drift', priority: d.severity as string, title });
-        const lid = (d.location_id as string) ?? null;
+      // ── (a) drift — supplied by the page, not queried here ──
+      for (const d of (driftRef.current || [])) {
+        const title = getDriftLabel(d.drift_type, { form: 'noun' });
+        const rated = classify({ kind: 'drift', priority: d.severity, title });
+        const lid = d.location_id ?? null;
         out.push({
-          id: d.id as string,
+          id: d.id,
           kind: 'drift',
           severity: rated.severity,
           reason: rated.reason,
           title,
           locationId: lid,
-          locationName: lid ? locName.get(lid) ?? null : null,
+          locationName: d.location_name ?? (lid ? locName.get(lid) ?? null : null),
           orgLevel: !lid,
-          daysOverdue: daysBetween(d.detected_at as string, now),
+          daysOverdue: daysBetween(d.detected_at, now),
           approaching: false,
-          inMotion: inMotionBySource.get(d.id as string) ?? null,
+          inMotion: inMotionBySource.get(d.id) ?? null,
           href: '',
-          pillar: (d.pillar as 'food_safety' | 'fire_safety') ?? null,
+          pillar: d.pillar,
+          recipients: routingRef.current?.[d.id] || [],
         });
       }
 
@@ -342,7 +371,7 @@ export function useRiskFeed(): UseRiskFeedResult {
     })();
 
     return () => { cancelled = true; };
-  }, [orgId]);
+  }, [orgId, driftKey, routingKey]);
 
   const counts = useMemo(() => {
     const c = emptyCounts();

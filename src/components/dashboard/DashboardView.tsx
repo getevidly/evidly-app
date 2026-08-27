@@ -1,12 +1,12 @@
 /**
  * DashboardView — Full dashboard layout matching DashboardMockup.jsx.
- * Renders: LocationTabs → Hero → QuickActions → ExposureBand → WhoCanAsk → Pillars → Explore → BusinessRecords → Alerts → TemperatureLogs
+ * Renders: LocationTabs → Hero → QuickActions → ExposureBand → WhoCanAsk → Pillars → Explore → BusinessRecords → TemperatureLogs
  * All data from live PROD hooks. No fake/sample data.
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Utensils, AlertTriangle, Calendar, Bell, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users } from 'lucide-react';
+import { Flame, Utensils, AlertTriangle, Calendar, FileText, Thermometer, ArrowRight, Home, Upload, Truck, Download, Building2, Users } from 'lucide-react';
 import { FONT, TONE, PILLAR } from '../../design/tokens';
 import { useWhatsAtRisk } from '../../hooks/useWhatsAtRisk';
 import type { WhatsAtRisk } from '../../hooks/useWhatsAtRisk';
@@ -28,11 +28,8 @@ import { useFireChipStatus } from '../../hooks/dashboard/useFireChipStatus';
 import type { FireChip } from '../../hooks/dashboard/useFireChipStatus';
 import { useBusinessProofStatus } from '../../hooks/dashboard/useBusinessProofStatus';
 import { useRole } from '../../contexts/RoleContext';
-import { getDriftLabel } from '../../constants/driftTypeLabels';
 import { daysSince } from '../../lib/daysSince';
 import { supabase } from '../../lib/supabase';
-import type { DriftCatchWithAcks } from '../../hooks/useDriftCatches';
-import type { DriftRecipient } from '../../hooks/useDriftRouting';
 
 // ─── Brand tokens ────────────────────────────────────────────────
 const NAVY = '#1E2D4D';
@@ -43,7 +40,6 @@ const GREEN = '#3F6B47';
 const RED = '#A04040';
 const AMBER = '#B08A2E';
 const RUST = '#B85D22';
-const INK = '#0F1828';
 const EMBER = '#B24A2E';
 
 // ─── Explore catalog types ──────────────────────────────────────
@@ -120,7 +116,9 @@ export function DashboardView() {
   // Suppress lint: refetchKey forces re-mount of hooks below
   void refetchKey;
 
-  const { catches, acknowledge } = useDriftCatches({ locationIdFilter: selectedLocationId || undefined });
+  // Loaded org-wide: the feed's portfolio snapshot and kitchen cards aggregate
+  // drift across every kitchen, so the tab scope is applied client-side below.
+  const { catches, acknowledge } = useDriftCatches();
   const openCatches = catches.filter(c => c.status === 'open' && !c.userHasAcked);
   const routingMap = useDriftRouting(openCatches.map(c => c.id));
 
@@ -138,7 +136,8 @@ export function DashboardView() {
   // One severity-ordered view of everything open. Loaded org-wide so switching
   // the location tab re-scopes without a refetch.
   const [riskVersion, setRiskVersion] = useState(0);
-  const { items: riskItems, byLocation, portfolioNextDue, counts: riskCounts, loading: riskLoading } = useRiskFeed();
+  const { items: riskItems, byLocation, portfolioNextDue, counts: riskCounts, loading: riskLoading } =
+    useRiskFeed({ driftCatches: openCatches, routingMap });
   void riskVersion;
 
   // Org-level items (business records, vendor docs) stay visible on every tab.
@@ -204,7 +203,9 @@ export function DashboardView() {
     };
   })() : null;
 
-  const alertCount = openCatches.length;
+  const alertCount = selectedLocationId
+    ? openCatches.filter(c => c.location_id === selectedLocationId).length
+    : openCatches.length;
 
   // Watching bar: total requirement count across all locations
   const watchingCount = (fireProof.total + foodProof.total) * Math.max(locationCount, 1);
@@ -262,6 +263,8 @@ export function DashboardView() {
         loading={riskLoading}
         scopeLabel={scopeName}
         onCreated={() => setRiskVersion(v => v + 1)}
+        onAcknowledge={acknowledge}
+        roleLabel={roleLabel}
       />
 
       {/* Treat + prove */}
@@ -327,16 +330,6 @@ export function DashboardView() {
             </>
           )}
         </div>
-      )}
-
-      {/* Alerts */}
-      {alertCount > 0 && (
-        <AlertsSection
-          catches={openCatches}
-          routingMap={routingMap}
-          onAcknowledge={acknowledge}
-          roleLabel={roleLabel}
-        />
       )}
 
       {/* Temperature Logs — real query, hidden when no equipment */}
@@ -826,142 +819,6 @@ function ExplorePanel({ fireItems, foodItems, toggledCodes, onToggle, isOpen, on
       )}
     </div>
   );
-}
-
-// ─── Alerts Section ──────────────────────────────────────────────
-function AlertsSection({ catches, routingMap, onAcknowledge, roleLabel }: {
-  catches: DriftCatchWithAcks[];
-  routingMap: Record<string, DriftRecipient[]>;
-  onAcknowledge: (id: string) => void;
-  roleLabel: string;
-}) {
-  const critical = catches.filter(c => c.severity === 'urgent' || c.severity === 'high').length;
-  const warning = catches.length - critical;
-
-  return (
-    <div>
-      <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2">
-            <Bell size={16} style={{ color: RED }} />
-            <h3 className="text-lg font-bold" style={{ color: NAVY, fontFamily: FONT.display }}>Alerts</h3>
-          </div>
-          <span className="text-[10px] uppercase tracking-widest font-bold px-2 py-1" style={{ backgroundColor: '#F4F1E6', color: GOLD }}>
-            EvidLY caught {catches.length}
-          </span>
-        </div>
-        <div className="flex items-center gap-3 text-xs">
-          {critical > 0 && <span className="inline-flex items-center gap-1.5" style={{ color: RED }}><span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: RED }} /><strong>{critical}</strong> critical</span>}
-          {warning > 0 && <span className="inline-flex items-center gap-1.5" style={{ color: AMBER }}><span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: AMBER }} /><strong>{warning}</strong> warning</span>}
-          <span className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: MUTED }}>Routed automatically</span>
-        </div>
-      </div>
-      <div className="space-y-2">
-        {catches.map(drift => (
-          <AlertCard
-            key={drift.id}
-            drift={drift}
-            recipients={routingMap[drift.id] || []}
-            onAcknowledge={onAcknowledge}
-            roleLabel={roleLabel}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── AlertCard ───────────────────────────────────────────────────
-function AlertCard({ drift, recipients, onAcknowledge, roleLabel }: {
-  drift: DriftCatchWithAcks;
-  recipients: DriftRecipient[];
-  onAcknowledge: (id: string) => void;
-  roleLabel: string;
-}) {
-  const isCritical = drift.severity === 'urgent' || drift.severity === 'high';
-  const severityLabel = isCritical ? 'critical' : 'warning';
-  const pillarLabel = drift.pillar === 'fire_safety' ? 'Fire' : 'Food';
-  const title = getDriftLabel(drift.drift_type, { form: 'noun' });
-  const days = daysSince(drift.detected_at);
-  const description = `${days} day${days === 1 ? '' : 's'} running · ${drift.location_name}`;
-
-  // Routing text
-  const routingText = buildRoutingText(recipients);
-  // Escalation text
-  const escalationText = buildEscalationText(recipients);
-
-  return (
-    <div className="bg-white border"
-      style={{ borderColor: LINE, borderLeftWidth: 4, borderLeftColor: isCritical ? RED : AMBER }}>
-      <div className="px-5 py-4 flex items-start gap-4 flex-wrap">
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-[10px] uppercase tracking-widest px-2 py-1 font-bold" style={{
-            backgroundColor: isCritical ? '#F7E9E9' : '#FDF6E9',
-            color: isCritical ? RED : AMBER,
-          }}>{severityLabel}</span>
-          <span className="text-[10px] uppercase tracking-widest px-2 py-1 font-semibold" style={{
-            backgroundColor: drift.pillar === 'fire_safety' ? '#FBEDDF' : '#EAEFF7',
-            color: drift.pillar === 'fire_safety' ? RUST : NAVY,
-          }}>{pillarLabel}</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-bold mb-0.5" style={{ color: NAVY, fontFamily: FONT.display }}>{title}</div>
-          <div className="text-xs leading-relaxed mb-1.5" style={{ color: INK }}>{description}</div>
-          <div className="text-[11px] flex items-center gap-3 flex-wrap" style={{ color: MUTED }}>
-            {routingText && <span>{routingText}</span>}
-            {escalationText && <span style={{ color: isCritical ? RED : AMBER }}>· {escalationText}</span>}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Link to="/alerts" className="text-xs px-3 py-2 font-medium inline-flex items-center gap-1.5"
-            style={{ backgroundColor: '#F4F1E6', color: NAVY }}>
-            View <ArrowRight size={11} />
-          </Link>
-          <button
-            type="button"
-            className="text-xs px-4 py-2 font-medium inline-flex items-center gap-1.5"
-            style={{ backgroundColor: NAVY, color: 'white' }}
-            onClick={() => onAcknowledge(drift.id)}
-          >
-            Acknowledge as {roleLabel} <ArrowRight size={11} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function buildRoutingText(recipients: DriftRecipient[]): string | null {
-  if (recipients.length === 0) return null;
-  const unacked = recipients.filter(r => !r.acknowledged_at && !r.escalated_at);
-  const escalated = recipients.filter(r => r.escalated_at);
-  if (escalated.length > 0) {
-    const targets = recipients.filter(r => !r.escalated_at && !r.acknowledged_at);
-    if (targets.length > 0) {
-      return `Escalated to ${targets.map(t => `${t.full_name} (${ROLE_LABELS[t.role] || t.role})`).join(', ')}`;
-    }
-    return 'Escalated — awaiting response';
-  }
-  if (unacked.length > 0) {
-    return `Routed to ${unacked.map(r => `${r.full_name} (${ROLE_LABELS[r.role] || r.role})`).join(', ')}`;
-  }
-  const acked = recipients.filter(r => r.acknowledged_at);
-  if (acked.length > 0) {
-    return `Acknowledged by ${acked.map(r => r.full_name).join(', ')}`;
-  }
-  return null;
-}
-
-function buildEscalationText(recipients: DriftRecipient[]): string | null {
-  const unacked = recipients.filter(r => !r.acknowledged_at && !r.escalated_at);
-  if (unacked.length === 0) return null;
-  const soonest = unacked
-    .filter(r => r.escalation_deadline)
-    .sort((a, b) => (a.escalation_deadline! < b.escalation_deadline! ? -1 : 1))[0];
-  if (!soonest?.escalation_deadline) return null;
-  const minutesLeft = Math.max(0, Math.round((new Date(soonest.escalation_deadline).getTime() - Date.now()) / 60_000));
-  if (minutesLeft <= 0) return 'Escalation pending';
-  return `Escalating in ${minutesLeft} min`;
 }
 
 // ─── Pillar Card ─────────────────────────────────────────────────
