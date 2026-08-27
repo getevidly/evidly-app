@@ -399,6 +399,15 @@ export function CorrectiveActionDetail() {
           verification_note: verificationNote || prev.verification_note,
         } : prev));
         toast.success('Corrective action verified and sealed.');
+
+        // The seal is durable before the function attempts to close the drift
+        // catch that raised the action, so that write degrades to a warning on
+        // a 200 rather than failing the seal. Nothing read it, which made a
+        // half-closed loop — action sealed, catch still open — invisible.
+        if (data?.warning) {
+          console.warn('[CorrectiveActionDetail] seal returned a warning:', data.warning);
+          toast.warning(`Sealed — source flag update failed: ${data.warning}`, { duration: 10000 });
+        }
       } catch (err) {
         console.error('[CorrectiveActionDetail] Seal invoke threw:', err);
         toast.error('Sealing failed — the corrective action is unchanged.');
