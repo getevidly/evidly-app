@@ -94,6 +94,49 @@ export const SERVICE_BASE_BY_LABEL: readonly { match: RegExp; base: Severity }[]
 /** Documents whose lapse is citable on sight start a level higher. */
 export const DOCUMENT_HIGH_BASE = /\bcoi\b|insurance|licen[cs]e|permit/i;
 
+/**
+ * Keyword -> pillar, for sources that carry no pillar column of their own:
+ * overdue task_instances and expiring documents. Neither table stores a
+ * pillar, and their own taxonomies (task_type, documents.category) classify a
+ * different axis, so the label is the only signal available.
+ *
+ * Food entries are scanned before fire; the first term found wins.
+ */
+export const PILLAR_BY_LABEL: readonly { pillar: 'food_safety' | 'fire_safety'; terms: readonly string[] }[] = [
+  {
+    pillar: 'food_safety',
+    terms: [
+      'temperature', 'temp', 'hot well', 'cold hold', 'cooler', 'freezer',
+      'warewash', 'sanitizer', 'handler', 'cfpm', 'food manager', 'haccp',
+      'tphc', 'allergen', 'consumer advisory', 'pest', 'grease trap',
+      'interceptor', 'backflow', 'health permit',
+    ],
+  },
+  {
+    pillar: 'fire_safety',
+    terms: [
+      'hood', 'exhaust', 'suppression', 'extinguisher', 'sprinkler', 'alarm',
+      'fire door', 'class k', 'emergency light',
+    ],
+  },
+] as const;
+
+/**
+ * Best-effort pillar for a free-text label. Case-insensitive substring match.
+ * Null when nothing matches — the caller owns the fallback, so this never
+ * guesses facility_services on the engine's behalf.
+ */
+export function inferPillar(label: string | null | undefined): 'food_safety' | 'fire_safety' | null {
+  if (!label) return null;
+  const haystack = label.toLowerCase();
+  for (const row of PILLAR_BY_LABEL) {
+    for (const term of row.terms) {
+      if (haystack.includes(term)) return row.pillar;
+    }
+  }
+  return null;
+}
+
 const HOOD_LABEL = /hood|exhaust/i;
 const SOLID_FUEL = /solid[\s-]?fuel/i;
 

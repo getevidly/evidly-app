@@ -21,6 +21,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getDriftLabel } from '../constants/driftTypeLabels';
 import {
   classify,
+  inferPillar,
   fromStoredSeverity,
   SEVERITY_ASC,
   SEVERITY_RANK,
@@ -284,6 +285,9 @@ export function useRiskFeed(options?: UseRiskFeedOptions): UseRiskFeedResult {
           approaching: false,
           inMotion: inMotionBySource.get(t.id as string) ?? null,
           href: '/checklists',
+          // task_instances has no pillar column, and task_type classifies a
+          // different axis, so the title is the only signal.
+          pillar: inferPillar(title),
         });
       }
 
@@ -306,6 +310,9 @@ export function useRiskFeed(options?: UseRiskFeedOptions): UseRiskFeedResult {
           approaching: false,
           inMotion: inMotionBySource.get(d.id as string) ?? null,
           href: '/documents',
+          // documents.category is a filing taxonomy (kitchen/employee/service/
+          // business), not a pillar, so it cannot be carried through here.
+          pillar: inferPillar(title),
         });
       }
 

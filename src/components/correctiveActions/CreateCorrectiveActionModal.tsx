@@ -19,6 +19,7 @@ import { useOrgMembers } from '../../hooks/useOrgMembers';
 import {
   SEVERITY_ASC,
   SEVERITY_COLORS,
+  inferPillar,
   toStoredSeverity,
   type Severity,
 } from '../../lib/severityEngine';
@@ -101,6 +102,17 @@ export function CreateCorrectiveActionModal({
 
   if (!open) return null;
 
+  // Category derivation, in order:
+  //   1. the source's own value, whenever it is a real pillar
+  //   2. inference from the label, for sources whose table has no pillar column
+  //   3. facility_services, only once both have failed
+  // Derived from initialTitle rather than the editable title state so the
+  // locked chip does not shift while the user types.
+  const effectiveCategory: CACategory =
+    source.category !== 'facility_services'
+      ? source.category
+      : inferPillar(initialTitle) ?? inferPillar(source.sourceLabel) ?? 'facility_services';
+
   const canCreate = !!title.trim() && !!assignee && !saving;
 
   const handleCreate = async () => {
@@ -119,7 +131,7 @@ export function CreateCorrectiveActionModal({
       const assigneeName = member?.full_name || member?.email || null;
 
       // facility_services has no pillar — the CHECK only allows the two pillars.
-      const pillar = source.category === 'facility_services' ? null : source.category;
+      const pillar = effectiveCategory === 'facility_services' ? null : effectiveCategory;
 
       const { data, error } = await supabase
         .from('corrective_actions')
@@ -127,7 +139,7 @@ export function CreateCorrectiveActionModal({
           organization_id: profile.organization_id,
           location_id: source.locationId || null,
           title: title.trim(),
-          category: source.category,
+          category: effectiveCategory,
           pillar,
           severity: toStoredSeverity(severity),
           status: 'reported',
@@ -219,7 +231,7 @@ export function CreateCorrectiveActionModal({
               className="inline-flex items-center rounded-full text-[12.5px]"
               style={{ background: CREAM, border: `1px solid ${LINE}`, color: NAVY, padding: '5px 11px' }}
             >
-              {CATEGORY_LABELS[source.category]}
+              {CATEGORY_LABELS[effectiveCategory]}
             </span>
           </div>
 
