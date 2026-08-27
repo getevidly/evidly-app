@@ -1011,7 +1011,7 @@ export function CorrectiveActions() {
                               <div className="flex items-center gap-2 mb-1">
                                 <h4 className="text-sm font-semibold text-[#1E2D4D] truncate">{tpl.title}</h4>
                                 <span
-                                  className="text-xs font-bold px-1.5 py-0.5 rounded-full uppercase shrink-0"
+                                  className="text-xs font-bold px-1.5 py-0.5 rounded-full shrink-0"
                                   style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
                                 >
                                   {sev.label}
