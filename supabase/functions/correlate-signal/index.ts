@@ -8,6 +8,10 @@ import { getCorsHeaders } from "../_shared/cors.ts";
  * Called after a signal is published. Writes to intelligence_correlations.
  * Match types: national, county, industry, requirement.
  *
+ * Relevance rule: a signal correlates to an org ONLY through a county match, a
+ * requirement match, or a kitchen-impacting national category. Generic national
+ * noise produces no correlation at all — see NATIONAL_BROADCAST_CATEGORIES.
+ *
  * POST { signal_id: UUID }
  * Returns { success, correlations_created, matches: { national, county, industry, requirement } }
  */
@@ -39,6 +43,31 @@ const REQUIREMENT_NAMES: Record<string, string> = {
   GT: "Grease Trap Service", REFR: "Refrigeration Service",
   EQRP: "Equipment Repair", HVAC: "HVAC Service", PC: "Pest Control",
 };
+
+/**
+ * The only categories permitted to correlate nationally — i.e. to every org,
+ * with no county or requirement evidence tying the signal to that kitchen.
+ *
+ * The rule: a signal reaches an org through a county match, a requirement
+ * match, or membership of this list. Nothing else broadcasts. A category
+ * absent here (regulatory_updates, regulatory_change, info, legislative,
+ * seasonal_risk, food_handler, and anything unlisted) can still reach an org
+ * — but only via county or requirement, where the relevance is demonstrable.
+ *
+ * Membership means the category impacts kitchen operations directly enough
+ * that every operator should see it regardless of jurisdiction.
+ */
+const NATIONAL_BROADCAST_CATEGORIES = new Set<string>([
+  "recall_alert",
+  "outbreak_alert",
+  "food_code_update",
+  "nfpa_update",
+  "fire_safety",
+  "hood_cleaning",
+  "ventilation",
+  "grease_trap",
+  "enforcement_surge",
+]);
 
 // System/template org IDs to exclude
 const EXCLUDED_ORG_IDS = new Set([
@@ -160,11 +189,26 @@ Deno.serve(async (req) => {
       countyOrgLocations.get(key)!.push({ orgId: loc.organization_id, locId: loc.id });
     }
 
+    // Scope alone no longer broadcasts. effectiveScope defaults to "national"
+    // when a signal carries no scope at all, so without this gate an untagged
+    // signal of any category reached every org.
+    const nationalAllowed =
+      (effectiveScope === "national" || effectiveScope === "statewide") &&
+      NATIONAL_BROADCAST_CATEGORIES.has(signal.category);
+
+    if (!nationalAllowed && (effectiveScope === "national" || effectiveScope === "statewide")) {
+      console.log(
+        `[correlate-signal] national match suppressed: category="${signal.category}" ` +
+        `scope="${effectiveScope}" is not kitchen-impacting — county/requirement only`,
+      );
+    }
+
     const matchCounts = { national: 0, county: 0, industry: 0, requirement: 0 };
 
     for (const org of orgs) {
       // ── 5a. NATIONAL match ──────────────────────────────
-      if (effectiveScope === "national" || effectiveScope === "statewide") {
+      // Gated on category, not scope alone: see NATIONAL_BROADCAST_CATEGORIES.
+      if (nationalAllowed) {
         rows.push({
           signal_id: signal.id,
           organization_id: org.id,
