@@ -16,15 +16,24 @@ import {
   GOLD,
   hexToRgb,
 } from './pdfExport';
+import { getPhotoUrl } from './photoUpload';
 
 // ── Types (mirrors IncidentLog.tsx shapes) ──────────────────────────────
 
 interface PhotoRecord {
   id: string;
   dataUrl: string;
+  storagePath?: string;
   timestamp: string;
   displayTime: string;
 }
+
+/**
+ * incidents.photos / incidents.resolution_photos hold plain strings - a legacy
+ * inline "data:" URL or a compliance-photos storage path. In-session captures
+ * arrive as full PhotoRecords instead.
+ */
+type PhotoEntryLike = string | PhotoRecord;
 
 interface TimelineEntry {
   id: string;
@@ -53,8 +62,8 @@ export interface ProofPacketIncident {
   resolutionSummary?: string;
   rootCause?: string;
   linkedCorrectiveActionId?: string;
-  photos: PhotoRecord[];
-  resolutionPhotos: PhotoRecord[];
+  photos: PhotoEntryLike[];
+  resolutionPhotos: PhotoEntryLike[];
   timeline: TimelineEntry[];
 }
 
@@ -64,6 +73,52 @@ export interface ProofPacketCA {
   corrective_steps?: string;
   status: string;
   assignee_name?: string;
+}
+
+// ── Photo pre-resolution ───────────────────────────────────
+// jsPDF assembles synchronously and addImage needs actual bytes, so every photo is
+// resolved to a data URL before the document is built.
+
+/** Pull the bytes behind a signed URL and inline them. */
+async function fetchAsDataUrl(url: string): Promise<string> {
+  const res = await fetch(url);
+  if (!res.ok) return '';
+  const blob = await res.blob();
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Resolve a mixed array to records carrying real image data. Anything that cannot be
+ * resolved comes back with an empty dataUrl, which the draw loops' existing catch
+ * turns into the grey "Photo" placeholder - one bad photo never blocks the packet.
+ */
+async function resolvePhotos(entries: PhotoEntryLike[]): Promise<PhotoRecord[]> {
+  return Promise.all(entries.map(async (entry, i): Promise<PhotoRecord> => {
+    const meta = typeof entry === 'string' ? null : entry;
+    const raw = typeof entry === 'string' ? entry : (entry.storagePath || entry.dataUrl || '');
+    const base: PhotoRecord = {
+      id: meta?.id || `photo-${i}`,
+      dataUrl: '',
+      timestamp: meta?.timestamp || '',
+      displayTime: meta?.displayTime || '',
+    };
+    if (!raw) return base;
+    if (raw.startsWith('data:')) return { ...base, dataUrl: raw };
+    try {
+      const signed = raw.startsWith('http://') || raw.startsWith('https://')
+        ? raw
+        : await getPhotoUrl(raw);
+      if (!signed) return base;
+      return { ...base, dataUrl: await fetchAsDataUrl(signed) };
+    } catch {
+      return base;
+    }
+  }));
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────
@@ -136,11 +191,17 @@ function ensureSpace(doc: any, y: number, needed: number): number {
 
 // ── Main Export ─────────────────────────────────────────────────────────
 
-export function exportProofPacketPdf(
+export async function exportProofPacketPdf(
   incident: ProofPacketIncident,
   linkedCA?: ProofPacketCA | null,
   resolvedByName?: string,
-): void {
+): Promise<void> {
+  // Resolve every photo before a single page is drawn.
+  const [incidentPhotos, resolutionPhotos] = await Promise.all([
+    resolvePhotos(incident.photos),
+    resolvePhotos(incident.resolutionPhotos),
+  ]);
+
   const doc = createReportPdf();
   const isResolved = incident.status === 'resolved' || incident.status === 'verified';
   const dateRange = `${fmtDate(incident.createdAt)} \u2013 ${fmtDate(incident.resolvedAt || incident.createdAt)}`;
@@ -247,8 +308,8 @@ export function exportProofPacketPdf(
   }
 
   // ── Photo Evidence ──
-  const hasIncidentPhotos = incident.photos.length > 0;
-  const hasResolutionPhotos = incident.resolutionPhotos.length > 0;
+  const hasIncidentPhotos = incidentPhotos.length > 0;
+  const hasResolutionPhotos = resolutionPhotos.length > 0;
 
   if (hasIncidentPhotos || hasResolutionPhotos) {
     y = ensureSpace(doc, y, 30);
@@ -262,17 +323,19 @@ export function exportProofPacketPdf(
     if (hasIncidentPhotos) {
       doc.setFontSize(8);
       doc.setTextColor(...hexToRgb(GRAY));
-      doc.text(`Incident Photos (${incident.photos.length})`, MARGIN, y);
+      doc.text(`Incident Photos (${incidentPhotos.length})`, MARGIN, y);
       y += 4;
 
       let px = MARGIN;
-      for (const photo of incident.photos) {
+      for (const photo of incidentPhotos) {
         if (px + photoW > MARGIN + CONTENT_W) {
           px = MARGIN;
           y += photoH + photoGap + 4;
         }
         y = ensureSpace(doc, y, photoH + 8);
         try {
+          // Unresolved photo -> straight to the placeholder below, deterministically.
+          if (!photo.dataUrl) throw new Error('photo could not be resolved');
           doc.addImage(photo.dataUrl, 'JPEG', px, y, photoW, photoH);
           // Timestamp below photo
           doc.setFontSize(6);
@@ -296,17 +359,19 @@ export function exportProofPacketPdf(
       y = ensureSpace(doc, y, photoH + 12);
       doc.setFontSize(8);
       doc.setTextColor(...hexToRgb(GRAY));
-      doc.text(`Resolution Photos (${incident.resolutionPhotos.length})`, MARGIN, y);
+      doc.text(`Resolution Photos (${resolutionPhotos.length})`, MARGIN, y);
       y += 4;
 
       let px = MARGIN;
-      for (const photo of incident.resolutionPhotos) {
+      for (const photo of resolutionPhotos) {
         if (px + photoW > MARGIN + CONTENT_W) {
           px = MARGIN;
           y += photoH + photoGap + 4;
         }
         y = ensureSpace(doc, y, photoH + 8);
         try {
+          // Unresolved photo -> straight to the placeholder below, deterministically.
+          if (!photo.dataUrl) throw new Error('photo could not be resolved');
           doc.addImage(photo.dataUrl, 'JPEG', px, y, photoW, photoH);
           doc.setFontSize(6);
           doc.setTextColor(...hexToRgb(GRAY));

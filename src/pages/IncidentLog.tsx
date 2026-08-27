@@ -9,6 +9,7 @@ import {
   BookOpen, PenLine, Shield, X,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
+import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { Modal } from '../components/ui/Modal';
 import { useRole } from '../contexts/RoleContext';
@@ -1756,7 +1757,7 @@ export function IncidentLog() {
                     resolutionPhotos: inc.resolutionPhotos,
                     timeline: inc.timeline,
                   };
-                  exportProofPacketPdf(packetData, linkedCA);
+                  await exportProofPacketPdf(packetData, linkedCA);
                   showToast('PDF downloaded for ' + inc.id);
                 })}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-[#1E2D4D]/10 rounded-lg text-sm font-medium text-[#1E2D4D]/80 hover:bg-[#FAF7F0]"
