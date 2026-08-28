@@ -103,14 +103,6 @@ export async function buildClientInviteEmail(
   const firstName = recipientName.split(' ')[0];
   const isCpp = accessVia === 'cpp_client';
 
-  // Derive denominators from the pillar_requirements catalog so adding
-  // a requirement to the catalog changes the email without a code edit.
-  const { data: reqs } = await supabase
-    .from('pillar_requirements')
-    .select('pillar')
-    .eq('state_code', 'CA')
-    .eq('counts_toward_total', true);
-
   const subject = isCpp
     ? "Your hood cleaning service certificate is on file."
     : "Your EvidLY account is ready.";
