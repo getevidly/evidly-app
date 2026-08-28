@@ -215,7 +215,7 @@ CATEGORY ASSIGNMENT RULES:
 - recall_alert: FDA/CPSC product recall with confirmed or potential CA distribution
 - outbreak_alert: CDC/CDPH foodborne outbreak with traced or suspected CA source
 - enforcement_surge: Cal/OSHA, county health inspection campaigns, enforcement actions
-- legislative: pending bills, rulemaking calendars, legislative session tracking
+- legislative: RESERVED for session-watch and pending-bill monitoring — a session opening, a bill-tracking notice, a rulemaking calendar, or a pending bill with no operative date. An ENACTED bill or law carrying an operative date or a concrete operator obligation is NOT legislative: categorize it by its substance (allergen or food code -> food_code_update; handler card, manager certification or training mandate -> food_handler; FOG or grease -> grease_trap; hood or NFPA 96 -> nfpa_update or hood_cleaning; inspection or penalty regimes -> enforcement_surge).
 - info: genuinely regulatory or advisory but general — no operational action for a kitchen
 - not_applicable: the item declares its own irrelevance, covers a non-kitchen consumer product, is an empty-scrape or bill-tracker artifact with no identified bill, or is a website-maintenance/outage notice
 - Never use a generic "regulatory" category — regulatory_updates and regulatory_change are NOT valid values. Always pick the most specific match above.

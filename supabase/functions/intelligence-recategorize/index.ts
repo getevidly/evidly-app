@@ -20,7 +20,12 @@ import { getCorsHeaders } from "../_shared/cors.ts";
  * Auth: Bearer token — service-role key or a platform_admin user.
  */
 
-const CATCH_ALL = ["regulatory_updates", "regulatory_change"];
+/**
+ * Default input set — the original catch-all pair. A request may override it
+ * with {"categories": [...]} to re-run the pass over any category, e.g.
+ * ["legislative"] to move enacted laws to their substantive category.
+ */
+const DEFAULT_CATEGORIES = ["regulatory_updates", "regulatory_change"];
 
 /** The ONLY values Claude may return. Anything else is treated as unparseable. */
 const ALLOWED = new Set([
@@ -59,7 +64,18 @@ Rules:
 - ventilation — kitchen ventilation and make-up air, including ASHRAE, where hood cleaning is not the subject.
 - recall_alert — product or equipment recalls affecting kitchen operations.
 - outbreak_alert — foodborne illness outbreaks, pathogen surveillance, contamination events.
-- legislative — genuinely regulatory but general: pending bills, legislative sessions, statutory change with no specific operational subject above.
+- legislative — RESERVED for session-watch and pending-bill monitoring: a legislative session opening, a bill-tracking notice, a pending bill with no operative date, a rulemaking calendar, or an empty-scrape artifact that identified no bill. Use it only when there is nothing for an operator to do yet.
+
+ENACTED LEGISLATION — read this carefully:
+An enacted bill or law that carries an operative date OR a concrete operator obligation is NOT legislative. Categorize it by its SUBSTANCE:
+  - allergen disclosure, menu labeling, food code or CalCode amendment -> food_code_update
+  - food handler card, manager certification, training mandate, who pays for certification -> food_handler
+  - FOG, grease trap or interceptor requirements -> grease_trap
+  - hood, duct or NFPA 96 requirements -> nfpa_update or hood_cleaning
+  - fire suppression, alarm, sprinkler, extinguisher requirements -> fire_safety
+  - inspection, citation or penalty regimes -> enforcement_surge
+A named bill with a date an operator must act by (for example "required July 1" or "effective January 1") is enacted law, not session watch — classify it by subject.
+If the item is legislative in form but has no bearing on a commercial kitchen at all, use not_applicable.
 - info — genuinely regulatory or advisory but general, with no operational action for a kitchen.
 
 Judge on substance, not on how urgent the title sounds. A title claiming kitchen relevance while the body describes an unrelated product is not_applicable.
@@ -191,24 +207,41 @@ Deno.serve(async (req) => {
   }
 
   let batchesPerRun = DEFAULT_BATCHES_PER_RUN;
+  let categories = DEFAULT_CATEGORIES;
   try {
     const body = await req.json();
     if (body && Number.isInteger(body.batches) && body.batches > 0) batchesPerRun = body.batches;
-  } catch { /* no body — use the default */ }
+    if (Array.isArray(body?.categories) && body.categories.length > 0) {
+      categories = body.categories.filter((c: unknown) => typeof c === "string" && c.length > 0);
+    }
+  } catch { /* no body — use the defaults */ }
+
+  if (categories.length === 0) {
+    return json({ error: "categories must be a non-empty array of strings" }, 400);
+  }
 
   let processed = 0;
   let skipped = 0;
+  /** Verdict matched the current category — nothing written, nothing logged. */
+  let unchanged = 0;
+  /** Rows settled this run, so later batches advance past them. */
+  const confirmedIds = new Set<string>();
   let heldNotApplicable = 0;
   const distribution: Record<string, number> = {};
 
   try {
     for (let b = 0; b < batchesPerRun; b++) {
       // Re-read each pass: rewritten rows have already left the input set.
-      const { data: rows, error: readErr } = await supabase
+      let batchQ = supabase
         .from("intelligence_signals")
         .select("id, title, content_summary, category, routing_tier")
-        .in("category", CATCH_ALL)
-        .limit(BATCH_SIZE);
+        .in("category", categories);
+      // Rows confirmed in place stay in the input set by design, so step over
+      // them rather than re-reading the same ones every batch.
+      if (confirmedIds.size > 0) {
+        batchQ = batchQ.not("id", "in", "(" + [...confirmedIds].join(",") + ")");
+      }
+      const { data: rows, error: readErr } = await batchQ.limit(BATCH_SIZE);
 
       if (readErr) return json({ error: `read failed: ${readErr.message}` }, 500);
       if (!rows || rows.length === 0) break;
@@ -230,6 +263,15 @@ Deno.serve(async (req) => {
         if (!next) {
           skipped++;
           console.warn(`[intelligence-recategorize] skipped (no usable verdict): ${row.id} "${row.title}"`);
+          continue;
+        }
+
+        // Confirmed in place. Writing this would leave the row in the input
+        // set, so a re-invocation would return the same rows indefinitely —
+        // and every pass would add a "from == to" row to the audit trail.
+        if (next === row.category) {
+          unchanged++;
+          confirmedIds.add(row.id);
           continue;
         }
 
@@ -271,16 +313,18 @@ Deno.serve(async (req) => {
     const { count: remaining } = await supabase
       .from("intelligence_signals")
       .select("id", { count: "exact", head: true })
-      .in("category", CATCH_ALL);
+      .in("category", categories);
 
     console.log(
-      `[intelligence-recategorize] processed=${processed} skipped=${skipped} ` +
+      `[intelligence-recategorize] processed=${processed} unchanged=${unchanged} skipped=${skipped} ` +
         `held=${heldNotApplicable} remaining=${remaining ?? "?"}`,
     );
 
     return json({
       success: true,
+      categories,
       processed,
+      unchanged,
       skipped,
       held_not_applicable: heldNotApplicable,
       distribution,

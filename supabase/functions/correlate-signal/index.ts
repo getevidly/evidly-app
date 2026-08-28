@@ -80,6 +80,10 @@ const NATIONAL_BROADCAST_CATEGORIES = new Set<string>([
   "ventilation",
   "grease_trap",
   "enforcement_surge",
+  // Certification changes (ServSafe / CFPM / handler cards) apply to every
+  // operator regardless of jurisdiction, and no service-schedule code exists
+  // for staff certification — so national is the only path they can take.
+  "food_handler",
 ]);
 
 /**
