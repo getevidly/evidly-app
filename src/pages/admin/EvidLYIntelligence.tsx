@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
+import { INDUSTRY_LABELS, SCOPE_LABELS } from '../../lib/correlationEngine';
 import {
   useAudiencePreview, reachSummary, matchChipLabel,
   type SignalAudience,
@@ -296,7 +296,6 @@ export default function EvidLYIntelligence() {
     signalScope: 'statewide' as string,
     recommendedAction: '', actionDeadline: '',
   });
-  const [impactPreview, setImpactPreview] = useState<CorrelationPreview | null>(null);
 
   // RFP Monitor
   const [rfpListings, setRfpListings] = useState<{ id: string; title: string; entity_name: string; state: string; relevance_tier: string; deadline: string | null; estimated_value_min: number | null; estimated_value_max: number | null; status: string; created_at: string; ai_relevance_summary: string | null }[]>([]);
@@ -439,23 +438,6 @@ export default function EvidLYIntelligence() {
     setRoutingModeLoading(false);
   };
 
-  // Impact preview: refresh when targeting fields change in publish modal
-  useEffect(() => {
-    if (!publishModal.open) return;
-    const targetCountiesArr = pubForm.targetCounties.split(',').map(c => c.trim()).filter(Boolean);
-    const targeting = {
-      target_industries: pubForm.targetIndustries,
-      target_all_industries: pubForm.allIndustries,
-      target_counties: targetCountiesArr,
-      signal_scope: pubForm.signalScope,
-    };
-    let cancelled = false;
-    const isDemoMode = !user || user.email === 'demo@getevidly.com';
-    correlateSignal(targeting, supabase, isDemoMode).then(preview => {
-      if (!cancelled) setImpactPreview(preview);
-    });
-    return () => { cancelled = true; };
-  }, [publishModal.open, pubForm.allIndustries, pubForm.targetIndustries, pubForm.targetCounties, pubForm.signalScope, user]);
 
   // ── Review queue: notify tier, newest first, paginated ──────────
   // The audience panel is driven by ONE batched preview call per visible
@@ -475,6 +457,19 @@ export default function EvidLYIntelligence() {
   );
   const { byId: audienceById, loading: audienceLoading, error: audienceError } =
     useAudiencePreview(activeTab === 'review' ? reviewPageItems.map(s => s.id) : []);
+
+  // The publish modal shows the SAME live preview the audience panel uses, so
+  // the page has one source of truth for who receives a signal.
+  const {
+    byId: modalAudienceById,
+    loading: modalAudienceLoading,
+    error: modalAudienceError,
+  } = useAudiencePreview(
+    publishModal.open && publishModal.signal ? [publishModal.signal.id] : [],
+  );
+  const modalAudience: SignalAudience | undefined = publishModal.signal
+    ? modalAudienceById[publishModal.signal.id]
+    : undefined;
 
   const selectedReviewSignal = selectedReviewId
     ? reviewQueue.find(s => s.id === selectedReviewId) || null
@@ -580,7 +575,6 @@ export default function EvidLYIntelligence() {
       signalScope: signal.signal_scope || 'statewide',
       recommendedAction: '', actionDeadline: '',
     });
-    setImpactPreview(null);
     setPublishModal({ open: true, signal });
   };
 
@@ -2157,22 +2151,35 @@ export default function EvidLYIntelligence() {
                   </div>
                 </div>
 
-                {/* Impact Preview */}
-                {impactPreview && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg py-2.5 px-3.5">
-                    <div className="text-[11px] font-bold text-navy mb-1">
-                      Impact Preview: {impactPreview.total_orgs} org{impactPreview.total_orgs !== 1 ? 's' : ''}, {impactPreview.total_locations} location{impactPreview.total_locations !== 1 ? 's' : ''}
-                    </div>
-                    {impactPreview.orgs.length > 0 && (
-                      <div className="text-[10px] text-blue-500 leading-relaxed">
-                        {impactPreview.orgs.map(o => o.name).join(' · ')}
+                {/* Who receives this — live correlation, the same call the
+                    audience panel makes. Not an estimate. */}
+                <div className="bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3.5">
+                  <div className="text-[11px] font-bold text-navy mb-1">Who Receives This</div>
+                  {modalAudienceLoading && !modalAudience && (
+                    <div className="text-[10px] text-slate_ui">Loading live correlation…</div>
+                  )}
+                  {modalAudienceError && (
+                    <div className="text-[10px] text-red-600">Preview failed — {modalAudienceError}</div>
+                  )}
+                  {!modalAudienceError && modalAudience && (
+                    <>
+                      <div className="text-[10px] text-navy leading-relaxed">
+                        {reachSummary(modalAudience)}
                       </div>
-                    )}
-                    <div className="text-[9px] text-gray-500 mt-1">
-                      Confidence: {impactPreview.confidence}%
-                    </div>
-                  </div>
-                )}
+                      {modalAudience.totals.orgs > 0 && (
+                        <div className="text-[10px] text-slate_ui leading-relaxed mt-1">
+                          {modalAudience.audience.map(o => o.org_name).join(' · ')}
+                        </div>
+                      )}
+                      <div className="text-[10px] text-navy font-medium mt-1">
+                        {modalAudience.totals.full} full · {modalAudience.totals.teaser} teaser · {modalAudience.totals.skip} skipped
+                      </div>
+                      <div className="text-[9px] text-slate_ui mt-1">
+                        Reflects this signal as stored. Targeting edits above apply once published.
+                      </div>
+                    </>
+                  )}
+                </div>
 
                 {/* Recommended Action + Deadline */}
                 <div className="border-t border-border_ui pt-3.5">
