@@ -19,6 +19,7 @@ import { PortfolioSnapshot as RiskPortfolioSnapshot } from './risk/PortfolioSnap
 import { KitchenOverviewCards } from './risk/KitchenOverviewCards';
 import { RiskFeed } from './risk/RiskFeed';
 import { TreatProveStrips } from './risk/TreatProveStrips';
+import { SealedEvidencePanel } from './risk/SealedEvidencePanel';
 import { useDriftRouting } from '../../hooks/useDriftRouting';
 import { useAdvisorBriefings } from '../../hooks/useAdvisorBriefings';
 import { useUpcomingServicesList } from '../../hooks/useUpcomingServicesList';
@@ -289,6 +290,9 @@ export function DashboardView() {
 
       {/* Treat + prove */}
       <TreatProveStrips locationId={selectedLocationId} />
+
+      {/* Sealed evidence — org-wide tally, so it rides the all-locations tab */}
+      {selectedLocationId === null && <SealedEvidencePanel />}
 
       {/* Who can ask — five asker cards */}
       <WhoCanAsk />
