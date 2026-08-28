@@ -207,6 +207,7 @@ const MarketingSERP = lazy(() => import('./pages/admin/marketing/MarketingSERP')
 const MarketingGoogleAds = lazy(() => import('./pages/admin/marketing/MarketingGoogleAds'));
 const MarketingForecastVsActual = lazy(() => import('./pages/admin/marketing/MarketingForecastVsActual'));
 const MarketingPlanner = lazy(() => import('./pages/admin/marketing/MarketingPlanner'));
+const MarketingFollowUps = lazy(() => import('./pages/admin/marketing/MarketingFollowUps'));
 const MarketingPolicyLens = lazy(() => import('./pages/admin/marketing/MarketingPolicyLens'));
 const SalesPipeline = lazy(() => import('./pages/admin/SalesPipeline'));
 const EvidLYIntelligence = lazy(() => import('./pages/admin/EvidLYIntelligence'));
@@ -849,6 +850,7 @@ function AppRoutes() {
           <Route path="/admin/event-log" element={<EventLog />} />
           <Route path="/admin/marketing" element={<Navigate to="/admin/marketing/today" replace />} />
           <Route path="/admin/marketing/today" element={<SalesGuard><MarketingToday /></SalesGuard>} />
+          <Route path="/admin/marketing/follow-ups" element={<SalesGuard><MarketingFollowUps /></SalesGuard>} />
           <Route path="/admin/marketing/overview" element={<SalesGuard><MarketingOverview /></SalesGuard>} />
           <Route path="/admin/marketing/outbound-calls" element={<SalesGuard><MarketingOutboundCalls /></SalesGuard>} />
           <Route path="/admin/marketing/in-person" element={<SalesGuard><MarketingInPerson /></SalesGuard>} />
