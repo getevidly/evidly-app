@@ -111,10 +111,6 @@ export async function buildClientInviteEmail(
     .eq('state_code', 'CA')
     .eq('counts_toward_total', true);
 
-  const fireDenom = reqs?.filter((r: { pillar: string }) => r.pillar === 'fire_safety').length || 5;
-  const foodDenom = reqs?.filter((r: { pillar: string }) => r.pillar === 'food_safety').length || 13;
-  const total = fireDenom + foodDenom;
-
   const subject = isCpp
     ? "Your hood cleaning service certificate is on file."
     : "Your EvidLY account is ready.";
@@ -260,7 +256,7 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
           </table>
 
           <!-- Disclaimer -->
-          <div style="font-family:${fInstrument};font-size:13px;line-height:1.55;color:#8b95a3;padding:18px 0 0;">This is what EvidLY holds today, out of the ${total} records a California kitchen has to produce on demand. <span style="color:#5F6875;">It is not a compliance score</span> &mdash; the rest may well exist, in a binder, a vendor&rsquo;s inbox, a folder on a phone. Having them and having them the moment someone asks are not the same thing.</div>
+          <div style="font-family:${fInstrument};font-size:13px;line-height:1.55;color:#8b95a3;padding:18px 0 0;">A sample of what EvidLY monitors &mdash; every requirement watched, with an alert before anything lapses. <span style="color:#5F6875;">It is not a compliance score</span> &mdash; the rest may well exist, in a binder, a vendor&rsquo;s inbox, a folder on a phone. Having them and having them the moment someone asks are not the same thing.</div>
 
         </td></tr>
       </table>
