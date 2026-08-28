@@ -4,7 +4,6 @@
 
 import { buildEmailHtml } from "./email.ts";
 import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
-import { generateRingImages } from "./ring-renderer.ts";
 
 interface InviteEmailParams {
   senderName: string;
@@ -104,11 +103,6 @@ export async function buildClientInviteEmail(
   const firstName = recipientName.split(' ')[0];
   const isCpp = accessVia === 'cpp_client';
 
-  // ── Day-one numerators: CPP clients start with 1 fire (hood cert on file).
-  //    Non-CPP clients start at 0/0 — no certificate is claimed. ──
-  const fireNumerator = isCpp ? 1 : 0;
-  const foodNumerator = 0;
-
   // Derive denominators from the pillar_requirements catalog so adding
   // a requirement to the catalog changes the email without a code edit.
   const { data: reqs } = await supabase
@@ -120,13 +114,6 @@ export async function buildClientInviteEmail(
   const fireDenom = reqs?.filter((r: { pillar: string }) => r.pillar === 'fire_safety').length || 5;
   const foodDenom = reqs?.filter((r: { pillar: string }) => r.pillar === 'food_safety').length || 13;
   const total = fireDenom + foodDenom;
-  const firePct = Math.round((fireNumerator / fireDenom) * 100);
-  const foodPct = Math.round((foodNumerator / foodDenom) * 100);
-
-  // Generate ring PNGs (content-addressed — reuses existing images)
-  const { fireRingUrl, foodRingUrl } = await generateRingImages(
-    supabase, fireNumerator, fireDenom, foodNumerator, foodDenom,
-  );
 
   const subject = isCpp
     ? "Your hood cleaning service certificate is on file."
@@ -238,21 +225,39 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
           <div style="font-family:${fInstrument};font-size:27px;line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:#1C2A3A;padding:8px 0 0;">${isCpp ? 'Here&rsquo;s what your kitchen is carrying right now.' : 'Your account is ready.<br />Records start here.'}</div>
           <div style="font-family:${fInstrument};font-size:14.5px;line-height:1.6;color:#5F6875;padding:12px 0 22px;"><span style="color:#1C2A3A;font-weight:600;">Fire and food records both have to be current, and to hand the moment someone asks.</span> On top of that: your company&rsquo;s own business records, and one set for every vendor who provides services.</div>
 
-          <!-- TWO RINGS -->
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 0;"><tr>
-            <!-- Fire ring (text baked into 2x PNG — scales as one unit on mobile) -->
-            <td width="50%" align="center" valign="top" style="padding:0 6px;">
-              <img src="${fireRingUrl}" alt="${firePct}% fire safety" width="104" height="104" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
-              <div style="font-family:${fMono};font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#8b95a3;padding:9px 0 0;">Fire safety</div>
-              <div style="font-family:${fInstrument};font-size:13px;color:#5F6875;padding:4px 0 0;">${fireNumerator} of ${fireDenom} on file</div>
-            </td>
-            <!-- Food ring (text baked into 2x PNG — scales as one unit on mobile) -->
-            <td width="50%" align="center" valign="top" style="padding:0 6px;">
-              <img src="${foodRingUrl}" alt="${foodPct}% food safety" width="104" height="104" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
-              <div style="font-family:${fMono};font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#8b95a3;padding:9px 0 0;">Food safety</div>
-              <div style="font-family:${fInstrument};font-size:13px;color:#5F6875;padding:4px 0 0;">${foodNumerator} of ${foodDenom} on file</div>
-            </td>
-          </tr></table>
+          <!-- DASHBOARD PREVIEW · Predict / Reduce / Prove (static sample) -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 0;border:1px solid #E4DBC8;border-radius:10px;">
+            <tr><td style="background:#1C2A3A;padding:11px 15px;border-radius:10px 10px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td style="font-family:${fInstrument};font-weight:800;font-size:13px;color:#ffffff;letter-spacing:-0.02em;"><span style="color:#B24A2E;">E</span>vid<span style="color:#B24A2E;">LY</span></td>
+                <td align="right" style="font-family:${fMono};font-size:9px;letter-spacing:0.06em;color:#c9d3e0;text-transform:uppercase;">Sample &middot; Pacific Restaurant Group</td>
+              </tr></table>
+            </td></tr>
+            <tr><td style="background:#ffffff;padding:12px 15px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td width="14" valign="top" style="font-size:12px;line-height:1;color:#B8912F;padding-top:3px;">&#9679;</td>
+                <td width="60" valign="top" style="font-family:${fInstrument};font-weight:700;font-size:13.5px;color:#1C2A3A;">Predict</td>
+                <td valign="top" style="font-family:${fMono};font-size:10px;color:#646D7A;">Health permit renewal &middot; in 12 days</td>
+                <td align="right" valign="top" style="font-family:${fInstrument};font-weight:700;font-size:16px;color:#B8912F;line-height:1;">5<br><span style="font-family:${fMono};font-size:7.5px;font-weight:400;letter-spacing:0.09em;text-transform:uppercase;color:#9aa0a8;">coming due</span></td>
+              </tr></table>
+            </td></tr>
+            <tr><td style="background:#ffffff;padding:12px 15px;border-top:1px solid #EEE7D9;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td width="14" valign="top" style="font-size:12px;line-height:1;color:#B24A2E;padding-top:3px;">&#9679;</td>
+                <td width="60" valign="top" style="font-family:${fInstrument};font-weight:700;font-size:13.5px;color:#1C2A3A;">Reduce</td>
+                <td valign="top" style="font-family:${fMono};font-size:10px;color:#646D7A;">Health permit expired &middot; 26 days over</td>
+                <td align="right" valign="top" style="font-family:${fInstrument};font-weight:700;font-size:16px;color:#B3402F;line-height:1;">5<br><span style="font-family:${fMono};font-size:7.5px;font-weight:400;letter-spacing:0.09em;text-transform:uppercase;color:#9aa0a8;">open now</span></td>
+              </tr></table>
+            </td></tr>
+            <tr><td style="background:#ffffff;padding:12px 15px;border-top:1px solid #EEE7D9;border-radius:0 0 10px 10px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td width="14" valign="top" style="font-size:12px;line-height:1;color:#3F7D58;padding-top:3px;">&#9679;</td>
+                <td width="60" valign="top" style="font-family:${fInstrument};font-weight:700;font-size:13.5px;color:#1C2A3A;">Prove</td>
+                <td valign="top" style="font-family:${fMono};font-size:10px;color:#646D7A;">Hood cleaning certificate &middot; sealed</td>
+                <td align="right" valign="top" style="font-family:${fInstrument};font-weight:700;font-size:16px;color:#3F7D58;line-height:1;">63<br><span style="font-family:${fMono};font-size:7.5px;font-weight:400;letter-spacing:0.09em;text-transform:uppercase;color:#9aa0a8;">on file</span></td>
+              </tr></table>
+            </td></tr>
+          </table>
 
           <!-- Disclaimer -->
           <div style="font-family:${fInstrument};font-size:13px;line-height:1.55;color:#8b95a3;padding:18px 0 0;">This is what EvidLY holds today, out of the ${total} records a California kitchen has to produce on demand. <span style="color:#5F6875;">It is not a compliance score</span> &mdash; the rest may well exist, in a binder, a vendor&rsquo;s inbox, a folder on a phone. Having them and having them the moment someone asks are not the same thing.</div>
