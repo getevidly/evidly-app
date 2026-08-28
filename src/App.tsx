@@ -238,6 +238,7 @@ const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence').t
 const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ default: m.ClientReports })));
 const PredictiveAnalysis = lazy(() => import('./pages/PredictiveAnalysis'));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
+const SealedEvidenceShare = lazy(() => import('./pages/SealedEvidenceShare'));
 const PortalPage = lazy(() => import('./pages/public/PortalPage').then(m => ({ default: m.PortalPage })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
@@ -589,6 +590,8 @@ function AppRoutes() {
         <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
         <Route path="/r/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralPage /></Suspense>} />
         <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
+        {/* Carrier share — public, the token in the URL is the auth */}
+        <Route path="/share/evidence/:token" element={<Suspense fallback={<PageSkeleton />}><SealedEvidenceShare /></Suspense>} />
         <Route path="/reports/view/:shareToken" element={<Suspense fallback={<PageSkeleton />}><ReportViewer /></Suspense>} />
         <Route path="/portal/:token" element={<Suspense fallback={<PageSkeleton />}><PortalPage /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />

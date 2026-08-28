@@ -423,6 +423,13 @@ verify_jwt = false
 [functions.vendor-secure-upload]
 verify_jwt = false
 
+# Sealed evidence share — public read of a kitchen's seal tally by carriers
+# and brokers via a tokenized link. The token in the URL is the auth; it is
+# 32+ bytes of crypto-random, expires, and can be revoked. Returns counts and
+# hash prefixes only, never record contents. Carriers have no auth session.
+[functions.sealed-evidence-share]
+verify_jwt = false
+
 # Drift detection — cron job every 15 min, no user context
 [functions.detect-operational-drift]
 verify_jwt = false
