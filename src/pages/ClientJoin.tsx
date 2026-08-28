@@ -12,11 +12,12 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import { anonClient } from '../lib/anonClient';
 import { toast } from 'sonner';
 import { EvidLYDashboard, LOC_TABS } from '../components/join/EvidLYDashboard';
+import { DashboardThreeViews } from '../components/join/DashboardThreeViews';
 
 const VIEWED_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mark-record-viewed`;
 const SHARE_URL  = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/share-join-preview`;
@@ -48,6 +49,7 @@ interface Invite {
 /* ═══════════════════════════════════════════════════════════════ */
 export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
   const { token } = useParams<{ token: string }>();
+  const [searchParams] = useSearchParams();
 
   /* ── State ─────────────────────────────────────────────────── */
   const [loading, setLoading]       = useState(!previewOnly);
@@ -124,6 +126,10 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
     ? 'Pacific Restaurant Group'
     : (invite?.organization_name || invite?.business_name || 'your kitchen');
   const gateHref = token ? `/gate/${token}` : null;
+
+  /* ?view=3v renders the static three-view sample instead. Additive only:
+     without the flag /join renders exactly what it always has. */
+  const threeViews = searchParams.get('view') === '3v';
 
   /* ── Loading ───────────────────────────────────────────────── */
   if (loading) {
@@ -310,7 +316,9 @@ export function ClientJoin({ previewOnly = false }: { previewOnly?: boolean }) {
         )}
 
         {/* ── 4–12. EMBEDDED DASHBOARD ── */}
-        <EvidLYDashboard embedded loc={previewLoc} onLocChange={setPreviewLoc} gateToken={token} />
+        {threeViews
+          ? <DashboardThreeViews gateToken={token} />
+          : <EvidLYDashboard embedded loc={previewLoc} onLocChange={setPreviewLoc} gateToken={token} />}
       </div>
 
       {/* ══════ MOBILE STICKY BOTTOM CTA (phones only) ══════ */}
