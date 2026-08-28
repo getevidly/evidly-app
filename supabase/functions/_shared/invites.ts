@@ -182,7 +182,7 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
     <h1 style="margin:0;font-family:${fInstrument};font-weight:bold;font-size:27px;line-height:1.22;color:#FFFFFF;">${isCpp ? `${businessName}, your hood cleaning service certificate is on file.` : `${businessName}, your account is ready.`}</h1>
     <p style="margin:14px 0 24px;font-family:${fInstrument};font-size:14px;line-height:1.6;color:#A9B2BE;">${isCpp
       ? `You trust Cleaning Pros Plus with your kitchen exhaust and hood cleaning &mdash; the service certificate required by NFPA 96 is on file. Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Binder or application, fire and food records both have to be to hand when they ask.`
-      : `Your insurance company, your property manager, the fire marshal and the health inspector each ask for records, on their own schedules. Binder or application, fire and food records both have to be to hand when they ask. EvidLY keeps every record in one place so the answer is ready the moment someone asks.`}</p>
+      : `Your insurance company, your property manager, the fire marshal and the health inspector each ask for records. Binder or application, fire and food records both have to be to hand when they ask. EvidLY monitors every requirement, alerts you before one lapses, and has the record ready the moment someone asks.`}</p>
 
     <!-- Pillars -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -235,8 +235,8 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
           <!-- On file today -->
           <div style="font-family:${fMono};font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#A79E8B;padding:20px 0 0;">On file today</div>
-          <div style="font-family:${fInstrument};font-size:27px;line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:#1C2A3A;padding:8px 0 0;">${isCpp ? 'Your hood cleaning<br />certificate is on file.' : 'Your account is ready.<br />Records start here.'}</div>
-          <div style="font-family:${fInstrument};font-size:14.5px;line-height:1.6;color:#5F6875;padding:12px 0 22px;"><span style="color:#1C2A3A;font-weight:600;">${total} compliance records are required</span> for this kitchen &mdash; ${fireDenom} fire safety, ${foodDenom} food safety. On top of that: your company&rsquo;s own business records, and one set for every vendor who provides services.</div>
+          <div style="font-family:${fInstrument};font-size:27px;line-height:1.22;font-weight:700;letter-spacing:-0.02em;color:#1C2A3A;padding:8px 0 0;">${isCpp ? 'Here&rsquo;s what your kitchen is carrying right now.' : 'Your account is ready.<br />Records start here.'}</div>
+          <div style="font-family:${fInstrument};font-size:14.5px;line-height:1.6;color:#5F6875;padding:12px 0 22px;"><span style="color:#1C2A3A;font-weight:600;">Fire and food records both have to be current, and to hand the moment someone asks.</span> On top of that: your company&rsquo;s own business records, and one set for every vendor who provides services.</div>
 
           <!-- TWO RINGS -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 0;"><tr>
