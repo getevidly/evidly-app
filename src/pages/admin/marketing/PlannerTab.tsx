@@ -8,10 +8,42 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import {
-  EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, EV_LIGHT, EV_PAPER,
-  EV_SUCCESS,
+  EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, EV_PAPER,
   DISPLAY, BODY,
 } from './marketingTokens';
+
+// The mock's --track, plus the three block styles it repeats.
+const EV_TRACK = '#EFECE5';
+
+const CARD: React.CSSProperties = {
+  background: EV_PAPER,
+  border: `1px solid ${EV_LINE}`,
+  borderRadius: 12,
+  padding: '20px 22px',
+  marginBottom: 20,
+};
+
+const EYEBROW: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '.08em',
+  textTransform: 'uppercase',
+  color: EV_MUTED,
+  marginBottom: 16,
+};
+
+const TAG: React.CSSProperties = {
+  display: 'inline-block',
+  fontSize: 9,
+  fontWeight: 700,
+  letterSpacing: '.04em',
+  color: EV_EMBER,
+  background: '#F6E4DC',
+  borderRadius: 4,
+  padding: '2px 5px',
+  marginLeft: 6,
+  verticalAlign: 'middle',
+};
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -78,10 +110,13 @@ function RateInput({
   label,
   value,
   onChange,
+  note,
 }: {
   label: string;
   value: number;
   onChange: (v: number) => void;
+  /** Muted aside beside the label, e.g. "(price is the price)". */
+  note?: string;
 }) {
   const [local, setLocal] = useState(String(value));
   const [focused, setFocused] = useState(false);
@@ -96,9 +131,21 @@ function RateInput({
   };
 
   return (
-    <div className="flex items-center justify-between py-2">
-      <span className="text-[13px] font-medium" style={{ color: EV_NAVY }}>{label}</span>
-      <span className="inline-flex items-center gap-1">
+    <div>
+      <label style={{ display: 'block', fontSize: 11.5, color: EV_NAVY, marginBottom: 7, fontWeight: 500 }}>
+        {label}
+        {note && <span style={{ color: EV_MUTED }}> {note}</span>}
+      </label>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          border: `1px solid ${EV_LINE}`,
+          borderRadius: 8,
+          padding: '9px 12px',
+          backgroundColor: EV_PAPER,
+        }}
+      >
         <input
           type="number"
           min={0}
@@ -110,20 +157,20 @@ function RateInput({
           onBlur={() => { setFocused(false); commit(); }}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
           style={{
-            width: 60,
-            padding: '4px 8px',
-            border: `1px solid ${EV_LINE}`,
-            borderRadius: 6,
-            fontSize: 13,
-            fontFamily: 'ui-monospace, monospace',
-            color: EV_NAVY,
-            backgroundColor: EV_PAPER,
+            width: '100%',
+            border: 'none',
             outline: 'none',
+            padding: 0,
+            fontSize: 16,
+            fontWeight: 600,
+            color: EV_NAVY,
+            backgroundColor: 'transparent',
             textAlign: 'right',
+            fontFamily: BODY,
           }}
         />
-        <span className="text-[12px] font-semibold" style={{ color: EV_MUTED }}>%</span>
-      </span>
+        <span style={{ color: EV_MUTED, marginLeft: 4 }}>%</span>
+      </div>
     </div>
   );
 }
@@ -281,16 +328,40 @@ export default function PlannerTab() {
     );
   }
 
+  // Stage presentation, in the mock's order. Enterprise rows always render;
+  // when the toggle is off they sit dimmed and out of the chain.
+  const rowFor = (label: string) => funnel.find(f => f.label === label) || null;
+  const period = config.goal_period === 'month' ? 'month' : 'week';
+  const perAbbr = period === 'month' ? 'mo' : 'wk';
+  const entOn = config.include_enterprise_path;
+
+  const STAGES = [
+    { key: 'Touches',      name: 'Touches',       conv: 'top of funnel',                                  ent: false, live: false },
+    { key: 'Contacts',     name: 'Contact',       conv: `${config.rate_touch_contact}% of touches`,       ent: false, live: false },
+    { key: 'Discoveries',  name: 'Discovery',     conv: `${config.rate_contact_discovery}% of contacts`,  ent: false, live: true  },
+    { key: 'Tours',        name: 'Tour',          conv: `${config.rate_discovery_tour}% of discoveries`,  ent: false, live: true  },
+    { key: 'Proposals',    name: 'Proposal sent', conv: 'enterprise / custom only',                       ent: true,  live: true  },
+    { key: 'Negotiations', name: 'Negotiation',   conv: 'enterprise / custom only',                       ent: true,  live: true  },
+    { key: 'Won',          name: 'Won',           conv: entOn
+        ? `${config.rate_negotiation_won}% of negotiations · the goal`
+        : `${config.rate_tour_won}% of tours · the goal`,                                                ent: false, live: true  },
+  ];
+
+  const wtdPct = config.goal_count > 0
+    ? Math.round((wonCount / config.goal_count) * 100)
+    : 0;
+
   return (
-    <div style={{ fontFamily: BODY }}>
+    <div style={{ fontFamily: BODY, color: EV_NAVY }}>
+
       {/* ── Goal bar ─────────────────────────────────────────────── */}
       <div
-        className="border rounded-lg p-5 mb-6 flex items-center gap-3 flex-wrap"
-        style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
+          fontFamily: DISPLAY, fontSize: 20, color: EV_NAVY, marginBottom: 20,
+        }}
       >
-        <span className="text-[14px] font-semibold" style={{ color: EV_NAVY }}>
-          I want to close
-        </span>
+        I want to close
         <input
           type="number"
           min={0}
@@ -304,144 +375,190 @@ export default function PlannerTab() {
           }}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
           style={{
-            width: 64,
-            padding: '6px 10px',
-            border: `2px solid ${EV_EMBER}`,
-            borderRadius: 8,
-            fontSize: 18,
-            fontWeight: 700,
-            fontFamily: DISPLAY,
-            color: EV_EMBER,
-            backgroundColor: EV_PAPER,
-            outline: 'none',
-            textAlign: 'center',
+            width: 64, textAlign: 'center', fontFamily: BODY, fontSize: 18, fontWeight: 600,
+            padding: 8, border: `1px solid ${EV_LINE}`, borderRadius: 8,
+            backgroundColor: EV_PAPER, color: EV_NAVY, outline: 'none',
           }}
         />
-        <span className="text-[14px] font-semibold" style={{ color: EV_NAVY }}>
-          new accounts per
-        </span>
+        new accounts per
         <select
           value={config.goal_period}
           onChange={(e) => updateField('goal_period', e.target.value)}
           style={{
-            padding: '6px 12px',
-            border: `1px solid ${EV_LINE}`,
-            borderRadius: 8,
-            fontSize: 14,
-            fontWeight: 600,
-            color: EV_NAVY,
-            backgroundColor: EV_PAPER,
-            outline: 'none',
-            cursor: 'pointer',
+            fontFamily: BODY, fontSize: 14, padding: '9px 12px',
+            border: `1px solid ${EV_LINE}`, borderRadius: 8,
+            backgroundColor: EV_PAPER, color: EV_NAVY, cursor: 'pointer',
           }}
         >
-          <option value="week">week</option>
-          <option value="month">month</option>
+          <option value="week">Week</option>
+          <option value="month">Month</option>
         </select>
         {saving && (
-          <span className="text-[11px] font-semibold" style={{ color: EV_MUTED }}>
-            Saving…
-          </span>
+          <span style={{ fontFamily: BODY, fontSize: 11, fontWeight: 600, color: EV_MUTED }}>Saving…</span>
         )}
       </div>
 
       {/* ── Controls row ─────────────────────────────────────────── */}
-      <div className="flex items-center gap-6 mb-6 flex-wrap">
-        <label className="inline-flex items-center gap-2 cursor-pointer">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap', marginBottom: 22 }}>
+        <label
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 9, fontSize: 13, color: EV_NAVY, fontWeight: 500, cursor: 'pointer' }}
+        >
           <input
             type="checkbox"
-            checked={config.include_enterprise_path}
+            checked={entOn}
             onChange={(e) => updateField('include_enterprise_path', e.target.checked)}
-            className="w-4 h-4 accent-[#B24A2E]"
+            style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
           />
-          <span className="text-[13px] font-semibold" style={{ color: EV_NAVY }}>
-            Include enterprise path
+          <span
+            aria-hidden="true"
+            style={{
+              width: 38, height: 22, borderRadius: 99, position: 'relative', flex: 'none',
+              backgroundColor: entOn ? EV_EMBER : EV_TRACK,
+              border: `1px solid ${entOn ? EV_EMBER : EV_LINE}`,
+              transition: 'background-color .15s',
+            }}
+          >
+            <span
+              style={{
+                content: '""', position: 'absolute', top: 2, left: entOn ? 'auto' : 2, right: entOn ? 2 : 'auto',
+                width: 18, height: 18, borderRadius: '50%', backgroundColor: '#FFF',
+                boxShadow: '0 1px 2px rgba(0,0,0,.15)',
+              }}
+            />
           </span>
+          Include enterprise path <span style={{ color: EV_MUTED, fontWeight: 400 }}>(proposal + negotiation)</span>
         </label>
+
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: EV_MUTED, fontSize: 13 }}>
+          Attribute to
+          <select
+            value={config.attribution_channel}
+            onChange={(e) => updateField('attribution_channel', e.target.value)}
+            style={{
+              fontFamily: BODY, fontSize: 13, padding: '8px 12px',
+              border: `1px solid ${EV_LINE}`, borderRadius: 8,
+              backgroundColor: EV_PAPER, color: EV_NAVY, cursor: 'pointer',
+            }}
+          >
+            <option value="all">All channels (overall)</option>
+            <option value="outbound_calls">Outbound calls</option>
+            <option value="in_person">In person</option>
+            <option value="shows">Shows</option>
+            <option value="content">Content</option>
+          </select>
+        </span>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* ── Conversion Rates card ──────────────────────────────── */}
-        <div className="border rounded-lg p-5" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
-          <h3 className="text-sm font-bold mb-4" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
-            Conversion Rates
-          </h3>
-          <div className="divide-y" style={{ borderColor: EV_LINE }}>
-            <RateInput label="Touch → Contact" value={config.rate_touch_contact} onChange={(v) => updateField('rate_touch_contact', v)} />
-            <RateInput label="Contact → Discovery" value={config.rate_contact_discovery} onChange={(v) => updateField('rate_contact_discovery', v)} />
-            <RateInput label="Discovery → Tour" value={config.rate_discovery_tour} onChange={(v) => updateField('rate_discovery_tour', v)} />
-            {config.include_enterprise_path ? (
-              <>
-                <RateInput label="Tour → Proposal" value={config.rate_tour_proposal} onChange={(v) => updateField('rate_tour_proposal', v)} />
-                <RateInput label="Proposal → Negotiation" value={config.rate_proposal_negotiation} onChange={(v) => updateField('rate_proposal_negotiation', v)} />
-                <RateInput label="Negotiation → Won" value={config.rate_negotiation_won} onChange={(v) => updateField('rate_negotiation_won', v)} />
-              </>
-            ) : (
-              <RateInput label="Tour → Won" value={config.rate_tour_won} onChange={(v) => updateField('rate_tour_won', v)} />
-            )}
-          </div>
+      {/* ── Conversion rates card ────────────────────────────────── */}
+      <div style={CARD}>
+        <div style={EYEBROW}>Conversion rates — standard path</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+          <RateInput label="Touch → Contact" value={config.rate_touch_contact} onChange={(v) => updateField('rate_touch_contact', v)} />
+          <RateInput label="Contact → Discovery" value={config.rate_contact_discovery} onChange={(v) => updateField('rate_contact_discovery', v)} />
+          <RateInput label="Discovery → Tour" value={config.rate_discovery_tour} onChange={(v) => updateField('rate_discovery_tour', v)} />
+          <RateInput label="Tour → Won" note="(price is the price)" value={config.rate_tour_won} onChange={(v) => updateField('rate_tour_won', v)} />
         </div>
 
-        {/* ── Funnel card ────────────────────────────────────────── */}
-        <div className="lg:col-span-2 border rounded-lg p-5" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
-          <h3 className="text-sm font-bold mb-1" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>
-            Funnel Targets
+        <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px dashed ${EV_LINE}` }}>
+          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '.06em', color: EV_EMBER, marginBottom: 12 }}>
+            Enterprise / custom only
+            <span
+              style={{
+                backgroundColor: '#F6E4DC', color: EV_EMBER, borderRadius: 4,
+                padding: '2px 6px', marginLeft: 6, fontSize: 9, letterSpacing: '.04em',
+              }}
+            >
+              TOGGLE ON
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            <RateInput label="Tour → Proposal" value={config.rate_tour_proposal} onChange={(v) => updateField('rate_tour_proposal', v)} />
+            <RateInput label="Proposal → Negotiation" value={config.rate_proposal_negotiation} onChange={(v) => updateField('rate_proposal_negotiation', v)} />
+            <RateInput label="Negotiation → Won" value={config.rate_negotiation_won} onChange={(v) => updateField('rate_negotiation_won', v)} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Funnel card ──────────────────────────────────────────── */}
+      <div style={CARD}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+          <h3 style={{ fontFamily: DISPLAY, fontSize: 17, fontWeight: 600, margin: 0, color: EV_NAVY }}>
+            Overall funnel
+            <small style={{ fontFamily: BODY, fontWeight: 400, fontSize: 12, color: EV_MUTED, marginLeft: 8 }}>
+              per {period} · {entOn ? 'enterprise path' : 'standard path'}
+            </small>
           </h3>
-          <p className="text-[11px] mb-5" style={{ color: EV_MUTED }}>
-            Backward math from {config.goal_count} won per {config.goal_period}
-          </p>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', color: EV_MUTED }}>
+            {period === 'month' ? 'MONTH TO DATE' : 'WEEK TO DATE'} · <b style={{ color: EV_EMBER }}>{wtdPct}%</b>
+          </span>
+        </div>
 
-          <div className="space-y-3">
-            {funnel.map((row) => {
-              const targetPct = Math.round((row.target / maxTarget) * 100);
-              const actualPct = row.actual !== null
-                ? Math.min(Math.round((row.actual / maxTarget) * 100), 100)
-                : null;
-              const onTrack = row.actual !== null && row.actual >= row.target;
+        {STAGES.map((st, i) => {
+          const row = rowFor(st.key);
+          const dim = st.ent && !entOn;
+          const target = row ? row.target : 0;
+          const actual = row ? row.actual : null;
+          const targetPct = maxTarget > 0 ? Math.round((target / maxTarget) * 100) : 0;
+          const actualPct = actual !== null && maxTarget > 0
+            ? Math.min(Math.round((actual / maxTarget) * 100), 100)
+            : 0;
 
-              return (
-                <div key={row.label}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[13px] font-semibold" style={{ color: EV_NAVY }}>
-                      {row.label}
-                    </span>
-                    <span className="text-[12px] font-mono" style={{ color: EV_MUTED }}>
-                      {row.actual !== null ? (
-                        <>
-                          <span className="font-bold" style={{ color: onTrack ? EV_SUCCESS : EV_EMBER }}>
-                            {row.actual}
-                          </span>
-                          {' / '}
-                          {row.target}
-                        </>
-                      ) : (
-                        <>— / {row.target}</>
-                      )}
-                    </span>
-                  </div>
-                  <div className="relative h-5 rounded" style={{ backgroundColor: EV_LIGHT }}>
-                    {/* Target bar (muted background) */}
-                    <div
-                      className="absolute inset-y-0 left-0 rounded"
-                      style={{ width: `${targetPct}%`, backgroundColor: `${EV_NAVY}18` }}
-                    />
-                    {/* Actual bar (solid overlay) */}
-                    {actualPct !== null && (
-                      <div
-                        className="absolute inset-y-0 left-0 rounded"
-                        style={{
-                          width: `${Math.min(actualPct, targetPct)}%`,
-                          backgroundColor: onTrack ? EV_SUCCESS : EV_EMBER,
-                          opacity: 0.65,
-                        }}
-                      />
-                    )}
-                  </div>
+          return (
+            <div
+              key={st.key}
+              style={{
+                display: 'grid', gridTemplateColumns: '210px 1fr 110px',
+                alignItems: 'center', gap: 16, padding: '14px 0',
+                borderTop: i === 0 ? 'none' : `1px solid ${EV_LINE}`,
+                opacity: dim ? 0.5 : 1,
+              }}
+            >
+              <div>
+                <b style={{ display: 'block', fontSize: 14, fontWeight: 600, color: EV_NAVY }}>
+                  {st.name}
+                  {st.ent && <span style={TAG}>ENTERPRISE</span>}
+                  {!st.live && <span style={{ ...TAG, color: EV_MUTED, backgroundColor: EV_TRACK }}>NO LIVE SOURCE</span>}
+                </b>
+                <div style={{ fontSize: 11, color: EV_MUTED, marginTop: 2 }}>{st.conv}</div>
+              </div>
+
+              <div>
+                <div style={{ height: 12, borderRadius: 6, backgroundColor: EV_TRACK, overflow: 'hidden' }}>
+                  <div style={{ height: 12, borderRadius: 6, backgroundColor: '#CBD2DD', width: `${dim ? 0 : targetPct}%` }} />
                 </div>
-              );
-            })}
-          </div>
-        </div>
+                {/* No actual bar where there is no live source, and none for a
+                    dimmed enterprise row — an empty ember bar would read as a
+                    real zero rather than as "not measured". */}
+                {st.live && !dim && (
+                  <div style={{ marginTop: 7, height: 9, borderRadius: 5, backgroundColor: EV_TRACK, overflow: 'hidden' }}>
+                    <div style={{ height: 9, borderRadius: 5, backgroundColor: EV_EMBER, width: `${actualPct}%` }} />
+                  </div>
+                )}
+              </div>
+
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 13, color: EV_MUTED }}>
+                  {dim ? '—' : `${target} / ${perAbbr}`}
+                </div>
+                {st.live && !dim && (
+                  <div style={{ fontSize: 12, color: EV_NAVY, marginTop: 6 }}>
+                    Actual <b style={{ color: EV_EMBER }}>{actual ?? 0}</b>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Footer explainer ─────────────────────────────────────── */}
+      <div style={{ fontSize: 12, color: EV_MUTED, marginTop: 14, paddingTop: 14, borderTop: `1px solid ${EV_LINE}` }}>
+        Standard path (toggle off): <b style={{ color: EV_NAVY }}>1 account/week</b> needs about{' '}
+        <b style={{ color: EV_NAVY }}>34 touches → 10 contacts → 5 discoveries → 3 tours → 1 won</b> — they see
+        the price and buy, no proposal. Flip <b style={{ color: EV_NAVY }}>Include enterprise path</b> on and Tour
+        routes through <b style={{ color: EV_NAVY }}>Proposal → Negotiation → Won</b> instead (needs ~67 touches for
+        the same close). Ember bar = real week-to-date; grey = target. Touches and Contact have no live actual
+        source yet, so they show target only.
       </div>
     </div>
   );
