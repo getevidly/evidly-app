@@ -46,6 +46,30 @@ function ladderFor(source: string | null): number[] {
   return (source && LADDERS[source]) || DEFAULT_LADDER;
 }
 
+/**
+ * pipeline_touches.touch_type is constrained to
+ *   call | email | in_person | show | other
+ * while sales_pipeline.source is a free vocabulary ('study', 'door_knock',
+ * null, ...). Passing source straight through fails the CHECK and the whole
+ * save is rejected, so map it and fall back to the permitted 'other'.
+ */
+const TOUCH_TYPE_BY_SOURCE: Record<string, string> = {
+  call: 'call',
+  cold_call: 'call',
+  outbound_call: 'call',
+  phone: 'call',
+  email: 'email',
+  in_person: 'in_person',
+  door_knock: 'in_person',
+  field: 'in_person',
+  show: 'show',
+  trade_show: 'show',
+};
+
+function touchTypeFor(source: string | null): string {
+  return (source && TOUCH_TYPE_BY_SOURCE[source]) || 'other';
+}
+
 const OUTCOMES = [
   { key: 'connected', label: 'Connected' },
   { key: 'no_answer', label: 'No answer' },
@@ -170,6 +194,10 @@ export default function FollowUpsTab() {
   const [note, setNote] = useState('');
   const [lostReason, setLostReason] = useState('');
   const [saving, setSaving] = useState(false);
+  /** Save failure, shown in the panel footer rather than at the page top. */
+  const [saveErr, setSaveErr] = useState<string | null>(null);
+  /** Close-out reveals the reason field without requiring the chip first. */
+  const [closingOut, setClosingOut] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -310,6 +338,15 @@ export default function FollowUpsTab() {
 
   const openRow = useMemo(() => rows.find(r => r.id === openId) || null, [rows, openId]);
 
+  /** The date the next action will be set to — exact date wins over the count. */
+  const computedNextDate = exactDate || iso(new Date(Date.now() + days * 86400000));
+
+  /**
+   * The gate the panel copy promises: no save without an outcome and a next
+   * action, and no close-out without a reason.
+   */
+  const canSave = !saving && !!outcome && !!computedNextDate && (!closingOut || !!lostReason.trim());
+
   function beginLog(row: QueueRow) {
     const ladder = ladderFor(row.source);
     const rung = row.touchCount; // 0-based index of the rung being set now
@@ -319,12 +356,15 @@ export default function FollowUpsTab() {
     setExactDate('');
     setNote('');
     setLostReason('');
+    setSaveErr(null);
+    setClosingOut(false);
   }
 
   async function save(closeOut: boolean) {
     if (!openRow) return;
     if (closeOut && !lostReason.trim()) return;
     setSaving(true);
+    setSaveErr(null);
 
     const nextAt = closeOut
       ? null
@@ -332,14 +372,14 @@ export default function FollowUpsTab() {
 
     const { error: tErr } = await supabase.from('pipeline_touches').insert({
       pipeline_id: openRow.id,
-      touch_type: openRow.source || 'other',
+      touch_type: touchTypeFor(openRow.source),
       outcome: closeOut ? 'not_a_fit' : outcome,
       was_due_on: openRow.next_action_at,
       touch_date: today,
       note: note.trim() || null,
       next_action_set: nextAt,
     });
-    if (tErr) { setErr(tErr.message); setSaving(false); return; }
+    if (tErr) { setSaveErr(tErr.message); setSaving(false); return; }
 
     const patch: Record<string, unknown> = closeOut
       ? { stage: 'lost', lost_reason: lostReason.trim(), next_action_at: null }
@@ -349,7 +389,7 @@ export default function FollowUpsTab() {
     }
 
     const { error: pErr } = await supabase.from('sales_pipeline').update(patch).eq('id', openRow.id);
-    if (pErr) { setErr(pErr.message); setSaving(false); return; }
+    if (pErr) { setSaveErr(pErr.message); setSaving(false); return; }
 
     const idx = rows.findIndex(r => r.id === openRow.id);
     const next = rows[idx + 1] || null;
@@ -571,13 +611,29 @@ export default function FollowUpsTab() {
                         </label>
                         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                           <div style={{ display: 'flex', alignItems: 'center', border: `1px solid ${EV_LINE}`, borderRadius: 2, background: EV_PAPER }}>
+                            <button
+                              type="button"
+                              aria-label="Fewer days"
+                              onClick={() => { setDays(d => Math.max(1, d - 1)); setExactDate(''); }}
+                              style={{ padding: '9px 12px', border: 'none', borderRight: `1px solid ${EV_LINE}`, background: 'transparent', color: EV_MUTED, cursor: 'pointer', fontSize: 15, fontFamily: BODY }}
+                            >
+                              −
+                            </button>
                             <input
                               type="number"
                               min={1}
                               value={days}
-                              onChange={e => { setDays(parseInt(e.target.value) || 1); setExactDate(''); }}
-                              style={{ padding: '9px 14px', fontFamily: MONO, fontSize: 14, width: 74, border: 'none', outline: 'none', background: 'transparent', color: EV_NAVY }}
+                              onChange={e => { setDays(Math.max(1, parseInt(e.target.value) || 1)); setExactDate(''); }}
+                              style={{ padding: '9px 10px', fontFamily: MONO, fontSize: 14, width: 62, border: 'none', outline: 'none', background: 'transparent', color: EV_NAVY, textAlign: 'center' }}
                             />
+                            <button
+                              type="button"
+                              aria-label="More days"
+                              onClick={() => { setDays(d => d + 1); setExactDate(''); }}
+                              style={{ padding: '9px 12px', border: 'none', borderLeft: `1px solid ${EV_LINE}`, background: 'transparent', color: EV_MUTED, cursor: 'pointer', fontSize: 15, fontFamily: BODY }}
+                            >
+                              +
+                            </button>
                             <em style={{ fontStyle: 'normal', padding: '9px 12px', fontSize: 13, color: EV_MUTED, borderLeft: `1px solid ${EV_LINE}` }}>days</em>
                           </div>
                           <span style={{ color: EV_MUTED, fontSize: 13 }}>or</span>
@@ -589,7 +645,12 @@ export default function FollowUpsTab() {
                             aria-label="Pick a date"
                           />
                         </div>
-                        <p style={{ fontSize: 12, color: EV_MUTED, margin: '10px 0 0' }}>
+                        <p style={{ fontSize: 12, color: EV_NAVY, margin: '10px 0 0' }}>
+                          Next action lands on{' '}
+                          <b style={{ fontFamily: MONO, fontWeight: 500 }}>{computedNextDate || '—'}</b>
+                          {exactDate && <span style={{ color: EV_MUTED }}> (exact date overrides the day count)</span>}
+                        </p>
+                        <p style={{ fontSize: 12, color: EV_MUTED, margin: '6px 0 0' }}>
                           Ladder for {r.source ? r.source.replace(/_/g, ' ') : 'this source'}:{' '}
                           <b style={{ color: EV_NAVY, fontFamily: MONO, fontWeight: 500 }}>{ladder.join(' → ')} days</b>.
                           {isLast
@@ -610,7 +671,7 @@ export default function FollowUpsTab() {
                         />
                       </div>
 
-                      {outcome === 'not_a_fit' && (
+                      {(outcome === 'not_a_fit' || closingOut) && (
                         <div style={{ marginBottom: 22 }}>
                           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 9 }}>
                             Reason <span style={{ fontSize: 12, color: EV_MUTED, fontWeight: 400, marginLeft: 6 }}>required to close out</span>
@@ -624,18 +685,33 @@ export default function FollowUpsTab() {
                       )}
                     </div>
                     <div style={{ borderTop: `1px solid ${EV_LINE}`, padding: '16px 18px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', background: CREAM }}>
-                      <button type="button" style={BTN_PRIMARY} disabled={saving} onClick={() => save(false)}>
+                      <button
+                        type="button"
+                        style={{ ...BTN_PRIMARY, opacity: canSave ? 1 : 0.5, cursor: canSave ? 'pointer' : 'not-allowed' }}
+                        disabled={!canSave}
+                        onClick={() => save(false)}
+                      >
                         {saving ? 'Saving…' : 'Save and go to next'}
                       </button>
                       <button
                         type="button"
-                        style={{ ...BTN_QUIET, opacity: lostReason.trim() ? 1 : 0.5 }}
-                        disabled={saving || !lostReason.trim()}
-                        onClick={() => save(true)}
+                        style={BTN_QUIET}
+                        disabled={saving}
+                        onClick={() => {
+                          // First press reveals the reason field; it is required
+                          // before the close-out can be written.
+                          if (!closingOut) { setClosingOut(true); setOutcome('not_a_fit'); return; }
+                          if (lostReason.trim()) void save(true);
+                        }}
                       >
-                        Close out as "Not a fit"
+                        {closingOut && !lostReason.trim() ? 'Reason required to close out' : 'Close out as "Not a fit"'}
                       </button>
                       <span style={{ fontSize: 12, color: EV_MUTED }}>{leftToday} left in today's queue</span>
+                      {saveErr && (
+                        <span style={{ fontSize: 12, color: '#A03B1C', flexBasis: '100%' }}>
+                          Not saved — {saveErr}
+                        </span>
+                      )}
                     </div>
                   </section>
                 )}
