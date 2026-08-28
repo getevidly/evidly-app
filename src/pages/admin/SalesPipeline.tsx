@@ -4,7 +4,8 @@
  * Access: platform_admin / @getevidly.com
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
@@ -48,6 +49,7 @@ export default function SalesPipeline() {
   const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
   const [selectedDeal, setSelectedDeal] = useState<any | null>(null);
   const [stageBlockedId, setStageBlockedId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -62,6 +64,32 @@ export default function SalesPipeline() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  // ── ?id= deep link ────────────────────────────────────────────
+  // The Follow-ups tab's "Open thread" button links here with the pipeline
+  // row's id. Open the same DealPanel a kanban card click opens, and scroll
+  // the card into view. Runs once: without the guard, closing the panel would
+  // reopen it on the next render, and a reload after an edit would yank the
+  // user back. An id matching no row is ignored — the list renders normally.
+  const deepLinkHandled = useRef(false);
+  useEffect(() => {
+    if (deepLinkHandled.current || loading) return;
+    const wanted = searchParams.get('id');
+    if (!wanted) return;
+
+    deepLinkHandled.current = true;
+    const row = pipeline.find(d => d.id === wanted);
+    if (!row) return;
+
+    setSelectedDeal(row);
+    // The card only exists in kanban view; in table view the panel still
+    // opens and this simply finds nothing.
+    requestAnimationFrame(() => {
+      document
+        .querySelector(`[data-deal-id="${wanted}"]`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [loading, pipeline, searchParams]);
 
   // Summary metrics
   const openDeals = useMemo(() => pipeline.filter(p => !['won', 'lost', 'churned'].includes(p.stage)), [pipeline]);
@@ -243,7 +271,7 @@ function KanbanView({ pipeline, onStageChange, onSelect, onNotes, onCloseDate, s
             </div>
             <div className="bg-cream rounded-xl p-2 min-h-[200px] space-y-2">
               {deals.map(deal => (
-                <div key={deal.id} onClick={() => onSelect(deal)}
+                <div key={deal.id} data-deal-id={deal.id} onClick={() => onSelect(deal)}
                   className="bg-white rounded-xl border border-navy/10 p-3 cursor-pointer hover:shadow-md transition-shadow">
                   <div className="font-semibold text-sm text-navy mb-1">{deal.org_name}</div>
                   <div className="text-xs text-navy/50">{deal.contact_name || '—'}{deal.contact_title ? ` · ${deal.contact_title}` : ''}</div>
