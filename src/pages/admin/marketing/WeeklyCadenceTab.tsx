@@ -36,10 +36,10 @@ export default function WeeklyCadenceTab() {
           style={{ backgroundColor: EV_EMBER }}
         />
         <p className="text-[14px] m-0" style={{ color: EV_MUTED, fontFamily: BODY }}>
-          <b style={{ color: EV_NAVY }}>How it reads.</b> Each week, Start today and the adherence
-          card compare that week's actual against <b style={{ color: EV_NAVY }}>the target scheduled
-          for that week</b>. Set next week to 9 and the week after to 11, and the number you're
-          graded on rises with it — automatically, as the calendar moves.
+          <b style={{ color: EV_NAVY }}>How it reads.</b> The &quot;this week&quot; number on each
+          per-week channel is <b style={{ color: EV_NAVY }}>the target scheduled for that week</b>.
+          Set next week to 9 and the week after to 11, and the target rises with it — automatically,
+          as the calendar moves.
         </p>
       </div>
 
