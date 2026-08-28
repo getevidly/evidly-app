@@ -1,7 +1,7 @@
 /**
  * weeklyTarget — shared helpers for per-week cadence overrides.
  *
- * Used by ChannelCadences (editor), StartToday, and AdherenceCards.
+ * Used by ChannelCadences (editor) and FollowUpsTab's adherence math.
  */
 
 /** Number of future weeks shown in the weekly schedule editor. */
@@ -9,7 +9,7 @@ export const SCHEDULE_WEEKS = 8;
 
 /**
  * Returns the Monday (ISO yyyy-mm-dd) of the week containing `d`.
- * Week starts Monday, matching StartToday's per_week window.
+ * Week starts Monday, matching the per_week cadence window.
  */
 export function mondayOf(d: Date): string {
   const dt = new Date(d);

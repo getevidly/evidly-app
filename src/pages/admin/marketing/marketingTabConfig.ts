@@ -25,7 +25,7 @@ export interface MarketingTab {
 }
 
 export const MARKETING_TABS: MarketingTab[] = [
-  { id: 'today',     label: 'Today',              Icon: Calendar,        route: 'today' },
+  { id: 'weekly-cadence', label: 'Weekly Cadence', Icon: Calendar,        route: 'weekly-cadence' },
   { id: 'followups', label: 'Follow-ups',         Icon: CheckSquare,     route: 'follow-ups' },
   { id: 'overview',  label: 'Overview',           Icon: LayoutDashboard, route: 'overview' },
   { id: 'planner',   label: 'Planner',            Icon: Target,          route: 'planner' },
@@ -48,7 +48,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 ];
 
 export type MarketingTabId =
-  | 'today' | 'followups' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
+  | 'weekly-cadence' | 'followups' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
   | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
 

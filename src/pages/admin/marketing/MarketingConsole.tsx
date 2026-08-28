@@ -15,7 +15,7 @@ import ChannelsTab from './ChannelsTab';
 import SurveyTab from './SurveyTab';
 import ContentScheduleTab from './ContentScheduleTab';
 import OutreachTab from './OutreachTab';
-import TodayTab from './TodayTab';
+import WeeklyCadenceTab from './WeeklyCadenceTab';
 import FollowUpsTab from './FollowUpsTab';
 import OverviewTab from './OverviewTab';
 import OutboundCallsTab from './OutboundCallsTab';
@@ -248,7 +248,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       ) : null}
 
       {/* Placeholder tabs — shell only, data wiring in later phases */}
-      {tab === 'today'     && <TodayTab />}
+      {tab === 'weekly-cadence' && <WeeklyCadenceTab />}
       {tab === 'followups' && <FollowUpsTab />}
       {tab === 'overview'  && <OverviewTab accounts={accounts} sends={sends} loading={loading} error={error} />}
       {tab === 'calls'     && <OutboundCallsTab accounts={accounts} loading={loading} error={error} onRefresh={data.refresh} />}

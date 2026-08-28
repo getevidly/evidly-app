@@ -12,10 +12,10 @@ import { Plus, Check } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import {
   EV_NAVY, EV_MUTED, EV_LINE, EV_PAPER, EV_LIGHT, EV_EMBER,
-  EV_DANGER, EV_SUCCESS, DISPLAY, BODY,
+  EV_DANGER, EV_SUCCESS, EV_FAINT, DISPLAY, BODY,
 } from './marketingTokens';
 import { toast } from 'sonner';
-import { mondayOf, SCHEDULE_WEEKS } from '../../../lib/marketing/weeklyTarget';
+import { mondayOf, SCHEDULE_WEEKS, targetForWeek } from '../../../lib/marketing/weeklyTarget';
 
 interface CadenceRow {
   id: string;
@@ -276,6 +276,10 @@ export default function ChannelCadences() {
   // Weekly drawer: which row id is open (null = none)
   const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
 
+  // This week's per-channel overrides, so the Target cell can read "N this week"
+  const [thisMonday] = useState(() => mondayOf(new Date()));
+  const [weekOverrides, setWeekOverrides] = useState<Record<string, number>>({});
+
   // Archive visibility
   const [showArchived, setShowArchived] = useState(false);
 
@@ -308,7 +312,21 @@ export default function ChannelCadences() {
     setLoading(false);
   }, []);
 
+  const fetchWeekOverrides = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('channel_cadence_weeks')
+      .select('channel_id, target_count')
+      .eq('week_start', thisMonday);
+    if (error) { setWeekOverrides({}); return; }
+    const map: Record<string, number> = {};
+    for (const w of (data as { channel_id: string; target_count: number }[]) || []) {
+      map[w.channel_id] = w.target_count;
+    }
+    setWeekOverrides(map);
+  }, [thisMonday]);
+
   useEffect(() => { fetchRows(); }, [fetchRows]);
+  useEffect(() => { fetchWeekOverrides(); }, [fetchWeekOverrides]);
 
   const getEdit = (id: string, field: keyof CadenceRow, original: unknown) => {
     return edits[id]?.[field] ?? original;
@@ -412,7 +430,7 @@ export default function ChannelCadences() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b" style={{ borderColor: EV_LINE }}>
-                  {['Label', 'Source value', 'Stage', 'Cadence', 'Target', 'Owner', ''].map(h => (
+                  {['Channel', 'Source value', 'Stage', 'Cadence', 'Target', 'Owner', 'Active'].map(h => (
                     <th key={h} className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>
                       {h}
                     </th>
@@ -423,7 +441,14 @@ export default function ChannelCadences() {
                 {visibleRows.map(r => {
                   const effectiveCadence = (getEdit(r.id, 'cadence_type', r.cadence_type) as string);
                   const isPerWeek = effectiveCadence === 'per_week';
+                  const isPerWeekday = effectiveCadence === 'per_weekday';
                   const drawerOpen = openDrawerId === r.id;
+                  const baseline = getEdit(r.id, 'target_count', r.target_count) as number | null;
+                  const thisWeekTarget = targetForWeek(
+                    baseline,
+                    r.id in weekOverrides ? { [thisMonday]: weekOverrides[r.id] } : {},
+                    thisMonday,
+                  );
 
                   return (
                     <>
@@ -451,23 +476,41 @@ export default function ChannelCadences() {
                           </select>
                         </td>
                         <td className="py-2.5 px-4">
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="number"
-                              min={0}
-                              value={(getEdit(r.id, 'target_count', r.target_count) as number | null) ?? ''}
-                              onChange={e => setEdit(r.id, 'target_count', e.target.value ? parseInt(e.target.value) : null)}
-                              className="w-16 py-1 px-2 text-[12px] border rounded-md outline-none"
-                              style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
-                            />
-                            {isPerWeek && (
-                              <button
-                                onClick={() => setOpenDrawerId(drawerOpen ? null : r.id)}
-                                className="text-[11px] font-semibold border-none bg-transparent cursor-pointer whitespace-nowrap"
-                                style={{ color: EV_EMBER, fontFamily: BODY }}
-                              >
-                                Schedule {drawerOpen ? '▴' : '▾'}
-                              </button>
+                          <div className="flex items-center gap-2.5">
+                            {isPerWeek ? (
+                              <>
+                                {thisWeekTarget != null ? (
+                                  <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: EV_NAVY, fontFamily: BODY }}>
+                                    {thisWeekTarget}{' '}
+                                    <span className="font-medium" style={{ color: EV_MUTED }}>this week</span>
+                                  </span>
+                                ) : (
+                                  <span className="text-[13px]" style={{ color: EV_FAINT }}>{'—'}</span>
+                                )}
+                                <button
+                                  onClick={() => setOpenDrawerId(drawerOpen ? null : r.id)}
+                                  className="text-[12px] font-semibold border-none bg-transparent cursor-pointer whitespace-nowrap p-0"
+                                  style={{ color: EV_EMBER, fontFamily: BODY }}
+                                >
+                                  Schedule {drawerOpen ? '▴' : '▾'}
+                                </button>
+                              </>
+                            ) : isPerWeekday ? (
+                              <>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  value={baseline ?? ''}
+                                  onChange={e => setEdit(r.id, 'target_count', e.target.value ? parseInt(e.target.value) : null)}
+                                  className="w-16 py-1 px-2 text-[12px] border rounded-md outline-none text-center"
+                                  style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+                                />
+                                <span className="text-[12px] whitespace-nowrap" style={{ color: EV_MUTED, fontFamily: BODY }}>
+                                  per weekday
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-[13px]" style={{ color: EV_FAINT }}>{'—'}</span>
                             )}
                           </div>
                         </td>
@@ -483,6 +526,15 @@ export default function ChannelCadences() {
                         </td>
                         <td className="py-2.5 px-4">
                           <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={r.is_active}
+                              onChange={() => toggleActive(r)}
+                              title={r.is_active ? 'Archive' : 'Unarchive'}
+                              aria-label={(r.is_active ? 'Archive ' : 'Unarchive ') + r.label}
+                              className="w-4 h-4 cursor-pointer"
+                              style={{ accentColor: EV_EMBER }}
+                            />
                             {hasEdits(r.id) && (
                               <button
                                 onClick={() => saveRow(r)}
@@ -493,13 +545,6 @@ export default function ChannelCadences() {
                                 <Check size={11} /> {savingId === r.id ? 'Saving' : 'Save'}
                               </button>
                             )}
-                            <button
-                              onClick={() => toggleActive(r)}
-                              className="py-1 px-2 text-[11px] font-semibold rounded-md border-none cursor-pointer"
-                              style={{ color: EV_MUTED, fontFamily: BODY, backgroundColor: 'transparent' }}
-                            >
-                              {r.is_active ? 'Archive' : 'Unarchive'}
-                            </button>
                           </div>
                         </td>
                       </tr>
@@ -508,9 +553,9 @@ export default function ChannelCadences() {
                           <td colSpan={7} className="p-0 border-b" style={{ borderColor: EV_LINE }}>
                             <WeeklyDrawer
                               row={r}
-                              baseline={(getEdit(r.id, 'target_count', r.target_count) as number | null)}
+                              baseline={baseline}
                               onBaselineChange={v => setEdit(r.id, 'target_count', v)}
-                              onClose={() => setOpenDrawerId(null)}
+                              onClose={() => { setOpenDrawerId(null); fetchWeekOverrides(); }}
                             />
                           </td>
                         </tr>
