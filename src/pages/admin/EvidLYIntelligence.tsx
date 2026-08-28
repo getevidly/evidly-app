@@ -8,6 +8,10 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { INDUSTRY_LABELS, SCOPE_LABELS, correlateSignal, type CorrelationPreview } from '../../lib/correlationEngine';
+import {
+  useAudiencePreview, reachSummary, matchChipLabel,
+  type SignalAudience,
+} from '../../hooks/useAudiencePreview';
 import { routingTierLabel, routingTierColor, type RoutingTier } from '../../lib/intelligenceRouter';
 import { CIC_PILLARS, getPillarForSignalType, isPseSignalType } from '../../lib/cicPillars';
 import { RiskLevelTooltip } from '../../components/RiskLevelTooltip';
@@ -22,7 +26,7 @@ import { Modal } from '../../components/ui/Modal';
 // TEXT_SEC=#6B7F96 → text-slate_ui, TEXT_MUTED=#9CA3AF → text-gray-400
 // BORDER=#E5E0D8 → border-border_ui
 
-type Tab = 'overview' | 'signals' | 'sources' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
+type Tab = 'overview' | 'review' | 'signals' | 'sources' | 'jurisdiction_updates' | 'regulatory_updates' | 'predictions';
 
 interface Source {
   id: string;
@@ -45,6 +49,8 @@ interface Signal {
   id: string;
   source_key: string | null;
   signal_type: string;
+  category: string | null;
+  action_deadline: string | null;
   title: string;
   content_summary: string | null;
   source_url: string | null;
@@ -451,6 +457,32 @@ export default function EvidLYIntelligence() {
     return () => { cancelled = true; };
   }, [publishModal.open, pubForm.allIndustries, pubForm.targetIndustries, pubForm.targetCounties, pubForm.signalScope, user]);
 
+  // ── Review queue: notify tier, newest first, paginated ──────────
+  // The audience panel is driven by ONE batched preview call per visible
+  // page — never one per row, never the whole pool.
+  const REVIEW_PAGE_SIZE = 20;
+  const [reviewPage, setReviewPage] = useState(0);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+
+  const reviewQueue = signals
+    .filter(s => s.routing_tier === 'notify' && !s.is_published)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  const reviewPageCount = Math.max(1, Math.ceil(reviewQueue.length / REVIEW_PAGE_SIZE));
+  const reviewPageItems = reviewQueue.slice(
+    reviewPage * REVIEW_PAGE_SIZE,
+    reviewPage * REVIEW_PAGE_SIZE + REVIEW_PAGE_SIZE,
+  );
+  const { byId: audienceById, loading: audienceLoading, error: audienceError } =
+    useAudiencePreview(activeTab === 'review' ? reviewPageItems.map(s => s.id) : []);
+
+  const selectedReviewSignal = selectedReviewId
+    ? reviewQueue.find(s => s.id === selectedReviewId) || null
+    : null;
+  const selectedAudience: SignalAudience | undefined = selectedReviewId
+    ? audienceById[selectedReviewId]
+    : undefined;
+
   // Derived stats — accurate counts from server-side head queries
   const regulatoryCount = regulatoryChanges.length;
   const rfpCount = rfpListings.length;
@@ -738,6 +770,7 @@ export default function EvidLYIntelligence() {
       <div className="flex border-b-2 border-border_ui overflow-x-auto scrollbar-none">
         {([
           { key: 'overview' as Tab, label: 'Overview', count: null },
+          { key: 'review' as Tab, label: 'Review Queue', count: reviewQueue.length },
           { key: 'signals' as Tab, label: 'Signals', count: signalCounts.total },
           { key: 'sources' as Tab, label: 'Sources', count: sources.length },
           { key: 'jurisdiction_updates' as Tab, label: 'Jurisdictions', count: allJurisdictions.length },
@@ -863,6 +896,166 @@ export default function EvidLYIntelligence() {
       )}
 
       {/* ────────── TAB: SIGNALS ────────── */}
+      {activeTab === 'review' && (
+        <div className="flex flex-col lg:flex-row gap-4">
+
+          {/* Left pane — the queue */}
+          <div className="w-full lg:w-[380px] flex-shrink-0">
+            <div className="flex items-baseline justify-between mb-2">
+              <h3 className="text-sm font-semibold text-navy">Pending Review</h3>
+              <span className="text-[11px] text-slate_ui">
+                {reviewQueue.length} signal{reviewQueue.length === 1 ? '' : 's'}
+              </span>
+            </div>
+
+            {reviewQueue.length === 0 && (
+              <div className="bg-white border border-gray-200 rounded-lg p-5 text-center">
+                <p className="text-xs text-slate_ui">Nothing awaiting review.</p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              {reviewPageItems.map(sig => {
+                const a = audienceById[sig.id];
+                const isSel = selectedReviewId === sig.id;
+                return (
+                  <button
+                    key={sig.id}
+                    onClick={() => setSelectedReviewId(sig.id)}
+                    className={`w-full text-left bg-white border rounded-lg p-3 ${isSel ? 'border-ember ring-1 ring-ember' : 'border-gray-200 hover:border-gray-300'}`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-gray-100 text-navy">
+                        {sig.category || 'Uncategorized'}
+                      </span>
+                    </div>
+                    <p className="text-xs font-semibold text-navy leading-snug">{sig.title}</p>
+                    <p className="text-[11px] text-slate_ui mt-1">
+                      {sig.source_key || 'Unknown source'} · {new Date(sig.created_at).toLocaleDateString()}
+                    </p>
+                    <p className="text-[11px] mt-1 text-slate_ui">
+                      {audienceLoading && !a ? 'Loading reach…' : reachSummary(a)}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {reviewQueue.length > REVIEW_PAGE_SIZE && (
+              <div className="flex items-center justify-between mt-3">
+                <Button onClick={() => { setReviewPage(p => Math.max(0, p - 1)); setSelectedReviewId(null); }}
+                  disabled={reviewPage === 0} className="text-xs px-3 py-1.5">Previous</Button>
+                <span className="text-[11px] text-slate_ui">Page {reviewPage + 1} of {reviewPageCount}</span>
+                <Button onClick={() => { setReviewPage(p => Math.min(reviewPageCount - 1, p + 1)); setSelectedReviewId(null); }}
+                  disabled={reviewPage >= reviewPageCount - 1} className="text-xs px-3 py-1.5">Next</Button>
+              </div>
+            )}
+          </div>
+
+          {/* Right pane — the signal and its audience */}
+          <div className="flex-1">
+            {!selectedReviewSignal ? (
+              <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+                <p className="text-xs text-slate_ui">Select a signal to see who receives it.</p>
+              </div>
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-lg p-5">
+                <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-gray-100 text-navy">
+                  {selectedReviewSignal.category || 'Uncategorized'}
+                </span>
+                <h3 className="text-base font-semibold text-navy mt-2 leading-snug">
+                  {selectedReviewSignal.title}
+                </h3>
+                <p className="text-[11px] text-slate_ui mt-1">
+                  {selectedReviewSignal.source_key || 'Unknown source'}
+                  {' · '}{new Date(selectedReviewSignal.created_at).toLocaleDateString()}
+                  {' · '}Tier {selectedReviewSignal.routing_tier || 'none'}
+                  {selectedReviewSignal.action_deadline
+                    ? ` · Deadline ${new Date(selectedReviewSignal.action_deadline).toLocaleDateString()}`
+                    : ''}
+                </p>
+
+                {selectedReviewSignal.content_summary && (
+                  <p className="text-xs text-navy/80 leading-relaxed mt-3">
+                    {selectedReviewSignal.content_summary}
+                  </p>
+                )}
+
+                {/* Who receives this */}
+                <div className="mt-5 border-t border-gray-200 pt-4">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <h4 className="text-sm font-semibold text-navy">Who Receives This</h4>
+                    <span className="text-[11px] text-slate_ui">
+                      {audienceLoading && !selectedAudience
+                        ? 'Loading…'
+                        : `${selectedAudience?.totals.orgs ?? 0} organization${(selectedAudience?.totals.orgs ?? 0) === 1 ? '' : 's'} · live correlation, not an estimate`}
+                    </span>
+                  </div>
+
+                  {audienceError && (
+                    <p className="text-xs text-red-600">Preview failed — {audienceError}</p>
+                  )}
+
+                  {!audienceError && selectedAudience && selectedAudience.totals.orgs === 0 && (
+                    <p className="text-xs text-slate_ui">
+                      Reaches no organizations — publishing would deliver nothing.
+                    </p>
+                  )}
+
+                  {!audienceError && selectedAudience && selectedAudience.totals.orgs > 0 && (
+                    <div className="space-y-2">
+                      {selectedAudience.audience.map(org => (
+                        <div key={org.org_id} className="border border-gray-200 rounded-md p-2.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-semibold text-navy">{org.org_name}</span>
+                            {org.matches.map((m, i) => (
+                              <span key={i}
+                                className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-gray-100 text-navy">
+                                {matchChipLabel(m)}
+                              </span>
+                            ))}
+                          </div>
+                          {org.matches.map((m, i) => (
+                            <p key={i} className="text-[11px] text-slate_ui mt-1">{m.reason}</p>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {selectedAudience && (
+                    <div className="mt-3">
+                      <p className="text-[11px] text-navy font-medium">
+                        {selectedAudience.totals.full} full · {selectedAudience.totals.teaser} teaser · {selectedAudience.totals.skip} skipped
+                      </p>
+                      <p className="text-[11px] text-slate_ui mt-0.5">
+                        Email rides the Monday digest. The app feed shows it on publish.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions — the existing publish and hold paths */}
+                <div className="mt-5 flex items-center gap-2 flex-wrap">
+                  <Button
+                    onClick={() => openPublishModal(selectedReviewSignal)}
+                    className="text-xs px-4 py-2 bg-navy text-white"
+                  >
+                    Publish to This Audience
+                  </Button>
+                  <Button
+                    onClick={() => updateSignalStatus(selectedReviewSignal.id, 'hold')}
+                    className="text-xs px-4 py-2"
+                  >
+                    Keep on Hold
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {activeTab === 'signals' && (
         <>
           {/* Filter bar */}

@@ -108,6 +108,25 @@ export const COUNTY_CORRELATABLE_CATEGORIES: ReadonlySet<string> = new Set([
  */
 const NOT_APPLICABLE_TITLE = /^\s*(recall\s+)?not\s+(applicable|relevant)\b/i;
 
+/**
+ * The digest's gate, mirrored exactly (intelligence-digest/index.ts).
+ * Preview must answer "who receives this" the same way the sender decides it,
+ * so these two sets of constants have to stay in step.
+ */
+const TRIAL_SETUP_ENDS_DAY = 15;
+const TRIAL_USE_ENDS_DAY = 60;
+const PAID_TIERS = new Set(["founder", "standard", "enterprise"]);
+
+type FeedMode = "full" | "teaser" | "skip";
+
+function feedModeFor(planTier: string | null, trialStartDate: string | null, now: number): FeedMode {
+  if (PAID_TIERS.has(planTier || "")) return "full";
+  if (!trialStartDate) return "skip";
+  const days = Math.floor((now - new Date(trialStartDate).getTime()) / 86400000);
+  if (days <= TRIAL_SETUP_ENDS_DAY) return "skip";
+  return days <= TRIAL_USE_ENDS_DAY ? "full" : "teaser";
+}
+
 // System/template org IDs to exclude
 const EXCLUDED_ORG_IDS = new Set([
   "00000000-0000-0000-0000-000000000001", // __SYSTEM_TEMPLATES__
@@ -125,7 +144,180 @@ Deno.serve(async (req) => {
   );
 
   try {
-    const { signal_id } = await req.json();
+    const body = await req.json().catch(() => ({}));
+
+    // ── PREVIEW MODE ────────────────────────────────────────
+    // Read-only. Runs the identical gates used below over the given signals
+    // and reports who would receive each. Writes nothing — no upsert, no rows.
+    if (body?.preview === true) {
+      const authHeader = req.headers.get("Authorization") || "";
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const asUser = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const { data: { user } } = await asUser.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: prof } = await supabase
+        .from("user_profiles").select("role").eq("id", user.id).single();
+      if (prof?.role !== "platform_admin") {
+        return new Response(JSON.stringify({ error: "Admin access required" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const ids: string[] = Array.isArray(body.signal_ids) ? body.signal_ids.slice(0, 100) : [];
+      if (ids.length === 0) {
+        return new Response(JSON.stringify({ error: "signal_ids required" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const [sigRes, orgRes, locRes, jurRes, schedRes] = await Promise.all([
+        supabase.from("intelligence_signals")
+          .select("id, title, category, scope, signal_scope, counties_affected, target_counties")
+          .in("id", ids),
+        supabase.from("organizations")
+          .select("id, name, industry_type, plan_tier, trial_start_date"),
+        supabase.from("locations").select("id, organization_id, jurisdiction_id"),
+        supabase.from("jurisdictions").select("id, county"),
+        supabase.from("location_service_schedules").select("organization_id, service_type_code"),
+      ]);
+
+      const previewOrgs = (orgRes.data || []).filter(
+        (o: Record<string, unknown>) =>
+          !EXCLUDED_ORG_IDS.has(o.id as string) && o.industry_type !== "system",
+      );
+      const jurCounty = new Map(
+        (jurRes.data || []).map((j: Record<string, unknown>) => [j.id as string, j.county as string]),
+      );
+      const previewCounties = new Map<string, Set<string>>();
+      for (const l of (locRes.data || []) as Record<string, unknown>[]) {
+        const c = jurCounty.get(l.jurisdiction_id as string);
+        if (!c || !l.organization_id) continue;
+        const key = l.organization_id as string;
+        if (!previewCounties.has(key)) previewCounties.set(key, new Set());
+        previewCounties.get(key)!.add(String(c).toLowerCase());
+      }
+      const previewReqs = new Map<string, Set<string>>();
+      for (const sc of (schedRes.data || []) as Record<string, unknown>[]) {
+        if (!sc.organization_id || !sc.service_type_code) continue;
+        const key = sc.organization_id as string;
+        if (!previewReqs.has(key)) previewReqs.set(key, new Set());
+        previewReqs.get(key)!.add(sc.service_type_code as string);
+      }
+
+      const nowMs = Date.now();
+      const previewOut = (sigRes.data || []).map((sig: Record<string, unknown>) => {
+        const cat = sig.category as string;
+        const title = (sig.title as string) || "";
+        const belted = NOT_APPLICABLE_TITLE.test(title);
+
+        const effScope = (sig.signal_scope || sig.scope || "national") as string;
+        const sigCounties = (
+          ((sig.target_counties as string[] | null)?.length
+            ? (sig.target_counties as string[])
+            : ((sig.counties_affected as string[] | null) || []))
+        ).map((c) => String(c).toLowerCase());
+
+        const nationalAllowed = !belted &&
+          (effScope === "national" || effScope === "statewide") &&
+          NATIONAL_BROADCAST_CATEGORIES.has(cat);
+        const countyAllowed = !belted && COUNTY_CORRELATABLE_CATEGORIES.has(cat);
+        const reqCodes = belted ? [] : (CATEGORY_TO_REQUIREMENTS[cat] || []);
+
+        const audience: Record<string, unknown>[] = [];
+        const byType = { national: 0, county: 0, requirement: 0 };
+
+        for (const org of previewOrgs as Record<string, unknown>[]) {
+          const matches: Record<string, unknown>[] = [];
+
+          if (nationalAllowed) {
+            matches.push({
+              type: "national",
+              reason: effScope === "national"
+                ? "National scope — affects all commercial kitchens"
+                : "Statewide — affects all California locations",
+              relevance: 0.30,
+            });
+            byType.national++;
+          }
+          if (countyAllowed && sigCounties.length) {
+            const mine = previewCounties.get(org.id as string);
+            const hit = mine ? sigCounties.find((c) => mine.has(c)) : undefined;
+            if (hit) {
+              const display = hit.replace(/\b\w/g, (l) => l.toUpperCase());
+              matches.push({
+                type: "county",
+                reason: `Your kitchen operates in ${display} County`,
+                relevance: 0.70,
+                county: display,
+              });
+              byType.county++;
+            }
+          }
+          if (reqCodes.length) {
+            const mine = previewReqs.get(org.id as string);
+            const hit = mine ? reqCodes.find((c) => mine.has(c)) : undefined;
+            if (hit) {
+              matches.push({
+                type: "requirement",
+                reason: `Touches your ${REQUIREMENT_NAMES[hit] || hit} requirement`,
+                relevance: 0.90,
+                requirement_code: hit,
+              });
+              byType.requirement++;
+            }
+          }
+
+          if (matches.length === 0) continue;
+          audience.push({
+            org_id: org.id,
+            org_name: org.name,
+            mode: feedModeFor(
+              org.plan_tier as string | null,
+              org.trial_start_date as string | null,
+              nowMs,
+            ),
+            matches,
+          });
+        }
+
+        const modeCount: Record<string, number> = { full: 0, teaser: 0, skip: 0 };
+        for (const a of audience) modeCount[a.mode as string]++;
+
+        return {
+          signal_id: sig.id,
+          title,
+          category: cat,
+          skipped_reason: belted ? "not_applicable_title" : null,
+          audience,
+          totals: {
+            orgs: audience.length,
+            full: modeCount.full,
+            teaser: modeCount.teaser,
+            skip: modeCount.skip,
+            by_match_type: byType,
+          },
+        };
+      });
+
+      return new Response(
+        JSON.stringify({ preview: true, orgs_considered: previewOrgs.length, signals: previewOut }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    const { signal_id } = body;
     if (!signal_id) {
       return new Response(
         JSON.stringify({ error: "signal_id required" }),
