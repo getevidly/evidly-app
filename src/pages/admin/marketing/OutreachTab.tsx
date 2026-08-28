@@ -2,7 +2,7 @@
  * OutreachTab — six-panel outreach surface inside the Marketing console.
  *
  * Panels (in workflow order):
- *   1. How to run this      — staff guide
+ *   1. The flow            — stage-by-stage reference (FlowOverview)
  *   2. Add a recipient      — single or pasted rows
  *   3. Schedule + sign-off  — step definitions, sign-off gate
  *   4. County review        — approval table (moved from standalone page)
@@ -14,6 +14,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import FlowOverview from './FlowOverview';
 import {
   EV_NAVY, EV_EMBER, EV_MUTED, EV_FAINT, EV_LINE,
   EV_PAPER, EV_CREAM, EV_LIGHT, EV_SUCCESS, EV_WARN, EV_DANGER,
@@ -757,23 +758,8 @@ export default function OutreachTab() {
         </button>
       </div>
 
-      {/* ── Panel 1: How to run this ──────────────────────────── */}
-      <div style={CARD}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-          <span style={NUM_BADGE}>1</span>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: EV_NAVY, fontFamily: DISPLAY, margin: 0 }}>
-            How to run this
-          </h3>
-        </div>
-        <ol style={{ margin: 0, paddingLeft: 20, color: EV_MUTED, fontSize: 13, lineHeight: 2.0 }}>
-          <li><strong style={{ color: EV_NAVY }}>Add recipients</strong> — email + county + cold or warm variant</li>
-          <li><strong style={{ color: EV_NAVY }}>Define steps</strong> — sequence number, delay days, trigger type (manual or auto-cron)</li>
-          <li><strong style={{ color: EV_NAVY }}>Edit copy</strong> — subject + body framing; four jurisdiction sections are locked</li>
-          <li><strong style={{ color: EV_NAVY }}>Sign off each step</strong> — editing copy, delay, or trigger clears sign-off</li>
-          <li><strong style={{ color: EV_NAVY }}>Approve each county</strong> — jurisdiction data change lapses the approval</li>
-          <li><strong style={{ color: EV_NAVY }}>Send</strong> — warm sends from here, cold exports to HubSpot</li>
-        </ol>
-      </div>
+      {/* ── Panel 1: The flow, stage by stage ─────────────────── */}
+      <FlowOverview />
 
       {/* ── Panel 2: Add a recipient ──────────────────────────── */}
       <div style={CARD}>
