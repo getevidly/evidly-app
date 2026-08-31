@@ -560,13 +560,13 @@ function buildBriefingEmail(
       listed('If applicable', 'Backflow testing', 'California Code of Regulations Title 17'),
     ) +
     gridRow(
-      card('Receiving temperature log', '\u00a7113996', 'At delivery', XA, 'one per day'),
+      card('Receiving temperature log', '\u00a7114037', 'At delivery', XA, 'one per day'),
       card('Cold holding log', '\u00a7113996', '\u226441\u00b0F', XA, 'one per day'),
       card('Hot holding log', '\u00a7113996', '\u2265135\u00b0F', XA, 'one per day'),
     ) +
     gridRow(
       card('Cooling log', '\u00a7114002', '135\u219270\u00b0F in 2 hrs', XA, 'one per day'),
-      card('Reheating log', '\u00a7114014', '\u2265165\u00b0F within 2 hrs', XA, 'one per day'),
+      card('Reheating log', '\u00a7114016', '\u2265165\u00b0F within 2 hrs', XA, 'one per day'),
       card('Warewash and sanitizer', '\u00a7114099', 'Test kit on hand', XA),
     ) +
     gridRow(
