@@ -501,6 +501,12 @@ verify_jwt = false
 [functions.partner-upload]
 verify_jwt = false
 
+# Public partner directory — getevidly.com/trusted-partner-alliance
+# reads this with no login. Returns only is_published rows, and only
+# the card fields; no contact details, tokens, paths or expiry dates.
+[functions.partner-listing]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
