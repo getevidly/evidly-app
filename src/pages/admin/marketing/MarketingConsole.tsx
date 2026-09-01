@@ -23,6 +23,7 @@ import InPersonTab from './InPersonTab';
 import ShowsTab from './ShowsTab';
 import FunnelTab from './FunnelTab';
 import SegmentsTab from './SegmentsTab';
+import PartnersTab from './PartnersTab';
 import FounderWindowTab from './FounderWindowTab';
 import SEOTab from './SEOTab';
 import SERPTab from './SERPTab';
@@ -260,6 +261,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'founder'   && <FounderWindowTab />}
       {tab === 'funnel'    && <FunnelTab accounts={accounts} loading={loading} error={error} />}
       {tab === 'segments'  && <SegmentsTab accounts={accounts} loading={loading} error={error} />}
+      {tab === 'partners'  && <PartnersTab />}
       {tab === 'sequence'  && <OutreachTab />}
 
       {tab === 'seo'       && <SEOTab />}

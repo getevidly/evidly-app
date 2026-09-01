@@ -13,7 +13,7 @@ import {
   LayoutDashboard, Radio, MapPin, Building2,
   Layers, ClipboardList, Calendar, Flame, GitBranch,
   Users, Mail, Search, TrendingUp, Megaphone, FileBarChart,
-  Ticket, Target, ScanSearch, CheckSquare,
+  Ticket, Target, ScanSearch, CheckSquare, Handshake,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -39,6 +39,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'funnel',    label: 'Funnel',              Icon: GitBranch,       route: 'funnel' },
   { id: 'accounts',  label: 'Accounts',            Icon: Building2,       route: 'accounts' },
   { id: 'segments',  label: 'Segments',            Icon: Users,           route: 'segments' },
+  { id: 'partners',  label: 'Partners',            Icon: Handshake,       route: 'partners' },
   { id: 'channels',  label: 'Channels',            Icon: Layers,          route: 'channels' },
   { id: 'founder',   label: 'Founder Window',      Icon: Flame,           route: 'founder-window' },
   { id: 'seo',       label: 'SEO',                 Icon: Search,          route: 'seo' },
@@ -50,7 +51,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 export type MarketingTabId =
   | 'weekly-cadence' | 'followups' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
-  | 'segments' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
+  | 'segments' | 'partners' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
 
 /** Map tab id → route path */
 export function tabRoute(id: MarketingTabId): string {
