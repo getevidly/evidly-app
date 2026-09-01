@@ -196,6 +196,32 @@ function extractTiers(gc: Record<string, any>): Array<{ name: string; range: str
       ...(t.color ? { color: t.color as string } : {}),
     }));
   }
+  // Format 4: gc.placard_rules as { green: { label, score_range, color }, ... }
+  // Only the nested-object form with a score_range is a tier set. The flat
+  // colour-to-sentence form (Sacramento) is a violation-count rule, not a
+  // score band, and is rendered as prose by buildPlacardProse instead.
+  const pr = gc.placard_rules;
+  if (pr && typeof pr === 'object' && !Array.isArray(pr)) {
+    const placards: Array<{ name: string; range: string; color?: string; rank: number }> = [];
+    for (const [key, val] of Object.entries(pr)) {
+      if (key === 'imminent_health_hazard_override') continue;
+      if (!val || typeof val !== 'object' || Array.isArray(val)) continue;
+      // deno-lint-ignore no-explicit-any
+      const v = val as Record<string, any>;
+      if (typeof v.score_range !== 'string' || !v.score_range.trim()) continue;
+      placards.push({
+        name: String(v.label || v.color || key),
+        range: v.score_range,
+        ...(v.color ? { color: String(v.color) } : {}),
+        rank: placardRank(String(v.color || key)),
+      });
+    }
+    if (placards.length >= 2) {
+      placards.sort((a, b) => a.rank - b.rank);
+      return placards.map(({ rank: _rank, ...t }) => t);
+    }
+  }
+
   // Format 3: top-level letter keys A, B, C with [min, max] arrays (e.g. LA, Riverside)
   const letterKeys = ['A', 'B', 'C', 'D', 'F'];
   const found: Array<{ name: string; range: string; color?: string }> = [];
@@ -221,6 +247,113 @@ function extractTiers(gc: Record<string, any>): Array<{ name: string; range: str
     found.push({ name: belowLabel, range: `0 \u2013 ${gc.fail_below - 1}` });
   }
   return found.length >= 2 ? found : null;
+}
+
+
+// ── Placard / no-grade helpers ───────────────────────────────────
+// Several verified counties store a complete evaluation method in a shape
+// extractTiers never read, so they fell through to the "once verified"
+// placeholder despite being verified with full data. These read the shapes
+// that actually exist rather than asking the data to change.
+
+const PLACARD_ORDER = ['green', 'yellow', 'red'];
+
+function placardRank(key: string): number {
+  const i = PLACARD_ORDER.indexOf(key.toLowerCase());
+  return i === -1 ? PLACARD_ORDER.length : i;
+}
+
+/**
+ * True when the county issues no grade, placard or score at all — it keeps a
+ * narrative inspection report and nothing else. Covers the modern schema
+ * (three explicit produces_* flags, or evaluation_method calcode_narrative)
+ * and the older flat shape (a violation report with an absent or empty
+ * grades map). Deliberately strict: Alameda produces a score and Sacramento
+ * produces a placard, so neither is caught here.
+ */
+// deno-lint-ignore no-explicit-any
+function producesNoGrade(gc: Record<string, any> | null): boolean {
+  if (!gc) return false;
+  if (gc.produces_score === false && gc.produces_placard === false && gc.produces_letter_grade === false) {
+    return true;
+  }
+  if (gc.evaluation_method === 'calcode_narrative') return true;
+  const df = gc.display_format;
+  if (df === 'violation_report' || df === 'violation_report_only') {
+    const g = gc.grades;
+    const empty = g === null || g === undefined
+      || (typeof g === 'object' && !Array.isArray(g) && Object.keys(g).length === 0);
+    if (empty) return true;
+  }
+  return false;
+}
+
+/**
+ * Placard rules whose colour is set by a MAJOR-VIOLATION COUNT rather than a
+ * score: placard_rules is a flat map of colour to a sentence. Rendered as the
+ * stored prose, because forcing it into a name/range table would state a
+ * numeric basis this county does not use.
+ */
+// deno-lint-ignore no-explicit-any
+function buildPlacardProse(gc: Record<string, any>, fBody: string, fCode: string): string {
+  const pr = gc.placard_rules;
+  if (!pr || typeof pr !== 'object' || Array.isArray(pr)) return '';
+  const rows = Object.entries(pr)
+    .filter(([k, v]) => k !== 'imminent_health_hazard_override' && typeof v === 'string' && (v as string).trim())
+    .sort((a, b) => placardRank(a[0]) - placardRank(b[0]));
+  if (rows.length === 0) return '';
+
+  const basis = gc.evaluation_method === 'major_violation_count_placard'
+    ? 'Placard colour is set by the number of major violations observed, not by a numeric score.'
+    : 'Placard colour is set by the rules below, not by a numeric score.';
+
+  let html = `<p style="font-family:${fBody};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 10px;">${basis}</p>`;
+  html += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 12px;">`;
+  for (const [name, text] of rows) {
+    html += `<tr><td valign="top" style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fCode};font-size:11px;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">${name}</td>` +
+      `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fBody};font-size:13px;line-height:1.5;">${text}</td></tr>`;
+  }
+  html += '</table>';
+  return html;
+}
+
+/**
+ * Qualitative deduction scales: deduction_tiers carries risk bands and a
+ * relative magnitude, with no numeric ranges anywhere, so there is nothing to
+ * put in a range column. Rendered as prose describing the method.
+ */
+// deno-lint-ignore no-explicit-any
+function buildDeductionProse(gc: Record<string, any>, fBody: string, fCode: string): string {
+  const dt = gc.deduction_tiers;
+  if (!Array.isArray(dt) || dt.length === 0) return '';
+
+  const lowerBetter = gc.lower_is_better === true || gc.scale_direction === 'negative';
+  const perfect = typeof gc.perfect_score === 'number' ? gc.perfect_score : null;
+  let lead = 'Inspections are scored by deduction: points are taken for each violation.';
+  if (lowerBetter) {
+    lead += perfect !== null
+      ? ` A lower total is better — a clean inspection scores ${perfect}.`
+      : ' A lower total is better.';
+  }
+  lead += ' Violations are weighted by risk:';
+
+  let html = `<p style="font-family:${fBody};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 10px;">${lead}</p>`;
+  html += `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 12px;">`;
+  for (const t of dt) {
+    if (!t || typeof t !== 'object') continue;
+    // deno-lint-ignore no-explicit-any
+    const row = t as Record<string, any>;
+    const name = String(row.tier || '').replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+    if (!name) continue;
+    const mag = row.deduction_magnitude ? `${row.deduction_magnitude} deduction` : '';
+    const ex = Array.isArray(row.examples) && row.examples.length > 0
+      ? `${mag ? ' \u00b7 ' : ''}${row.examples.join(', ')}`
+      : '';
+    html += `<tr><td valign="top" style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#1C2A3A;font-family:${fCode};font-size:11px;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">${name}</td>` +
+      `<td style="padding:8px 10px;border-bottom:1px solid #EEE7D9;color:#4A5566;font-family:${fBody};font-size:13px;line-height:1.5;">${mag}${ex}</td></tr>`;
+  }
+  html += '</table>';
+  return html;
 }
 
 // deno-lint-ignore no-explicit-any
@@ -598,7 +731,7 @@ function buildBriefingEmail(
   const gc = jur?.grading_config as Record<string, any> | null;
   let evalBlock = '';
 
-  if (jur?.grading_type === 'calcode_default') {
+  if (jur?.grading_type === 'calcode_default' || producesNoGrade(gc)) {
     evalBlock = `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0;">This county posts no grade or placard. Inspection reports are kept on file and produced on request.</p>`;
   } else if (gc) {
     const tiers = extractTiers(gc);
@@ -643,8 +776,18 @@ function buildBriefingEmail(
     }
   }
 
+  // Shapes a name/range table would misrepresent, so they render as prose.
+  if (!evalBlock && gc) {
+    evalBlock = buildPlacardProse(gc, fInstrument, fMono) || buildDeductionProse(gc, fInstrument, fMono);
+  }
+
   if (!evalBlock) {
-    evalBlock = `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#8B95AA;margin:0;font-style:italic;">County-specific evaluation details will appear here once verified.</p>`;
+    // "once verified" is only honest for a row that is actually unverified.
+    // A verified county with a shape nothing above caught still has its
+    // method on file, and saying otherwise misreports our own data.
+    evalBlock = jur?.jie_audit_status === 'verified'
+      ? `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0;">This county’s evaluation method is on file — see how ${county} County reports below.</p>`
+      : `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#8B95AA;margin:0;font-style:italic;">County-specific evaluation details will appear here once verified.</p>`;
   }
 
   if (jur?.agency_name) {
@@ -671,12 +814,12 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
   <!-- 1. HEADER -->
   <tr><td class="p40" style="background:#1C2A3A;padding:20px 40px;" bgcolor="#1C2A3A">
     <div style="font-family:${fMontserrat};font-weight:900;font-size:26px;letter-spacing:-0.5px;line-height:1;"><span style="color:#B24A2E;">E</span><span style="color:#F4EFE4;">vid</span><span style="color:#B24A2E;">LY</span></div>
-    <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">County Briefing</div>
+    <div style="font-family:${fMono};font-size:10.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.60);text-transform:uppercase;margin-top:7px;">Commercial Kitchen Risk Management</div>
   </td></tr>
 
   <!-- 2. COUNTY KICKER -->
   <tr><td class="p40" style="padding:28px 40px 0;" bgcolor="#FFFFFF">
-    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:0 0 12px;">${county} County</div>
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:0 0 12px;">${county} County Briefing</div>
   </td></tr>
 
   <!-- 3. SALUTATION -->
