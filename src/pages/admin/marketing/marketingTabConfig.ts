@@ -1,13 +1,17 @@
 /**
- * marketingTabConfig — 15-tab definition for the Marketing console.
+ * marketingTabConfig — 21-tab definition for the Marketing console.
  *
  * Single source of truth for tab id, label, icon, and route slug.
  * Used by MarketingConsole (tab bar + switchTab) and can be imported
  * by anything that needs to know the tab set.
  *
  * PRP Attribution removed — Predict/Reduce/Prove is a product-level
- * lens, not a marketing channel tab. Network remains routable but is
- * not surfaced in the tab bar.
+ * lens, not a marketing channel tab.
+ *
+ * MarketingTabId carries 22 ids against the 21 in MARKETING_TABS. The
+ * extra one is `network`: it is routable (/admin/marketing/network) and
+ * the console renders it, but it is deliberately kept out of the tab bar.
+ * The id has to stay in the union for that route to typecheck.
  */
 import {
   LayoutDashboard, Radio, MapPin, Building2,

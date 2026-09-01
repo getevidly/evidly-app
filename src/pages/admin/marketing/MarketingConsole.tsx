@@ -1,5 +1,5 @@
 /**
- * MarketingConsole — 15-tab marketing dashboard shell.
+ * MarketingConsole — 21-tab marketing dashboard shell.
  *
  * Route wrappers (one per tab) live alongside this file and pass
  * defaultTab to deep-link each route to its tab.
@@ -248,7 +248,6 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
         />
       ) : null}
 
-      {/* Placeholder tabs — shell only, data wiring in later phases */}
       {tab === 'weekly-cadence' && <WeeklyCadenceTab />}
       {tab === 'followups' && <FollowUpsTab />}
       {tab === 'overview'  && <OverviewTab accounts={accounts} sends={sends} loading={loading} error={error} />}
@@ -264,6 +263,8 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'partners'  && <PartnersTab />}
       {tab === 'sequence'  && <OutreachTab />}
 
+      {/* Connect-gated: no provider linked yet, so these three render a
+          ConnectBanner and an empty preview rather than any figures. */}
       {tab === 'seo'       && <SEOTab />}
       {tab === 'serp'      && <SERPTab />}
       {tab === 'ads'       && <GoogleAdsTab />}
