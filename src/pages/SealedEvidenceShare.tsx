@@ -1,5 +1,5 @@
 /**
- * SealedEvidenceShare — the carrier-facing page behind a share link.
+ * SealedEvidenceShare — what an insurance professional sees behind a share link.
  *
  * Public and read-only. Everything on it comes from the sealed-evidence-share
  * edge function, which returns counts and hash prefixes only. No record

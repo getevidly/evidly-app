@@ -19,9 +19,9 @@ const MONO = "'IBM Plex Mono', ui-monospace, monospace";
 const EMBER = '#B24A2E';
 
 /**
- * Minting a carrier link is a decision-maker act — the same three roles the
- * migration's INSERT policy admits. The button is not rendered for anyone
- * else rather than shown and refused.
+ * Minting an insurance-professional link is a decision-maker act — the same
+ * three roles the migration's INSERT policy admits. The button is not
+ * rendered for anyone else rather than shown and refused.
  */
 const SHARE_ROLES: ReadonlySet<string> = new Set([
   'owner_operator',
@@ -187,7 +187,7 @@ export function SealedEvidencePanel() {
             className="text-[12px] font-semibold rounded-lg px-4 disabled:opacity-50"
             style={{ background: EMBER, color: '#FFFFFF', minHeight: 40 }}
           >
-            {minting ? 'Creating link…' : 'Share with your carrier'}
+            {minting ? 'Creating link…' : 'Share with your insurance professional'}
           </button>
 
           {shareError && (
