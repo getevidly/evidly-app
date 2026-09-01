@@ -863,21 +863,19 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   <!-- 4. HEADLINE -->
   <tr><td class="p40" style="padding:0 40px 20px;" bgcolor="#FFFFFF">
-    <h2 style="font-family:${fInstrument};font-size:20px;font-weight:700;color:#1C2A3A;margin:0;">What a kitchen here has to produce.</h2>
+    <h2 style="font-family:${fInstrument};font-size:20px;font-weight:700;color:#1C2A3A;margin:0;text-align:center;">What a commercial kitchen has to produce.</h2>
   </td></tr>
 
   <!-- 5. FIRE SAFETY -->
   <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#B24A2E;">Fire safety</span> <span style="font-family:${fMono};font-size:9px;color:#A79E8D;letter-spacing:0.04em;padding-left:10px;">FIVE RECORDS \u00b7 PLUS 1 LISTED, NOT INCLUDED IN THE TOTAL</span></div>
+    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#B24A2E;">Fire safety</span> <span style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;padding-left:10px;">Every one is a vendor service record \u2014 the signed report from the licensed contractor who did the work. The fire authority\u2019s own inspection report is theirs, not yours.</span></div>
     ${fireGrid}
-    <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Every one is a vendor service record \u2014 the signed report from the licensed contractor who did the work. The fire authority\u2019s own inspection report is theirs, not yours.</p>
   </td></tr>
 
   <!-- 6. FOOD SAFETY -->
   <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#3E6B8A;">Food safety</span> <span style="font-family:${fMono};font-size:9px;color:#A79E8D;letter-spacing:0.04em;padding-left:10px;">13 RECORDS \u00b7 PLUS 7 LISTED, NOT INCLUDED IN THE TOTAL</span></div>
+    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#3E6B8A;">Food safety</span> <span style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;padding-left:10px;">Pest control, grease trap and backflow are vendor services \u2014 a company does the work and signs the record. Everything flagged here is listed but not included in the total.</span></div>
     ${foodGrid}
-    <p style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;margin:12px 0 0;">Pest control, grease trap and backflow are vendor services \u2014 a company does the work and signs the record. Everything flagged here is listed but not included in the total.</p>
     <p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: California Retail Food Code.</p>
   </td></tr>
 
