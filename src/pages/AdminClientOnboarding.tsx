@@ -434,7 +434,6 @@ export function AdminClientOnboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [warning, setWarning] = useState('');
 
   const [orgName, setOrgName] = useState('');
   const [industryType, setIndustryType] = useState('Restaurant');
@@ -500,7 +499,6 @@ export function AdminClientOnboarding() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setWarning('');
     setLoading(true);
 
     // ── Validate per-location fields ──
@@ -598,71 +596,10 @@ export function AdminClientOnboarding() {
           .eq('id', contactId);
       }
 
-      // 4. Auto-enroll into county briefing queue (non-fatal)
-      let enrollNote = '';
-      try {
-        if (!ownerEmail) {
-          enrollNote = 'Client saved, but no contact email \u2014 not added to the briefing queue.';
-        } else {
-          const jurId = locations[0]?.jurisdictionId;
-          let county: string | null = null;
-          if (jurId) {
-            const { data: jur } = await supabase
-              .from('jurisdictions')
-              .select('county')
-              .eq('id', jurId)
-              .maybeSingle();
-            county = jur?.county || null;
-          }
-
-          if (!county) {
-            enrollNote = 'Briefing enrollment skipped \u2014 no county on this client\u2019s location.';
-          } else {
-            // Dedupe check
-            const { data: existing } = await supabase
-              .from('county_briefing_recipients')
-              .select('id')
-              .eq('email', ownerEmail.trim().toLowerCase())
-              .limit(1)
-              .maybeSingle();
-
-            if (existing) {
-              enrollNote = 'Already in the briefing queue.';
-            } else {
-              const firstName = ownerName ? ownerName.split(/\s+/)[0] : null;
-              const { error: enrollErr } = await supabase.functions.invoke('county-briefing', {
-                body: {
-                  action: 'add-recipients',
-                  recipients: [{
-                    email: ownerEmail,
-                    first_name: firstName || undefined,
-                    org_name: orgName || undefined,
-                    county,
-                    variant: 'warm',
-                    ...(jurId ? { jurisdiction_id: jurId } : {}),
-                  }],
-                },
-              });
-              if (enrollErr) throw enrollErr;
-              enrollNote = 'Client queued for the county briefing.';
-            }
-          }
-        }
-      } catch (enrollErr: any) {
-        enrollNote = `Client saved, but briefing enrollment failed: ${enrollErr.message || 'Unknown error'}.`;
-      }
-
-      // Surface enrollment result — success vs warning styling
-      const isEnrollSuccess = enrollNote === 'Client queued for the county briefing.' || enrollNote === 'Already in the briefing queue.';
-      if (isEnrollSuccess) {
-        setSuccess(`Client account created. Use Invite people to grant access. ${enrollNote}`);
-      } else {
-        setSuccess('Client account created. Use Invite people to grant access.');
-        if (enrollNote) setWarning(enrollNote);
-      }
+      setSuccess('Client account created. Use Invite people to grant access.');
       setTimeout(() => {
         setOrgName(''); setBusinessPhone(''); setOwnerName(''); setOwnerEmail(''); setOwnerMobile('');
-        setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess(''); setWarning('');
+        setLocations([newLocationEntry()]); setSelectedTribe(''); setSuccess('');
         setAccessVia('signed_on_directly'); setBilling('not_paying');
         setInsBrokerAgency(''); setInsBrokerContact(''); setInsCarrier('');
         setInsEmail(''); setInsPhone(''); setInsRenewal('');
@@ -703,11 +640,6 @@ export function AdminClientOnboarding() {
           {success && (
             <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
               {success}
-            </div>
-          )}
-          {warning && (
-            <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded">
-              {warning}
             </div>
           )}
 
