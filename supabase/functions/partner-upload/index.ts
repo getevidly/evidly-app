@@ -213,17 +213,22 @@ Deno.serve(async (req) => {
     }
 
     // ── Mark the slot ───────────────────────────────────────────
-    // The prior path is read first: if the partner replaces a PDF with a PNG
-    // the extension changes, and the old object would otherwise linger in the
-    // bucket unreferenced.
-    const { data: priorRow } = await supabase
+    // The whole set is read first, for two reasons. The prior path: if the
+    // partner replaces a PDF with a PNG the extension changes, and the old
+    // object would otherwise linger in the bucket unreferenced. And prior
+    // completeness: the "all six are in" email fires on the transition into
+    // complete, not on every save once already complete.
+    const { data: priorRows } = await supabase
       .from("partner_documents")
-      .select("file_path")
-      .eq("application_id", applicationId)
-      .eq("doc_type", docType)
-      .maybeSingle();
+      .select("doc_type, file_path, status")
+      .eq("application_id", applicationId);
 
-    const priorPath = (priorRow?.file_path as string | null) ?? null;
+    const prior = (priorRows ?? []) as { doc_type: string; file_path: string | null; status: string | null }[];
+    const priorPath = prior.find((r) => r.doc_type === docType)?.file_path ?? null;
+
+    const wasAlreadyComplete = DOC_TYPES.every((t) =>
+      prior.find((r) => r.doc_type === t)?.status === "uploaded"
+    );
 
     const { error: updErr } = await supabase
       .from("partner_documents")
@@ -281,7 +286,9 @@ Deno.serve(async (req) => {
     // ── All six in? Tell Arthur. Never fails the upload. ────────
     const uploadedCount = state.filter((d) => d.uploaded).length;
 
-    if (uploadedCount === DOC_TYPES.length) {
+    // Only on the transition into complete. Replacing a document on an
+    // already-complete set is not news.
+    if (uploadedCount === DOC_TYPES.length && !wasAlreadyComplete) {
       const businessName = String(app.business_name ?? "A partner");
       const rows = state.map((d) =>
         `<tr><td style="padding: 4px 16px 4px 0; color: #64748b;">${esc(d.doc_type.replace(/_/g, " "))}</td>` +
