@@ -483,6 +483,18 @@ verify_jwt = false
 [functions.pl-agent-request]
 verify_jwt = false
 
+# Trusted Partner Alliance intake — the landing form at
+# getevidly.com/partners/apply POSTs here with no session. CORS is
+# domain-restricted; there is no user to verify a JWT for.
+[functions.partner-apply]
+verify_jwt = false
+
+# Partner upload-link validation — getevidly.com/partners/upload calls
+# this on load. The token in the URL is the auth, it expires, and an
+# unknown token and an expired one return the same shape.
+[functions.partner-token]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
