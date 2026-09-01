@@ -102,6 +102,20 @@ const REC_STATUS: Record<string, { bg: string; fg: string }> = {
 
 // ── Main component ───────────────────────────────────────────────
 
+/**
+ * The `list` payload carries no jurisdiction_type, but it does carry city:
+ * county rows come back with city null, the five city jurisdictions with a
+ * value. San Francisco is a consolidated city-county and carries both, so it
+ * reads as its own name rather than repeating itself as city and county.
+ */
+function isCityRow(c: any): boolean {
+  return !!c.city && c.city !== c.county;
+}
+
+function jurLabel(c: any): string {
+  return isCityRow(c) ? c.city + ' (city) · ' + c.county + ' County' : c.county;
+}
+
 export default function OutreachTab() {
   const [paused, setPaused] = useState(false);
   const [pauseLoading, setPauseLoading] = useState(false);
@@ -116,7 +130,9 @@ export default function OutreachTab() {
   const [addEmail, setAddEmail] = useState('');
   const [addFirstName, setAddFirstName] = useState('');
   const [addOrgName, setAddOrgName] = useState('');
-  const [addCounty, setAddCounty] = useState('');
+  // Bound to jurisdiction_id, not the county name: a city row can share its
+  // county's name, so the id is the only unambiguous handle.
+  const [addJurId, setAddJurId] = useState('');
   const [addVariant, setAddVariant] = useState('cold');
   const [pasteMode, setPasteMode] = useState(false);
   const [pasteText, setPasteText] = useState('');
@@ -251,9 +267,10 @@ export default function OutreachTab() {
 
   const handleAddSingle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addEmail || !addCounty) return;
+    const addJur = counties.find((c: any) => c.jurisdiction_id === addJurId);
+    if (!addEmail || !addJur) return;
+    const addCounty = addJur.county;
     setActionLoading('add');
-    const addJur = counties.find((c: any) => c.county === addCounty && c.governmental_level === 'county');
     const { data, error } = await supabase.functions.invoke('county-briefing', {
       body: {
         action: 'add-recipients',
@@ -263,7 +280,7 @@ export default function OutreachTab() {
           org_name: addOrgName || undefined,
           county: addCounty,
           variant: addVariant,
-          ...(addJur ? { jurisdiction_id: addJur.jurisdiction_id } : {}),
+          jurisdiction_id: addJur.jurisdiction_id,
         }],
       },
     });
@@ -286,7 +303,7 @@ export default function OutreachTab() {
         email: parts[0],
         first_name: parts[1] || undefined,
         org_name: parts[2] || undefined,
-        county: parts[3] || addCounty,
+        county: parts[3] || (counties.find((c: any) => c.jurisdiction_id === addJurId)?.county ?? ''),
         variant: parts[4] || 'cold',
       };
     }).filter(r => r.email && r.county);
@@ -354,8 +371,7 @@ export default function OutreachTab() {
       let matched: any = null;
       if (city) {
         matched = counties.find((c: any) =>
-          c.governmental_level === 'city'
-          && (c.city || '').toLowerCase() === city.toLowerCase()
+          (c.city || '').toLowerCase() === city.toLowerCase()
           && (c.county || '').toLowerCase() === county.toLowerCase()
         );
         if (!matched) {
@@ -363,7 +379,7 @@ export default function OutreachTab() {
         }
       } else {
         matched = counties.find((c: any) =>
-          c.governmental_level === 'county'
+          !c.city
           && (c.county || '').toLowerCase() === county.toLowerCase()
         );
         if (!matched) {
@@ -877,11 +893,13 @@ export default function OutreachTab() {
             </div>
             <div>
               <div style={LABEL}>County *</div>
-              <select value={addCounty} onChange={e => setAddCounty(e.target.value)} required
+              <select value={addJurId} onChange={e => setAddJurId(e.target.value)} required
                 style={{ ...INPUT, background: '#FFF' }}>
                 <option value="">Select</option>
-                {counties.filter((c: any) => c.governmental_level === 'county').map((c: any) => (
-                  <option key={c.jurisdiction_id} value={c.county}>{c.county}</option>
+                {/* Every active CA jurisdiction, cities included — they are valid
+                    briefing targets, so they belong here rather than hidden. */}
+                {counties.map((c: any) => (
+                  <option key={c.jurisdiction_id} value={c.jurisdiction_id}>{jurLabel(c)}</option>
                 ))}
               </select>
             </div>
@@ -1081,9 +1099,7 @@ export default function OutreachTab() {
               <option value="">Select a jurisdiction</option>
               {counties.map((c: any) => (
                 <option key={c.jurisdiction_id} value={c.jurisdiction_id}>
-                  {c.governmental_level === 'city'
-                    ? `${c.city} (city) \u00B7 ${c.county} County`
-                    : c.county}
+                  {jurLabel(c)}
                 </option>
               ))}
             </select>
