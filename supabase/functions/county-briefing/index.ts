@@ -958,13 +958,20 @@ Deno.serve(async (req: Request) => {
         }, 422);
       }
 
-      // Fetch queued recipients
+      // Fetch queued recipients.
+      //
+      // Cold is excluded here rather than skipped in the loop below, so a
+      // cold row is never touched at all — not emailed, and not put on hold
+      // by the dedupe check either. Cold never sends from EvidLY; those rows
+      // stay queued and go out through the external tool, which is the same
+      // rule cron-process enforces with its 'Cold variant' skip.
       let recipientQuery = supabase
         .from('county_briefing_recipients')
         .select('*')
         .eq('county', county)
         .eq('state_code', 'CA')
-        .eq('status', 'queued');
+        .eq('status', 'queued')
+        .neq('variant', 'cold');
       if (sendStepNumber !== undefined) {
         recipientQuery = recipientQuery.eq('step_number', sendStepNumber);
       }
