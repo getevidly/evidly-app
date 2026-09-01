@@ -163,10 +163,7 @@ export default function OutreachTab() {
     const [stepsRes, countiesRes, recipientsRes, orgsRes] = await Promise.all([
       supabase.functions.invoke('county-briefing', { body: { action: 'list-steps' } }),
       supabase.functions.invoke('county-briefing', { body: { action: 'list' } }),
-      supabase.from('county_briefing_recipients')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(500),
+      supabase.functions.invoke('county-briefing', { body: { action: 'list-recipients' } }),
       supabase.from('organizations')
         .select('id, name, primary_contact_email, created_at')
         .order('created_at', { ascending: false }),
@@ -179,7 +176,10 @@ export default function OutreachTab() {
     setPaused(masterRow ? !masterRow.is_active : false);
 
     setCounties(countiesRes.data?.counties || []);
-    const recs = recipientsRes.data || [];
+    // Recipients now come from the edge function's service-role read. The
+    // direct query this replaced was silently returning zero rows under
+    // platform_admin_read, which also left the dedupe set below empty.
+    const recs = recipientsRes.data?.recipients || [];
     setRecipients(recs);
 
     // Reconcile: orgs whose contact email is NOT in county_briefing_recipients

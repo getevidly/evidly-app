@@ -1189,6 +1189,26 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ steps: steps || [] });
     }
 
+    // ── LIST-RECIPIENTS ─────────────────────────────────────────
+    // The tab used to read this table directly from the browser, but
+    // county_briefing_recipients is gated by platform_admin_read and no
+    // user holds that role, so the query silently returned zero rows.
+    // Reading it here on the service role fixes the list without opening
+    // the table — the RLS policy is deliberately left untouched.
+    if (action === "list-recipients") {
+      const { data: recipients, error } = await supabase
+        .from('county_briefing_recipients')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(500);
+
+      if (error) {
+        return jsonResponse({ error: error.message }, 500);
+      }
+
+      return jsonResponse({ ok: true, recipients: recipients || [] });
+    }
+
     // ── UPSERT-STEP ─────────────────────────────────────────────
     if (action === "upsert-step") {
       const { step_number, label, delay_days, trigger_type, variant_scope,
