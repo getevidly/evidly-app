@@ -100,12 +100,37 @@ async function computeStepContentHash(step: Record<string, any>): Promise<string
   return sha256(buf.buffer);
 }
 
-const DEFAULT_SUBJECT = (county: string) =>
-  `${county} County Briefing — How ${county} County Evaluates Commercial Kitchens`;
+/**
+ * The name a jurisdiction is labelled by.
+ *
+ * A city jurisdiction is its own health authority (Long Beach is not Los
+ * Angeles County), so it is labelled by city and takes no "County" suffix.
+ * San Francisco carries a city and a county of the same name because it is a
+ * consolidated city-county, so it keeps the county form.
+ *
+ * The word "County" lives inside the returned name rather than beside every
+ * call site, which is what let a city inherit it in the first place.
+ */
+// deno-lint-ignore no-explicit-any
+function jurisdictionDisplayName(county: string, jur: Record<string, any> | null | undefined): string {
+  const city = typeof jur?.city === 'string' ? jur.city.trim() : '';
+  if (city && city.toLowerCase() !== (county || '').trim().toLowerCase()) return city;
+  return `${county} County`;
+}
 
-function buildSubject(template: string | null | undefined, county: string, firstName: string): string {
-  if (!template) return DEFAULT_SUBJECT(county);
-  return template.replace(/\{\{COUNTY\}\}/g, county).replace(/\{\{FIRST_NAME\}\}/g, firstName);
+const DEFAULT_SUBJECT = (displayName: string) =>
+  `${displayName} Briefing — How ${displayName} Evaluates Commercial Kitchens`;
+
+function buildSubject(template: string | null | undefined, displayName: string, firstName: string): string {
+  if (!template) return DEFAULT_SUBJECT(displayName);
+  // Templates written before cities were labelled separately put the word
+  // "County" straight after the token, so substituting a city name alone
+  // would read "Long Beach County". Absorb the adjacent word: a county row
+  // still resolves to "Merced County", a city row to "Long Beach".
+  return template
+    .replace(/\{\{COUNTY\}\}\s+County\b/g, displayName)
+    .replace(/\{\{COUNTY\}\}/g, displayName)
+    .replace(/\{\{FIRST_NAME\}\}/g, firstName);
 }
 
 // Named-requirement gate. Each required section is checked individually
@@ -644,6 +669,9 @@ function buildBriefingEmail(
     ? `${unsubBase}?token=${encodeURIComponent(unsubToken)}`
     : 'https://app.getevidly.com/settings/notifications';
 
+  // Every label below uses this, so a city is never called by its county.
+  const displayName = jurisdictionDisplayName(county, jur);
+
   // ── Card builders for fire / food grids ─────────────────────────
   // Standard card: white bg, solid border, coloured top accent
   const card = (title: string, cite: string, value: string, accent: string, cadence?: string) => {
@@ -786,7 +814,7 @@ function buildBriefingEmail(
     // A verified county with a shape nothing above caught still has its
     // method on file, and saying otherwise misreports our own data.
     evalBlock = jur?.jie_audit_status === 'verified'
-      ? `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0;">This county’s evaluation method is on file — see how ${county} County reports below.</p>`
+      ? `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0;">This county’s evaluation method is on file — see how ${displayName} reports below.</p>`
       : `<p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#8B95AA;margin:0;font-style:italic;">County-specific evaluation details will appear here once verified.</p>`;
   }
 
@@ -799,14 +827,14 @@ function buildBriefingEmail(
 <meta name="x-apple-disable-message-reformatting">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light only">
-<title>${county} County Briefing</title>
+<title>${displayName} Briefing</title>
 <style>
 :root { color-scheme: light only; supported-color-schemes: light only; }
 body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-interpolation-mode:bicubic;}
 @media (max-width:620px){.card{width:100%!important;} .p40{padding-left:22px!important;padding-right:22px!important;}}
 </style>
 </head><body style="margin:0;padding:0;background:#F7F1E6;" bgcolor="#F7F1E6">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Hi ${firstName} \u2014 what ${county} County can ask your kitchen to produce.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Hi ${firstName} \u2014 what ${displayName} can ask your kitchen to produce.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F1E6;" bgcolor="#F7F1E6">
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#FFFFFF;border:1px solid #EEE7D9;" bgcolor="#FFFFFF">
@@ -819,17 +847,17 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   <!-- 2. COUNTY KICKER -->
   <tr><td class="p40" style="padding:28px 40px 0;" bgcolor="#FFFFFF">
-    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:0 0 12px;">${county} County Briefing</div>
+    <div style="font-family:${fMono};font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;margin:0 0 12px;">${displayName} Briefing</div>
   </td></tr>
 
   <!-- 3. SALUTATION -->
   <tr><td class="p40" style="padding:0 40px 0;" bgcolor="#FFFFFF">
     <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 20px;">${
       firstName !== 'there' && orgName
-        ? `Hi <strong style="color:#1C2A3A;">${firstName}</strong> \u2014 <strong style="color:#1C2A3A;">${orgName}</strong> runs a kitchen in ${county} County. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
+        ? `Hi <strong style="color:#1C2A3A;">${firstName}</strong> \u2014 <strong style="color:#1C2A3A;">${orgName}</strong> runs a kitchen in ${displayName}. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
         : firstName !== 'there'
-        ? `Hi <strong style="color:#1C2A3A;">${firstName}</strong> \u2014 you manage a kitchen in ${county} County. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
-        : `Hi there \u2014 you manage a kitchen in ${county} County. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
+        ? `Hi <strong style="color:#1C2A3A;">${firstName}</strong> \u2014 you manage a kitchen in ${displayName}. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
+        : `Hi there \u2014 you manage a kitchen in ${displayName}. Here is what your property management, insurance company, compliance officer, the fire marshal and health department can ask you to produce anytime.`
     }</p>
   </td></tr>
 
@@ -855,7 +883,7 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
   <!-- 7. HOW THIS COUNTY EVALUATES -->
   <tr><td class="p40" style="padding:0 40px 20px;border-top:1px solid #EEE7D9;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How ${county} County Evaluates</h3>
+    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How ${displayName} Evaluates</h3>
     ${evalBlock}
   </td></tr>
 
@@ -1199,7 +1227,7 @@ Deno.serve(async (req: Request) => {
           subject = inviteResult.subject;
         } else {
           html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
-          subject = buildSubject(stepSubjectTemplate, county, firstName);
+          subject = buildSubject(stepSubjectTemplate, jurisdictionDisplayName(county, jur), firstName);
         }
 
         const result = await sendEmail({ to: r.email, subject, html });
@@ -1693,7 +1721,7 @@ Deno.serve(async (req: Request) => {
             const slug = r.county.toLowerCase().replace(/\s+/g, '-');
             const ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
             html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
-            emailSubject = buildSubject(step.subject_template, r.county, firstName);
+            emailSubject = buildSubject(step.subject_template, jurisdictionDisplayName(r.county, jur), firstName);
           }
 
           const result = await sendEmail({ to: r.email, subject: emailSubject, html });
