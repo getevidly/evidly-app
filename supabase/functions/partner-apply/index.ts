@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 /**
  * partner-apply — intake for the Trusted Partner Alliance application.
@@ -56,6 +57,11 @@ const REQUIRED_FIELDS = [
 ] as const;
 
 const TOKEN_TTL_DAYS = 30;
+
+/** Unauthenticated write: 7 rows and 2 emails per call. Held per IP. */
+const APPLY_MAX = 5;
+const APPLY_WINDOW = 3600; // 1 hour
+
 const ADMIN_EMAIL = "arthur@getevidly.com";
 const UPLOAD_BASE = "https://getevidly.com/partners/upload";
 
@@ -64,6 +70,15 @@ const esc = (s: string) =>
     .replace(/"/g, "&quot;");
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) {
+    const first = fwd.split(",")[0].trim();
+    if (first) return first;
+  }
+  return req.headers.get("cf-connecting-ip")?.trim() || "unknown";
+}
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req.headers.get("origin"));
@@ -87,6 +102,19 @@ Deno.serve(async (req) => {
   let applicationId: string | null = null;
 
   try {
+    const limit = await checkRateLimit({
+      key: `partner_apply:${clientIp(req)}`,
+      maxRequests: APPLY_MAX,
+      windowSeconds: APPLY_WINDOW,
+      supabase,
+    });
+    if (!limit.allowed) {
+      return json(
+        { ok: false, error: "Too many applications from this connection — try again later." },
+        429,
+      );
+    }
+
     let body: Record<string, unknown>;
     try {
       body = await req.json();
