@@ -660,7 +660,6 @@ function buildBriefingEmail(
   // deno-lint-ignore no-explicit-any
   jur: Record<string, any>,
   variant: string,
-  ctaUrl: string,
   accessVia?: string,
   unsubToken?: string,
 ): string {
@@ -822,6 +821,9 @@ function buildBriefingEmail(
     evalBlock += `<p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: ${jur.agency_name}.</p>`;
   }
 
+  const countyDisplay = displayName;
+  const briefingSlug = ((jur?.slug) || '').replace(/-ca$/, '');
+
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="x-apple-disable-message-reformatting">
@@ -861,38 +863,48 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
     }</p>
   </td></tr>
 
-  <!-- 4. HEADLINE -->
-  <tr><td class="p40" style="padding:0 40px 20px;" bgcolor="#FFFFFF">
-    <h2 style="font-family:${fInstrument};font-size:20px;font-weight:700;color:#1C2A3A;margin:0;text-align:center;">What a commercial kitchen has to produce.</h2>
-  </td></tr>
+    <tr><td bgcolor="#FFFFFF" align="center" style="background:#FFFFFF;padding:26px 32px 6px;">
+      <div style="font-family:'Instrument Sans',Arial,sans-serif;font-weight:700;font-size:25px;line-height:1.2;letter-spacing:-.01em;color:#1C2A3A;">
+        What a commercial kitchen in ${countyDisplay} has to produce.
+      </div>
+    </td></tr>
 
-  <!-- 5. FIRE SAFETY -->
-  <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#B24A2E;">Fire safety</span> <span style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;padding-left:10px;">Every one is a vendor service record \u2014 the signed report from the licensed contractor who did the work. The fire authority\u2019s own inspection report is theirs, not yours.</span></div>
-    ${fireGrid}
-  </td></tr>
+    <tr><td bgcolor="#FFFFFF" align="center" style="background:#FFFFFF;padding:14px 40px 28px;">
+      <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:15.5px;line-height:1.65;color:#5B6470;">
+        Having them and having them available are not the same thing &mdash; and the difference only shows up on the day someone&rsquo;s standing there asking.
+      </div>
+    </td></tr>
 
-  <!-- 6. FOOD SAFETY -->
-  <tr><td class="p40" style="padding:0 40px 6px;" bgcolor="#FFFFFF">
-    <div style="margin:24px 0 12px 0;"><span style="font-family:${fInstrument};font-size:16px;font-weight:bold;color:#3E6B8A;">Food safety</span> <span style="font-family:${fInstrument};font-size:13px;line-height:1.5;color:#5F6875;padding-left:10px;">Pest control, grease trap and backflow are vendor services \u2014 a company does the work and signs the record. Everything flagged here is listed but not included in the total.</span></div>
-    ${foodGrid}
-    <p style="font-family:${fMono};font-size:10px;letter-spacing:0.08em;color:#9A9384;margin:10px 0 0;text-transform:uppercase;">Source: California Retail Food Code.</p>
-  </td></tr>
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:0 32px 30px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#1C2A3A" style="background:#1C2A3A;border-top:3px solid #B24A2E;">
+        <tr><td bgcolor="#1C2A3A" align="center" style="background:#1C2A3A;padding:26px 20px 6px;">
+          <span style="font-family:'Montserrat',Arial,sans-serif;font-weight:800;font-size:62px;line-height:1;color:#CB5E38;">39</span>
+        </td></tr>
+        <tr><td bgcolor="#1C2A3A" align="center" style="background:#1C2A3A;padding:0 20px 6px;">
+          <span style="font-family:'Instrument Sans',Arial,sans-serif;font-weight:600;font-size:15px;color:#F4EFE4;">Records to keep current, at all times</span>
+        </td></tr>
+        <tr><td bgcolor="#1C2A3A" align="center" style="background:#1C2A3A;padding:6px 20px 4px;">
+          <span style="font-family:'IBM Plex Mono','Courier New',monospace;font-size:12px;letter-spacing:.08em;color:#C7D1DF;">Fire 5 &middot; Food 13 &middot; Business 6 &middot; Vendor 15</span>
+        </td></tr>
+        <tr><td bgcolor="#1C2A3A" align="center" style="background:#1C2A3A;padding:4px 26px 26px;">
+          <span style="font-family:'Instrument Sans',Arial,sans-serif;font-size:12.5px;color:#C7D1DF;">That&rsquo;s one kitchen with three service companies. Nine more records apply only to some kitchens.</span>
+        </td></tr>
+      </table>
+    </td></tr>
 
-  <!-- 7. HOW THIS COUNTY EVALUATES -->
-  <tr><td class="p40" style="padding:0 40px 20px;border-top:1px solid #EEE7D9;" bgcolor="#FFFFFF">
-    <h3 style="color:#1C2A3A;border-bottom:2px solid #B24A2E;padding-bottom:4px;margin:24px 0 12px 0;font-family:${fInstrument};font-size:17px;font-weight:700;">How ${displayName} Evaluates</h3>
-    ${evalBlock}
-  </td></tr>
+    <tr><td bgcolor="#FFFFFF" align="center" style="background:#FFFFFF;padding:0 40px 8px;">
+      <div style="font-family:'Instrument Sans',Arial,sans-serif;font-size:15px;line-height:1.65;color:#1C2A3A;">
+        The full set &mdash; every record with its citation, and how ${countyDisplay} evaluates &mdash; is one click below.
+      </div>
+    </td></tr>
 
-  <!-- 8. CTA -->
-  <tr><td class="p40" style="padding:0 40px 28px;" bgcolor="#FFFFFF">
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 6px;">CalCode is the same in every county.</p>
-    <p style="font-family:${fInstrument};font-size:14px;line-height:1.6;color:#4A5566;margin:0 0 18px;">How your inspection gets reported is not. Tiers, placards and point weights are set locally. All 58 counties are published, free to read.</p>
-    <table role="presentation" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr>
-      <td align="center" style="background:#1C2A3A;" bgcolor="#1C2A3A"><a href="${ctaUrl}" style="display:inline-block;padding:14px 30px;font-family:${fInstrument};font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">See how each county reports &#8594;</a></td>
-    </tr></table>
-  </td></tr>
+    <tr><td bgcolor="#FFFFFF" align="center" style="background:#FFFFFF;padding:20px 32px 40px;">
+      <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td bgcolor="#B24A2E" style="background:#B24A2E;border-radius:4px;">
+          <a href="https://www.getevidly.com/briefing/california/${briefingSlug}?from=email&v=warm" style="display:inline-block;font-family:'Instrument Sans',Arial,sans-serif;font-weight:600;font-size:16px;color:#FFFFFF;padding:14px 30px;">See the ${countyDisplay} Briefing</a>
+        </td></tr>
+      </table>
+    </td></tr>
 
   <!-- 9. FOOTER -->
   <tr><td class="p40" align="center" style="background:#FBF9F2;padding:24px 40px;border-top:1px solid #EEE7D9;text-align:center;" bgcolor="#FBF9F2">
@@ -983,9 +995,7 @@ Deno.serve(async (req: Request) => {
       const gate = checkRequirements(jur);
       const hash = await computeJurisdictionHash(jur);
       const previewAccessVia = (body.access_via as string) || undefined;
-      const previewSlug = county.toLowerCase().replace(/\s+/g, '-');
-      const previewCtaUrl = `https://www.getevidly.com/scoretable/california/${previewSlug}?from=email`;
-      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, previewCtaUrl, previewAccessVia, 'preview');
+      const previewHtml = buildBriefingEmail(county, 'there', null, jur, variant, previewAccessVia, 'preview');
 
       return jsonResponse({
         preview_html: previewHtml,
@@ -1171,7 +1181,6 @@ Deno.serve(async (req: Request) => {
           continue;
         }
 
-        let ctaUrl: string;
         let sendAccessVia: string | undefined;
         let sendInviteToken: string | undefined;
 
@@ -1195,7 +1204,6 @@ Deno.serve(async (req: Request) => {
           }
           sendInviteToken = invite.token;
           const slug = county.toLowerCase().replace(/\s+/g, '-');
-          ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
 
           if (invite.organization_id) {
             const { data: org } = await supabase
@@ -1207,7 +1215,6 @@ Deno.serve(async (req: Request) => {
           }
         } else {
           const slug = county.toLowerCase().replace(/\s+/g, '-');
-          ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
         }
 
         const firstName = r.first_name || 'there';
@@ -1224,7 +1231,7 @@ Deno.serve(async (req: Request) => {
           html = inviteResult.html;
           subject = inviteResult.subject;
         } else {
-          html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, ctaUrl, sendAccessVia, r.unsub_token);
+          html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, sendAccessVia, r.unsub_token);
           subject = buildSubject(stepSubjectTemplate, jurisdictionDisplayName(county, jur), firstName);
         }
 
@@ -1717,8 +1724,7 @@ Deno.serve(async (req: Request) => {
             emailSubject = inviteResult.subject;
           } else {
             const slug = r.county.toLowerCase().replace(/\s+/g, '-');
-            const ctaUrl = `https://www.getevidly.com/scoretable/california/${slug}?from=email`;
-            html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, ctaUrl, cronAccessVia, r.unsub_token);
+            html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, cronAccessVia, r.unsub_token);
             emailSubject = buildSubject(step.subject_template, jurisdictionDisplayName(r.county, jur), firstName);
           }
 
