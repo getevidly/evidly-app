@@ -6,7 +6,7 @@
  *   2. Add a recipient      — single or pasted rows
  *   3. Schedule + sign-off  — step definitions, sign-off gate
  *   4. County review        — approval table (moved from standalone page)
- *   5. Cold handoff         — export cold recipients for HubSpot
+ *   5. Cold handoff         — export cold recipients for ListKit
  *   6. Queue                — all recipients, hold reasons inline
  *   7. Missing clients      — orgs not in the briefing queue, with enroll action
  *
@@ -1417,10 +1417,10 @@ export default function OutreachTab() {
             Cold handoff
           </h3>
           <div style={{ flex: 1 }} />
-          <button onClick={exportCold} style={BTN(EV_NAVY, '#FFF')}>Export for HubSpot</button>
+          <button onClick={exportCold} style={BTN(EV_NAVY, '#FFF')}>Export for ListKit</button>
         </div>
         <p style={{ fontSize: 12, color: EV_MUTED, marginBottom: 14 }}>
-          Cold recipients never send from EvidLY. Export their list for HubSpot.
+          Cold recipients never send from EvidLY. Export their list for ListKit.
         </p>
         <ColdTable recipients={recipients} counties={counties} />
       </div>

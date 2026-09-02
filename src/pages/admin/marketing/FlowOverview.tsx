@@ -98,7 +98,7 @@ const FLOW_HTML = `
 
   <div class="legend">
     <span><i class="chip ev">EvidLY</i> sends from our own domain</span>
-    <span><i class="chip hs">HubSpot</i> bulk send, suppression handled there</span>
+    <span><i class="chip hs">ListKit</i> bulk send, suppression handled there</span>
     <span><i class="chip pg">Page</i> not an email — a screen they land on</span>
     <span><i class="chip sg">Sign-off</i> cannot fire until you approve it</span>
     <span><i class="chip nb">Not built</i></span>
@@ -289,7 +289,7 @@ const FLOW_HTML = `
         <div class="st-l">
           <div class="st-n"><span class="st-num">1</span><span class="st-name">County briefing</span></div>
           <div class="st-trig">Trigger · list handed over<br />Sends · manual, per county</div>
-          <div class="st-chips"><span class="chip hs">HubSpot</span><span class="chip sg">Sign-off</span></div>
+          <div class="st-chips"><span class="chip hs">ListKit</span><span class="chip sg">Sign-off</span></div>
         </div>
         <div class="st-m">
           <div class="k">Audience</div>
@@ -306,7 +306,7 @@ const FLOW_HTML = `
         <div class="st-r">
           <div class="k">Purpose</div>
           <div class="purp"><b>The one cold email, and the one cold call to action.</b> Same message on LinkedIn, the show QR, the call script and the postcard — only the delivery differs.</div>
-          <div class="not"><b>Sent from HubSpot, not EvidLY.</b> Our sending domain carries the invite, the gate links and every vendor request. Cold volume there risks the mail that has to arrive.</div>
+          <div class="not"><b>Sent from ListKit, not EvidLY.</b> Our sending domain carries the invite, the gate links and every vendor request. Cold volume there risks the mail that has to arrive.</div>
         </div>
       </div>
 
