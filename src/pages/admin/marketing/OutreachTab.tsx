@@ -982,6 +982,15 @@ export default function OutreachTab() {
                         background: '#F6E3DF', color: EV_DANGER,
                       }}>Unsigned</span>
                     )}
+                    {!step.signed_off_at && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); signOffStep(step.step_number); }}
+                        disabled={!!actionLoading}
+                        style={BTN(EV_SUCCESS, '#FFF')}
+                      >
+                        {actionLoading === `signoff-${step.step_number}` ? 'Signing…' : 'Sign off'}
+                      </button>
+                    )}
                   </span>
                 </div>
 
