@@ -62,3 +62,27 @@ export function tabRoute(id: MarketingTabId): string {
   const tab = MARKETING_TABS.find(t => t.id === id);
   return `/admin/marketing/${tab?.route ?? id}`;
 }
+
+/**
+ * Top-level grouping for the tab bar.
+ *
+ * Purely presentational: every member is an existing MARKETING_TABS id and
+ * keeps its own route. Grouping changes how the bar is drawn, not where
+ * anything lives. `network` is absent because it is route-only and
+ * deliberately not surfaced in the bar.
+ */
+export const MARKETING_GROUPS: { id: string; label: string; members: MarketingTabId[] }[] = [
+  { id: 'plan',     label: 'Plan',             members: ['weekly-cadence', 'planner'] },
+  { id: 'outreach', label: 'Outreach',         members: ['sequence', 'calls', 'field', 'shows', 'followups'] },
+  { id: 'content',  label: 'Content Schedule', members: ['schedule'] },
+  { id: 'programs', label: 'Programs',         members: ['policylens', 'survey', 'partners'] },
+  { id: 'pipeline', label: 'Pipeline',         members: ['overview', 'funnel', 'segments', 'accounts'] },
+  { id: 'channels', label: 'Channels',         members: ['channels', 'forecast'] },
+  { id: 'founder',  label: 'Founder Window',   members: ['founder'] },
+  { id: 'growth',   label: 'Growth',           members: ['seo', 'serp', 'ads'] },
+];
+
+/** The group that owns a tab, or undefined for a route-only tab such as `network`. */
+export function groupForTab(id: MarketingTabId) {
+  return MARKETING_GROUPS.find(g => g.members.includes(id));
+}

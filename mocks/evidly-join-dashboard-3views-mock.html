@@ -1,0 +1,871 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>EvidLY · Sample Dashboard — Three Views</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1E2D4D; --ink:#26313F; --muted:#5B6675; --soft:#8A94A3;
+  --paper:#FFFFFF; --cream:#FAF7F0; --line:#E7E1D6; --edge:#D6CFC1;
+  --ember:#B24A2E;
+  --crit:#B3402F; --crit-bg:#FBEDEA; --high:#BE6F35; --high-bg:#FCF2E8;
+  --med:#B8912F; --med-bg:#FBF6E7; --low:#67758C; --low-bg:#EFF1F5;
+  --ok:#3F7D58; --ok-bg:#EDF5F0;
+  --disp:'Montserrat','Instrument Sans',system-ui,sans-serif; --sans:'Instrument Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:16px;
+  line-height:1.6;-webkit-font-smoothing:antialiased;padding:44px 28px}
+.demo{max-width:1080px;margin:0 auto}
+.spec{font-family:var(--mono);font-size:11px;letter-spacing:.09em;color:var(--muted);
+  margin:0 0 26px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  box-shadow:0 14px 40px -26px rgba(30,45,77,.35)}
+.chead{display:flex;align-items:center;gap:13px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.ctitle{font-family:var(--disp);font-weight:800;font-size:17px;color:var(--navy);letter-spacing:-.02em}
+.cmeta{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--soft)}
+.cdate{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--muted);
+  border:1px solid var(--line);border-radius:3px;padding:5px 11px}
+
+/* tabs */
+.card input{position:absolute;opacity:0;pointer-events:none}
+.tabs{display:flex;background:var(--cream);border-bottom:1px solid var(--line)}
+.tabs label{flex:1;cursor:pointer;padding:15px 20px 13px;border-right:1px solid var(--line);
+  border-bottom:2px solid transparent}
+.tabs label:last-child{border-right:0}
+.tabs label:hover{background:#F4EFE4}
+.tabs label b{display:block;font-family:var(--disp);font-weight:800;font-size:16px;color:var(--soft);
+  letter-spacing:-.015em}
+.tabs label em{display:block;font-style:normal;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.13em;color:var(--soft);margin-top:5px}
+#t1:checked~.tabs [for=t1],#t2:checked~.tabs [for=t2],#t3:checked~.tabs [for=t3]{
+  background:var(--paper);border-bottom-color:var(--ember)}
+#t1:checked~.tabs [for=t1] b,#t2:checked~.tabs [for=t2] b,#t3:checked~.tabs [for=t3] b{color:var(--navy)}
+#t1:checked~.tabs [for=t1] em{color:var(--med)}#t2:checked~.tabs [for=t2] em{color:var(--crit)}#t3:checked~.tabs [for=t3] em{color:var(--ok)}
+.pane{display:none}
+#t1:checked~.body .p1,#t2:checked~.body .p2,#t3:checked~.body .p3{display:block}
+
+/* filter bar */
+.fdrop{position:relative}
+.fbtn{appearance:none;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--navy);
+  background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:7px 30px 7px 12px;
+  cursor:pointer;letter-spacing:-.005em;position:relative}
+.fbtn:after{content:"";position:absolute;right:11px;top:50%;margin-top:-2px;
+  border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--soft)}
+.fdrop.open .fbtn{background:#fff;border-color:var(--ember);box-shadow:0 0 0 3px rgba(178,74,46,.10)}
+.fdrop.open .fbtn:after{border-top-color:var(--ember)}
+.fmenu{display:none;position:absolute;z-index:60;top:calc(100% + 6px);left:0;z-index:20;min-width:230px;
+  background:#fff;border:1px solid var(--line);border-radius:6px;padding:7px 0;
+  box-shadow:0 18px 44px -18px rgba(30,45,77,.34)}
+.fdrop.open .fmenu{display:block}
+.fmenu{max-height:340px;overflow-y:auto}
+.fgrp{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--soft);
+  padding:9px 14px 5px;border-top:1px solid var(--line);margin-top:5px}
+.fmenu .fgrp:first-child{border-top:0;margin-top:0;padding-top:5px}
+.fopt{display:flex;align-items:center;gap:9px;padding:7px 14px;font-size:13.5px;color:var(--ink);
+  text-decoration:none}
+.fopt:hover{background:var(--cream)}
+.fopt.on{color:var(--ember);font-weight:600}
+.fopt.vend{font-weight:600;color:var(--navy)}
+.fopt.sub{padding-left:28px;font-size:12.5px;color:var(--muted)}
+.fopt.sub:before{content:"";width:5px;height:1px;background:var(--edge);display:inline-block;
+  margin-right:-4px}
+.fopt em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:10px;color:var(--soft)}
+.sd{width:9px;height:9px;border-radius:2px;display:inline-block}
+.sd.crit{background:var(--crit)}.sd.high{background:var(--high)}.sd.med{background:var(--med)}
+.sd.low{background:var(--low)}.sd.ok{background:var(--ok)}
+
+.filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px 24px;position:relative;z-index:5;
+  background:var(--paper);border-bottom:1px solid var(--line)}
+.flab{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--soft);margin-right:2px}
+.fclear{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+  color:var(--ember);text-decoration:none}
+
+/* summary strip */
+.sum{width:100%;border-collapse:collapse;border-bottom:1px solid var(--line);background:var(--cream)}
+.sum td{padding:16px 18px;border-right:1px solid var(--line);width:20%;vertical-align:top}
+.sum td:last-child{border-right:0}
+.sum .n{font-family:var(--disp);font-weight:800;font-size:26px;line-height:1;color:var(--navy);
+  letter-spacing:-.03em}
+.sum .n.z{color:var(--edge)}
+.sum .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;color:var(--muted);margin-top:8px}
+.sum .b{display:inline-block;width:22px;height:3px;border-radius:2px;margin-top:10px;background:var(--edge)}
+.b.crit{background:var(--crit)}.b.high{background:var(--high)}
+.b.med{background:var(--med)}.b.ok{background:var(--ok)}
+.cat{display:flex;align-items:center;gap:11px;padding:11px 24px;background:var(--cream);
+  border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.cat b{font-family:var(--mono);font-size:9.5px;letter-spacing:.17em;color:var(--muted);font-weight:500}
+.cat i{width:6px;height:6px;border-radius:1px;background:var(--ember)}
+.cat .n{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;color:var(--soft)}
+.iss{display:flex;align-items:center;gap:16px;padding:15px 24px;border-bottom:1px solid var(--line)}
+.iss:last-child{border-bottom:0}
+.sev{font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;padding:4px 9px;border-radius:3px;
+  white-space:nowrap;flex:0 0 auto}
+.sev.crit{background:var(--crit-bg);color:var(--crit);border:1px solid #EBCFC8}
+.sev.high{background:var(--high-bg);color:var(--high);border:1px solid #EDD8C2}
+.sev.med{background:var(--med-bg);color:var(--med);border:1px solid #EBDFBC}
+.sev.ok{background:var(--ok-bg);color:var(--ok);border:1px solid #CFE3D8}
+.txt{min-width:0}
+.txt b{display:block;font-weight:600;font-size:15.5px;color:var(--navy);line-height:1.3;letter-spacing:-.01em}
+.txt em{display:block;font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  margin-top:6px;letter-spacing:.03em}
+.when{margin-left:auto;text-align:center;flex:0 0 auto}
+.when b{display:block;font-family:var(--disp);font-weight:800;font-size:18px;line-height:1;
+  color:var(--navy);letter-spacing:-.02em}
+.when.predict b{color:var(--med)}
+.when.reduce b{color:var(--crit)}
+.when.prove b{color:var(--ok)}
+/* Predict/Reduce/Prove count numbers match the day-number lens colours */
+.m-predict .sum .n:not(.z){color:var(--med)}.m-reduce .sum .n:not(.z){color:var(--crit)}.m-prove .sum .n:not(.z){color:var(--ok)}
+.m-predict .cat .n{color:var(--med)}.m-reduce .cat .n{color:var(--crit)}.m-prove .cat .n{color:var(--ok)}
+.txt em .mred{color:var(--crit)}.txt em .mgrn{color:var(--ok);font-weight:500}.txt em .mgold{color:var(--ok);font-weight:500}
+.when span{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;
+  color:var(--soft);margin-top:6px}
+.more{display:block;padding:14px 24px;font-family:var(--mono);font-size:10px;letter-spacing:.13em;
+  color:var(--ember);text-decoration:none;border-top:1px solid var(--line);background:var(--cream)}
+
+.hwrap{padding:22px 24px 24px}
+.hmap{width:100%;border-collapse:separate;border-spacing:6px}
+.hmap th{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--muted);
+  text-align:left;padding:0 0 10px 3px;font-weight:400;vertical-align:bottom}
+.hk{font-family:var(--sans)!important;font-weight:600!important;font-size:14.5px!important;
+  color:var(--navy)!important;letter-spacing:0!important;padding:0 14px 0 12px!important;
+  vertical-align:middle!important;border-left:3px solid var(--ember);width:196px}
+.hk span{display:block;font-family:var(--mono);font-weight:400;font-size:9.5px;
+  letter-spacing:.1em;color:var(--soft);margin-top:4px}
+.hmap td.c{padding:12px 13px;border-radius:4px;vertical-align:top;width:16%;border:1px solid transparent}
+.hmap td.c b{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.14em;font-weight:500}
+.hmap td.c b:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.hmap td.c em{display:block;font-style:normal;font-size:12.5px;margin-top:7px;line-height:1.35;
+  color:var(--navy);font-weight:500}
+td.crit{background:var(--crit-bg);border-color:#EBCFC8}td.crit b{color:var(--crit)}
+td.high{background:var(--high-bg);border-color:#EDD8C2}td.high b{color:var(--high)}
+td.med{background:var(--med-bg);border-color:#EBDFBC}td.med b{color:var(--med)}
+td.low{background:var(--low-bg);border-color:#DCE0E7}td.low b{color:var(--low)}
+td.ok{background:var(--ok-bg);border-color:#CFE3D8}td.ok b{color:var(--ok)}
+td.clear{background:transparent;border:1px dashed var(--edge)}
+td.clear b{color:var(--soft)}td.clear em{color:var(--soft);font-weight:400}
+.hnote{margin:18px 24px 22px;font-size:13.5px;color:var(--muted);line-height:1.6;
+  padding-left:14px;border-left:2px solid var(--ember)}
+
+.twrap{padding:20px 22px 6px}.twrap svg{display:block}
+.tnote{margin:6px 24px 22px;font-size:13.5px;color:var(--muted);line-height:1.6;
+  padding-left:14px;border-left:2px solid var(--ember)}
+/* ── motion: one orchestrated entrance per card ───────────── */
+@keyframes aUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes aIn{from{opacity:0}to{opacity:1}}
+@keyframes aPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes svcPop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.anim-up{opacity:0;animation:aUp .5s cubic-bezier(.22,1,.36,1) forwards}
+.anim-in{opacity:0;animation:aIn .45s ease forwards}
+.anim-pop{opacity:0;animation:aPop .46s cubic-bezier(.22,1,.36,1) forwards}
+.svc{opacity:0;transform-box:fill-box;transform-origin:center;
+  animation:svcPop .40s cubic-bezier(.2,1.3,.4,1) forwards}
+.gapbar{transform-box:fill-box;transform-origin:left center;transform:scaleX(0);
+  animation:grow .70s cubic-bezier(.4,0,.2,1) forwards}
+.duedot{opacity:0;transform-box:fill-box;transform-origin:center;
+  animation:svcPop .46s cubic-bezier(.2,1.3,.4,1) forwards}
+.statustx{opacity:0;animation:aIn .5s ease forwards}
+.todayline{opacity:0;animation:aIn .5s ease forwards;animation-delay:1.05s}
+/* tab switch feels alive without re-running the whole entrance */
+.pane{animation:aIn .28s ease}
+@media (prefers-reduced-motion:reduce){
+  .anim-up,.anim-in,.anim-pop,.svc,.gapbar,.duedot,.statustx,.todayline,.pane{
+    animation:none!important;opacity:1!important;transform:none!important}
+}
+
+.emptyst{padding:34px 24px;text-align:center;border-top:1px solid var(--line)}
+.emptyst b{display:block;font-family:var(--disp);font-weight:800;font-size:20px;color:#3F7D58}
+.emptyst span{display:block;font-size:14.5px;color:var(--muted);margin-top:8px}
+
+.emptyrow{padding:20px 24px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  color:#3F7D58;background:#F7FAF8;border-bottom:1px solid var(--line)}
+
+.act{flex:0 0 auto;font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;font-weight:500;
+  padding:8px 13px;border-radius:6px;cursor:pointer;white-space:nowrap;
+  border:1px solid #A8C2E0;color:#2C6BB0;background:#fff;text-decoration:none}
+.act:hover{background:#EFF4FB;border-color:#2C6BB0}
+.acts{margin-left:14px;display:flex;gap:8px;flex:0 0 auto;align-items:center}
+.modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(30,45,77,.44)}
+.modal.open{display:flex;animation:aIn .16s ease}
+.sheet{background:var(--paper);border-radius:10px;width:460px;max-width:calc(100vw - 28px);
+  max-height:calc(100vh - 40px);overflow:auto;box-shadow:0 30px 80px -30px rgba(30,45,77,.6);
+  animation:aUp .22s cubic-bezier(.22,1,.36,1)}
+.shead{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+.shead .st{font-family:var(--disp);font-weight:800;font-size:18px;color:var(--navy);letter-spacing:-.02em}
+.shead .ss{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--soft);margin-top:7px;line-height:1.5}
+.sx{margin-left:auto;background:none;border:0;cursor:pointer;font-size:24px;line-height:1;color:var(--soft);padding:0 2px}
+.sbody{padding:18px 22px}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--muted);margin-bottom:6px}
+.fld input,.fld select,.fld textarea{width:100%;font-family:var(--sans);font-size:14px;color:var(--ink);
+  border:1px solid var(--line);border-radius:5px;padding:9px 11px;background:#fff}
+.fld textarea{min-height:64px;resize:vertical;line-height:1.5}
+.fld input.ro{background:var(--cream);color:var(--navy);font-weight:600}
+.sfoot{display:flex;align-items:center;gap:10px;padding:14px 22px 20px}
+.sbtn{font-family:var(--sans);font-size:14px;font-weight:600;padding:10px 18px;border-radius:6px;
+  cursor:pointer;border:1px solid var(--navy)}
+.sbtn.primary{background:var(--navy);color:#fff}
+.sbtn.ghost{background:#fff;color:var(--navy)}
+.sok{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ok);margin-left:auto}
+
+/* ── mobile ─────────────────────────────────────────────── */
+@media (max-width:640px){
+  body{padding:20px 12px}
+  .demo{max-width:100%}
+  .card{border-radius:7px}
+  .chead{flex-wrap:wrap;gap:6px 10px;padding:15px 16px}
+  .cmeta{order:3;flex-basis:100%}
+  .cdate{margin-left:auto}
+  .tabs label{padding:13px 8px 11px}
+  .tabs label b{font-size:14px}
+  .tabs label em{font-size:8px;letter-spacing:.07em;margin-top:4px}
+  .filters{padding:11px 16px;gap:8px}
+  .flab{width:100%;margin:0 0 2px}
+  .fmenu{min-width:0;width:min(280px,calc(100vw - 40px))}
+  /* five-pillar strip stays five-across, just tighter */
+  .sum td{padding:12px 7px}
+  .sum .n{font-size:21px}
+  .sum .l{font-size:8px;letter-spacing:.05em;margin-top:6px}
+  .sum .b{width:18px;margin-top:8px}
+  /* issue rows */
+  .cat{padding:10px 16px;gap:9px}
+  .iss{gap:11px;padding:13px 16px}
+  .sev{font-size:8px;padding:3px 7px}
+  .txt b{font-size:14.5px}
+  .txt em{font-size:9.5px}
+  .when b{font-size:16px}
+  .when span{font-size:8px}
+  .more,.emptyrow{padding:13px 16px}
+  .iss{flex-wrap:wrap}
+  .acts{margin:9px 0 0 auto;flex-wrap:wrap}.act{font-size:11px;padding:6px 11px}
+  .emptyst{padding:28px 16px}
+}
+<style>
+/* stacked three-view dashboard */
+.stack{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.card2{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(30,45,77,.04)}
+.ctop{display:flex;align-items:baseline;gap:12px;padding:16px 24px 14px;border-bottom:1px solid var(--line);background:var(--cream)}
+.ctop h3{margin:0;font-family:var(--disp);font-weight:800;font-size:15.5px;color:var(--navy);letter-spacing:-.01em}
+.ctop span{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--soft);text-transform:none}
+.stack .pane{display:none;animation:aIn .28s ease}
+#t1:checked~.stack .m-predict,#t2:checked~.stack .m-reduce,#t3:checked~.stack .m-prove{display:block}
+.dhead{display:flex;align-items:center;gap:13px;padding:2px 2px 16px}
+.dwm{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--navy);letter-spacing:-.02em}
+.dwm .em{color:var(--ember)}
+.dsample{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:#fff;background:var(--navy);
+  padding:5px 10px;border-radius:5px;text-transform:uppercase}
+.dctx{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);margin-left:auto;line-height:1.5;text-align:right}
+@media(max-width:640px){.ctop{padding:14px 16px 12px}.dctx{display:none}.dhead{flex-wrap:wrap;gap:8px}}
+
+/* sample: hover tooltips (not clickable) */
+.iss[data-tip]{cursor:help}
+[data-tip]{position:relative}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:14px;bottom:calc(100% + 8px);
+  background:var(--navy);color:#fff;font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;font-weight:500;
+  line-height:1.45;padding:9px 12px;border-radius:8px;width:max-content;max-width:250px;z-index:60;
+  box-shadow:0 10px 30px -10px rgba(28,42,58,.6);pointer-events:none;white-space:normal;letter-spacing:0}
+[data-tip]:hover::before{content:'';position:absolute;left:26px;bottom:calc(100% + 3px);
+  border:5px solid transparent;border-top-color:var(--navy);z-index:60;pointer-events:none}
+@media(max-width:640px){[data-tip]:hover::after{max-width:200px;left:8px}}
+</style>
+</style></head><body><div class="demo">
+
+<div class="dhead">
+  <span class="dwm"><span class="em">E</span>vid<span class="em">LY</span></span>
+  <span class="dsample">Sample Dashboard</span>
+  <span class="dctx">A worked sample — Pacific Restaurant Group.<br>Your account starts with your hood cleaning certificate.</span>
+</div>
+
+<div class="dash card">
+  <input type="radio" name="tb" id="t1" checked><input type="radio" name="tb" id="t2"><input type="radio" name="tb" id="t3">
+  <div class="chead"><span class="ctitle" id="acct"></span><span class="cmeta">· &nbsp;3 Kitchens · 3 Counties</span><span class="cdate" id="dt"></span></div>
+<div class="tabs">
+  <label for="t1"><b>Predict</b><em id="e1"></em></label>
+  <label for="t2"><b>Reduce</b><em id="e2"></em></label>
+  <label for="t3"><b>Prove</b><em id="e3"></em></label>
+</div>
+<div class="filters">
+  <span class="flab">Filter</span>
+
+  <div class="fdrop">
+    <button class="fbtn">All Kitchens</button>
+    <div class="fmenu">
+      <div class="fgrp">Portfolio</div>
+      <a class="fopt on" href="#">All Kitchens <em>3</em></a>
+      <div class="fgrp">Sacramento County</div>
+      <a class="fopt" href="#">Vista Grill</a>
+      <div class="fgrp">Alameda County</div>
+      <a class="fopt" href="#">Harbor House</a>
+      <div class="fgrp">Kern County</div>
+      <a class="fopt" href="#">The Anchor Room</a>
+    </div>
+  </div>
+
+  <div class="fdrop">
+    <button class="fbtn">All Categories</button>
+    <div class="fmenu">
+      <a class="fopt on" href="#">All Categories</a>
+      <div class="fgrp">Fire Safety</div>
+      <a class="fopt" href="#">Kitchen Exhaust Cleaning</a>
+      <a class="fopt" href="#">Fire Suppression</a>
+      <a class="fopt" href="#">Sprinklers</a>
+      <a class="fopt" href="#">Fire Alarm</a>
+      <a class="fopt" href="#">Extinguishers</a>
+      <div class="fgrp">Food Safety</div>
+      <a class="fopt" href="#">Health Permit</a>
+      <a class="fopt" href="#">Temperature Logs</a>
+      <a class="fopt" href="#">Pest Control</a>
+      <a class="fopt" href="#">Handler Certifications</a>
+      <div class="fgrp">Business &amp; Vendors</div>
+      <a class="fopt" href="#">Insurance</a>
+      <a class="fopt" href="#">Licences &amp; Permits</a>
+      <a class="fopt" href="#">Vendor Records</a>
+    </div>
+  </div>
+
+  <div class="fdrop">
+    <button class="fbtn" aria-expanded="false">All Vendors</button>
+    <div class="fmenu">
+      <a class="fopt on" href="#">All Vendors <em>3</em></a>
+      <div class="fgrp">Cleaning Pros Plus &middot; Hood Cleaning</div>
+      <a class="fopt vend" href="#">Cleaning Pros Plus</a>
+      <a class="fopt sub" href="#">Insurance Certificate</a>
+      <a class="fopt sub" href="#">Service Agreement</a>
+      <a class="fopt sub" href="#">W-9</a>
+      <a class="fopt sub" href="#">Licence</a>
+      <div class="fgrp">Valley Pest Control &middot; Pest Control</div>
+      <a class="fopt vend" href="#">Valley Pest Control</a>
+      <a class="fopt sub" href="#">Insurance Certificate</a>
+      <a class="fopt sub" href="#">Service Agreement</a>
+      <a class="fopt sub" href="#">W-9</a>
+      <a class="fopt sub" href="#">Licence</a>
+      <div class="fgrp">Sierra Fire Protection &middot; Suppression</div>
+      <a class="fopt vend" href="#">Sierra Fire Protection</a>
+      <a class="fopt sub" href="#">Insurance Certificate</a>
+      <a class="fopt sub" href="#">Workers&rsquo; Compensation</a>
+      <a class="fopt sub" href="#">Service Agreement</a>
+      <a class="fopt sub" href="#">W-9</a>
+    </div>
+  </div>
+
+  <div class="fdrop">
+    <button class="fbtn">All Severities</button>
+    <div class="fmenu">
+      <a class="fopt on" href="#">All Severities</a>
+      <a class="fopt" href="#"><i class="sd crit"></i>Critical</a>
+      <a class="fopt" href="#"><i class="sd high"></i>High</a>
+      <a class="fopt" href="#"><i class="sd med"></i>Medium</a>
+      <a class="fopt" href="#"><i class="sd low"></i>Low</a>
+      <a class="fopt" href="#"><i class="sd ok"></i>Clear</a>
+    </div>
+  </div>
+
+  <div class="fdrop">
+    <button class="fbtn">Next 90 Days</button>
+    <div class="fmenu">
+      <a class="fopt" href="#">Next 30 Days</a>
+      <a class="fopt" href="#">Next 60 Days</a>
+      <a class="fopt on" href="#">Next 90 Days</a>
+      <a class="fopt" href="#">Next 12 Months</a>
+    </div>
+  </div>
+
+  <a class="fclear" href="#">Clear Filters</a>
+</div>
+
+  <div class="stack">
+
+    <div class="card2">
+      <div class="ctop"><h3>Risk Summary</h3><span>Issues grouped by category — hover a row for detail</span></div>
+      <div class="body">
+        <div class="pane m-predict" id="s1"></div>
+        <div class="pane m-reduce"  id="s2"></div>
+        <div class="pane m-prove"   id="s3"></div>
+      </div>
+    </div>
+
+    <div class="card2">
+      <div class="ctop"><h3>Portfolio Heatmap</h3><span>Every requirement across all three kitchens at a glance</span></div>
+      <div class="body">
+        <div class="pane m-predict" id="h1"></div>
+        <div class="pane m-reduce"  id="h2"></div>
+        <div class="pane m-prove"   id="h3"></div>
+      </div>
+    </div>
+
+    <div class="card2">
+      <div class="ctop"><h3>Service Timeline</h3><span>What is due and when, plotted across the next window</span></div>
+      <div class="body">
+        <div class="pane m-predict" id="m1"></div>
+        <div class="pane m-reduce"  id="m2"></div>
+        <div class="pane m-prove"   id="m3"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>/* ─────────────────────────────────────────────────────────────
+   EvidLY demo card engine
+   Every date is derived from TODAY at render time. Sample data is
+   expressed as OFFSETS (days / months), never as fixed dates, so
+   the marketing cards never go stale.
+   ───────────────────────────────────────────────────────────── */
+(function (w) {
+  'use strict';
+
+  var TODAY = new Date();
+  var SEV = { critical:'crit', high:'high', medium:'med', low:'low', sealed:'ok' };
+  var COL = { crit:'#B3402F', high:'#BE6F35', med:'#B8912F', low:'#67758C', ok:'#3F7D58' };
+  var LABEL = { crit:'Critical', high:'High', med:'Medium', low:'Low', ok:'Sealed' };
+
+  function addDays(d, n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+  function addMonths(d, n){ var x=new Date(d); x.setMonth(x.getMonth()+n); return x; }
+  function fmt(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+  function lastLabel(f){ return f.act==='request'?'Last Issued' : f.act==='cap'?'Occurred' : 'Last Serviced'; }
+  function fmt2(d){ var p=function(x){return String(x).padStart(2,'0')}; return p(d.getMonth()+1)+'/'+p(d.getDate())+'/'+String(d.getFullYear()).slice(-2); }
+  function mon(d){ return d.toLocaleDateString('en-US',{month:'short'}); }
+  function monYr(d){ return mon(d)+" '"+String(d.getFullYear()).slice(-2); }
+  function mmYy(d){ return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(-2); }
+  function days(a,b){ return Math.round((b-a)/86400000); }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function escA(s){ return esc(s).replace(/"/g,'&quot;'); }
+
+  /* ── the sample account ─────────────────────────────────── */
+  var DATA = {
+    account:'Pacific Restaurant Group',
+    kitchens:[
+      {name:'Vista Grill',      county:'Sacramento County'},
+      {name:'Harbor House',     county:'Alameda County'},
+      {name:'The Anchor Room',  county:'Kern County'}
+    ],
+    /* one kitchen's requirements — everyMonths drives the cadence */
+    timeline:[
+      /* Fire Safety */
+      {label:'Kitchen Exhaust Cleaning', std:'NFPA 96 · Quarterly',        everyMonths:3,  lastAgo:71,  sev:'high'},
+      {label:'Fire Suppression System',  std:'NFPA 17A · every 6 months',  everyMonths:6,  lastAgo:105, sev:'high'},
+      {label:'Fire Extinguishers',       std:'NFPA 10 · annual',           everyMonths:12, lastAgo:186, sev:'high'},
+      {label:'Sprinkler System',         std:'NFPA 25 · annual',           everyMonths:12, lastAgo:147, sev:'high'},
+      {label:'Fire Alarm',               std:'NFPA 72 · annual',           everyMonths:12, lastAgo:298, sev:'high'},
+      /* Food Safety */
+      {label:'Health Permit',            std:'§114381 · annual',           everyMonths:12, lastAgo:353, sev:'crit'},
+      {label:'Pest Control',             std:'§114259 · Monthly',          everyMonths:1,  lastAgo:58,  sev:'high'},
+      {label:'Grease Trap Service',      std:'Local FOG ordinance · quarterly', everyMonths:3, lastAgo:44, sev:'med'},
+      {label:'Backflow Testing',         std:'CCR Title 17 · annual',      everyMonths:12, lastAgo:240, sev:'med'},
+      {label:'Food Handler Cards',       std:'§113948 · per employee',     everyMonths:36, lastAgo:1067,sev:'med', note:'3 expire'},
+      {label:'Manager Certification',    std:'§113947.1 · every 5 years',  everyMonths:60, lastAgo:1620,sev:'med'},
+      /* Business & Vendors */
+      {label:'General Liability',        std:'Business record · annual',   everyMonths:12, lastAgo:201, sev:'med'},
+      {label:'Workers’ Compensation',    std:'Business record · annual',   everyMonths:12, lastAgo:374, sev:'crit'},
+      {label:'Cleaning Pros Plus',       std:'Hood cleaning · GL certificate',      everyMonths:12, lastAgo:344, sev:'med', vendor:'Cleaning Pros Plus'},
+      {label:'Valley Pest Control',      std:'Pest control · GL certificate',       everyMonths:12, lastAgo:281, sev:'med', vendor:'Valley Pest Control'},
+      {label:'Sierra Fire Protection',   std:'Suppression · GL + Workers’ Comp',    everyMonths:12, lastAgo:372, sev:'crit', vendor:'Sierra Fire Protection'}
+    ],
+    /* findings by tab — offsets only */
+    predict:[
+      {sev:'crit', cat:'Food Safety', title:'Health permit renewal',                 kitchen:2, std:'§114381',  inDays:12, act:'request'},
+      {sev:'med',  cat:'Food Safety', title:'Three food handler cards expire',       kitchen:0, std:'§113948',  inDays:28, act:'request'},
+      {sev:'high', cat:'Fire Safety', title:'Kitchen Exhaust Cleaning due',          kitchen:1, std:'NFPA 96 · Quarterly', inDays:22, act:'reschedule'},
+      {sev:'high', cat:'Fire Safety', title:'Fire suppression semiannual service',   kitchen:-1,std:'NFPA 17A', inDays:79, act:'reschedule'},
+      {sev:'med',  cat:'Vendors',     title:'Pest control certificate of insurance', kitchen:-1,std:'Vendor record', inDays:21, act:'request', vendor:'Valley Pest Control'}
+    ],
+    reduce:[
+      {sev:'crit', cat:'Food Safety', title:'Health permit expired',              kitchen:2, std:'§114381', overdue:26, act:'request', last:391},
+      {sev:'crit', cat:'Business',    title:'Workers’ compensation lapsed',       kitchen:2, std:'Business record', overdue:9, act:'request', last:374},
+      {sev:'high', cat:'Fire Safety', title:'Kitchen Exhaust Cleaning overdue',   kitchen:0, std:'NFPA 96 · Quarterly', overdue:71, act:'reschedule', last:161},
+      {sev:'high', cat:'Food Safety', title:'Pest control — two services missed', kitchen:0, std:'§114259 · Monthly', overdue:58, act:'reschedule', last:88},
+      {sev:'high', cat:'Incidents',   title:'Injury incident with no corrective action', kitchen:1, std:'Drift flag', overdue:6, act:'cap', last:6}
+    ],
+    prove:[
+      {sev:'ok', cat:'Fire Safety', title:'Kitchen Exhaust Cleaning certificate', kitchen:1, std:'NFPA 96 · filed by Cleaning Pros Plus', onFile:15},
+      {sev:'ok', cat:'Food Safety', title:'Temperature logs — current month',     kitchen:-1,std:'§113996 · 5 checkpoints daily', onFile:1},
+      {sev:'ok', cat:'Food Safety', title:'Health permit',                        kitchen:0, std:'§114381', onFile:56},
+      {sev:'ok', cat:'Vendors',     title:'Hood cleaning vendor — insurance certificate', kitchen:-1, std:'General liability', onFile:163, vendor:'Cleaning Pros Plus'}
+    ],
+    proveCounts:{'Fire Safety':14,'Food Safety':31,'Business':6,'Vendors':9,'Incidents':3}
+  };
+
+  var PILLARS=['Fire Safety','Food Safety','Business','Vendors','Incidents'];
+
+  /* live filter state — set by the filter bar, read by every render */
+  var F = { kitchen:null, category:null, vendor:null, vrecord:null, severity:null, window:90 };
+
+  function passes(f, mode){
+    if(F.kitchen!==null && f.kitchen>=0 && f.kitchen!==F.kitchen) return false;
+    if(F.category && f.cat!==F.category) return false;
+    if(F.severity && f.sev!==F.severity) return false;
+    if(F.vendor && f.vendor!==F.vendor) return false;
+    if(F.vrecord && f.cat!=='Vendors') return false;
+    if(mode==='predict' && F.window && f.inDays > F.window) return false;
+    return true;
+  }
+  function view(mode){ return DATA[mode].filter(function(f){ return passes(f,mode); }); }
+  function kitchensView(){
+    return DATA.kitchens.map(function(k,i){ return {k:k,i:i}; })
+      .filter(function(o){ return F.kitchen===null || o.i===F.kitchen; });
+  }
+  /* each kitchen runs the same requirements on its own schedule */
+  function kitchenRows(ki){
+    var shift=[0,37,-24][ki]||0;
+    return DATA.timeline.map(function(r){
+      var o={}; for(var k in r) o[k]=r[k];
+      o.lastAgo = Math.max(3, r.lastAgo + shift + (ki*11));
+      return o;
+    });
+  }
+
+  function timelineView(){
+    return DATA.timeline.filter(function(r){
+      if(F.category){
+        var pill = /NFPA/.test(r.std) ? 'Fire Safety'
+                 : /§11|CCR|FOG/.test(r.std) ? 'Food Safety'
+                 : /certificate|GL|Comp/i.test(r.std) ? 'Vendors' : 'Business';
+        if(pill!==F.category) return false;
+      }
+      if(F.vendor && r.vendor!==F.vendor) return false;
+      if(F.vrecord && !r.vendor) return false;
+      if(F.severity && r.sev!==F.severity) return false;
+      return true;
+    });
+  }
+  var CLEAR={
+    'Fire Safety':{predict:'Nothing due in 90 days',reduce:'5 of 5 current',prove:'5 of 5 sealed'},
+    'Food Safety':{predict:'Nothing due in 90 days',reduce:'13 of 13 current',prove:'13 of 13 sealed'},
+    'Business':   {predict:'Nothing due in 90 days',reduce:'6 of 6 on file',  prove:'6 of 6 sealed'},
+    'Vendors':    {predict:'Nothing due in 90 days',reduce:'3 of 3 current',  prove:'3 of 3 sealed'},
+    'Incidents':  {predict:'None scheduled',        reduce:'None open',       prove:'None logged'}
+  };
+  function where(i){ return i<0 ? 'All three kitchens'
+      : DATA.kitchens[i].name+' · '+DATA.kitchens[i].county; }
+
+  /* ── summary strip ──────────────────────────────────────── */
+  function strip(list, mode){
+    var counts={}, worst={};
+    PILLARS.forEach(function(p){ counts[p]=0; worst[p]=''; });
+    if(mode==='prove'){
+      PILLARS.forEach(function(p){ counts[p]=(F.category&&p!==F.category)?0:(DATA.proveCounts[p]||0); worst[p]=counts[p]?'ok':''; });
+    } else {
+      list.forEach(function(f){
+        counts[f.cat]=(counts[f.cat]||0)+1;
+        var rank={crit:4,high:3,med:2,low:1};
+        if(!worst[f.cat] || rank[f.sev]>rank[worst[f.cat]]) worst[f.cat]=f.sev;
+      });
+    }
+    var html='<table class="sum" cellpadding="0" cellspacing="0"><tr>';
+    PILLARS.forEach(function(p,i){
+      var n=counts[p], z=n===0?' z':'';
+      html+='<td class="anim-up" style="animation-delay:'+(i*0.06).toFixed(2)+'s">'+
+            '<div class="n'+z+'" data-n="'+n+'">'+n+'</div><div class="l">'+p+'</div>'+
+            '<div class="b '+(worst[p]||'')+'"></div></td>';
+    });
+    return html+'</tr></table>';
+  }
+
+  /* ── action for an overdue item: Schedule / Request / Corrective Action ── */
+  function actionFor(f){
+    var L={schedule:'Schedule',reschedule:'Reschedule',request:'Request Document',cap:'Corrective Action'};
+    var k=f.act;
+    if(!k){
+      if(f.cat==='Incidents') k='cap';
+      else if(/permit|insurance|compensation|certificate|licen|coi|w-9|business record/.test((f.title+' '+f.std).toLowerCase())) k='request';
+      else k='schedule';
+    }
+    return {key:k, label:L[k]};
+  }
+  function actBtns(f,mode){
+    function b(key,label,tip){ return '<span class="act act-'+key+'" data-tip="'+escA(tip)+'">'+label+'</span>'; }
+    var predict = mode==='predict';
+    if(f.cat==='Incidents' || f.act==='cap')
+      return '<span class="acts">'+b('cap','Corrective Action', predict?'Log a corrective action.':'Log a corrective action \u2014 root cause, owner, and the fix.')+'</span>';
+    if(f.act==='request')
+      return '<span class="acts">'+b('request','Request Document', predict?'Request the renewed document before it expires; EvidLY files it on arrival.':'Request the current document from the holder; EvidLY files it on arrival.')+'</span>';
+    return '<span class="acts">'+
+      b('schedule','Schedule', predict?'Schedule the service before it comes due.':'Schedule the overdue service.')+
+      b('request','Request Document', predict?'Request the resulting certificate once the service is done.':'Request the resulting certificate; EvidLY files it on arrival.')+
+      '</span>';
+  }
+
+  /* ── issue rows, grouped by category ────────────────────── */
+  function rows(list, mode){
+    var n=0, byCat={};
+    list.forEach(function(f){ (byCat[f.cat]=byCat[f.cat]||[]).push(f); });
+    var html='';
+    PILLARS.forEach(function(cat){
+      if(!byCat[cat]) return;
+      var items=byCat[cat];
+      html+='<div class="cat anim-in" style="animation-delay:'+(0.26+n*0.07).toFixed(2)+'s"><i></i><b>'+cat+'</b><span class="n">'+items.length+
+            (mode==='predict'?' Coming Due':mode==='reduce'?' Open':' Sealed')+'</span></div>';
+      items.forEach(function(f){
+        var num,lab,meta;
+        if(mode==='predict'){
+          num=f.inDays; lab='Days Until Due';
+          meta=f.std+' · <span class="mgold">Due '+fmt2(addDays(TODAY,f.inDays))+'</span>';
+        } else if(mode==='reduce'){
+          num=f.overdue; lab='Days Overdue';
+          meta=f.std+(f.last?' · <span class="mgrn">'+lastLabel(f)+' '+fmt2(addDays(TODAY,-f.last))+'</span>':'')+' · <span class="mred">Due '+fmt2(addDays(TODAY,-f.overdue))+'</span>';
+        } else {
+          num=f.onFile; lab=f.onFile===1?'Day on File':'Days on File';
+          meta=f.std+' · Sealed '+fmt2(addDays(TODAY,-f.onFile));
+        }
+        var _tip = mode==='prove' ? 'Sealed and on file \u2014 the record is stored and ready to share.' : '';
+        html+='<div class="iss anim-up"'+(_tip?' data-tip="'+escA(_tip)+'"':'')+' style="animation-delay:'+(0.30+(n++)*0.07).toFixed(2)+'s">'+
+              '<span class="sev '+f.sev+'">'+LABEL[f.sev]+'</span>'+
+              '<span class="txt"><b>'+esc(f.title)+'</b><em>'+where(f.kitchen)+
+              ' &nbsp;·&nbsp; '+meta+'</em></span>'+
+              '<span class="when '+mode+'"><b>'+num+'</b><span>'+lab+'</span></span>'+((mode==='reduce'||mode==='predict')?actBtns(f,mode):'')+'</div>';
+      });
+    });
+    return html;
+  }
+
+  /* ── service timeline (SVG) ─────────────────────────────── */
+  function timeline(mode){
+    var out='', ks=kitchensView();
+    ks.forEach(function(o){
+      var rows = kitchenRows(o.i).filter(function(r){
+        if(F.category){
+          var pill = /NFPA/.test(r.std) ? 'Fire Safety'
+                   : /§11|CCR|FOG/.test(r.std) ? 'Food Safety'
+                   : r.vendor ? 'Vendors' : 'Business';
+          if(pill!==F.category) return false;
+        }
+        if(F.vendor && r.vendor!==F.vendor) return false;
+        if(F.vrecord && !r.vendor) return false;
+        if(F.severity && r.sev!==F.severity) return false;
+        var due=addMonths(addDays(TODAY,-r.lastAgo), r.everyMonths), d=days(TODAY,due);
+        if(mode==='predict') return d>=0 && d<=(F.window||90);
+        if(mode==='reduce')  return d<0;
+        return true;                                  /* prove: the whole history */
+      });
+      if(mode==='prove') rows=rows.slice(0,6);
+      out += '<div class="cat"><i></i><b>'+o.k.name+'</b>'+
+             '<span class="n">'+o.k.county+' &nbsp;·&nbsp; '+rows.length+
+             (mode==='predict'?' Coming Due':mode==='reduce'?' Open':' Shown')+'</span></div>';
+      out += rows.length ? svgFor(rows, mode==='predict')
+                         : '<div class="emptyrow">Nothing '+(mode==='predict'?'due in this window':'open')+'</div>';
+    });
+    return out;
+  }
+
+  function svgFor(rows, showFuture){
+    var W=1180,L=236,TR=W-150,SX=W-140,ROW=42,TOP=64,BACK=12,FWD=3,NM=BACK+FWD;
+    var dot=0, rowsN=rows.length, H=TOP+rowsN*ROW+8, BOT=TOP+rowsN*ROW-16;
+    var start=new Date(TODAY.getFullYear(),TODAY.getMonth()-BACK+1,1);
+    function pos(d){ return (d.getFullYear()*12+d.getMonth())-(start.getFullYear()*12+start.getMonth())+(d.getDate()-1)/30; }
+    function X(m){ return L+(TR-L)*(m/NM); }
+    var todayX=X(pos(TODAY));
+    var p=['<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="#FFFFFF"/>'];
+    if(showFuture) p.push('<rect x="'+todayX.toFixed(1)+'" y="52" width="'+(TR-todayX).toFixed(1)+'" height="'+(BOT-52)+'" fill="#FAF7F0"/>');
+    for(var m=0;m<=NM;m++) p.push('<line x1="'+X(m).toFixed(1)+'" y1="52" x2="'+X(m).toFixed(1)+'" y2="'+BOT+'" stroke="#E7E1D6"/>');
+    var lastYr=null;
+    for(var m=0;m<NM;m++){
+      var d=addMonths(start,m);
+      p.push('<text x="'+X(m+0.5).toFixed(1)+'" y="44" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" letter-spacing="1.1" fill="#8A94A3">'+mon(d)+'</text>');
+      if(d.getFullYear()!==lastYr){
+        p.push('<text x="'+X(m+0.5).toFixed(1)+'" y="28" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing="1.3" fill="#1E2D4D">'+d.getFullYear()+'</text>');
+        if(m>0) p.push('<line x1="'+X(m).toFixed(1)+'" y1="20" x2="'+X(m).toFixed(1)+'" y2="'+BOT+'" stroke="#C9C0AE" stroke-width="1.4"/>');
+        lastYr=d.getFullYear();
+      }
+    }
+    p.push('<line x1="'+(SX-10)+'" y1="52" x2="'+(SX-10)+'" y2="'+BOT+'" stroke="#E7E1D6"/>');
+    rows.forEach(function(r,i){
+      var y=TOP+i*ROW, cy=y+6;
+      if(i) p.push('<line x1="18" y1="'+(y-10)+'" x2="'+(W-18)+'" y2="'+(y-10)+'" stroke="#E7E1D6"/>');
+      p.push('<text x="20" y="'+cy+'" font-family="Instrument Sans,sans-serif" font-weight="600" font-size="13.5" fill="#1E2D4D">'+r.label+'</text>');
+      p.push('<text x="20" y="'+(cy+15)+'" font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing=".7" fill="#8A94A3">'+r.std+'</text>');
+      p.push('<line x1="'+L+'" y1="'+(cy+4)+'" x2="'+TR+'" y2="'+(cy+4)+'" stroke="#E7E1D6" stroke-width="2"/>');
+      var last=addDays(TODAY,-r.lastAgo), due=addMonths(last,r.everyMonths), s=new Date(last), mk=[];
+      while(pos(s)>-1){ if(pos(s)>=0) mk.push(pos(s)); s=addMonths(s,-r.everyMonths); }
+      mk.reverse().forEach(function(m2){
+        p.push('<circle class="svc" cx="'+X(m2).toFixed(1)+'" cy="'+(cy+4)+'" r="4.5" fill="#3F7D58" style="animation-delay:'+(0.30+(dot++)*0.045).toFixed(2)+'s"/>');
+      });
+      var over=due<TODAY;
+      if(over){
+        var x0=X(pos(due));
+        p.push('<rect class="gapbar" x="'+x0.toFixed(1)+'" y="'+cy+'" width="'+Math.max(todayX-x0,5).toFixed(1)+'" height="8" rx="4" fill="'+COL[r.sev]+'" style="animation-delay:'+(0.9+i*0.08).toFixed(2)+'s"/>');
+      } else if(showFuture && pos(due)<=NM){
+        p.push('<circle class="duedot" cx="'+X(pos(due)).toFixed(1)+'" cy="'+(cy+4)+'" r="5" fill="'+COL[r.sev]+'" style="animation-delay:'+(1.0+i*0.08).toFixed(2)+'s"/>');
+      }
+      var stat = over ? days(due,TODAY)+' days overdue' : (r.note? r.note+' '+fmt(due) : 'Due '+fmt(due));
+      p.push('<text class="statustx" style="animation-delay:'+(1.2+i*0.07).toFixed(2)+'s" x="'+(W-18)+'" y="'+(cy+8)+'" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="10" letter-spacing=".3" fill="'+COL[r.sev]+'">'+stat+'</text>');
+    });
+    p.push('<line class="todayline" x1="'+todayX.toFixed(1)+'" y1="20" x2="'+todayX.toFixed(1)+'" y2="'+BOT+'" stroke="#1E2D4D" stroke-width="1.2" stroke-dasharray="4 4"/>');
+    p.push('<text class="todayline" x="'+todayX.toFixed(1)+'" y="14" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="9.5" letter-spacing="1.4" fill="#1E2D4D">Today</text>');
+    return '<div class="twrap"><svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg">'+p.join('')+'</svg></div>';
+  }
+
+  /* ── portfolio heatmap ──────────────────────────────────── */
+  function heat(list, mode){
+    var grid={};
+    kitchensView().forEach(function(o){ grid[o.i]={}; });
+    list.forEach(function(f){
+      var ks = f.kitchen<0 ? [0,1,2] : [f.kitchen];
+      ks.forEach(function(i){
+        if(!grid[i]) return;
+        var cur=grid[i][f.cat], rank={crit:4,high:3,med:2,low:1,ok:1};
+        var when = mode==='predict' ? fmt(addDays(TODAY,f.inDays))
+                 : mode==='reduce'  ? f.overdue+'d overdue'
+                 : 'on file';
+        if(!cur || rank[f.sev]>rank[cur.sev]) grid[i][f.cat]={sev:f.sev,txt:f.title,when:when};
+      });
+    });
+    var html='<div class="hwrap"><table class="hmap" cellpadding="0" cellspacing="0"><tr><th></th>';
+    PILLARS.forEach(function(p){ html+='<th>'+p+'</th>'; });
+    html+='</tr>';
+    kitchensView().forEach(function(o){
+      var k=o.k, i=o.i;
+      html+='<tr><th class="hk anim-in" style="animation-delay:'+(0.28+i*0.09).toFixed(2)+'s">'+
+            k.name+'<span>'+k.county+'</span></th>';
+      PILLARS.forEach(function(p,j2){
+        var d=(0.34+(i+j2)*0.055).toFixed(2), c=grid[i][p];
+        if(!c) html+='<td class="c clr anim-pop" style="animation-delay:'+d+'s"><b>Clear</b><em>'+CLEAR[p][mode]+'</em></td>';
+        else html+='<td class="c '+c.sev+' anim-pop" style="animation-delay:'+d+'s"><b>'+LABEL[c.sev]+
+                   '</b><em>'+esc(c.txt)+'<br>'+c.when+'</em></td>';
+      });
+      html+='</tr>';
+    });
+    return html+'</table></div>';
+  }
+
+  /* ── mount ──────────────────────────────────────────────── */
+  function empty(mode){
+    var t = mode==='predict' ? 'Nothing comes due in this window.'
+          : mode==='reduce'  ? 'Nothing open. Every requirement in this view is current.'
+          : 'No sealed records match this view.';
+    return '<div class="emptyst"><b>Clear</b><span>'+t+'</span></div>';
+  }
+
+  var NOTE={
+    predict:'Everything with a date attached, ordered by how soon it lands.',
+    reduce:'Open right now. An overdue Fire Safety item is never rated below High.',
+    prove:'Sealed on arrival — the document, its date, and who filed it.'
+  };
+
+  w.EvidLYCards = {
+    setFilter:function(key,val){ F[key]= (val==='__all'? (key==='window'?null:null) : val); },
+    filters:F,
+    today:function(){ return TODAY.toLocaleDateString('en-US',
+      {month:'short',day:'numeric',year:'numeric'}); },
+    counts:function(){ return {predict:DATA.predict.length, reduce:DATA.reduce.length,
+      prove:Object.keys(DATA.proveCounts).reduce(function(a,k){return a+DATA.proveCounts[k];},0)}; },
+    account:DATA.account,
+    render:function(kind, mode){
+      var list = view(mode);
+      if(kind==='summary'){
+        if(!list.length) return strip(list,mode)+empty(mode);
+        return strip(list,mode)+rows(list,mode);
+      }
+      if(kind==='heatmap') return strip(list,mode)+heat(list,mode)+
+        '<p class="hnote">'+NOTE[mode]+'</p>';
+      if(kind==='timeline') return strip(list,mode)+timeline(mode)+
+        '<p class="tnote">'+NOTE[mode]+'</p>';
+      return '';
+    }
+  };
+})(window);
+</script>
+<script>
+(function(){
+  document.getElementById('acct').textContent = EvidLYCards.account;
+  document.getElementById('dt').textContent   = EvidLYCards.today();
+  var c = EvidLYCards.counts();
+  document.getElementById('e1').textContent = 'Coming Due \u00b7 ' + c.predict;
+  document.getElementById('e2').textContent = 'Open Now \u00b7 '   + c.reduce;
+  document.getElementById('e3').textContent = 'Sealed \u00b7 '     + c.prove;
+  window.__CARDS__ = [['summary',['s1','s2','s3']],['heatmap',['h1','h2','h3']],['timeline',['m1','m2','m3']]];
+  var modes=['predict','reduce','prove'];
+  window.__CARDS__.forEach(function(cd){
+    cd[1].forEach(function(id,i){ document.getElementById(id).innerHTML = EvidLYCards.render(cd[0],modes[i]); });
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var KIT={'Vista Grill':0,'Harbor House':1,'The Anchor Room':2};
+  var SEV={'Critical':'crit','High':'high','Medium':'med','Low':'low','Clear':'ok'};
+  var CAT={'Fire Safety':'Fire Safety','Food Safety':'Food Safety','Business':'Business',
+           'Vendors':'Vendors','Incidents':'Incidents'};
+  var REQ={'Kitchen Exhaust Cleaning':'Fire Safety','Fire Suppression':'Fire Safety',
+    'Sprinklers':'Fire Safety','Fire Alarm':'Fire Safety','Extinguishers':'Fire Safety',
+    'Health Permit':'Food Safety','Temperature Logs':'Food Safety','Pest Control':'Food Safety',
+    'Handler Certifications':'Food Safety','Insurance':'Business','Licences & Permits':'Business',
+    'Vendor Records':'Vendors'};
+
+  function closeAll(except){
+    document.querySelectorAll('.fdrop.open').forEach(function(d){
+      if(d!==except){ d.classList.remove('open');
+        var b=d.querySelector('.fbtn'); if(b) b.setAttribute('aria-expanded','false'); }});
+  }
+  function label(el){ return el.textContent.replace(/\s+\d+$/,'').trim(); }
+
+  function apply(){
+    var modes=['predict','reduce','prove'];
+    (window.__CARDS__||[]).forEach(function(cd){
+      cd[1].forEach(function(id,i){
+        var el=document.getElementById(id); if(el) el.innerHTML=EvidLYCards.render(cd[0],modes[i]);
+      });
+    });
+    var c=EvidLYCards.counts();
+    var lab={e1:'Coming Due · '+c.predict,e2:'Open Now · '+c.reduce,e3:'Sealed · '+c.prove};
+    Object.keys(lab).forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=lab[id]; });
+  }
+
+  document.addEventListener('click', function(e){
+    var btn=e.target.closest('.fbtn');
+    if(btn){ e.preventDefault();
+      var d=btn.parentNode, open=!d.classList.contains('open');
+      closeAll(d); d.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',open?'true':'false'); return; }
+
+    var opt=e.target.closest('.fopt');
+    if(opt){ e.preventDefault();
+      var d=opt.closest('.fdrop'), v=label(opt), F=EvidLYCards.filters;
+      d.querySelectorAll('.fopt.on').forEach(function(o){o.classList.remove('on');});
+      opt.classList.add('on');
+      d.querySelector('.fbtn').textContent=v;
+
+      if(v in KIT) F.kitchen=KIT[v];
+      else if(/^All Kitchens/.test(v)) F.kitchen=null;
+      else if(v in CAT) F.category=CAT[v];
+      else if(v in REQ) F.category=REQ[v];
+      else if(/^All Categories/.test(v)) F.category=null;
+      else if(v in SEV) F.severity=SEV[v];
+      else if(/^All Severities/.test(v)) F.severity=null;
+      else if(/^All Vendors/.test(v)){ F.vendor=null; F.vrecord=null; }
+      else if(opt.classList.contains('vend')){ F.vendor=v; F.vrecord=null; }
+      else if(opt.classList.contains('sub')){
+        var g=opt.previousElementSibling;
+        while(g && !g.classList.contains('vend')) g=g.previousElementSibling;
+        F.vendor = g ? g.textContent.trim() : null;
+        F.vrecord = v;
+        d.querySelector('.fbtn').textContent = (g? g.textContent.trim().split(' ')[0]+' · ':'')+v;
+      }
+      else if(/^Next (\d+) Days/.test(v)) F.window=parseInt(RegExp.$1,10);
+      else if(/^Next 12 Months/.test(v)) F.window=365;
+
+
+      closeAll(null); apply(); return; }
+
+    var clr=e.target.closest('.fclear');
+    if(clr){ e.preventDefault();
+      var F=EvidLYCards.filters;
+      F.kitchen=null;F.category=null;F.vendor=null;F.vrecord=null;F.severity=null;F.window=90;
+      document.querySelectorAll('.fdrop').forEach(function(d){
+        var first=d.querySelector('.fopt');
+        d.querySelectorAll('.fopt.on').forEach(function(o){o.classList.remove('on');});
+        if(first){ first.classList.add('on'); d.querySelector('.fbtn').textContent=label(first); }
+      });
+      closeAll(null); apply(); return; }
+
+    if(!e.target.closest('.fmenu')) closeAll(null);
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAll(null); });
+})();
+</script>
+</body></html>

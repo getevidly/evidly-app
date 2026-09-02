@@ -6,10 +6,10 @@
  *
  * Access: salesOnly (SalesGuard)
  */
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from '../../../components/admin/AdminBreadcrumb';
-import { MARKETING_TABS, tabRoute, type MarketingTabId } from './marketingTabConfig';
+import { MARKETING_TABS, MARKETING_GROUPS, groupForTab, tabRoute, type MarketingTabId } from './marketingTabConfig';
 import { EV_NAVY, EV_EMBER, EV_MUTED, EV_LINE, DISPLAY, BODY, MARKETING_FONTS_HREF } from './marketingTokens';
 import ChannelsTab from './ChannelsTab';
 import SurveyTab from './SurveyTab';
@@ -103,6 +103,9 @@ const EMPTY_MEMBER_FORM: AddInfluencerInput = {
 export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) {
   const navigate = useNavigate();
   const [tab, setTab] = useState<MarketingTabId>(defaultTab);
+  // Back/Forward swaps the route without remounting the console, so the
+  // highlight would otherwise stay on the previous tab.
+  useEffect(() => { setTab(defaultTab); }, [defaultTab]);
   const data = useMarketingData();
   const { accounts, influencers, types, sends, loading, error } = data;
 
@@ -119,6 +122,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
 
   // Resolve active tab label for breadcrumb
   const activeLabel = MARKETING_TABS.find(t => t.id === tab)?.label ?? tab;
+  const activeGroup = groupForTab(tab);
 
   // ── Derived stats ──────────────────────────────────────────────
 
@@ -206,25 +210,57 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
         </p>
       </div>
 
-      {/* Tab bar — scrolls horizontally */}
+      {/* Tab bar — group row, then the active group's members */}
       <div className="flex items-center gap-0 border-b overflow-x-auto" style={{ borderColor: EV_LINE }}>
-        {MARKETING_TABS.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            onClick={() => switchTab(id)}
-            className="inline-flex items-center gap-2 px-4 py-3 text-sm transition relative whitespace-nowrap cursor-pointer bg-transparent border-x-0 border-t-0"
-            style={{
-              color: tab === id ? EV_NAVY : EV_MUTED,
-              fontWeight: tab === id ? 700 : 500,
-              fontFamily: BODY,
-              borderBottom: tab === id ? `3px solid ${EV_EMBER}` : '3px solid transparent',
-              marginBottom: '-1px',
-            }}
-          >
-            <Icon size={14} style={{ color: tab === id ? EV_EMBER : EV_MUTED }} /> {label}
-          </button>
-        ))}
+        {MARKETING_GROUPS.map((g) => {
+          const first = MARKETING_TABS.find(t => t.id === g.members[0]);
+          const GIcon = first?.Icon;
+          const on = activeGroup?.id === g.id;
+          return (
+            <button
+              key={g.id}
+              onClick={() => switchTab(g.members[0])}
+              className="inline-flex items-center gap-2 px-4 py-3 text-sm transition relative whitespace-nowrap cursor-pointer bg-transparent border-x-0 border-t-0"
+              style={{
+                color: on ? EV_NAVY : EV_MUTED,
+                fontWeight: on ? 700 : 500,
+                fontFamily: BODY,
+                borderBottom: on ? `3px solid ${EV_EMBER}` : '3px solid transparent',
+                marginBottom: '-1px',
+              }}
+            >
+              {GIcon && <GIcon size={14} style={{ color: on ? EV_EMBER : EV_MUTED }} />} {g.label}
+            </button>
+          );
+        })}
       </div>
+
+      {/* Sub-tabs — only when the active group holds more than one tab */}
+      {activeGroup && activeGroup.members.length > 1 && (
+        <div className="flex items-center gap-0 overflow-x-auto" style={{ borderBottom: `1px solid ${EV_LINE}` }}>
+          {activeGroup.members.map((mid) => {
+            const m = MARKETING_TABS.find(t => t.id === mid);
+            if (!m) return null;
+            const on = tab === mid;
+            return (
+              <button
+                key={mid}
+                onClick={() => switchTab(mid)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm transition relative whitespace-nowrap cursor-pointer bg-transparent border-x-0 border-t-0"
+                style={{
+                  color: on ? EV_NAVY : EV_MUTED,
+                  fontWeight: on ? 700 : 500,
+                  fontFamily: BODY,
+                  borderBottom: on ? `2px solid ${EV_EMBER}` : '2px solid transparent',
+                  marginBottom: '-1px',
+                }}
+              >
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Tab content */}
       {tab === 'accounts' ? (
