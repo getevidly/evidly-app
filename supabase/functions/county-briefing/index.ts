@@ -865,7 +865,7 @@ body{margin:0;padding:0;background:#F7F1E6;} a{text-decoration:none;} img{-ms-in
 
     <tr><td bgcolor="#FFFFFF" align="center" style="background:#FFFFFF;padding:26px 32px 6px;">
       <div style="font-family:'Instrument Sans',Arial,sans-serif;font-weight:700;font-size:25px;line-height:1.2;letter-spacing:-.01em;color:#1C2A3A;">
-        What a commercial kitchen in ${countyDisplay} has to produce.
+        What a commercial kitchen in ${countyDisplay} should maintain to reduce its risk.
       </div>
     </td></tr>
 
