@@ -1265,6 +1265,7 @@ Deno.serve(async (req: Request) => {
       const list = body.recipients as Array<{
         email: string; first_name?: string; org_name?: string;
         county: string; variant?: string; jurisdiction_id?: string;
+        sales_pipeline_id?: string;
       }>;
 
       if (!list || !Array.isArray(list) || list.length === 0) {
@@ -1281,6 +1282,10 @@ Deno.serve(async (req: Request) => {
         status: 'queued',
         unsub_token: crypto.randomUUID(),
         ...(r.jurisdiction_id ? { jurisdiction_id: r.jurisdiction_id } : {}),
+        // Optional link back to the CRM prospect this recipient was added
+        // alongside. Omitted entirely when absent, so existing callers that
+        // never send it behave exactly as before.
+        ...(r.sales_pipeline_id ? { sales_pipeline_id: r.sales_pipeline_id } : {}),
       }));
 
       const { error } = await supabase

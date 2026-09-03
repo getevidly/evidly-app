@@ -33,6 +33,11 @@ const CARD: React.CSSProperties = {
   background: EV_PAPER, padding: 20,
 };
 
+const LABEL: React.CSSProperties = {
+  fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
+  color: EV_FAINT, marginBottom: 4, fontFamily: BODY,
+};
+
 const INPUT: React.CSSProperties = {
   width: '100%', padding: '8px 10px', borderRadius: 6,
   border: `1px solid ${EV_LINE}`, fontSize: 13, fontFamily: BODY, color: EV_NAVY,
@@ -113,6 +118,17 @@ export default function BriefingsTab() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'prospects' | 'letter' | 'placard' | 'report'>('all');
 
+  // Add-a-prospect form
+  const [pOrg, setPOrg] = useState('');
+  const [pName, setPName] = useState('');
+  const [pEmail, setPEmail] = useState('');
+  const [pPhone, setPPhone] = useState('');
+  const [pJurId, setPJurId] = useState('');
+  const [pQueue, setPQueue] = useState(false);
+  const [pErr, setPErr] = useState<string | null>(null);
+  const [pWarn, setPWarn] = useState<string | null>(null);
+  const [pSaving, setPSaving] = useState(false);
+
   const [viewer, setViewer] = useState<'email' | 'page'>('email');
   const [pageWarm, setPageWarm] = useState(false);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
@@ -137,6 +153,10 @@ export default function BriefingsTab() {
 
   useEffect(() => { void loadAll(); }, [loadAll]);
 
+  // A briefing needs a jurisdiction to address, so the checkbox follows the
+  // picker: it self-checks when one is chosen and clears when it is not.
+  useEffect(() => { setPQueue(!!pJurId); }, [pJurId]);
+
   // The one definition of these three actions, shared with OutreachTab.
   const { handlePreview, handleApprove, handleSend } = useCountyBriefingActions({
     paused,
@@ -145,6 +165,75 @@ export default function BriefingsTab() {
     onPreview: (html, county) => { setPreviewHtml(html); setPreviewCounty(county); },
     onDone: loadAll,
   });
+
+  /**
+   * Prospect wins. The CRM row is the thing being created; queueing a
+   * briefing is a follow-on. If the queue call fails we keep the prospect
+   * and say so, rather than rolling back a good record over a mail-list
+   * problem. If the prospect insert itself fails, nothing is created.
+   */
+  const addProspect = async () => {
+    setPErr(null); setPWarn(null);
+    const org = pOrg.trim(), name = pName.trim(), email = pEmail.trim(), phone = pPhone.trim();
+    if (!org || !name || !email || !phone) {
+      setPErr('Organization, contact name, email and phone are all required.');
+      return;
+    }
+
+    const jur = counties.find((c: any) => c.jurisdiction_id === pJurId) || null;
+    setPSaving(true);
+
+    const { data: inserted, error: pipeErr } = await supabase
+      .from('sales_pipeline')
+      .insert({
+        org_name: org,
+        contact_name: name,
+        contact_email: email,
+        contact_phone: phone,
+        county: jur?.county || null,
+        stage: 'prospect',
+        source: 'briefing_add',
+      })
+      .select('id')
+      .single();
+
+    if (pipeErr || !inserted?.id) {
+      setPSaving(false);
+      setPErr(`Could not add the prospect: ${pipeErr?.message || 'Unknown error'}`);
+      return;
+    }
+
+    let queuedMsg = "";
+    if (pQueue && jur) {
+      const { data: qData, error: qErr } = await supabase.functions.invoke('county-briefing', {
+        body: {
+          action: 'add-recipients',
+          recipients: [{
+            email,
+            first_name: name.split(/\s+/)[0] || undefined,
+            org_name: org,
+            county: jur.county,
+            variant: 'warm',
+            jurisdiction_id: jur.jurisdiction_id,
+            sales_pipeline_id: inserted.id,
+          }],
+        },
+      });
+      if (qErr || !qData?.inserted) {
+        setPSaving(false);
+        setPWarn(`Added ${org} to the CRM, but the briefing queue failed: ${qErr?.message || qData?.error || 'Unknown error'}`);
+        setPOrg(''); setPName(''); setPEmail(''); setPPhone(''); setPJurId('');
+        loadAll();
+        return;
+      }
+      queuedMsg = ` and queued a warm ${jurLabel(jur)} briefing`;
+    }
+
+    setPSaving(false);
+    flash(`Added ${org} to the CRM${queuedMsg}`);
+    setPOrg(''); setPName(''); setPEmail(''); setPPhone(''); setPJurId('');
+    loadAll();
+  };
 
   const selected = useMemo(
     () => counties.find((c: any) => c.jurisdiction_id === selectedId) || null,
@@ -200,6 +289,71 @@ export default function BriefingsTab() {
           padding: '10px 12px', marginBottom: 16, fontWeight: 600,
         }}>Sending is paused — resume it in Briefing send before anything will go out.</div>
       )}
+
+      {/* ── Add a prospect ──────────────────────────────────── */}
+      <div style={{ ...CARD, marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: EV_NAVY, fontFamily: DISPLAY, margin: 0 }}>
+            Add a prospect
+          </h3>
+          <div style={{ flex: 1 }} />
+          <span style={{ fontSize: 11, color: EV_FAINT }}>Bulk import — coming soon</span>
+        </div>
+
+        {pErr && (
+          <div style={{ fontSize: 12, color: EV_DANGER, background: '#F6E3DF', border: `1px solid ${EV_LINE}`, borderRadius: 6, padding: '8px 10px', marginBottom: 12 }}>{pErr}</div>
+        )}
+        {pWarn && (
+          <div style={{ fontSize: 12, color: EV_WARN, background: '#FDF3E3', border: `1px solid ${EV_LINE}`, borderRadius: 6, padding: '8px 10px', marginBottom: 12 }}>{pWarn}</div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+          <div>
+            <div style={LABEL}>Organization *</div>
+            <input value={pOrg} onChange={e => setPOrg(e.target.value)} style={{ ...INPUT, background: '#FFF' }} />
+          </div>
+          <div>
+            <div style={LABEL}>Contact name *</div>
+            <input value={pName} onChange={e => setPName(e.target.value)} style={{ ...INPUT, background: '#FFF' }} />
+          </div>
+          <div>
+            <div style={LABEL}>Email *</div>
+            <input type="email" value={pEmail} onChange={e => setPEmail(e.target.value)} style={{ ...INPUT, background: '#FFF' }} />
+          </div>
+          <div>
+            <div style={LABEL}>Phone *</div>
+            <input value={pPhone} onChange={e => setPPhone(e.target.value)} style={{ ...INPUT, background: '#FFF' }} />
+          </div>
+          <div>
+            <div style={LABEL}>Jurisdiction</div>
+            <select value={pJurId} onChange={e => setPJurId(e.target.value)} style={{ ...INPUT, background: '#FFF' }}>
+              <option value="">No jurisdiction</option>
+              {counties.map((c: any) => (
+                <option key={c.jurisdiction_id} value={c.jurisdiction_id}>{jurLabel(c)}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, color: pJurId ? EV_NAVY : EV_FAINT, cursor: pJurId ? 'pointer' : 'not-allowed' }}>
+            <input
+              type="checkbox"
+              checked={pQueue}
+              disabled={!pJurId}
+              onChange={e => setPQueue(e.target.checked)}
+            />
+            Queue for county briefing (warm)
+          </label>
+          {!pJurId && (
+            <span style={{ fontSize: 11, color: EV_FAINT }}>Pick a jurisdiction to queue a briefing.</span>
+          )}
+          <div style={{ flex: 1 }} />
+          <button onClick={addProspect} disabled={pSaving} style={BTN(EV_EMBER, '#FFF')}>
+            {pSaving ? 'Adding…' : 'Add'}
+          </button>
+        </div>
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 340px) 1fr', gap: 20, alignItems: 'start' }}>
 
