@@ -17,7 +17,7 @@ import {
   LayoutDashboard, Radio, MapPin, Building2,
   Layers, ClipboardList, Calendar, Flame, GitBranch,
   Users, Mail, Search, TrendingUp, Megaphone, FileBarChart,
-  Ticket, Target, ScanSearch, CheckSquare, Handshake,
+  Ticket, Target, ScanSearch, CheckSquare, Handshake, ClipboardCheck,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -45,6 +45,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'accounts',  label: 'Accounts',            Icon: Building2,       route: 'accounts' },
   { id: 'segments',  label: 'Segments',            Icon: Users,           route: 'segments' },
   { id: 'partners',  label: 'Partners',            Icon: Handshake,       route: 'partners' },
+  { id: 'inspections', label: 'Inspections',       Icon: ClipboardCheck,  route: 'inspections' },
   { id: 'channels',  label: 'Channels',            Icon: Layers,          route: 'channels' },
   { id: 'founder',   label: 'Founder Window',      Icon: Flame,           route: 'founder-window' },
   { id: 'seo',       label: 'SEO',                 Icon: Search,          route: 'seo' },
@@ -56,7 +57,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 export type MarketingTabId =
   | 'weekly-cadence' | 'followups' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
-  | 'segments' | 'partners' | 'sequence' | 'briefings' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
+  | 'segments' | 'partners' | 'inspections' | 'sequence' | 'briefings' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
 
 /** Map tab id → route path */
 export function tabRoute(id: MarketingTabId): string {
@@ -76,7 +77,7 @@ export const MARKETING_GROUPS: { id: string; label: string; members: MarketingTa
   { id: 'plan',     label: 'Plan',             members: ['weekly-cadence', 'planner'] },
   { id: 'outreach', label: 'Outreach',         members: ['sequence', 'briefings', 'calls', 'field', 'shows', 'followups'] },
   { id: 'content',  label: 'Content Schedule', members: ['schedule'] },
-  { id: 'programs', label: 'Programs',         members: ['policylens', 'survey', 'partners'] },
+  { id: 'programs', label: 'Programs',         members: ['policylens', 'survey', 'partners', 'inspections'] },
   { id: 'pipeline', label: 'Pipeline',         members: ['overview', 'funnel', 'segments', 'accounts'] },
   { id: 'channels', label: 'Channels',         members: ['channels', 'forecast'] },
   { id: 'founder',  label: 'Founder Window',   members: ['founder'] },
