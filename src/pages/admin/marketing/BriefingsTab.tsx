@@ -12,7 +12,7 @@
  * action — the same payload OutreachTab reads, including the slug the public
  * page URL is built from.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useCountyBriefingActions } from './useCountyBriefingActions';
 import {
@@ -157,12 +157,20 @@ export default function BriefingsTab() {
   // picker: it self-checks when one is chosen and clears when it is not.
   useEffect(() => { setPQueue(!!pJurId); }, [pJurId]);
 
+  // Stable identity: handlePreview closes over this, and the auto-render
+  // effect below depends on handlePreview. An inline arrow here would give it a
+  // new identity every render and the effect would re-fire forever.
+  const onPreview = useCallback((html: string, county: string) => {
+    setPreviewHtml(html);
+    setPreviewCounty(county);
+  }, []);
+
   // The one definition of these three actions, shared with OutreachTab.
   const { handlePreview, handleApprove, handleSend } = useCountyBriefingActions({
     paused,
     setActionLoading,
     flash,
-    onPreview: (html, county) => { setPreviewHtml(html); setPreviewCounty(county); },
+    onPreview,
     onDone: loadAll,
   });
 
@@ -264,6 +272,20 @@ export default function BriefingsTab() {
       setPreviewCounty(null);
     }
   }, [selected, previewCounty]);
+
+  // The email renders itself. Reading the briefing is the point of this tab, so
+  // it should not be gated behind a button press. Keyed to the jurisdiction so
+  // switching counties fetches that county and never shows the previous one's.
+  // The ref records the attempt, not the result, so a failed preview reports
+  // once rather than retrying on every render.
+  const previewAttemptRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!selected || viewer !== 'email') return;
+    if (previewHtml && previewCounty === selected.county) return;
+    if (previewAttemptRef.current === selected.jurisdiction_id) return;
+    previewAttemptRef.current = selected.jurisdiction_id;
+    void handlePreview(selected.county, undefined, selected.jurisdiction_id);
+  }, [selected, viewer, previewHtml, previewCounty, handlePreview]);
 
   const FILTERS: { id: typeof filter; label: string }[] = [
     { id: 'all', label: 'All' },
@@ -546,9 +568,13 @@ export default function BriefingsTab() {
                     <div style={{ maxHeight: 640, overflow: 'auto', background: '#FFF' }}>
                       <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
                     </div>
+                  ) : actionLoading === `preview-${selected.jurisdiction_id}` ? (
+                    <div style={{ padding: 24, fontSize: 13, color: EV_MUTED }}>
+                      Loading email…
+                    </div>
                   ) : (
                     <div style={{ padding: 24, fontSize: 13, color: EV_MUTED }}>
-                      Use “Send test to me” to render the email for {jurLabel(selected)}.
+                      Could not load the email for {jurLabel(selected)} — “Send test to me” retries it.
                     </div>
                   )
                 ) : pageSlug ? (
