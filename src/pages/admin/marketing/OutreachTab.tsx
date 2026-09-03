@@ -159,6 +159,8 @@ export default function OutreachTab() {
 
   // Standalone county preview — stores jurisdiction_id
   const [previewAnyJurId, setPreviewAnyJurId] = useState('');
+  // Cold is the default view; the page swaps itself on ?v=warm.
+  const [pagePreviewWarm, setPagePreviewWarm] = useState(false);
 
   // Queue filter
   const [queueFilter, setQueueFilter] = useState('all');
@@ -1137,6 +1139,57 @@ export default function OutreachTab() {
             </button>
           )}
         </div>
+
+        {/* Briefing page preview — same selection as the email preview above. */}
+        {(() => {
+          const selRow = counties.find((c: any) => c.jurisdiction_id === previewAnyJurId);
+          const pageSlug = ((selRow?.slug) || '').replace(/-ca$/, '');
+          const pageUrl = `https://www.getevidly.com/briefing/california/${pageSlug}`
+            + (pagePreviewWarm ? '?v=warm' : '');
+          return (
+            <div style={{
+              border: `1px solid ${EV_LINE}`, borderRadius: 8,
+              background: '#FFF', marginBottom: 16,
+            }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', flexWrap: 'wrap' as const, gap: 8,
+                padding: '8px 16px', background: EV_CREAM, borderBottom: `1px solid ${EV_LINE}`,
+                fontSize: 12, fontWeight: 700, color: EV_NAVY,
+              }}>
+                <span>Briefing page preview</span>
+                <div style={{ flex: 1 }} />
+                <button
+                  onClick={() => setPagePreviewWarm(false)}
+                  style={pagePreviewWarm ? BTN(EV_LIGHT, EV_NAVY) : BTN(EV_NAVY, '#FFF')}
+                >Cold</button>
+                <button
+                  onClick={() => setPagePreviewWarm(true)}
+                  style={pagePreviewWarm ? BTN(EV_NAVY, '#FFF') : BTN(EV_LIGHT, EV_NAVY)}
+                >Warm</button>
+                {pageSlug && (
+                  <a
+                    href={pageUrl}
+                    target="_blank"
+                    rel="noopener"
+                    style={{ fontSize: 12, fontWeight: 700, color: EV_EMBER, textDecoration: 'none' }}
+                  >Open live ↗</a>
+                )}
+              </div>
+              {pageSlug ? (
+                <iframe
+                  key={pageUrl}
+                  title="Briefing page preview"
+                  src={pageUrl}
+                  style={{ width: '100%', minHeight: 640, border: 'none', overflow: 'auto', display: 'block' }}
+                />
+              ) : (
+                <div style={{ padding: 20, fontSize: 13, color: EV_MUTED }}>
+                  Select a jurisdiction to preview its page
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Standalone preview render */}
         {previewHtml && previewCounty && (

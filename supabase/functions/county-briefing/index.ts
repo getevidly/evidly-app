@@ -1299,7 +1299,7 @@ Deno.serve(async (req: Request) => {
       // All active CA jurisdictions (county + city rows), left-joined to approvals + recipient counts
       const { data: jurisdictions } = await supabase
         .from('jurisdictions')
-        .select('id, county, city, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status')
+        .select('id, county, city, agency_name, fire_ahj_name, grading_type, grading_config, violation_weight_map, hood_cleaning_default, fire_jurisdiction_config, jie_audit_status, slug')
         .eq('state', 'CA')
         .eq('is_active', true)
         .order('county');
@@ -1345,6 +1345,7 @@ Deno.serve(async (req: Request) => {
           county: j.county,
           city: (j as any).city || null,
           jurisdiction_id: j.id,
+          slug: (j as any).slug || null,
           sendable: gate.ok,
           block_reason: gate.block_reason,
           approved: appr?.approved_at ? true : false,
