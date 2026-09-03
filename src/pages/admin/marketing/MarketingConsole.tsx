@@ -15,6 +15,7 @@ import ChannelsTab from './ChannelsTab';
 import SurveyTab from './SurveyTab';
 import ContentScheduleTab from './ContentScheduleTab';
 import OutreachTab from './OutreachTab';
+import BriefingsTab from './BriefingsTab';
 import WeeklyCadenceTab from './WeeklyCadenceTab';
 import FollowUpsTab from './FollowUpsTab';
 import OverviewTab from './OverviewTab';
@@ -298,6 +299,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'segments'  && <SegmentsTab accounts={accounts} loading={loading} error={error} />}
       {tab === 'partners'  && <PartnersTab />}
       {tab === 'sequence'  && <OutreachTab />}
+      {tab === 'briefings' && <BriefingsTab />}
 
       {/* Connect-gated: no provider linked yet, so these three render a
           ConnectBanner and an empty preview rather than any figures. */}

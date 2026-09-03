@@ -36,6 +36,7 @@ export const MARKETING_TABS: MarketingTab[] = [
   { id: 'schedule',  label: 'Content Schedule',    Icon: Calendar,        route: 'content-schedule' },
   { id: 'policylens', label: 'Policy Lens',        Icon: ScanSearch,      route: 'policy-lens' },
   { id: 'sequence',  label: 'Outreach',           Icon: Mail,            route: 'email-sequence' },
+  { id: 'briefings', label: 'Briefings',           Icon: Mail,            route: 'briefings' },
   { id: 'calls',     label: 'Outbound Calls',     Icon: Radio,           route: 'outbound-calls' },
   { id: 'field',     label: 'In Person',           Icon: MapPin,          route: 'in-person' },
   { id: 'shows',     label: 'Shows',               Icon: Ticket,          route: 'shows' },
@@ -55,7 +56,7 @@ export const MARKETING_TABS: MarketingTab[] = [
 export type MarketingTabId =
   | 'weekly-cadence' | 'followups' | 'overview' | 'planner' | 'calls' | 'field' | 'shows' | 'accounts' | 'network'
   | 'channels' | 'survey' | 'schedule' | 'founder' | 'funnel'
-  | 'segments' | 'partners' | 'sequence' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
+  | 'segments' | 'partners' | 'sequence' | 'briefings' | 'seo' | 'serp' | 'ads' | 'forecast' | 'policylens';
 
 /** Map tab id → route path */
 export function tabRoute(id: MarketingTabId): string {
@@ -73,7 +74,7 @@ export function tabRoute(id: MarketingTabId): string {
  */
 export const MARKETING_GROUPS: { id: string; label: string; members: MarketingTabId[] }[] = [
   { id: 'plan',     label: 'Plan',             members: ['weekly-cadence', 'planner'] },
-  { id: 'outreach', label: 'Outreach',         members: ['sequence', 'calls', 'field', 'shows', 'followups'] },
+  { id: 'outreach', label: 'Outreach',         members: ['sequence', 'briefings', 'calls', 'field', 'shows', 'followups'] },
   { id: 'content',  label: 'Content Schedule', members: ['schedule'] },
   { id: 'programs', label: 'Programs',         members: ['policylens', 'survey', 'partners'] },
   { id: 'pipeline', label: 'Pipeline',         members: ['overview', 'funnel', 'segments', 'accounts'] },

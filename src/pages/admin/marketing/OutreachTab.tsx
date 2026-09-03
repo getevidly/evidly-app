@@ -15,6 +15,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import FlowOverview from './FlowOverview';
+import { useCountyBriefingActions } from './useCountyBriefingActions';
 import {
   EV_NAVY, EV_EMBER, EV_MUTED, EV_FAINT, EV_LINE,
   EV_PAPER, EV_CREAM, EV_LIGHT, EV_SUCCESS, EV_WARN, EV_DANGER,
@@ -538,52 +539,15 @@ export default function OutreachTab() {
 
   // ── County actions ───────────────────────────────────────────
 
-  const handlePreview = async (county: string, variant?: string, jurisdictionId?: string) => {
-    const key = jurisdictionId || county;
-    setActionLoading(`preview-${key}`);
-    const reqBody: any = { action: 'preview', county, variant: variant || 'cold' };
-    if (jurisdictionId) reqBody.jurisdiction_id = jurisdictionId;
-    const { data, error } = await supabase.functions.invoke('county-briefing', {
-      body: reqBody,
-    });
-    setActionLoading(null);
-    if (error || !data?.preview_html) {
-      flash(`Preview failed: ${error?.message || data?.error || 'Unknown'}`);
-      return;
-    }
-    setPreviewHtml(data.preview_html);
-    setPreviewCounty(county);
-  };
-
-  const handleApprove = async (county: string) => {
-    setActionLoading(`approve-${county}`);
-    const { data, error } = await supabase.functions.invoke('county-briefing', {
-      body: { action: 'approve', county },
-    });
-    setActionLoading(null);
-    if (error || !data?.approval_id) {
-      flash(`Approve failed: ${error?.message || data?.error || 'Unknown'}`);
-      return;
-    }
-    flash(`${county} approved`);
-    loadAll();
-  };
-
-  const handleSend = async (county: string, queuedCount: number) => {
-    if (paused) { flash('Sending is paused'); return; }
-    if (!confirm(`Send the ${county} briefing to ${queuedCount} recipient${queuedCount !== 1 ? 's' : ''} now?`)) return;
-    setActionLoading(`send-${county}`);
-    const { data, error } = await supabase.functions.invoke('county-briefing', {
-      body: { action: 'send', county },
-    });
-    setActionLoading(null);
-    if (error) {
-      flash(`Send failed: ${error.message || data?.error || 'Unknown'}`);
-      return;
-    }
-    flash(`${county}: ${data.sent} sent, ${data.failed} failed, ${data.held} held`);
-    loadAll();
-  };
+  // The three county-briefing actions now live in one shared hook so the
+  // Briefings tab calls the same functions rather than a copy.
+  const { handlePreview, handleApprove, handleSend } = useCountyBriefingActions({
+    paused,
+    setActionLoading,
+    flash,
+    onPreview: (html, county) => { setPreviewHtml(html); setPreviewCounty(county); },
+    onDone: loadAll,
+  });
 
   // ── Jurisdiction edit helpers ────────────────────────────
 

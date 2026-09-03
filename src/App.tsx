@@ -202,6 +202,7 @@ const MarketingFunnel = lazy(() => import('./pages/admin/marketing/MarketingFunn
 const MarketingSegments = lazy(() => import('./pages/admin/marketing/MarketingSegments'));
 const MarketingPartners = lazy(() => import('./pages/admin/marketing/MarketingPartners'));
 const MarketingEmailSequence = lazy(() => import('./pages/admin/marketing/MarketingEmailSequence'));
+const MarketingBriefings = lazy(() => import('./pages/admin/marketing/MarketingBriefings'));
 
 const MarketingSEO = lazy(() => import('./pages/admin/marketing/MarketingSEO'));
 const MarketingSERP = lazy(() => import('./pages/admin/marketing/MarketingSERP'));
@@ -866,6 +867,7 @@ function AppRoutes() {
           <Route path="/admin/marketing/segments" element={<SalesGuard><MarketingSegments /></SalesGuard>} />
           <Route path="/admin/marketing/partners" element={<SalesGuard><MarketingPartners /></SalesGuard>} />
           <Route path="/admin/marketing/email-sequence" element={<SalesGuard><MarketingEmailSequence /></SalesGuard>} />
+          <Route path="/admin/marketing/briefings" element={<SalesGuard><MarketingBriefings /></SalesGuard>} />
           <Route path="/admin/marketing/prp-attribution" element={<Navigate to="/admin/marketing/overview" replace />} />
           <Route path="/admin/marketing/seo" element={<SalesGuard><MarketingSEO /></SalesGuard>} />
           <Route path="/admin/marketing/serp" element={<SalesGuard><MarketingSERP /></SalesGuard>} />
