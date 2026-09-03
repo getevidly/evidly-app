@@ -195,6 +195,7 @@ const MarketingOutboundCalls = lazy(() => import('./pages/admin/marketing/Market
 const MarketingInPerson = lazy(() => import('./pages/admin/marketing/MarketingInPerson'));
 const MarketingShows = lazy(() => import('./pages/admin/marketing/MarketingShows'));
 const MarketingChannels = lazy(() => import('./pages/admin/marketing/MarketingChannels'));
+const SeoConsole = lazy(() => import('./pages/admin/seo/SeoConsole'));
 const MarketingSurvey = lazy(() => import('./pages/admin/marketing/MarketingSurvey'));
 const MarketingContentSchedule = lazy(() => import('./pages/admin/marketing/MarketingContentSchedule'));
 const MarketingFounderWindow = lazy(() => import('./pages/admin/marketing/MarketingFounderWindow'));
@@ -860,6 +861,7 @@ function AppRoutes() {
           <Route path="/admin/marketing/accounts" element={<SalesGuard><MarketingAccounts /></SalesGuard>} />
           <Route path="/admin/marketing/network" element={<SalesGuard><MarketingNetwork /></SalesGuard>} />
           <Route path="/admin/marketing/channels" element={<SalesGuard><MarketingChannels /></SalesGuard>} />
+          <Route path="/admin/seo" element={<SalesGuard><SeoConsole /></SalesGuard>} />
           <Route path="/admin/marketing/survey" element={<SalesGuard><MarketingSurvey /></SalesGuard>} />
           <Route path="/admin/marketing/content-schedule" element={<SalesGuard><MarketingContentSchedule /></SalesGuard>} />
           <Route path="/admin/marketing/founder-window" element={<SalesGuard><MarketingFounderWindow /></SalesGuard>} />
