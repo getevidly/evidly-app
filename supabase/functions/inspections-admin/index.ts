@@ -33,6 +33,18 @@ import { getCorsHeaders } from "../_shared/cors.ts";
  */
 
 const MATCH_CAP = 100;
+const QUEUE_CAP = 200;
+
+/** The four operator actions, and the status each one lands the trigger in. */
+const ACTION_STATUS: Record<string, string> = {
+  approve: "ready", // staged for a send that does not exist yet — NOT sent
+  hold: "held",
+  skip: "skipped",
+  client: "client",
+};
+
+/** Statuses that still represent an unworked trigger. */
+const OPEN_STATUSES = ["new", "ready", "held"];
 
 interface SourceRow {
   id: string;
@@ -78,18 +90,23 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  // section arrives on the query string for a GET and in the body for
-  // the POST that supabase.functions.invoke sends. Accept both.
-  let section = new URL(req.url).searchParams.get("section") ?? undefined;
-  if (!section && req.method === "POST") {
+  // The body is read once and kept: `act` needs trigger_id/action/reason
+  // out of the same payload that carries `section`, and a Request body
+  // can only be consumed once.
+  let body: Record<string, unknown> = {};
+  if (req.method === "POST") {
     try {
-      const body = await req.json();
-      section = (body as Record<string, unknown>)?.section as string | undefined;
+      body = ((await req.json()) ?? {}) as Record<string, unknown>;
     } catch {
       // An empty or unparseable body is not fatal; the unknown-section
       // branch below reports it properly.
     }
   }
+
+  // section arrives on the query string for a GET and in the body for
+  // the POST that supabase.functions.invoke sends. Accept both.
+  const section = new URL(req.url).searchParams.get("section") ??
+    (body.section as string | undefined);
 
   /** exact row count, no rows transferred */
   const countOf = async (
@@ -289,8 +306,178 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true, facilities, capped: facilities.length === MATCH_CAP });
     }
 
+    // ── queue ─────────────────────────────────────────────────────
+    if (section === "queue") {
+      const openCount = await countOf("inspection_triggers", (q) => q.eq("status", "new"));
+
+      const { data: trigData, error: trigErr } = await supabase
+        .from("inspection_triggers")
+        .select("id, facility_id, source_id, inspection_id, trigger_type, trigger_date, mapped_record, rank")
+        .eq("status", "new")
+        // rank is the intended order; trigger_date breaks the tie while
+        // every rank is still 0, so paging is at least deterministic.
+        .order("rank", { ascending: false })
+        .order("trigger_date", { ascending: false })
+        .order("id", { ascending: true })
+        .limit(QUEUE_CAP);
+
+      if (trigErr) {
+        console.error("[inspections-admin] queue read failed:", trigErr.message);
+        return json({ ok: false, error: "Could not load the trigger queue." }, 500);
+      }
+
+      const trigRows = (trigData ?? []) as Record<string, unknown>[];
+      if (trigRows.length === 0) return json({ ok: true, triggers: [], total: openCount });
+
+      const { data: facData, error: facErr } = await supabase
+        .from("facilities")
+        .select("id, name, address, city, zip, source_id")
+        .in("id", [...new Set(trigRows.map((t) => t.facility_id as string))]);
+
+      if (facErr) {
+        console.error("[inspections-admin] queue facility read failed:", facErr.message);
+        return json({ ok: false, error: "Could not load queue facilities." }, 500);
+      }
+
+      const facById = new Map<string, Record<string, unknown>>();
+      for (const f of (facData ?? []) as Record<string, unknown>[]) {
+        facById.set(f.id as string, f);
+      }
+
+      const { data: srcData, error: srcErr } = await supabase
+        .from("inspection_sources")
+        .select("id, jurisdiction_id")
+        .in("id", [...new Set(trigRows.map((t) => t.source_id as string))]);
+
+      if (srcErr) {
+        console.error("[inspections-admin] queue source read failed:", srcErr.message);
+        return json({ ok: false, error: "Could not load inspection sources." }, 500);
+      }
+
+      const srcRows = (srcData ?? []) as { id: string; jurisdiction_id: string }[];
+      const { data: jurData, error: jurErr } = await supabase
+        .from("jurisdictions")
+        .select("id, slug")
+        .in("id", srcRows.map((s) => s.jurisdiction_id));
+
+      if (jurErr) {
+        console.error("[inspections-admin] queue jurisdiction read failed:", jurErr.message);
+        return json({ ok: false, error: "Could not load jurisdictions." }, 500);
+      }
+
+      const slugByJur = new Map<string, string>();
+      for (const j of (jurData ?? []) as { id: string; slug: string }[]) {
+        slugByJur.set(j.id, j.slug);
+      }
+      const slugBySource = new Map<string, string | null>();
+      for (const s of srcRows) slugBySource.set(s.id, slugByJur.get(s.jurisdiction_id) ?? null);
+
+      const triggers = trigRows.map((t) => {
+        const f = facById.get(t.facility_id as string);
+        return {
+          id: t.id,
+          facility_id: t.facility_id,
+          facility_name: (f?.name as string) ?? null,
+          address: (f?.address as string) ?? null,
+          city: (f?.city as string) ?? null,
+          zip: (f?.zip as string) ?? null,
+          slug: slugBySource.get(t.source_id as string) ?? null,
+          trigger_type: t.trigger_type,
+          trigger_date: t.trigger_date,
+          mapped_record: t.mapped_record,
+          rank: t.rank,
+        };
+      });
+
+      return json({ ok: true, triggers, total: openCount, capped: triggers.length === QUEUE_CAP });
+    }
+
+    // ── act ───────────────────────────────────────────────────────
+    // The only write path in this function. It touches
+    // inspection_triggers and, for 'client', facilities.is_client and
+    // facilities.identity_status. Nothing else, and it never deletes.
+    if (section === "act") {
+      const triggerId = body.trigger_id as string | undefined;
+      const action = body.action as string | undefined;
+      const reason = typeof body.reason === "string" && body.reason.trim()
+        ? (body.reason as string).trim()
+        : null;
+
+      if (!triggerId) return json({ ok: false, error: "trigger_id is required." }, 400);
+      if (!action || !(action in ACTION_STATUS)) {
+        return json(
+          { ok: false, error: "action must be one of approve, hold, skip, client." },
+          400,
+        );
+      }
+
+      const stamp = {
+        status_at: new Date().toISOString(),
+        status_by: caller?.email ?? null,
+        updated_at: new Date().toISOString(),
+      };
+
+      // 'client' is three writes with no transaction available — an RPC
+      // would need a migration, which is out of scope here. Ordered so a
+      // failure leaves the trigger still in the queue and every step
+      // safely repeatable: flag the facility, close its siblings, then
+      // close the trigger itself last.
+      if (action === "client") {
+        const { data: target, error: readErr } = await supabase
+          .from("inspection_triggers")
+          .select("id, facility_id")
+          .eq("id", triggerId)
+          .maybeSingle();
+
+        if (readErr) {
+          console.error("[inspections-admin] act read failed:", readErr.message);
+          return json({ ok: false, error: "Could not read the trigger." }, 500);
+        }
+        if (!target) return json({ ok: false, error: "Trigger not found." }, 404);
+
+        const facilityId = (target as { facility_id: string }).facility_id;
+
+        const { error: facErr } = await supabase
+          .from("facilities")
+          .update({ is_client: true, identity_status: "resolved" })
+          .eq("id", facilityId);
+
+        if (facErr) {
+          console.error("[inspections-admin] act facility update failed:", facErr.message);
+          return json({ ok: false, error: "Could not mark the facility as a client." }, 500);
+        }
+
+        const { error: sibErr } = await supabase
+          .from("inspection_triggers")
+          .update({ status: "skipped", status_reason: "facility marked client", ...stamp })
+          .eq("facility_id", facilityId)
+          .neq("id", triggerId)
+          .in("status", OPEN_STATUSES);
+
+        if (sibErr) {
+          console.error("[inspections-admin] act sibling skip failed:", sibErr.message);
+          return json({ ok: false, error: "Could not close the facility's other triggers." }, 500);
+        }
+      }
+
+      const { data: updated, error: updErr } = await supabase
+        .from("inspection_triggers")
+        .update({ status: ACTION_STATUS[action], status_reason: reason, ...stamp })
+        .eq("id", triggerId)
+        .select("id, facility_id, source_id, inspection_id, trigger_type, trigger_date, mapped_record, rank, status, status_reason, status_at, status_by")
+        .maybeSingle();
+
+      if (updErr) {
+        console.error("[inspections-admin] act update failed:", updErr.message);
+        return json({ ok: false, error: "Could not update the trigger." }, 500);
+      }
+      if (!updated) return json({ ok: false, error: "Trigger not found." }, 404);
+
+      return json({ ok: true, trigger: updated });
+    }
+
     return json(
-      { ok: false, error: "Unknown section. Expected sources, match or summary." },
+      { ok: false, error: "Unknown section. Expected sources, match, summary, queue or act." },
       400,
     );
   } catch (err) {

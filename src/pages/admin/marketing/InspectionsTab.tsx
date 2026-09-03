@@ -56,9 +56,25 @@ interface HeldFacility {
   slug: string | null;
 }
 
+interface QueueRow {
+  id: string;
+  facility_id: string;
+  facility_name: string | null;
+  address: string | null;
+  city: string | null;
+  zip: string | null;
+  slug: string | null;
+  trigger_type: 'cited' | 'clean' | 'due';
+  trigger_date: string | null;
+  mapped_record: string | null;
+  rank: number | null;
+}
+
 type Freshness = 'live' | 'snapshot';
 type SortCol = 'slug' | 'platform_family' | 'facility_count' | 'inspection_count' | 'violation_count' | 'newest_inspection_date';
+type QueueSortCol = 'facility_name' | 'slug' | 'trigger_type' | 'trigger_date' | 'mapped_record' | 'rank';
 type SortDir = 'asc' | 'desc';
+type TriggerAction = 'approve' | 'hold' | 'skip' | 'client';
 
 /**
  * The designed suppression rules. These are the rule set the surface is
@@ -73,8 +89,24 @@ const SUPPRESSION_RULES: { rule: string; detail: string }[] = [
   { rule: 'Opted out', detail: 'Any recorded opt-out suppresses every step permanently.' },
 ];
 
-/** Column headers for the trigger queue. No rows exist to fill them yet. */
-const QUEUE_COLS = ['Facility', 'Jurisdiction', 'Trigger', 'Inspection date', 'Outcome', 'Rank'];
+/** Trigger-type pill colours: cited ember, clean green, due navy. */
+const TRIGGER_PILL: Record<string, { bg: string; fg: string; label: string }> = {
+  cited: { bg: '#FBEAE5', fg: EV_EMBER, label: 'CITED' },
+  clean: { bg: '#E8F2EC', fg: EV_SUCCESS, label: 'CLEAN' },
+  due: { bg: '#EEF1F6', fg: EV_NAVY, label: 'DUE' },
+};
+
+function TriggerPill({ type }: { type: string }) {
+  const m = TRIGGER_PILL[type] ?? { bg: EV_LIGHT, fg: EV_MUTED, label: type.toUpperCase() };
+  return (
+    <span
+      className="inline-block text-[10px] font-bold tracking-wider rounded px-2 py-[3px] whitespace-nowrap"
+      style={{ backgroundColor: m.bg, color: m.fg, fontFamily: BODY }}
+    >
+      {m.label}
+    </span>
+  );
+}
 
 function fmt(n: number | null | undefined): string {
   return typeof n === 'number' ? n.toLocaleString() : '—';
@@ -130,23 +162,6 @@ function EmptyState({ headline, sub }: { headline: string; sub?: string }) {
   );
 }
 
-/** A disabled filter bar — rendered so the shape is visible, inert because there is nothing to filter. */
-function InertFilterBar({ placeholders }: { placeholders: string[] }) {
-  return (
-    <div className="flex items-center gap-3 flex-wrap px-4 py-3 border-b" style={{ borderColor: EV_LINE }}>
-      {placeholders.map((p) => (
-        <span
-          key={p}
-          className="py-[7px] px-[10px] text-[12.5px] border rounded-md select-none"
-          style={{ borderColor: EV_LINE, color: EV_FAINT, backgroundColor: EV_LIGHT, fontFamily: BODY }}
-        >
-          {p}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 export default function InspectionsTab() {
   const [summary, setSummary] = useState<SummaryPayload | null>(null);
   const [sources, setSources] = useState<SourceRow[]>([]);
@@ -163,22 +178,38 @@ export default function InspectionsTab() {
   const [sortCol, setSortCol] = useState<SortCol>('slug');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
 
+  // ── Queue ────────────────────────────────────────────────────
+  const [queue, setQueue] = useState<QueueRow[]>([]);
+  const [queueTotal, setQueueTotal] = useState(0);
+  const [qSearch, setQSearch] = useState('');
+  const [qJurisdiction, setQJurisdiction] = useState('');
+  const [qType, setQType] = useState('');
+  const [qSortCol, setQSortCol] = useState<QueueSortCol>('rank');
+  const [qSortDir, setQSortDir] = useState<SortDir>('desc');
+  /** trigger id currently being written, so its buttons disable */
+  const [acting, setActing] = useState<string | null>(null);
+  /** trigger id whose inline reason box is open, and for which action */
+  const [reasonFor, setReasonFor] = useState<{ id: string; action: TriggerAction } | null>(null);
+  const [reasonText, setReasonText] = useState('');
+  const [actionError, setActionError] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [sumRes, srcRes, matchRes] = await Promise.all([
+      const [sumRes, srcRes, matchRes, queueRes] = await Promise.all([
         supabase.functions.invoke('inspections-admin', { body: { section: 'summary' } }),
         supabase.functions.invoke('inspections-admin', { body: { section: 'sources' } }),
         supabase.functions.invoke('inspections-admin', { body: { section: 'match' } }),
+        supabase.functions.invoke('inspections-admin', { body: { section: 'queue' } }),
       ]);
 
-      const firstErr = sumRes.error || srcRes.error || matchRes.error;
+      const firstErr = sumRes.error || srcRes.error || matchRes.error || queueRes.error;
       if (firstErr) throw new Error(firstErr.message);
 
-      if (!sumRes.data?.ok || !srcRes.data?.ok || !matchRes.data?.ok) {
+      if (!sumRes.data?.ok || !srcRes.data?.ok || !matchRes.data?.ok || !queueRes.data?.ok) {
         throw new Error(
-          sumRes.data?.error || srcRes.data?.error || matchRes.data?.error ||
+          sumRes.data?.error || srcRes.data?.error || matchRes.data?.error || queueRes.data?.error ||
           'The inspections read did not succeed.',
         );
       }
@@ -186,6 +217,8 @@ export default function InspectionsTab() {
       setSummary(sumRes.data.summary as SummaryPayload);
       setSources((srcRes.data.sources ?? []) as SourceRow[]);
       setHeld((matchRes.data.facilities ?? []) as HeldFacility[]);
+      setQueue((queueRes.data.triggers ?? []) as QueueRow[]);
+      setQueueTotal((queueRes.data.total ?? 0) as number);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load inspection data.');
     } finally {
@@ -233,6 +266,81 @@ export default function InspectionsTab() {
     else { setSortCol(col); setSortDir('asc'); }
   }
 
+  // ── Queue filter / sort — same inline pattern as Sources above ──
+  const qJurisdictions = useMemo(
+    () => [...new Set(queue.map(t => t.slug).filter(Boolean) as string[])].sort(),
+    [queue],
+  );
+
+  const qFiltered = useMemo(() => {
+    const q = qSearch.trim().toLowerCase();
+    return queue.filter(t => {
+      if (q && !`${t.facility_name ?? ''} ${t.city ?? ''}`.toLowerCase().includes(q)) return false;
+      if (qJurisdiction && t.slug !== qJurisdiction) return false;
+      if (qType && t.trigger_type !== qType) return false;
+      return true;
+    });
+  }, [queue, qSearch, qJurisdiction, qType]);
+
+  const qSorted = useMemo(() => {
+    const rows = [...qFiltered];
+    rows.sort((a, b) => {
+      let cmp = 0;
+      switch (qSortCol) {
+        case 'facility_name': cmp = (a.facility_name ?? '').localeCompare(b.facility_name ?? ''); break;
+        case 'slug': cmp = (a.slug ?? '').localeCompare(b.slug ?? ''); break;
+        case 'trigger_type': cmp = a.trigger_type.localeCompare(b.trigger_type); break;
+        case 'trigger_date': cmp = (a.trigger_date ?? '').localeCompare(b.trigger_date ?? ''); break;
+        case 'mapped_record': cmp = (a.mapped_record ?? '').localeCompare(b.mapped_record ?? ''); break;
+        case 'rank': cmp = (a.rank ?? 0) - (b.rank ?? 0); break;
+      }
+      return qSortDir === 'desc' ? -cmp : cmp;
+    });
+    return rows;
+  }, [qFiltered, qSortCol, qSortDir]);
+
+  function toggleQSort(col: QueueSortCol) {
+    if (qSortCol === col) setQSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
+    else { setQSortCol(col); setQSortDir('asc'); }
+  }
+
+  const qHasFilters = !!(qSearch || qJurisdiction || qType);
+
+  /**
+   * Fire one operator action. The row is removed optimistically — it is
+   * no longer status='new' — and restored in place if the write fails.
+   * Nothing here sends anything; 'approve' only stages the row.
+   */
+  const act = useCallback(async (row: QueueRow, action: TriggerAction, reason?: string) => {
+    setActing(row.id);
+    setActionError(null);
+    const before = queue;
+    setQueue(q => q.filter(t => t.id !== row.id));
+    setQueueTotal(n => Math.max(0, n - 1));
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('inspections-admin', {
+        body: { section: 'act', trigger_id: row.id, action, reason: reason ?? null },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok) throw new Error(data?.error || 'The action did not succeed.');
+      setReasonFor(null);
+      setReasonText('');
+    } catch (e) {
+      setQueue(before);
+      setQueueTotal(n => n + 1);
+      setActionError(e instanceof Error ? e.message : 'The action did not succeed.');
+    } finally {
+      setActing(null);
+    }
+  }, [queue]);
+
+  function onMarkClient(row: QueueRow) {
+    const name = row.facility_name ?? 'this facility';
+    if (window.confirm(`Mark ${name} as your client? It will be protected from all future triggers.`)) {
+      act(row, 'client');
+    }
+  }
+
   const sortIcon = (active: boolean) => (
     <ArrowUpDown size={11} style={{ color: active ? EV_EMBER : EV_MUTED, opacity: active ? 1 : 0.4 }} />
   );
@@ -258,7 +366,7 @@ export default function InspectionsTab() {
         <KpiMini l="LIVE SOURCES" v={fmt(summary?.active_source_count)} sub={`${fmt(summary?.source_count)} configured`} />
         <KpiMini l="FACILITIES" v={fmt(summary?.facility_count)} sub="crawled and stored" />
         <KpiMini l="INSPECTIONS" v={fmt(summary?.inspection_count)} sub={`${fmt(summary?.violation_count)} violations`} />
-        <KpiMini l="IN THE QUEUE" v={0} sub="triggers not yet generated" accent={EV_MUTED} />
+        <KpiMini l="IN THE QUEUE" v={fmt(queueTotal)} sub="awaiting a decision" accent={EV_EMBER} />
       </div>
 
       {/* ── 1 Sources ──────────────────────────────────────────── */}
@@ -359,23 +467,180 @@ export default function InspectionsTab() {
       </Section>
 
       {/* ── 2 Trigger queue ────────────────────────────────────── */}
-      <Section n={2} title="Trigger queue" note="What would be worked, once triggers are generated.">
-        <InertFilterBar placeholders={['Search facility', 'All jurisdictions', 'All triggers', 'All ranks']} />
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b" style={{ borderColor: EV_LINE }}>
-                {QUEUE_COLS.map(c => (
-                  <th key={c} className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>{c}</th>
-                ))}
-              </tr>
-            </thead>
-          </table>
+      <Section
+        n={2}
+        title="Trigger queue"
+        note="Approve stages a trigger. Nothing is sent — the send sequence is not built."
+      >
+        <div className="flex items-center gap-3 flex-wrap px-4 py-3 border-b" style={{ borderColor: EV_LINE }}>
+          <input
+            value={qSearch}
+            onChange={e => setQSearch(e.target.value)}
+            placeholder="Search facility"
+            className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY, minWidth: 190 }}
+          />
+          <select
+            value={qJurisdiction}
+            onChange={e => setQJurisdiction(e.target.value)}
+            className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+          >
+            <option value="">All jurisdictions</option>
+            {qJurisdictions.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select
+            value={qType}
+            onChange={e => setQType(e.target.value)}
+            className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
+            style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
+          >
+            <option value="">All triggers</option>
+            <option value="cited">Cited</option>
+            <option value="clean">Clean</option>
+            <option value="due">Due</option>
+          </select>
+          {qHasFilters && (
+            <button
+              onClick={() => { setQSearch(''); setQJurisdiction(''); setQType(''); }}
+              className="py-[7px] px-3 text-[12px] font-semibold rounded-md cursor-pointer border-none"
+              style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}
+            >
+              Clear
+            </button>
+          )}
+          <span className="ml-auto text-[12px] font-semibold" style={{ color: EV_MUTED }}>
+            {qHasFilters
+              ? `Showing ${qSorted.length} of ${queueTotal}`
+              : `${fmt(queueTotal)} in queue`}
+          </span>
         </div>
-        <EmptyState
-          headline="No triggers generated yet."
-          sub="Trigger generation is not built. Nothing reads the inspection record and produces a queue row today, so this list stays empty by design rather than for want of data."
-        />
+
+        {actionError && (
+          <div className="mx-4 mt-3 text-[12.5px] text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            {actionError}
+          </div>
+        )}
+
+        {qSorted.length === 0 ? (
+          <EmptyState
+            headline={queue.length === 0 ? 'Nothing left in the queue.' : 'No triggers match these filters.'}
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b" style={{ borderColor: EV_LINE }}>
+                  {([
+                    ['Facility', 'facility_name'],
+                    ['Jurisdiction', 'slug'],
+                    ['Trigger', 'trigger_type'],
+                    ['Date', 'trigger_date'],
+                    ['Mapped record', 'mapped_record'],
+                    ['Rank', 'rank'],
+                  ] as const).map(([label, col]) => (
+                    <th
+                      key={col}
+                      onClick={() => toggleQSort(col)}
+                      className="py-2 px-4 text-[10px] font-bold tracking-wider cursor-pointer select-none"
+                      style={{ color: EV_MUTED }}
+                    >
+                      <span className="inline-flex items-center gap-1">
+                        {label} {sortIcon(qSortCol === col)}
+                      </span>
+                    </th>
+                  ))}
+                  <th className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {qSorted.map(t => {
+                  const busy = acting === t.id;
+                  const openReason = reasonFor?.id === t.id ? reasonFor : null;
+                  return (
+                    <tr key={t.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE, opacity: busy ? 0.5 : 1 }}>
+                      <td className="py-2.5 px-4 text-[13px] font-semibold" style={{ color: EV_NAVY }}>
+                        {t.facility_name ?? '—'}
+                        <div className="text-[11px] font-normal" style={{ color: EV_MUTED }}>{t.city ?? '—'}</div>
+                      </td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED }}>{t.slug ?? '—'}</td>
+                      <td className="py-2.5 px-4"><TriggerPill type={t.trigger_type} /></td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{t.trigger_date ?? '—'}</td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: t.mapped_record ? EV_NAVY : EV_FAINT }}>
+                        {t.mapped_record ?? '—'}
+                      </td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{t.rank ?? 0}</td>
+                      <td className="py-2.5 px-4">
+                        {openReason ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              autoFocus
+                              value={reasonText}
+                              onChange={e => setReasonText(e.target.value)}
+                              placeholder="Reason (optional)"
+                              className="py-[5px] px-2 text-[12px] border rounded outline-none bg-white"
+                              style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY, minWidth: 150 }}
+                            />
+                            <button
+                              disabled={busy}
+                              onClick={() => act(t, openReason.action, reasonText)}
+                              className="py-[5px] px-2.5 text-[11px] font-bold rounded cursor-pointer border-none"
+                              style={{ backgroundColor: EV_NAVY, color: '#fff', fontFamily: BODY }}
+                            >
+                              Confirm {openReason.action}
+                            </button>
+                            <button
+                              onClick={() => { setReasonFor(null); setReasonText(''); }}
+                              className="py-[5px] px-2 text-[11px] font-semibold rounded cursor-pointer border-none"
+                              style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <button
+                              disabled={busy}
+                              onClick={() => act(t, 'approve')}
+                              className="py-[5px] px-2.5 text-[11px] font-bold rounded cursor-pointer border-none whitespace-nowrap"
+                              style={{ backgroundColor: EV_EMBER, color: '#fff', fontFamily: BODY }}
+                            >
+                              Approve
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => { setReasonFor({ id: t.id, action: 'hold' }); setReasonText(''); }}
+                              className="py-[5px] px-2.5 text-[11px] font-semibold rounded cursor-pointer whitespace-nowrap"
+                              style={{ backgroundColor: '#fff', color: EV_NAVY, border: `1px solid ${EV_LINE}`, fontFamily: BODY }}
+                            >
+                              Hold
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => { setReasonFor({ id: t.id, action: 'skip' }); setReasonText(''); }}
+                              className="py-[5px] px-2.5 text-[11px] font-semibold rounded cursor-pointer whitespace-nowrap"
+                              style={{ backgroundColor: '#fff', color: EV_MUTED, border: `1px solid ${EV_LINE}`, fontFamily: BODY }}
+                            >
+                              Skip
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => onMarkClient(t)}
+                              className="py-[5px] px-2.5 text-[11px] font-semibold rounded cursor-pointer whitespace-nowrap"
+                              style={{ backgroundColor: '#fff', color: EV_SUCCESS, border: `1px solid ${EV_SUCCESS}`, fontFamily: BODY }}
+                            >
+                              Mark client
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Section>
 
       {/* ── 3 Sequence ─────────────────────────────────────────── */}
