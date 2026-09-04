@@ -255,20 +255,13 @@ Deno.serve(async (req: Request) => {
           return row?.inspection_date ?? null;
         });
 
-        // violations carries no source_id of its own; it reaches the
-        // source through its inspection. !inner makes the embedded
-        // filter a join condition rather than a null-tolerant one. This
-        // is the heaviest count of the four — nearly a million rows
-        // platform-wide — so it runs last and on its own.
-        base.violation_count = await attempt("violations", async () => {
-          const { count, error } = await supabase
-            .from("violations")
-            .select("inspections!inner(source_id)", { count: "exact", head: true })
-            .eq("inspections.source_id", s.id);
-          if (error) throw new Error(error.message);
-          return count ?? 0;
-        });
-
+        // NO per-source violation count. violations carries no source_id
+        // of its own, so counting it per source meant hash-joining the
+        // whole ~957k-row violations table through inspections, once for
+        // every source: 5.65s each, and the single reason this section
+        // took 56s and intermittently timed the tab out. It is left null
+        // deliberately — a cached counter or a source_id column would be
+        // needed to bring it back cheaply.
         return base;
       };
 

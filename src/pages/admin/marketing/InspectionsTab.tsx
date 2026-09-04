@@ -259,37 +259,52 @@ export default function InspectionsTab() {
     setLoading(true);
     setError(null);
     try {
-      const [sumRes, srcRes, matchRes, queueRes, readyRes, batchRes] = await Promise.all([
-        supabase.functions.invoke('inspections-admin', { body: { section: 'summary' } }),
-        supabase.functions.invoke('inspections-admin', { body: { section: 'sources' } }),
-        supabase.functions.invoke('inspections-admin', { body: { section: 'match' } }),
-        supabase.functions.invoke('inspections-admin', { body: { section: 'queue' } }),
-        supabase.functions.invoke('inspections-admin', { body: { section: 'ready' } }),
-        supabase.functions.invoke('inspections-admin', { body: { section: 'batches' } }),
-      ]);
+      // allSettled, not all: one slow or failing section must not blank the
+      // whole tab. Each section's state is set from its own result, and a
+      // section that fails records its own message while the rest render.
+      const SECTIONS = ['summary', 'sources', 'match', 'queue', 'ready', 'batches'] as const;
+      const settled = await Promise.allSettled(
+        SECTIONS.map(s => supabase.functions.invoke('inspections-admin', { body: { section: s } })),
+      );
 
-      const firstErr = sumRes.error || srcRes.error || matchRes.error || queueRes.error ||
-        readyRes.error || batchRes.error;
-      if (firstErr) throw new Error(firstErr.message);
+      const failures: string[] = [];
+      /** The section's payload, or null if it rejected / errored / returned !ok. */
+      const payloadOf = (i: number): any | null => {
+        const r = settled[i];
+        if (r.status === 'rejected') {
+          failures.push(`${SECTIONS[i]}: ${r.reason instanceof Error ? r.reason.message : String(r.reason)}`);
+          return null;
+        }
+        const { data, error: invErr } = r.value as { data: any; error: any };
+        if (invErr) { failures.push(`${SECTIONS[i]}: ${invErr.message}`); return null; }
+        if (!data?.ok) { failures.push(`${SECTIONS[i]}: ${data?.error ?? 'did not succeed'}`); return null; }
+        return data;
+      };
 
-      if (!sumRes.data?.ok || !srcRes.data?.ok || !matchRes.data?.ok || !queueRes.data?.ok ||
-          !readyRes.data?.ok || !batchRes.data?.ok) {
-        throw new Error(
-          sumRes.data?.error || srcRes.data?.error || matchRes.data?.error || queueRes.data?.error ||
-          readyRes.data?.error || batchRes.data?.error ||
-          'The inspections read did not succeed.',
-        );
+      const sum = payloadOf(0);
+      const src = payloadOf(1);
+      const mat = payloadOf(2);
+      const que = payloadOf(3);
+      const rdy = payloadOf(4);
+      const bat = payloadOf(5);
+
+      if (sum) setSummary(sum.summary as SummaryPayload);
+      if (src) setSources((src.sources ?? []) as SourceRow[]);
+      if (mat) setHeld((mat.facilities ?? []) as HeldFacility[]);
+      if (que) {
+        setQueue((que.triggers ?? []) as QueueRow[]);
+        setQueueTotal((que.total ?? 0) as number);
       }
+      if (rdy) {
+        setReady((rdy.triggers ?? []) as ReadyRow[]);
+        setReadyTotal((rdy.total ?? 0) as number);
+        setEligible((rdy.eligible ?? { postcard: 0, call: 0, email: 0 }) as typeof eligible);
+      }
+      if (bat) setBatches((bat.batches ?? []) as BatchRow[]);
 
-      setSummary(sumRes.data.summary as SummaryPayload);
-      setSources((srcRes.data.sources ?? []) as SourceRow[]);
-      setHeld((matchRes.data.facilities ?? []) as HeldFacility[]);
-      setQueue((queueRes.data.triggers ?? []) as QueueRow[]);
-      setQueueTotal((queueRes.data.total ?? 0) as number);
-      setReady((readyRes.data.triggers ?? []) as ReadyRow[]);
-      setReadyTotal((readyRes.data.total ?? 0) as number);
-      setEligible((readyRes.data.eligible ?? { postcard: 0, call: 0, email: 0 }) as typeof eligible);
-      setBatches((batchRes.data.batches ?? []) as BatchRow[]);
+      // Surfaced as a banner above the sections that did load, never
+      // instead of them.
+      setError(failures.length ? failures.join(' · ') : null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load inspection data.');
     } finally {
@@ -471,17 +486,19 @@ export default function InspectionsTab() {
   if (loading) {
     return <div className="p-10 text-center text-[13px]" style={{ color: EV_MUTED }}>Loading inspection data...</div>;
   }
-  if (error) {
-    return (
-      <div className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-md px-4 py-3">
-        {error}
-        <button onClick={load} className="ml-3 underline font-semibold cursor-pointer">Retry</button>
-      </div>
-    );
-  }
+  // NOT an early return: a partial failure is shown as a banner above the
+  // sections that did load, so one bad section never blanks the tab.
+  const errorBanner = error ? (
+    <div className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-md px-4 py-3">
+      {error}
+      <button onClick={load} className="ml-3 underline font-semibold cursor-pointer">Retry</button>
+    </div>
+  ) : null;
 
   return (
     <div className="space-y-4">
+      {errorBanner}
+
       {/* ── KPI strip ──────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <KpiMini l="LIVE SOURCES" v={fmt(summary?.active_source_count)} sub={`${fmt(summary?.source_count)} configured`} />
@@ -545,7 +562,6 @@ export default function InspectionsTab() {
                     ['Platform', 'platform_family'],
                     ['Facilities', 'facility_count'],
                     ['Inspections', 'inspection_count'],
-                    ['Violations', 'violation_count'],
                     ['Newest', 'newest_inspection_date'],
                   ] as const).map(([label, col]) => (
                     <th
@@ -576,7 +592,6 @@ export default function InspectionsTab() {
                     <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED }}>{s.platform_family ?? '—'}</td>
                     <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{fmt(s.facility_count)}</td>
                     <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{fmt(s.inspection_count)}</td>
-                    <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{fmt(s.violation_count)}</td>
                     <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{s.newest_inspection_date ?? '—'}</td>
                     <td className="py-2.5 px-4"><FreshnessPill kind={freshnessOf(s.newest_inspection_date)} /></td>
                   </tr>
