@@ -392,18 +392,31 @@ Deno.serve(async (req: Request) => {
         if (scopedSourceIds.length === 0) return json({ ok: true, triggers: [], total: 0 });
       }
 
+      // Optional "EvidLY-relevant only". mapped_record carries the
+      // requirement a citation maps to — temp logs, certs, permits,
+      // HACCP. Null means the citation is something EvidLY does not
+      // provide (a floor repair, signage), so it is not worth mailing.
+      // The column is either a real value or NULL — there are no empty
+      // strings — so IS NOT NULL is the whole test.
+      const evidlyOnly = body.evidly_relevant === true || body.evidly_relevant === "true";
+
+      // Both filters compose: San Diego AND EvidLY-relevant is valid.
+      const applyFilters = (q: any) => {
+        let out = q.eq("status", "new");
+        if (scopedSourceIds) out = out.in("source_id", scopedSourceIds);
+        if (evidlyOnly) out = out.not("mapped_record", "is", null);
+        return out;
+      };
+
       // The header count follows the same scope, so "N in queue" means
       // what is actually being shown.
-      const openCount = await countOf("inspection_triggers", (q) => {
-        const base = q.eq("status", "new");
-        return scopedSourceIds ? base.in("source_id", scopedSourceIds) : base;
-      });
+      const openCount = await countOf("inspection_triggers", applyFilters);
 
-      let trigQuery: any = supabase
-        .from("inspection_triggers")
-        .select("id, facility_id, source_id, inspection_id, trigger_type, trigger_date, mapped_record, rank")
-        .eq("status", "new");
-      if (scopedSourceIds) trigQuery = trigQuery.in("source_id", scopedSourceIds);
+      const trigQuery: any = applyFilters(
+        supabase
+          .from("inspection_triggers")
+          .select("id, facility_id, source_id, inspection_id, trigger_type, trigger_date, mapped_record, rank"),
+      );
 
       const { data: trigData, error: trigErr } = await trigQuery
         // rank is the intended order; trigger_date breaks the tie while

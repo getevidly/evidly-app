@@ -147,7 +147,6 @@ function csvCell(v: unknown): string {
   return `"${String(v ?? '').replace(/"/g, '""')}"`;
 }
 
-/** Turn the export rows into a .csv the browser saves locally. */
 /** Serialise rows to CSV under a fixed column order and save the file. */
 function saveCsv(rows: Record<string, unknown>[], cols: string[], filename: string) {
   const body = rows.map(r => cols.map(c => csvCell(r[c])).join(','));
@@ -254,6 +253,9 @@ export default function InspectionsTab() {
   const [qJurisdiction, setQJurisdiction] = useState('');
   /** Read inside load() so its identity stays stable at []. */
   const qJurisdictionRef = useRef('');
+  /** Only triggers whose citation maps to a record EvidLY provides. */
+  const [qEvidlyOnly, setQEvidlyOnly] = useState(false);
+  const qEvidlyOnlyRef = useRef(false);
   const [queueLoading, setQueueLoading] = useState(false);
   const [qType, setQType] = useState('');
   const [qSortCol, setQSortCol] = useState<QueueSortCol>('rank');
@@ -288,8 +290,12 @@ export default function InspectionsTab() {
       const settled = await Promise.allSettled(
         SECTIONS.map(s => supabase.functions.invoke('inspections-admin', {
           // the queue honours the jurisdiction filter server-side
-          body: s === 'queue' && qJurisdictionRef.current
-            ? { section: s, jurisdiction: qJurisdictionRef.current }
+          body: s === 'queue'
+            ? {
+                section: s,
+                ...(qJurisdictionRef.current ? { jurisdiction: qJurisdictionRef.current } : {}),
+                ...(qEvidlyOnlyRef.current ? { evidly_relevant: true } : {}),
+              }
             : { section: s },
         })),
       );
@@ -345,12 +351,16 @@ export default function InspectionsTab() {
    * Refetch ONLY the queue for a jurisdiction. Changing the dropdown must
    * not re-run the whole tab — `sources` alone costs several seconds.
    */
-  const loadQueue = useCallback(async (slug: string) => {
+  const loadQueue = useCallback(async (slug: string, evidlyOnly: boolean) => {
     setQueueLoading(true);
     setActionError(null);
     try {
       const { data, error: invErr } = await supabase.functions.invoke('inspections-admin', {
-        body: slug ? { section: 'queue', jurisdiction: slug } : { section: 'queue' },
+        body: {
+          section: 'queue',
+          ...(slug ? { jurisdiction: slug } : {}),
+          ...(evidlyOnly ? { evidly_relevant: true } : {}),
+        },
       });
       if (invErr) throw new Error(invErr.message);
       if (!data?.ok) throw new Error(data?.error || 'The queue could not be loaded.');
@@ -444,7 +454,7 @@ export default function InspectionsTab() {
     else { setQSortCol(col); setQSortDir('asc'); }
   }
 
-  const qHasFilters = !!(qSearch || qJurisdiction || qType);
+  const qHasFilters = !!(qSearch || qJurisdiction || qType || qEvidlyOnly);
 
   /**
    * Fire one operator action. The row is removed optimistically — it is
@@ -698,7 +708,7 @@ export default function InspectionsTab() {
               const v = e.target.value;
               setQJurisdiction(v);
               qJurisdictionRef.current = v;
-              loadQueue(v);
+              loadQueue(v, qEvidlyOnlyRef.current);
             }}
             className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
@@ -717,11 +727,31 @@ export default function InspectionsTab() {
             <option value="clean">Clean</option>
             <option value="due">Due</option>
           </select>
+          <label
+            className="flex items-center gap-2 text-[13px] cursor-pointer select-none"
+            style={{ color: EV_NAVY, fontFamily: BODY }}
+          >
+            <input
+              type="checkbox"
+              checked={qEvidlyOnly}
+              onChange={e => {
+                const v = e.target.checked;
+                setQEvidlyOnly(v);
+                qEvidlyOnlyRef.current = v;
+                loadQueue(qJurisdictionRef.current, v);
+              }}
+              style={{ accentColor: EV_EMBER, width: 15, height: 15 }}
+            />
+            EvidLY-relevant only
+          </label>
           {qHasFilters && (
             <button
               onClick={() => {
                 setQSearch(''); setQType('');
-                if (qJurisdiction) { setQJurisdiction(''); qJurisdictionRef.current = ''; loadQueue(''); }
+                const hadServerFilter = !!qJurisdiction || qEvidlyOnly;
+                setQJurisdiction(''); qJurisdictionRef.current = '';
+                setQEvidlyOnly(false); qEvidlyOnlyRef.current = false;
+                if (hadServerFilter) loadQueue('', false);
               }}
               className="py-[7px] px-3 text-[12px] font-semibold rounded-md cursor-pointer border-none"
               style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}
