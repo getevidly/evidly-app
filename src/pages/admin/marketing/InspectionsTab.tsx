@@ -70,6 +70,36 @@ interface QueueRow {
   rank: number | null;
 }
 
+interface ReadyRow {
+  id: string;
+  facility_id: string;
+  facility_name: string | null;
+  address: string | null;
+  city: string | null;
+  zip: string | null;
+  slug: string | null;
+  trigger_type: string;
+  mapped_record: string | null;
+  rank: number | null;
+  phone: string | null;
+  email: string | null;
+  has_address: boolean;
+  has_phone: boolean;
+}
+
+interface BatchRow {
+  id: string;
+  channel: string;
+  row_count: number;
+  status: string;
+  note: string | null;
+  exported_by: string | null;
+  exported_at: string | null;
+  created_at: string;
+}
+
+type Channel = 'email' | 'call' | 'postcard';
+
 type Freshness = 'live' | 'snapshot';
 type SortCol = 'slug' | 'platform_family' | 'facility_count' | 'inspection_count' | 'violation_count' | 'newest_inspection_date';
 type QueueSortCol = 'facility_name' | 'slug' | 'trigger_type' | 'trigger_date' | 'mapped_record' | 'rank';
@@ -110,6 +140,29 @@ function TriggerPill({ type }: { type: string }) {
 
 function fmt(n: number | null | undefined): string {
   return typeof n === 'number' ? n.toLocaleString() : '—';
+}
+
+/** RFC-4180 quoting: wrap every field, double any embedded quote. */
+function csvCell(v: unknown): string {
+  return `"${String(v ?? '').replace(/"/g, '""')}"`;
+}
+
+/** Turn the export rows into a .csv the browser saves locally. */
+function downloadCsv(rows: Record<string, unknown>[]) {
+  const cols = [
+    'email', 'first_name', 'last_name', 'company', 'address', 'city',
+    'state', 'zip', 'phone', 'trigger_type', 'mapped_record', 'source_tag',
+  ];
+  const body = rows.map(r => cols.map(c => csvCell(r[c])).join(','));
+  const csv = [cols.join(','), ...body].join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `inspections-email-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function freshnessOf(newest: string | null): Freshness {
@@ -193,23 +246,37 @@ export default function InspectionsTab() {
   const [reasonText, setReasonText] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
 
+  // ── Sequence / send ──────────────────────────────────────────
+  const [ready, setReady] = useState<ReadyRow[]>([]);
+  const [readyTotal, setReadyTotal] = useState(0);
+  const [eligible, setEligible] = useState({ postcard: 0, call: 0, email: 0 });
+  const [batches, setBatches] = useState<BatchRow[]>([]);
+  const [sending, setSending] = useState<Channel | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [sendNote, setSendNote] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [sumRes, srcRes, matchRes, queueRes] = await Promise.all([
+      const [sumRes, srcRes, matchRes, queueRes, readyRes, batchRes] = await Promise.all([
         supabase.functions.invoke('inspections-admin', { body: { section: 'summary' } }),
         supabase.functions.invoke('inspections-admin', { body: { section: 'sources' } }),
         supabase.functions.invoke('inspections-admin', { body: { section: 'match' } }),
         supabase.functions.invoke('inspections-admin', { body: { section: 'queue' } }),
+        supabase.functions.invoke('inspections-admin', { body: { section: 'ready' } }),
+        supabase.functions.invoke('inspections-admin', { body: { section: 'batches' } }),
       ]);
 
-      const firstErr = sumRes.error || srcRes.error || matchRes.error || queueRes.error;
+      const firstErr = sumRes.error || srcRes.error || matchRes.error || queueRes.error ||
+        readyRes.error || batchRes.error;
       if (firstErr) throw new Error(firstErr.message);
 
-      if (!sumRes.data?.ok || !srcRes.data?.ok || !matchRes.data?.ok || !queueRes.data?.ok) {
+      if (!sumRes.data?.ok || !srcRes.data?.ok || !matchRes.data?.ok || !queueRes.data?.ok ||
+          !readyRes.data?.ok || !batchRes.data?.ok) {
         throw new Error(
           sumRes.data?.error || srcRes.data?.error || matchRes.data?.error || queueRes.data?.error ||
+          readyRes.data?.error || batchRes.data?.error ||
           'The inspections read did not succeed.',
         );
       }
@@ -219,6 +286,10 @@ export default function InspectionsTab() {
       setHeld((matchRes.data.facilities ?? []) as HeldFacility[]);
       setQueue((queueRes.data.triggers ?? []) as QueueRow[]);
       setQueueTotal((queueRes.data.total ?? 0) as number);
+      setReady((readyRes.data.triggers ?? []) as ReadyRow[]);
+      setReadyTotal((readyRes.data.total ?? 0) as number);
+      setEligible((readyRes.data.eligible ?? { postcard: 0, call: 0, email: 0 }) as typeof eligible);
+      setBatches((batchRes.data.batches ?? []) as BatchRow[]);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load inspection data.');
     } finally {
@@ -333,6 +404,56 @@ export default function InspectionsTab() {
       setActing(null);
     }
   }, [queue]);
+
+  /**
+   * Stage the ready set down one channel. Nothing transmits here: email
+   * downloads a CSV, call fills a queue a person works, postcard parks a
+   * batch until an account exists.
+   */
+  const stage = useCallback(async (channel: Channel) => {
+    const ids = ready.map(r => r.id);
+    if (ids.length === 0) return;
+    setSending(channel);
+    setSendError(null);
+    setSendNote(null);
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('inspections-admin', {
+        body: { section: 'send', channel, trigger_ids: ids },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok) throw new Error(data?.error || 'The batch could not be staged.');
+
+      if (channel === 'email') {
+        const { data: exp, error: expErr } = await supabase.functions.invoke('inspections-admin', {
+          body: { section: 'export_email', batch_id: data.batch_id },
+        });
+        if (expErr) throw new Error(expErr.message);
+        if (!exp?.ok) throw new Error(exp?.error || 'The export could not be built.');
+        downloadCsv(exp.rows ?? []);
+        setSendNote(`Exported ${exp.row_count ?? 0} rows for ListKit.`);
+      } else if (channel === 'call') {
+        setSendNote(`${data.staged} sent to the call queue.`);
+      } else {
+        setSendNote(`${data.staged} staged. Transmit opens when the postcard account is connected.`);
+      }
+      await load();
+    } catch (e) {
+      setSendError(e instanceof Error ? e.message : 'The batch could not be staged.');
+    } finally {
+      setSending(null);
+    }
+  }, [ready, load]);
+
+  function onStage(channel: Channel) {
+    const n = ready.length;
+    if (n === 0) return;
+    const verb = channel === 'email'
+      ? `Export ${n} trigger${n === 1 ? '' : 's'} for ListKit?`
+      : channel === 'call'
+        ? `Send ${n} trigger${n === 1 ? '' : 's'} to the call queue?`
+        : `Stage ${n} trigger${n === 1 ? '' : 's'} as a postcard batch? Nothing is mailed.`;
+    if (window.confirm(verb)) stage(channel);
+  }
 
   function onMarkClient(row: QueueRow) {
     const name = row.facility_name ?? 'this facility';
@@ -644,25 +765,122 @@ export default function InspectionsTab() {
       </Section>
 
       {/* ── 3 Sequence ─────────────────────────────────────────── */}
-      <Section n={3} title="Sequence" note="The three steps a triggered facility would move through.">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 px-4 py-4">
-          {[
-            { step: 'Step 1', name: 'Postcard', when: 'Day 0', note: null as string | null },
-            { step: 'Step 2', name: 'Call', when: 'Day 4', note: null as string | null },
-            { step: 'Step 3', name: 'Email', when: 'Day 10', note: 'needs a contact' },
-          ].map(s => (
-            <div key={s.step} className="border rounded-lg p-4" style={{ borderColor: EV_LINE, backgroundColor: EV_LIGHT }}>
-              <div className="text-[10px] font-bold tracking-[0.14em]" style={{ color: EV_MUTED }}>{s.step}</div>
-              <div className="text-[15px] font-bold mt-1" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>{s.name}</div>
-              <div className="text-[11.5px] mt-0.5" style={{ color: EV_MUTED }}>
-                {s.when}{s.note ? ` · ${s.note}` : ''}
-              </div>
-              <div className="text-2xl font-bold mt-3" style={{ color: EV_MUTED, fontFamily: DISPLAY }}>0</div>
-              <div className="text-[10.5px]" style={{ color: EV_FAINT }}>sent</div>
+      <Section
+        n={3}
+        title="Sequence"
+        note="Staging only. No channel transmits — email downloads a file, call fills a queue, postcard waits."
+      >
+        {readyTotal === 0 ? (
+          <EmptyState
+            headline="Approve triggers in the queue above to stage them here."
+            sub="Nothing is ready yet. A trigger reaches this section once it has been approved in the queue."
+          />
+        ) : (
+          <>
+            <div className="px-4 py-3 border-b" style={{ borderColor: EV_LINE }}>
+              <span className="text-[13px] font-bold" style={{ color: EV_NAVY, fontFamily: BODY }}>
+                {fmt(readyTotal)} trigger{readyTotal === 1 ? '' : 's'} approved and ready
+              </span>
             </div>
-          ))}
+
+            {sendError && (
+              <div className="mx-4 mt-3 text-[12.5px] text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+                {sendError}
+              </div>
+            )}
+            {sendNote && (
+              <div
+                className="mx-4 mt-3 text-[12.5px] border rounded-md px-3 py-2"
+                style={{ color: EV_SUCCESS, backgroundColor: '#E8F2EC', borderColor: EV_SUCCESS }}
+              >
+                {sendNote}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 px-4 py-4">
+              {([
+                {
+                  ch: 'postcard' as Channel, step: 'Step 1', name: 'Postcard', when: 'Day 0',
+                  count: eligible.postcard, unit: 'with a deliverable address',
+                  cta: 'Stage postcard batch',
+                  foot: 'Staged — transmit opens when the postcard account is connected.',
+                },
+                {
+                  ch: 'call' as Channel, step: 'Step 2', name: 'Call', when: 'Day 4',
+                  count: eligible.call, unit: 'with a phone number',
+                  cta: 'Send to call queue',
+                  foot: 'The crawl records no phone numbers, so nothing is call-eligible yet.',
+                },
+                {
+                  ch: 'email' as Channel, step: 'Step 3', name: 'Email', when: 'Day 10 · needs a contact',
+                  count: eligible.email, unit: 'exportable as company rows',
+                  cta: 'Export for ListKit',
+                  foot: 'Company-level rows for ListKit to enrich — the crawl holds no addresses.',
+                },
+              ]).map(c => (
+                <div key={c.ch} className="border rounded-lg p-4 flex flex-col" style={{ borderColor: EV_LINE, backgroundColor: EV_LIGHT }}>
+                  <div className="text-[10px] font-bold tracking-[0.14em]" style={{ color: EV_MUTED }}>{c.step}</div>
+                  <div className="text-[15px] font-bold mt-1" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>{c.name}</div>
+                  <div className="text-[11.5px] mt-0.5" style={{ color: EV_MUTED }}>{c.when}</div>
+                  <div className="text-2xl font-bold mt-3" style={{ color: c.count > 0 ? EV_NAVY : EV_MUTED, fontFamily: DISPLAY }}>
+                    {fmt(c.count)}
+                  </div>
+                  <div className="text-[10.5px]" style={{ color: EV_FAINT }}>{c.unit}</div>
+                  <button
+                    disabled={sending !== null || c.count === 0}
+                    onClick={() => onStage(c.ch)}
+                    className="mt-3 py-[7px] px-3 text-[12px] font-bold rounded-md border-none w-full"
+                    style={{
+                      backgroundColor: c.count === 0 ? EV_LINE : EV_EMBER,
+                      color: c.count === 0 ? EV_MUTED : '#fff',
+                      cursor: c.count === 0 || sending ? 'not-allowed' : 'pointer',
+                      fontFamily: BODY,
+                    }}
+                  >
+                    {sending === c.ch ? 'Working…' : c.cta}
+                  </button>
+                  <div className="text-[10.5px] mt-2" style={{ color: EV_MUTED }}>{c.foot}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="border-t" style={{ borderColor: EV_LINE }}>
+          <div className="px-4 py-2.5 border-b" style={{ borderColor: EV_LINE }}>
+            <div className="text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>RECENT BATCHES</div>
+          </div>
+          {batches.length === 0 ? (
+            <EmptyState headline="No batches staged yet." />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b" style={{ borderColor: EV_LINE }}>
+                    {['Channel', 'Rows', 'Status', 'Staged'].map(c => (
+                      <th key={c} className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>{c}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {batches.map(b => (
+                    <tr key={b.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE }}>
+                      <td className="py-2.5 px-4 text-[13px] font-semibold" style={{ color: EV_NAVY }}>
+                        {b.channel}
+                        {b.note && <div className="text-[10.5px] font-normal" style={{ color: EV_WARN }}>{b.note}</div>}
+                      </td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{fmt(b.row_count)}</td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED }}>{b.status}</td>
+                      <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED, fontFamily: MONO }}>
+                        {(b.exported_at ?? b.created_at ?? '').slice(0, 10) || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-        <EmptyState headline="Nothing has been sent yet." />
       </Section>
 
       {/* ── 4 Response by trigger ──────────────────────────────── */}

@@ -46,6 +46,43 @@ const ACTION_STATUS: Record<string, string> = {
 /** Statuses that still represent an unworked trigger. */
 const OPEN_STATUSES = ["new", "ready", "held"];
 
+const READY_CAP = 500;
+const BATCH_LIST_CAP = 10;
+
+/**
+ * The three channels, and what staging one does to the batch and to the
+ * triggers it covers. Nothing here transmits: 'email' produces a CSV the
+ * operator downloads, 'call' fills a queue a person works, and 'postcard'
+ * parks a batch until a postcard account exists.
+ */
+const CHANNEL_PLAN: Record<
+  string,
+  { batchStatus: string; triggerStatus: string; note: string | null }
+> = {
+  email: { batchStatus: "exported", triggerStatus: "email_exported", note: null },
+  call: { batchStatus: "worked", triggerStatus: "call_queued", note: null },
+  postcard: {
+    batchStatus: "staged",
+    triggerStatus: "postcard_staged",
+    note: "awaiting postcard account",
+  },
+};
+
+/**
+ * facilities carries no phone and no email column — the crawl records a
+ * business and its address, never a contact. Both are surfaced as null so
+ * the export keeps its shape, and has_phone is therefore always 0. The
+ * email CSV is company-level data for ListKit to enrich.
+ */
+const FACILITY_PHONE: string | null = null;
+const FACILITY_EMAIL: string | null = null;
+
+/** Every source is Californian; the slug's suffix is the only state we hold. */
+function stateFromSlug(slug: string | null): string {
+  const m = (slug ?? "").match(/-([a-z]{2})$/);
+  return m ? m[1].toUpperCase() : "";
+}
+
 interface SourceRow {
   id: string;
   jurisdiction_id: string;
@@ -476,8 +513,234 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true, trigger: updated });
     }
 
+    // Triggers decorated with their facility and jurisdiction. Shared by
+    // `ready` (by status) and `export_email` (by explicit id list).
+    const loadTriggerRows = async (opts: { status?: string; ids?: string[]; cap?: number }) => {
+      let q: any = supabase
+        .from("inspection_triggers")
+        .select("id, facility_id, source_id, trigger_type, trigger_date, mapped_record, rank, status");
+      if (opts.status) q = q.eq("status", opts.status);
+      if (opts.ids) q = q.in("id", opts.ids);
+      q = q.order("rank", { ascending: false }).order("id", { ascending: true });
+      if (opts.cap) q = q.limit(opts.cap);
+
+      const { data, error } = await q;
+      if (error) throw new Error(`triggers: ${error.message}`);
+      const rows = (data ?? []) as Record<string, unknown>[];
+      if (rows.length === 0) return [];
+
+      const { data: facData, error: facErr } = await supabase
+        .from("facilities")
+        .select("id, name, address, city, zip")
+        .in("id", [...new Set(rows.map((r) => r.facility_id as string))]);
+      if (facErr) throw new Error(`facilities: ${facErr.message}`);
+      const facById = new Map<string, Record<string, unknown>>();
+      for (const f of (facData ?? []) as Record<string, unknown>[]) facById.set(f.id as string, f);
+
+      const { data: srcData, error: srcErr } = await supabase
+        .from("inspection_sources")
+        .select("id, jurisdiction_id")
+        .in("id", [...new Set(rows.map((r) => r.source_id as string))]);
+      if (srcErr) throw new Error(`inspection_sources: ${srcErr.message}`);
+      const srcRows = (srcData ?? []) as { id: string; jurisdiction_id: string }[];
+
+      const { data: jurData, error: jurErr } = await supabase
+        .from("jurisdictions")
+        .select("id, slug")
+        .in("id", srcRows.map((s) => s.jurisdiction_id));
+      if (jurErr) throw new Error(`jurisdictions: ${jurErr.message}`);
+      const slugByJur = new Map<string, string>();
+      for (const j of (jurData ?? []) as { id: string; slug: string }[]) slugByJur.set(j.id, j.slug);
+      const slugBySource = new Map<string, string | null>();
+      for (const s of srcRows) slugBySource.set(s.id, slugByJur.get(s.jurisdiction_id) ?? null);
+
+      return rows.map((t) => {
+        const f = facById.get(t.facility_id as string);
+        const address = (f?.address as string) ?? null;
+        return {
+          id: t.id as string,
+          facility_id: t.facility_id as string,
+          facility_name: (f?.name as string) ?? null,
+          address,
+          city: (f?.city as string) ?? null,
+          zip: (f?.zip as string) ?? null,
+          slug: slugBySource.get(t.source_id as string) ?? null,
+          trigger_type: t.trigger_type as string,
+          trigger_date: t.trigger_date as string | null,
+          mapped_record: (t.mapped_record as string) ?? null,
+          rank: t.rank as number,
+          phone: FACILITY_PHONE,
+          email: FACILITY_EMAIL,
+          has_address: !!(address && String(address).trim()),
+          has_phone: !!FACILITY_PHONE,
+        };
+      });
+    };
+
+    // ── ready ─────────────────────────────────────────────────────
+    if (section === "ready") {
+      const rows = await loadTriggerRows({ status: "ready", cap: READY_CAP });
+      const total = await countOf("inspection_triggers", (q) => q.eq("status", "ready"));
+
+      return json({
+        ok: true,
+        triggers: rows,
+        total,
+        capped: rows.length === READY_CAP,
+        eligible: {
+          // Postcard needs a deliverable address; call needs a phone the
+          // crawl does not carry; email exports company-level rows for
+          // enrichment, so every ready row qualifies.
+          postcard: rows.filter((r) => r.has_address).length,
+          call: rows.filter((r) => r.has_phone).length,
+          email: rows.length,
+        },
+      });
+    }
+
+    // ── send ──────────────────────────────────────────────────────
+    // Stages a batch. Nothing transmits: email writes a CSV the operator
+    // downloads, call fills a queue a person works, postcard parks.
+    if (section === "send") {
+      const channel = body.channel as string | undefined;
+      const requested = Array.isArray(body.trigger_ids) ? (body.trigger_ids as unknown[]) : null;
+
+      if (!channel || !(channel in CHANNEL_PLAN)) {
+        return json({ ok: false, error: "channel must be one of email, call, postcard." }, 400);
+      }
+      if (!requested || requested.length === 0) {
+        return json({ ok: false, error: "trigger_ids must be a non-empty array." }, 400);
+      }
+      const ids = requested.filter((v): v is string => typeof v === "string");
+      if (ids.length === 0) {
+        return json({ ok: false, error: "trigger_ids must contain trigger id strings." }, 400);
+      }
+
+      const plan = CHANNEL_PLAN[channel];
+
+      // Only rows genuinely sitting in 'ready' are staged, so a double
+      // click cannot send the same trigger down two channels.
+      const { data: eligible, error: eligErr } = await supabase
+        .from("inspection_triggers")
+        .select("id")
+        .in("id", ids)
+        .eq("status", "ready");
+
+      if (eligErr) {
+        console.error("[inspections-admin] send eligibility read failed:", eligErr.message);
+        return json({ ok: false, error: "Could not read the triggers to stage." }, 500);
+      }
+
+      const stageIds = ((eligible ?? []) as { id: string }[]).map((r) => r.id);
+      if (stageIds.length === 0) {
+        return json({ ok: false, error: "None of those triggers are ready to stage." }, 400);
+      }
+
+      const nowIso = new Date().toISOString();
+      const { data: batch, error: batchErr } = await supabase
+        .from("inspection_send_batches")
+        .insert({
+          channel,
+          trigger_ids: stageIds,
+          row_count: stageIds.length,
+          status: plan.batchStatus,
+          exported_at: nowIso,
+          exported_by: caller?.email ?? null,
+          note: plan.note,
+        })
+        .select("id, channel, trigger_ids, row_count, status, exported_at, exported_by, note, created_at")
+        .maybeSingle();
+
+      if (batchErr || !batch) {
+        console.error("[inspections-admin] batch insert failed:", batchErr?.message);
+        return json({ ok: false, error: "Could not create the send batch." }, 500);
+      }
+
+      const { error: moveErr } = await supabase
+        .from("inspection_triggers")
+        .update({
+          status: plan.triggerStatus,
+          status_at: nowIso,
+          status_by: caller?.email ?? null,
+          updated_at: nowIso,
+        })
+        .in("id", stageIds);
+
+      if (moveErr) {
+        console.error("[inspections-admin] trigger status move failed:", moveErr.message);
+        return json(
+          { ok: false, error: "The batch was created but the triggers did not move.", batch_id: batch.id },
+          500,
+        );
+      }
+
+      return json({ ok: true, batch, batch_id: batch.id, staged: stageIds.length });
+    }
+
+    // ── export_email ──────────────────────────────────────────────
+    if (section === "export_email") {
+      const batchId = body.batch_id as string | undefined;
+      if (!batchId) return json({ ok: false, error: "batch_id is required." }, 400);
+
+      const { data: batch, error: batchErr } = await supabase
+        .from("inspection_send_batches")
+        .select("id, channel, trigger_ids, row_count")
+        .eq("id", batchId)
+        .maybeSingle();
+
+      if (batchErr) {
+        console.error("[inspections-admin] export batch read failed:", batchErr.message);
+        return json({ ok: false, error: "Could not read the batch." }, 500);
+      }
+      if (!batch) return json({ ok: false, error: "Batch not found." }, 404);
+      if ((batch as { channel: string }).channel !== "email") {
+        return json({ ok: false, error: "That batch is not an email batch." }, 400);
+      }
+
+      const ids = ((batch as { trigger_ids: string[] }).trigger_ids ?? []);
+      const rows = ids.length ? await loadTriggerRows({ ids }) : [];
+
+      // The crawl records a business, never a person: company carries the
+      // facility name and the name columns stay blank for enrichment.
+      const csv = rows.map((r) => ({
+        email: r.email ?? "",
+        first_name: "",
+        last_name: "",
+        company: r.facility_name ?? "",
+        address: r.address ?? "",
+        city: r.city ?? "",
+        state: stateFromSlug(r.slug),
+        zip: r.zip ?? "",
+        phone: r.phone ?? "",
+        trigger_type: r.trigger_type,
+        mapped_record: r.mapped_record ?? "",
+        source_tag: "inspection",
+      }));
+
+      return json({ ok: true, batch_id: batchId, rows: csv, row_count: csv.length });
+    }
+
+    // ── batches ───────────────────────────────────────────────────
+    if (section === "batches") {
+      const { data, error } = await supabase
+        .from("inspection_send_batches")
+        .select("id, channel, row_count, status, note, exported_by, exported_at, created_at")
+        .order("created_at", { ascending: false })
+        .limit(BATCH_LIST_CAP);
+
+      if (error) {
+        console.error("[inspections-admin] batch list failed:", error.message);
+        return json({ ok: false, error: "Could not load recent batches." }, 500);
+      }
+      return json({ ok: true, batches: data ?? [] });
+    }
+
     return json(
-      { ok: false, error: "Unknown section. Expected sources, match, summary, queue or act." },
+      {
+        ok: false,
+        error:
+          "Unknown section. Expected sources, match, summary, queue, act, ready, send, export_email or batches.",
+      },
       400,
     );
   } catch (err) {
