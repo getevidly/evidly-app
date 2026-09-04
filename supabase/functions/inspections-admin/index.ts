@@ -48,6 +48,8 @@ const OPEN_STATUSES = ["new", "ready", "held"];
 
 const READY_CAP = 500;
 const BATCH_LIST_CAP = 10;
+/** Keep a CSV cell sane when an inspection has many violations. */
+const MAILER_VIOLATION_CAP = 500;
 
 /**
  * The three channels, and what staging one does to the batch and to the
@@ -773,6 +775,140 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true, batch_id: batchId, rows: csv, row_count: csv.length });
     }
 
+    // ── export_mailer ─────────────────────────────────────────────
+    // The printer's handoff: everything needed to produce a postcard,
+    // including WHAT THE VIOLATION WAS. Distinct from export_email,
+    // which is deliberately company+address only for ListKit to enrich.
+    //
+    // It does not reuse loadTriggerRows because that helper neither
+    // selects inspection_id (needed to reach violations) nor reads
+    // facilities.phone — it hardcodes FACILITY_PHONE = null, which was
+    // true when it was written and is not any more.
+    if (section === "export_mailer") {
+      const batchId = body.batch_id as string | undefined;
+      if (!batchId) return json({ ok: false, error: "batch_id is required." }, 400);
+
+      const { data: batch, error: batchErr } = await supabase
+        .from("inspection_send_batches")
+        .select("id, channel, trigger_ids, row_count")
+        .eq("id", batchId)
+        .maybeSingle();
+
+      if (batchErr) {
+        console.error("[inspections-admin] mailer batch read failed:", batchErr.message);
+        return json({ ok: false, error: "Could not read the batch." }, 500);
+      }
+      if (!batch) return json({ ok: false, error: "Batch not found." }, 404);
+      if ((batch as { channel: string }).channel !== "postcard") {
+        return json({ ok: false, error: "That batch is not a postcard batch." }, 400);
+      }
+
+      const ids = ((batch as { trigger_ids: string[] }).trigger_ids ?? []);
+      if (ids.length === 0) return json({ ok: true, batch_id: batchId, rows: [], row_count: 0 });
+
+      const { data: trigData, error: trigErr } = await supabase
+        .from("inspection_triggers")
+        .select("id, facility_id, source_id, inspection_id, trigger_type, trigger_date, mapped_record, rank")
+        .in("id", ids)
+        .order("rank", { ascending: false })
+        .order("id", { ascending: true });
+      if (trigErr) {
+        console.error("[inspections-admin] mailer trigger read failed:", trigErr.message);
+        return json({ ok: false, error: "Could not read the batch's triggers." }, 500);
+      }
+      const trigRows = (trigData ?? []) as Record<string, unknown>[];
+      if (trigRows.length === 0) return json({ ok: true, batch_id: batchId, rows: [], row_count: 0 });
+
+      // phone is read here, unlike the email export.
+      const { data: facData, error: facErr } = await supabase
+        .from("facilities")
+        .select("id, name, address, city, zip, phone")
+        .in("id", [...new Set(trigRows.map((t) => t.facility_id as string))]);
+      if (facErr) {
+        console.error("[inspections-admin] mailer facility read failed:", facErr.message);
+        return json({ ok: false, error: "Could not read the batch's facilities." }, 500);
+      }
+      const facById = new Map<string, Record<string, unknown>>();
+      for (const f of (facData ?? []) as Record<string, unknown>[]) facById.set(f.id as string, f);
+
+      const { data: srcData, error: srcErr } = await supabase
+        .from("inspection_sources")
+        .select("id, jurisdiction_id")
+        .in("id", [...new Set(trigRows.map((t) => t.source_id as string))]);
+      if (srcErr) {
+        console.error("[inspections-admin] mailer source read failed:", srcErr.message);
+        return json({ ok: false, error: "Could not read inspection sources." }, 500);
+      }
+      const srcRows = (srcData ?? []) as { id: string; jurisdiction_id: string }[];
+
+      const { data: jurData, error: jurErr } = await supabase
+        .from("jurisdictions")
+        .select("id, slug")
+        .in("id", srcRows.map((s) => s.jurisdiction_id));
+      if (jurErr) {
+        console.error("[inspections-admin] mailer jurisdiction read failed:", jurErr.message);
+        return json({ ok: false, error: "Could not read jurisdictions." }, 500);
+      }
+      const slugByJur = new Map<string, string>();
+      for (const j of (jurData ?? []) as { id: string; slug: string }[]) slugByJur.set(j.id, j.slug);
+      const slugBySource = new Map<string, string | null>();
+      for (const s of srcRows) slugBySource.set(s.id, slugByJur.get(s.jurisdiction_id) ?? null);
+
+      // Violation text, per driving inspection. A trigger with no
+      // violation rows — every 'due' trigger, every 'clean' one, and the
+      // whole of the MHD / Stanislaus / San Bernardino counties, which
+      // publish no violation detail — yields an empty cell. Nothing is
+      // invented to fill it; trigger_type already says what it is.
+      const inspectionIds = [...new Set(
+        trigRows.map((t) => t.inspection_id as string | null).filter(Boolean) as string[],
+      )];
+      const vioByInspection = new Map<string, string[]>();
+      if (inspectionIds.length > 0) {
+        const { data: vioData, error: vioErr } = await supabase
+          .from("violations")
+          .select("inspection_id, description")
+          .in("inspection_id", inspectionIds);
+        if (vioErr) {
+          console.error("[inspections-admin] mailer violation read failed:", vioErr.message);
+          return json({ ok: false, error: "Could not read violations." }, 500);
+        }
+        for (const v of (vioData ?? []) as { inspection_id: string; description: string | null }[]) {
+          const d = (v.description ?? "").trim();
+          if (!d) continue;
+          const list = vioByInspection.get(v.inspection_id) ?? [];
+          list.push(d);
+          vioByInspection.set(v.inspection_id, list);
+        }
+      }
+
+      const rows = trigRows.map((t) => {
+        const f = facById.get(t.facility_id as string);
+        const slug = slugBySource.get(t.source_id as string) ?? null;
+        const inspId = t.inspection_id as string | null;
+        const joined = inspId ? (vioByInspection.get(inspId) ?? []).join("; ") : "";
+        const violations = joined.length > MAILER_VIOLATION_CAP
+          ? joined.slice(0, MAILER_VIOLATION_CAP - 1).trimEnd() + "…"
+          : joined;
+
+        return {
+          facility_name: (f?.name as string) ?? "",
+          address: (f?.address as string) ?? "",
+          city: (f?.city as string) ?? "",
+          state: stateFromSlug(slug),
+          zip: (f?.zip as string) ?? "",
+          phone: (f?.phone as string) ?? "",
+          trigger_type: t.trigger_type as string,
+          trigger_date: (t.trigger_date as string) ?? "",
+          mapped_record: (t.mapped_record as string) ?? "",
+          violations,
+          jurisdiction: slug ?? "",
+          source_tag: "inspection",
+        };
+      });
+
+      return json({ ok: true, batch_id: batchId, rows, row_count: rows.length });
+    }
+
     // ── batches ───────────────────────────────────────────────────
     if (section === "batches") {
       const { data, error } = await supabase
@@ -792,7 +928,7 @@ Deno.serve(async (req: Request) => {
       {
         ok: false,
         error:
-          "Unknown section. Expected sources, match, summary, queue, act, ready, send, export_email or batches.",
+          "Unknown section. Expected sources, match, summary, queue, act, ready, send, export_email, export_mailer or batches.",
       },
       400,
     );

@@ -148,21 +148,37 @@ function csvCell(v: unknown): string {
 }
 
 /** Turn the export rows into a .csv the browser saves locally. */
-function downloadCsv(rows: Record<string, unknown>[]) {
-  const cols = [
-    'email', 'first_name', 'last_name', 'company', 'address', 'city',
-    'state', 'zip', 'phone', 'trigger_type', 'mapped_record', 'source_tag',
-  ];
+/** Serialise rows to CSV under a fixed column order and save the file. */
+function saveCsv(rows: Record<string, unknown>[], cols: string[], filename: string) {
   const body = rows.map(r => cols.map(c => csvCell(r[c])).join(','));
   const csv = [cols.join(','), ...body].join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
   const a = document.createElement('a');
   a.href = url;
-  a.download = `inspections-email-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+const today = () => new Date().toISOString().slice(0, 10);
+
+/** ListKit: company + address only, no violation detail. */
+function downloadCsv(rows: Record<string, unknown>[]) {
+  saveCsv(rows, [
+    'email', 'first_name', 'last_name', 'company', 'address', 'city',
+    'state', 'zip', 'phone', 'trigger_type', 'mapped_record', 'source_tag',
+  ], `inspections-email-${today()}.csv`);
+}
+
+/** The printer's handoff: location, contact, and what the violation was. */
+function downloadMailerCsv(rows: Record<string, unknown>[]) {
+  saveCsv(rows, [
+    'facility_name', 'address', 'city', 'state', 'zip', 'phone',
+    'trigger_type', 'trigger_date', 'mapped_record', 'violations',
+    'jurisdiction', 'source_tag',
+  ], `inspections-mailer-${today()}.csv`);
 }
 
 function freshnessOf(newest: string | null): Freshness {
@@ -255,6 +271,9 @@ export default function InspectionsTab() {
   const [eligible, setEligible] = useState({ postcard: 0, call: 0, email: 0 });
   const [batches, setBatches] = useState<BatchRow[]>([]);
   const [sending, setSending] = useState<Channel | null>(null);
+  /** Most recently staged postcard batch, so its mailer CSV can be pulled. */
+  const [lastPostcardBatch, setLastPostcardBatch] = useState<string | null>(null);
+  const [mailerBusy, setMailerBusy] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [sendNote, setSendNote] = useState<string | null>(null);
 
@@ -484,7 +503,10 @@ export default function InspectionsTab() {
       } else if (channel === 'call') {
         setSendNote(`${data.staged} sent to the call queue.`);
       } else {
-        setSendNote(`${data.staged} staged. Transmit opens when the postcard account is connected.`);
+        // Remembered so the operator can pull this batch's mailer list —
+        // the file the printer actually needs.
+        setLastPostcardBatch(data.batch_id ?? null);
+        setSendNote(`${data.staged} staged. Download the mailer list below to send to the printer.`);
       }
       await load();
     } catch (e) {
@@ -493,6 +515,25 @@ export default function InspectionsTab() {
       setSending(null);
     }
   }, [ready, load]);
+
+  /** Pull a staged postcard batch's mailer CSV. Read-only; stages nothing. */
+  const downloadMailer = useCallback(async (batchId: string) => {
+    setMailerBusy(true);
+    setSendError(null);
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('inspections-admin', {
+        body: { section: 'export_mailer', batch_id: batchId },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok) throw new Error(data?.error || 'The mailer list could not be built.');
+      downloadMailerCsv(data.rows ?? []);
+      setSendNote(`Mailer list downloaded — ${data.row_count ?? 0} rows for the printer.`);
+    } catch (e) {
+      setSendError(e instanceof Error ? e.message : 'The mailer list could not be built.');
+    } finally {
+      setMailerBusy(false);
+    }
+  }, []);
 
   function onStage(channel: Channel) {
     const n = ready.length;
@@ -904,6 +945,22 @@ export default function InspectionsTab() {
                   >
                     {sending === c.ch ? 'Working…' : c.cta}
                   </button>
+                  {c.ch === 'postcard' && lastPostcardBatch && (
+                    <button
+                      disabled={mailerBusy}
+                      onClick={() => downloadMailer(lastPostcardBatch)}
+                      className="mt-2 py-[7px] px-3 text-[12px] font-bold rounded-md w-full"
+                      style={{
+                        backgroundColor: '#fff',
+                        color: EV_NAVY,
+                        border: `1px solid ${EV_NAVY}`,
+                        cursor: mailerBusy ? 'not-allowed' : 'pointer',
+                        fontFamily: BODY,
+                      }}
+                    >
+                      {mailerBusy ? 'Building…' : 'Download mailer list (CSV)'}
+                    </button>
+                  )}
                   <div className="text-[10.5px] mt-2" style={{ color: EV_MUTED }}>{c.foot}</div>
                 </div>
               ))}
