@@ -13,7 +13,7 @@
  * silently; reading server-side on the service-role client makes the
  * data path explicit.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowUpDown } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { KpiMini } from './marketingPrimitives';
@@ -236,6 +236,9 @@ export default function InspectionsTab() {
   const [queueTotal, setQueueTotal] = useState(0);
   const [qSearch, setQSearch] = useState('');
   const [qJurisdiction, setQJurisdiction] = useState('');
+  /** Read inside load() so its identity stays stable at []. */
+  const qJurisdictionRef = useRef('');
+  const [queueLoading, setQueueLoading] = useState(false);
   const [qType, setQType] = useState('');
   const [qSortCol, setQSortCol] = useState<QueueSortCol>('rank');
   const [qSortDir, setQSortDir] = useState<SortDir>('desc');
@@ -264,7 +267,12 @@ export default function InspectionsTab() {
       // section that fails records its own message while the rest render.
       const SECTIONS = ['summary', 'sources', 'match', 'queue', 'ready', 'batches'] as const;
       const settled = await Promise.allSettled(
-        SECTIONS.map(s => supabase.functions.invoke('inspections-admin', { body: { section: s } })),
+        SECTIONS.map(s => supabase.functions.invoke('inspections-admin', {
+          // the queue honours the jurisdiction filter server-side
+          body: s === 'queue' && qJurisdictionRef.current
+            ? { section: s, jurisdiction: qJurisdictionRef.current }
+            : { section: s },
+        })),
       );
 
       const failures: string[] = [];
@@ -314,6 +322,28 @@ export default function InspectionsTab() {
 
   useEffect(() => { load(); }, [load]);
 
+  /**
+   * Refetch ONLY the queue for a jurisdiction. Changing the dropdown must
+   * not re-run the whole tab — `sources` alone costs several seconds.
+   */
+  const loadQueue = useCallback(async (slug: string) => {
+    setQueueLoading(true);
+    setActionError(null);
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('inspections-admin', {
+        body: slug ? { section: 'queue', jurisdiction: slug } : { section: 'queue' },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok) throw new Error(data?.error || 'The queue could not be loaded.');
+      setQueue((data.triggers ?? []) as QueueRow[]);
+      setQueueTotal((data.total ?? 0) as number);
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : 'The queue could not be loaded.');
+    } finally {
+      setQueueLoading(false);
+    }
+  }, []);
+
   const platforms = useMemo(
     () => [...new Set(sources.map(s => s.platform_family).filter(Boolean) as string[])].sort(),
     [sources],
@@ -353,20 +383,25 @@ export default function InspectionsTab() {
   }
 
   // ── Queue filter / sort — same inline pattern as Sources above ──
+  // Derived from `sources` (every configured jurisdiction), NOT from
+  // `queue`. The queue is capped at 200 rows by rank, so building the
+  // options from it listed only the four jurisdictions that happened to
+  // rank highest and made the rest unfilterable.
   const qJurisdictions = useMemo(
-    () => [...new Set(queue.map(t => t.slug).filter(Boolean) as string[])].sort(),
-    [queue],
+    () => [...new Set(sources.map(s => s.slug).filter(Boolean) as string[])].sort(),
+    [sources],
   );
 
   const qFiltered = useMemo(() => {
     const q = qSearch.trim().toLowerCase();
     return queue.filter(t => {
       if (q && !`${t.facility_name ?? ''} ${t.city ?? ''}`.toLowerCase().includes(q)) return false;
-      if (qJurisdiction && t.slug !== qJurisdiction) return false;
+      // No slug check here: jurisdiction is applied server-side, so the
+      // rows already are that jurisdiction's top 200.
       if (qType && t.trigger_type !== qType) return false;
       return true;
     });
-  }, [queue, qSearch, qJurisdiction, qType]);
+  }, [queue, qSearch, qType]);
 
   const qSorted = useMemo(() => {
     const rows = [...qFiltered];
@@ -618,7 +653,12 @@ export default function InspectionsTab() {
           />
           <select
             value={qJurisdiction}
-            onChange={e => setQJurisdiction(e.target.value)}
+            onChange={e => {
+              const v = e.target.value;
+              setQJurisdiction(v);
+              qJurisdictionRef.current = v;
+              loadQueue(v);
+            }}
             className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
             style={{ borderColor: EV_LINE, color: EV_NAVY, fontFamily: BODY }}
           >
@@ -638,7 +678,10 @@ export default function InspectionsTab() {
           </select>
           {qHasFilters && (
             <button
-              onClick={() => { setQSearch(''); setQJurisdiction(''); setQType(''); }}
+              onClick={() => {
+                setQSearch(''); setQType('');
+                if (qJurisdiction) { setQJurisdiction(''); qJurisdictionRef.current = ''; loadQueue(''); }
+              }}
               className="py-[7px] px-3 text-[12px] font-semibold rounded-md cursor-pointer border-none"
               style={{ backgroundColor: EV_LIGHT, color: EV_MUTED, fontFamily: BODY }}
             >
@@ -646,9 +689,11 @@ export default function InspectionsTab() {
             </button>
           )}
           <span className="ml-auto text-[12px] font-semibold" style={{ color: EV_MUTED }}>
-            {qHasFilters
-              ? `Showing ${qSorted.length} of ${queueTotal}`
-              : `${fmt(queueTotal)} in queue`}
+            {queueLoading
+              ? 'Loading queue…'
+              : qHasFilters
+                ? `Showing ${qSorted.length} of ${queueTotal}`
+                : `${fmt(queueTotal)} in queue`}
           </span>
         </div>
 

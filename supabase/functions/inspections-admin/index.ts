@@ -338,12 +338,56 @@ Deno.serve(async (req: Request) => {
 
     // ── queue ─────────────────────────────────────────────────────
     if (section === "queue") {
-      const openCount = await countOf("inspection_triggers", (q) => q.eq("status", "new"));
+      // Optional jurisdiction slug. Without it the queue is the top 200
+      // overall; with it, the top 200 *within that jurisdiction* — which
+      // is the only way a jurisdiction whose triggers don't crack the
+      // global top 200 (Sacramento, Stanislaus…) can ever be worked.
+      const jurSlug = typeof body.jurisdiction === "string" && body.jurisdiction.trim()
+        ? (body.jurisdiction as string).trim()
+        : null;
 
-      const { data: trigData, error: trigErr } = await supabase
+      let scopedSourceIds: string[] | null = null;
+      if (jurSlug) {
+        // triggers reach a slug two hops out (source → jurisdiction), so
+        // resolve the slug to source ids first rather than trying to
+        // filter on a nested embed.
+        const { data: jRows, error: jErr } = await supabase
+          .from("jurisdictions")
+          .select("id")
+          .eq("slug", jurSlug);
+        if (jErr) {
+          console.error("[inspections-admin] queue jurisdiction lookup failed:", jErr.message);
+          return json({ ok: false, error: "Could not resolve that jurisdiction." }, 500);
+        }
+        const jurIds = ((jRows ?? []) as { id: string }[]).map((j) => j.id);
+        if (jurIds.length === 0) return json({ ok: true, triggers: [], total: 0 });
+
+        const { data: sRows, error: sErr } = await supabase
+          .from("inspection_sources")
+          .select("id")
+          .in("jurisdiction_id", jurIds);
+        if (sErr) {
+          console.error("[inspections-admin] queue source lookup failed:", sErr.message);
+          return json({ ok: false, error: "Could not resolve that jurisdiction's sources." }, 500);
+        }
+        scopedSourceIds = ((sRows ?? []) as { id: string }[]).map((s) => s.id);
+        if (scopedSourceIds.length === 0) return json({ ok: true, triggers: [], total: 0 });
+      }
+
+      // The header count follows the same scope, so "N in queue" means
+      // what is actually being shown.
+      const openCount = await countOf("inspection_triggers", (q) => {
+        const base = q.eq("status", "new");
+        return scopedSourceIds ? base.in("source_id", scopedSourceIds) : base;
+      });
+
+      let trigQuery: any = supabase
         .from("inspection_triggers")
         .select("id, facility_id, source_id, inspection_id, trigger_type, trigger_date, mapped_record, rank")
-        .eq("status", "new")
+        .eq("status", "new");
+      if (scopedSourceIds) trigQuery = trigQuery.in("source_id", scopedSourceIds);
+
+      const { data: trigData, error: trigErr } = await trigQuery
         // rank is the intended order; trigger_date breaks the tie while
         // every rank is still 0, so paging is at least deterministic.
         .order("rank", { ascending: false })
