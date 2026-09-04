@@ -47,7 +47,6 @@ interface CrawlerSpec {
  *
  * Deliberately absent, with reasons:
  *   arcgis_bulk        (la-county-ca)                     — bulk loaded
- *   sdfoodinfo_custom  (san-diego-ca)                     — bulk loaded
  *   contra_costa_webforms (contra-costa-ca)               — no crawler; the
  *                          portal is VIEWSTATE-only and robots-disallowed
  *   decade_accela      (ventura-ca) — inspection-crawl-ventura DOES exist,
@@ -63,11 +62,13 @@ const CRAWLERS: Record<string, CrawlerSpec> = {
   merced_aspx: { fn: "merced-crawl", taskTable: "merced_crawl_tasks", mode: "full" },
   // Socrata speaks SoQL, so recency is a dated query, not a queue.
   socrata: { fn: "socrata-crawl", mode: "direct" },
+  // sdfoodinfo takes start_date/end_date on its search POST, so it is
+  // dated-query too: 449 rows in ~8s against 16,872 in 62s undated.
+  sdfoodinfo_custom: { fn: "sdfoodinfo-crawl", mode: "direct" },
 };
 
 const NO_CRAWLER_REASON: Record<string, string> = {
   arcgis_bulk: "bulk load, no re-crawl function — needs bulk reload",
-  sdfoodinfo_custom: "bulk load, no re-crawl function — needs bulk reload",
   contra_costa_webforms: "no crawler — portal is VIEWSTATE-only and robots-disallowed",
   decade_accela: "inspection-crawl-ventura exists but is whole-county only; run it directly",
 };
