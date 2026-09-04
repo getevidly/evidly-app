@@ -31,9 +31,14 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface CrawlerSpec {
   fn: string;
-  taskTable: string;
-  /** 'recent_days' seeds only the last N days; 'full' re-queues the county. */
-  mode: "recent_days" | "full";
+  /** 'direct' crawlers have no task queue. */
+  taskTable?: string;
+  /**
+   * 'recent_days' seeds only the last N days; 'full' re-queues the whole
+   * county; 'direct' has no queue at all — the crawler takes a dated
+   * query itself and is invoked once.
+   */
+  mode: "recent_days" | "full" | "direct";
 }
 
 /**
@@ -41,7 +46,6 @@ interface CrawlerSpec {
  * callable crawler and is skipped honestly.
  *
  * Deliberately absent, with reasons:
- *   socrata            (san-francisco-ca, santa-clara-ca) — bulk loaded
  *   arcgis_bulk        (la-county-ca)                     — bulk loaded
  *   sdfoodinfo_custom  (san-diego-ca)                     — bulk loaded
  *   contra_costa_webforms (contra-costa-ca)               — no crawler; the
@@ -57,10 +61,11 @@ const CRAWLERS: Record<string, CrawlerSpec> = {
   stanislaus_rest: { fn: "stan-crawl", taskTable: "stan_crawl_tasks", mode: "full" },
   sbc_webmethod: { fn: "sbc-crawl", taskTable: "sbc_crawl_tasks", mode: "full" },
   merced_aspx: { fn: "merced-crawl", taskTable: "merced_crawl_tasks", mode: "full" },
+  // Socrata speaks SoQL, so recency is a dated query, not a queue.
+  socrata: { fn: "socrata-crawl", mode: "direct" },
 };
 
 const NO_CRAWLER_REASON: Record<string, string> = {
-  socrata: "bulk load, no re-crawl function — needs bulk reload",
   arcgis_bulk: "bulk load, no re-crawl function — needs bulk reload",
   sdfoodinfo_custom: "bulk load, no re-crawl function — needs bulk reload",
   contra_costa_webforms: "no crawler — portal is VIEWSTATE-only and robots-disallowed",
@@ -171,6 +176,53 @@ Deno.serve(async (req: Request) => {
         };
       }
 
+      // ── 'direct': no queue. The crawler takes a dated query itself,
+      //    so it is invoked once and is done.
+      if (spec.mode === "direct") {
+        const crawlRuns: Record<string, unknown>[] = [];
+        let crawlError: string | null = null;
+        try {
+          const res = await invoke(spec.fn, { jurisdiction: slug, since_days: recentDays });
+          crawlRuns.push({
+            facilitiesWritten: res?.facilitiesWritten ?? null,
+            inspectionsWritten: res?.inspectionsWritten ?? null,
+            violationsWritten: res?.violationsWritten ?? null,
+            since: res?.since ?? null,
+            errors: res?.errors ?? [],
+          });
+        } catch (e) {
+          crawlError = e instanceof Error ? e.message : String(e);
+        }
+
+        let regenerate: unknown = null;
+        let regenerateError: string | null = null;
+        try {
+          const reg = await invoke("regenerate-triggers", { jurisdiction: slug });
+          const per = Array.isArray(reg?.per_jurisdiction) ? reg.per_jurisdiction[0] : null;
+          regenerate = {
+            cited: per?.cited ?? null, clean: per?.clean ?? null, due: per?.due ?? null,
+            deleted: per?.deleted ?? null, preserved: per?.preserved ?? null,
+            total_now: per?.total_now ?? null, recency_days_used: reg?.recency_days_used ?? null,
+          };
+        } catch (e) {
+          regenerateError = e instanceof Error ? e.message : String(e);
+        }
+
+        return {
+          jurisdiction: slug,
+          platform_family: family,
+          crawler_used: spec.fn,
+          crawl_mode: spec.mode,
+          drained: true,
+          crawl_summary: crawlRuns,
+          ...(crawlError ? { crawl_error: crawlError } : {}),
+          regenerate_summary: regenerate,
+          ...(regenerateError ? { regenerate_error: regenerateError } : {}),
+        };
+      }
+
+      const taskTable = spec.taskTable!;
+
       // ── Queue the work. Every queue drains to zero, so without this
       //    the crawler would return immediately having done nothing.
       let queued = 0;
@@ -192,28 +244,28 @@ Deno.serve(async (req: Request) => {
           }))
         );
         const { error } = await supabase
-          .from(spec.taskTable)
+          .from(taskTable)
           .upsert(rows, { onConflict: "source_id,day" });
-        if (error) throw new Error(`seed ${spec.taskTable}: ${error.message}`);
+        if (error) throw new Error(`seed ${taskTable}: ${error.message}`);
         queued = rows.length;
       } else {
         // Full-list crawlers have no date filter at source; re-queueing
         // the county is their only mode. 'split' rows are left alone —
         // their children carry the real work and are re-queued here.
         const { data, error } = await supabase
-          .from(spec.taskTable)
+          .from(taskTable)
           .update({ status: "pending", claimed_at: null, attempts: 0, last_error: null })
           .in("source_id", sourceIds)
           .in("status", ["done", "error"])
           .select("id");
-        if (error) throw new Error(`requeue ${spec.taskTable}: ${error.message}`);
+        if (error) throw new Error(`requeue ${taskTable}: ${error.message}`);
         queued = (data ?? []).length;
       }
 
       // ── Run the crawler until drained, the budget expires, or the cap.
       const crawlRuns: Record<string, unknown>[] = [];
       let invocations = 0;
-      let remaining = await pendingCount(spec.taskTable, sourceIds);
+      let remaining = await pendingCount(taskTable, sourceIds);
 
       while (
         remaining > 0 &&
@@ -229,7 +281,7 @@ Deno.serve(async (req: Request) => {
           inspectionsWritten: res?.inspectionsWritten ?? null,
           violationsWritten: res?.violationsWritten ?? null,
         });
-        remaining = await pendingCount(spec.taskTable, sourceIds);
+        remaining = await pendingCount(taskTable, sourceIds);
         await sleep(200);
       }
 
