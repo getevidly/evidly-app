@@ -159,24 +159,40 @@ Deno.serve(async (req: Request) => {
 
   try {
     // ── summary ───────────────────────────────────────────────────
+    // Reads the one-row cache, never live counts. Counting violations
+    // (957k) and inspections (367k) on every tab open cost ~2s and
+    // intermittently tipped this section past the request ceiling, which
+    // surfaced as "summary: Edge Function returned a non-2xx status
+    // code". The crawlers refresh inspection_stats at the end of each
+    // run — see refreshInspectionStats in each crawler.
     if (section === "summary") {
-      const [sourceCount, activeSourceCount, facilityCount, inspectionCount, violationCount] =
-        await Promise.all([
-          countOf("inspection_sources"),
-          countOf("inspection_sources", (q) => q.eq("is_active", true)),
-          countOf("facilities"),
-          countOf("inspections"),
-          countOf("violations"),
-        ]);
+      const { data: stats, error: statsErr } = await supabase
+        .from("inspection_stats")
+        .select("total_sources, active_sources, total_facilities, total_inspections, total_violations, total_triggers, refreshed_at")
+        .eq("id", 1)
+        .maybeSingle();
 
+      if (statsErr) {
+        console.error("[inspections-admin] stats read failed:", statsErr.message);
+        return json({ ok: false, error: "Could not load the inspection stats cache." }, 500);
+      }
+      if (!stats) {
+        // Deliberately not falling back to live counts — that is the
+        // failure mode this change exists to remove.
+        return json({ ok: false, error: "inspection_stats has no row id=1; run the refresh." }, 500);
+      }
+
+      const s = stats as Record<string, number | string | null>;
       return json({
         ok: true,
         summary: {
-          source_count: sourceCount,
-          active_source_count: activeSourceCount,
-          facility_count: facilityCount,
-          inspection_count: inspectionCount,
-          violation_count: violationCount,
+          source_count: s.total_sources,
+          active_source_count: s.active_sources,
+          facility_count: s.total_facilities,
+          inspection_count: s.total_inspections,
+          violation_count: s.total_violations,
+          trigger_count: s.total_triggers,
+          refreshed_at: s.refreshed_at,
         },
       });
     }

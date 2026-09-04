@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { refreshInspectionStats } from "../_shared/refreshInspectionStats.ts";
 
 /**
  * sbc-crawl — San Bernardino County food facility crawler.
@@ -305,8 +306,13 @@ Deno.serve(async (_req: Request) => {
     .eq("source_id", sourceId)
     .eq("status", "pending");
 
+  // Keep the Inspections tab's summary KPIs current; see
+  // _shared/refreshInspectionStats.ts. Never throws.
+  const statsRefreshed = await refreshInspectionStats(supabase);
+
   return Response.json({
     ok: true,
+    statsRefreshed,
     tasksProcessed,
     facilitiesWritten,
     inspectionsWritten,

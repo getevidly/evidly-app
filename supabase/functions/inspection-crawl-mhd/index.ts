@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { refreshInspectionStats } from "../_shared/refreshInspectionStats.ts";
 
 /**
  * inspection-crawl-mhd — one crawler for all five MyHealthDepartment
@@ -342,8 +343,13 @@ Deno.serve(async (_req: Request) => {
     .select("*", { count: "exact", head: true })
     .eq("status", "pending");
 
+  // Keep the Inspections tab's summary KPIs current; see
+  // _shared/refreshInspectionStats.ts. Never throws.
+  const statsRefreshed = await refreshInspectionStats(supabase);
+
   return Response.json({
     ok: true,
+    statsRefreshed,
     tasksProcessed,
     tasksErrored,
     facilitiesWritten,
