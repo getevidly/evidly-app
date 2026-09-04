@@ -22,6 +22,39 @@ import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
  * Never throws: a crawler run that succeeded must not be reported as
  * failed because a cosmetic counter did not update.
  */
+/**
+ * Recompute per-facility inspection cadence (median gap, last inspection)
+ * for one jurisdiction, or all when slug is null.
+ *
+ * This is the expensive half of trigger generation — a lag() window plus
+ * percentile_cont over every inspection a source holds. Doing it here,
+ * once per crawl, is what keeps regenerate-triggers under PostgREST's 8s
+ * statement ceiling for the large counties.
+ *
+ * PATTERN FOR FUTURE CRAWLERS: call this beside refreshInspectionStats at
+ * the end of a run, passing the jurisdiction slug the crawler covers (or
+ * null for a multi-jurisdiction crawler).
+ *
+ * Never throws: a crawl that succeeded must not report failure because a
+ * derived table did not update.
+ */
+export async function refreshFacilityCadence(
+  supabase: SupabaseClient,
+  slug: string | null = null,
+): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc("refresh_facility_cadence", { p_slug: slug });
+    if (error) throw new Error(error.message);
+    return true;
+  } catch (e) {
+    console.error(
+      "[refreshFacilityCadence] failed:",
+      e instanceof Error ? e.message : e,
+    );
+    return false;
+  }
+}
+
 export async function refreshInspectionStats(
   supabase: SupabaseClient,
 ): Promise<boolean> {

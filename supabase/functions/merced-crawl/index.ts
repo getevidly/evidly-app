@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { refreshInspectionStats } from "../_shared/refreshInspectionStats.ts";
+import { refreshInspectionStats, refreshFacilityCadence } from "../_shared/refreshInspectionStats.ts";
 
 /**
  * merced-crawl — Merced County food facility crawler.
@@ -366,11 +366,15 @@ Deno.serve(async (_req: Request) => {
 
   // Keep the Inspections tab's summary KPIs current; see
   // _shared/refreshInspectionStats.ts. Never throws.
+  // Cadence feeds the DUE rule in regenerate-triggers; recompute it
+  // here, once per crawl, so regeneration stays a cheap lookup.
+  const cadenceRefreshed = await refreshFacilityCadence(supabase, 'merced-ca');
   const statsRefreshed = await refreshInspectionStats(supabase);
 
   return Response.json({
     ok: true,
     statsRefreshed,
+    cadenceRefreshed,
     listFacilities,
     tasksSeeded,
     tasksProcessed,
