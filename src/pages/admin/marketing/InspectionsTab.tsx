@@ -738,11 +738,16 @@ export default function InspectionsTab() {
                 {qSorted.map(t => {
                   const busy = acting === t.id;
                   const openReason = reasonFor?.id === t.id ? reasonFor : null;
+                  // "2025 HIGHLAND, SAN BERNARDINO 92123" — degrades cleanly
+                  // when a source carries no street address (San Bernardino
+                  // and Stanislaus have no zip; Contra Costa has no rows yet).
+                  const cityZip = [t.city, t.zip].filter(Boolean).join(' ');
+                  const whereLine = [t.address, cityZip].filter(Boolean).join(', ');
                   return (
                     <tr key={t.id} className="border-b last:border-b-0" style={{ borderColor: EV_LINE, opacity: busy ? 0.5 : 1 }}>
                       <td className="py-2.5 px-4 text-[13px] font-semibold" style={{ color: EV_NAVY }}>
                         {t.facility_name ?? '—'}
-                        <div className="text-[11px] font-normal" style={{ color: EV_MUTED }}>{t.city ?? '—'}</div>
+                        <div className="text-[11px] font-normal" style={{ color: EV_MUTED }}>{whereLine || '—'}</div>
                       </td>
                       <td className="py-2.5 px-4 text-[12.5px]" style={{ color: EV_MUTED }}>{t.slug ?? '—'}</td>
                       <td className="py-2.5 px-4"><TriggerPill type={t.trigger_type} /></td>
