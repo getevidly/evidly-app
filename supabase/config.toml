@@ -547,3 +547,11 @@ s3_region = "env(S3_REGION)"
 s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
+
+# Public aggregate report consumed by getstovio.com. Safe without a JWT
+# because the payload is aggregate-only by construction: the cache table it
+# reads holds counts and percentages, never a facility name, address or row.
+# An optional shared key (STOVIO_REPORT_KEY) can be switched on without a
+# code change once Stovio's rendering model is known.
+[functions.kitchen-safety-report]
+verify_jwt = false
