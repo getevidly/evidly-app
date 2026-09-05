@@ -67,6 +67,16 @@ const CRAWLERS: Record<string, CrawlerSpec> = {
   sdfoodinfo_custom: { fn: "sdfoodinfo-crawl", mode: "direct" },
 };
 
+/**
+ * Slug-specific overrides, checked before the platform_family map. LA's
+ * family says arcgis_bulk because that is how it was first loaded, but it
+ * now refreshes from the county's eCompliance portal — one GET for the
+ * whole county — so it is 'direct' like the Socrata counties.
+ */
+const BY_SLUG: Record<string, CrawlerSpec> = {
+  "la-county-ca": { fn: "la-live-crawl", mode: "direct" },
+};
+
 const NO_CRAWLER_REASON: Record<string, string> = {
   arcgis_bulk: "bulk load, no re-crawl function — needs bulk reload",
   contra_costa_webforms: "no crawler — portal is VIEWSTATE-only and robots-disallowed",
@@ -165,7 +175,12 @@ Deno.serve(async (req: Request) => {
 
       const family = sources[0].platform_family as string;
       const sourceIds = sources.map((s) => s.id as string);
-      const spec = CRAWLERS[family];
+      // A slug-specific crawler wins over the family default. LA is the
+      // only arcgis_bulk source today, but the family name describes how
+      // the data was FIRST loaded, not how it is refreshed — la-live-crawl
+      // reads the county's live portal instead. Routing on the slug keeps
+      // a future arcgis_bulk county from inheriting an LA-only crawler.
+      const spec = BY_SLUG[slug] ?? CRAWLERS[family];
 
       if (!spec) {
         return {
@@ -337,7 +352,12 @@ Deno.serve(async (req: Request) => {
     }
     slugs = [...new Set(
       ((data ?? []) as Record<string, any>[])
-        .filter((r) => !!CRAWLERS[r.platform_family as string])
+        // A slug override counts as refreshable even when its family has
+        // no crawler — otherwise LA would be silently dropped from {all}.
+        .filter((r) =>
+          !!CRAWLERS[r.platform_family as string] ||
+          !!BY_SLUG[r.jurisdictions?.slug as string]
+        )
         .map((r) => r.jurisdictions?.slug as string)
         .filter(Boolean),
     )].sort();
