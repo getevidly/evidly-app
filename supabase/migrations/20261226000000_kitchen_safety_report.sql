@@ -27,34 +27,12 @@ create policy ksr_public_read
   on public.kitchen_safety_report_cache for select
   using (true);
 
--- ─────────────────────────────────────────────────────────────────────
--- refresh_kitchen_safety_report() — the heavy half.
---
--- Aggregates ~960k violations across six counties. Far too slow to run per
--- request against PostgREST's 8s ceiling, so it runs here on a maintenance
--- timeout and the endpoint only ever reads the result.
---
--- TWO GUARDS, both load-bearing:
---
--- 1. EVERY VIOLATION COUNTS ONCE. A violation can match two mapping rows —
---    one on source_code and one on cal_section — and a blind three-table
---    join then counts it twice. Measured: Ventura inflates by 5,626 rows
---    (1.7%) and San Francisco double-counts ~2,082 without the guard.
---    `distinct on (v.id)` collapses each violation to a single row before
---    anything is counted.
---
--- 2. SIZE BANDS ARE NOT COMPARABLE ACROSS COUNTIES. LA bands restaurants by
---    SEATS, San Francisco by SQUARE FOOTAGE. by_type therefore lives inside
---    each county's own object and is never rolled up; the only cross-county
---    axis this produces is the form-item category, which is the same
---    54-item California form everywhere.
--- ─────────────────────────────────────────────────────────────────────
-create or replace function public.refresh_kitchen_safety_report()
-returns jsonb
-language plpgsql
-security definer
-set search_path = public
-as $fn$
+CREATE OR REPLACE FUNCTION public.refresh_kitchen_safety_report()
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
 declare
   v_written int := 0;
   v_slugs   text[] := array[
@@ -173,6 +151,108 @@ begin
     group by 1
   ),
 
+  -- ── EvidLY / Non-EvidLY buckets and named themes ─────────────────
+  -- A PRODUCT DEFINITION, not data. Each of the 54 California form
+  -- items belongs to exactly one bucket and one theme. Derived from
+  -- EvidLY pillar_requirements + the queue requirement_code signal,
+  -- with four deliberate rulings that the automatic signal gets wrong:
+  --   38 thermometers  -> EvidLY / Temperature control (temp logging)
+  --   22 sewage        -> EvidLY / Grease trap    (grease_trap req)
+  --   40 plumbing      -> EvidLY / Backflow prevention (backflow req)
+  --   58 placard       -> Non-EvidLY (the county grade card, not ours)
+  -- Item 15 stays Non-EvidLY: its citations read "approved source",
+  -- never receiving-temp, so temp_receiving does not apply.
+  -- Every item is listed exactly once; an unlisted item would fall to
+  -- Non-EvidLY / Other rather than vanish.
+  bucket_map(form_item_code, bucket, theme) as (values
+    ('01A','EvidLY','Certifications'),
+    ('01B','EvidLY','Certifications'),
+    ('02','EvidLY','Employee health'),
+    ('03','Non-EvidLY','Hygiene & handwashing'),
+    ('04','Non-EvidLY','Hygiene & handwashing'),
+    ('05','Non-EvidLY','Hygiene & handwashing'),
+    ('06','Non-EvidLY','Hygiene & handwashing'),
+    ('07','EvidLY','Temperature control'),
+    ('08','Non-EvidLY','Cooking & other food safety'),
+    ('09','EvidLY','Temperature control'),
+    ('10','Non-EvidLY','Cooking & other food safety'),
+    ('11','EvidLY','Temperature control'),
+    ('12','Non-EvidLY','Food handling & storage'),
+    ('13','Non-EvidLY','Food handling & storage'),
+    ('14','EvidLY','Warewashing & sanitizer'),
+    ('15','Non-EvidLY','Cooking & other food safety'),
+    ('16','Non-EvidLY','Cooking & other food safety'),
+    ('18','EvidLY','HACCP'),
+    ('19','Non-EvidLY','Cooking & other food safety'),
+    ('20','Non-EvidLY','Food handling & storage'),
+    ('21','Non-EvidLY','Water supply'),
+    ('21A','Non-EvidLY','Water supply'),
+    ('22','EvidLY','Grease trap'),
+    ('23','EvidLY','Pest control'),
+    ('24','EvidLY','Person in charge'),
+    ('25','Non-EvidLY','Hygiene & handwashing'),
+    ('26','Non-EvidLY','Food handling & storage'),
+    ('27','Non-EvidLY','Food handling & storage'),
+    ('28','Non-EvidLY','Food handling & storage'),
+    ('29','EvidLY','Pest control'),
+    ('30','Non-EvidLY','Food handling & storage'),
+    ('31','Non-EvidLY','Food handling & storage'),
+    ('32','Non-EvidLY','Food handling & storage'),
+    ('33','Non-EvidLY','Facility & equipment condition'),
+    ('34','EvidLY','Warewashing & sanitizer'),
+    ('35','Non-EvidLY','Facility & equipment condition'),
+    ('36','Non-EvidLY','Facility & equipment condition'),
+    ('37','Non-EvidLY','Facility & equipment condition'),
+    ('38','EvidLY','Temperature control'),
+    ('39','Non-EvidLY','Facility & equipment condition'),
+    ('40','EvidLY','Backflow prevention'),
+    ('41','Non-EvidLY','Plumbing & fixtures'),
+    ('42','Non-EvidLY','Plumbing & fixtures'),
+    ('43','Non-EvidLY','Plumbing & fixtures'),
+    ('44','Non-EvidLY','Facility & equipment condition'),
+    ('45','Non-EvidLY','Facility & equipment condition'),
+    ('46','EvidLY','Permits'),
+    ('47','EvidLY','Permits'),
+    ('48','EvidLY','Permits'),
+    ('50','Non-EvidLY','Administrative'),
+    ('51','Non-EvidLY','Administrative'),
+    ('52','Non-EvidLY','Administrative'),
+    ('58','Non-EvidLY','Administrative'),
+    ('VM','Non-EvidLY','Administrative')
+  ),
+
+  -- Themes come off the SAME deduped vio rows the categories use, so
+  -- a violation counts once here exactly as it does there.
+  theme_tot as (
+    select vio.slug, bm.bucket, bm.theme, count(*) as n
+    from vio join bucket_map bm on bm.form_item_code = vio.form_item_code
+    where vio.form_item_code is not null
+    group by 1,2,3
+  ),
+  theme_pct as (
+    select t.*, sum(t.n) over (partition by t.slug) as county_total,
+           round(100.0 * t.n / sum(t.n) over (partition by t.slug), 1) as pct
+    from theme_tot t
+  ),
+  bucket_json as (
+    select b.slug,
+      jsonb_build_object(
+        'evidly', jsonb_build_object(
+          'total_citations', coalesce(sum(b.n) filter (where b.bucket = 'EvidLY'), 0),
+          'pct_of_all', round(100.0 * coalesce(sum(b.n) filter (where b.bucket = 'EvidLY'), 0) / max(b.county_total), 1),
+          'themes', coalesce(jsonb_agg(jsonb_build_object('theme', b.theme, 'citations', b.n, 'pct', b.pct)
+                        order by b.n desc) filter (where b.bucket = 'EvidLY'), '[]'::jsonb)
+        ),
+        'non_evidly', jsonb_build_object(
+          'total_citations', coalesce(sum(b.n) filter (where b.bucket = 'Non-EvidLY'), 0),
+          'pct_of_all', round(100.0 * coalesce(sum(b.n) filter (where b.bucket = 'Non-EvidLY'), 0) / max(b.county_total), 1),
+          'themes', coalesce(jsonb_agg(jsonb_build_object('theme', b.theme, 'citations', b.n, 'pct', b.pct)
+                        order by b.n desc) filter (where b.bucket = 'Non-EvidLY'), '[]'::jsonb)
+        )
+      ) as buckets
+    from theme_pct b group by b.slug
+  ),
+
   -- ── Category mix within each facility type ───────────────────────
   bytype as (
     select vio.slug, ft.facility_type, vio.form_item_code, count(*) as n,
@@ -226,6 +306,7 @@ begin
            'has_facility_type', h.slug = any(v_typed),
            'top_categories', cj.categories,
            'by_type', bj.by_type,
+           'buckets', bk.buckets,
            -- Stated in the payload so a consumer cannot accidentally chart
            -- LA seat-bands against SF square-foot bands as if they matched.
            'type_basis', case h.slug
@@ -242,6 +323,7 @@ begin
     from headline h
     left join cat_json cj on cj.slug = h.slug
     left join bytype_json bj on bj.slug = h.slug
+    left join bucket_json bk on bk.slug = h.slug
   on conflict (county) do update
     set report_json = excluded.report_json,
         computed_at = now();
@@ -254,10 +336,7 @@ begin
     'computed_at', now()
   );
 end;
-$fn$;
-
-revoke all on function public.refresh_kitchen_safety_report() from public, anon, authenticated;
-grant execute on function public.refresh_kitchen_safety_report() to service_role;
+$function$
 
 -- ── Nightly recompute ────────────────────────────────────────────────
 -- 9:05 UTC: ten minutes after refresh-regenerate-all (8:55) and clear of

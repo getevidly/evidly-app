@@ -32,6 +32,14 @@ import { PUBLIC_CORS_HEADERS } from "../_shared/cors.ts";
  * work on a maintenance timeout; this endpoint only serves the result, so
  * it answers in well under a second.
  *
+ * BUCKETS. Alongside the flat form-item "top_categories", each categorized
+ * county carries "buckets": EvidLY vs Non-EvidLY, each with named themes
+ * and each theme's share of that county's citations. The two buckets'
+ * pct_of_all sum to 100. The split is a product definition baked into
+ * refresh_kitchen_safety_report — see the bucket_map there — not a
+ * client-side guess, so the page and the queue's EvidLY filter agree.
+ * A theme with no citations in a county simply does not appear.
+ *
  * Request (GET query string or POST body):
  *   { "county": "la-county-ca" }   one county
  *   { "counties": "all" }          every cached county
