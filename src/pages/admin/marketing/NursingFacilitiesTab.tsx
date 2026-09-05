@@ -15,7 +15,7 @@
  * always "Federal fines"; K324 is the kitchen fire-suppression citation and
  * F812 the food-service citation, spelled out wherever they appear.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { KpiMini } from './marketingPrimitives';
 import {
@@ -101,17 +101,63 @@ const fmtDateTime = (s: string | null) => {
     : `${d.toLocaleDateString('en-US')} ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
 };
 
-/** Administrator first name from "LAST, FIRST" or "First Last". */
+/* ── Display casing ───────────────────────────────────────────────────
+ * CMS and CDPH publish names, cities and administrators in ALL CAPS.
+ * These are RENDER-TIME ONLY — nothing here is ever written back, so the
+ * stored value stays exactly as the source published it.
+ */
+
+/** Tokens that stay upper-case: entity suffixes, numerals, known initialisms. */
+const KEEP_UPPER = new Set([
+  'LLC', 'LP', 'INC', 'II', 'III', 'IV', 'SNF', 'LA', 'SF', 'DBA',
+]);
+/** Lower-cased when they are not the first word. */
+const KEEP_LOWER = new Set(['&', 'AND', 'OF', 'AT', 'THE']);
+
+/** Title-case a source string that may be ALL CAPS. */
+function titleCase(raw: string | null | undefined): string {
+  const s = (raw ?? '').trim();
+  if (!s) return '';
+  // Already mixed case in the source — leave it alone.
+  if (s !== s.toUpperCase()) return s;
+
+  return s.split(/\s+/).map((word, i) => {
+    const bare = word.replace(/[^A-Za-z&]/g, '');
+    const upper = bare.toUpperCase();
+    if (KEEP_UPPER.has(upper)) return word.toUpperCase();
+    if (i > 0 && KEEP_LOWER.has(upper)) return word.toLowerCase();
+    // Capitalise after internal punctuation too: O'BRIEN -> O'Brien.
+    return word.toLowerCase().replace(/(^|[^A-Za-z'])([a-z])/g, (_m, p, c) => p + c.toUpperCase());
+  }).join(' ');
+}
+
+/** "LAST, FIRST M" -> "First M Last". No comma: title-case as-is. */
+function displayAdmin(raw: string | null | undefined): string {
+  const s = (raw ?? '').trim();
+  if (!s) return '';
+  if (!s.includes(',')) return titleCase(s);
+  const [last, rest] = s.split(',');
+  const given = (rest ?? '').trim();
+  return titleCase(`${given} ${last.trim()}`.trim());
+}
+
+/** (209) 745-1537 for a 10-digit number; anything else is shown as given. */
+function displayPhone(raw: string | null | undefined): string {
+  const s = (raw ?? '').trim();
+  if (!s) return '';
+  const d = s.replace(/\D/g, '');
+  if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+  if (d.length === 11 && d.startsWith('1')) return `(${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+  return s;
+}
+
+/** Administrator first name, title-cased, from "LAST, FIRST" or "First Last". */
 function firstName(admin: string | null): string {
   const s = (admin ?? '').trim();
   if (!s) return 'the administrator';
-  const title = (w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
-  if (s.includes(',')) {
-    const after = s.split(',')[1]?.trim().split(/\s+/)[0];
-    return after ? title(after) : 'the administrator';
-  }
-  const first = s.split(/\s+/)[0];
-  return first ? title(first) : 'the administrator';
+  const shown = displayAdmin(s);
+  const first = shown.split(/\s+/)[0];
+  return first || 'the administrator';
 }
 
 /** Next weekday name, skipping the weekend. */
@@ -146,6 +192,54 @@ export default function NursingFacilitiesTab() {
   const [fStatus, setFStatus] = useState('');
   const [sort, setSort] = useState<'fines' | 'pain' | 'company' | 'name'>('fines');
   const [search, setSearch] = useState('');
+
+  // ── Resizable divider ────────────────────────────────────────────
+  // Card width is the operator's, so it persists. Min 420 keeps the
+  // scripts readable; max 60% of the container keeps the list usable.
+  const CARD_DEFAULT = 520;
+  const CARD_MIN = 420;
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [cardWidth, setCardWidth] = useState<number>(() => {
+    try {
+      const v = Number(localStorage.getItem('nf_card_width'));
+      return Number.isFinite(v) && v >= CARD_MIN ? v : CARD_DEFAULT;
+    } catch { return CARD_DEFAULT; }
+  });
+  const [dragging, setDragging] = useState(false);
+  const [handleHot, setHandleHot] = useState(false);
+
+  const maxCard = () => {
+    const w = containerRef.current?.clientWidth ?? 1200;
+    return Math.max(CARD_MIN, Math.round(w * 0.6));
+  };
+  const clampCard = useCallback((px: number) => {
+    return Math.min(maxCard(), Math.max(CARD_MIN, Math.round(px)));
+  }, []);
+  const commitWidth = useCallback((px: number) => {
+    const v = clampCard(px);
+    setCardWidth(v);
+    try { localStorage.setItem('nf_card_width', String(v)); } catch { /* private mode */ }
+  }, [clampCard]);
+
+  // Drag listeners live on the window so the pointer can leave the handle.
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent) => {
+      const box = containerRef.current?.getBoundingClientRect();
+      if (!box) return;
+      commitWidth(box.right - e.clientX);
+    };
+    const onUp = () => setDragging(false);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    const prev = document.body.style.userSelect;
+    document.body.style.userSelect = 'none';
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      document.body.style.userSelect = prev;
+    };
+  }, [dragging, commitWidth]);
 
   // call form
   const [outcome, setOutcome] = useState<string>('');
@@ -219,7 +313,7 @@ export default function NursingFacilitiesTab() {
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .map(([k, n]) => ({
         value: k === '' ? '__none__' : k,
-        label: `${k === '' ? 'Independent (no chain)' : k} (${n})`,
+        label: `${k === '' ? 'Independent (no chain)' : titleCase(k)} (${n})`,
       }));
   }, [facilities]);
 
@@ -351,7 +445,7 @@ export default function NursingFacilitiesTab() {
 
   // ── Card content ───────────────────────────────────────────────────
   const first = firstName(sel?.admin_name ?? null);
-  const adminFull = (sel?.admin_name ?? '').trim() || 'the administrator';
+  const adminFull = displayAdmin(sel?.admin_name) || 'the administrator';
   const both = Number(sel?.both_same_survey ?? 0);
   const k = Number(sel?.k324 ?? 0);
   const f = Number(sel?.f812 ?? 0);
@@ -444,7 +538,7 @@ export default function NursingFacilitiesTab() {
           className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
           style={{ borderColor: EV_LINE, color: EV_NAVY }}>
           <option value="">All counties</option>
-          {counties.map(c => <option key={c} value={c}>{c}</option>)}
+          {counties.map(c => <option key={c} value={c}>{titleCase(c)}</option>)}
         </select>
 
         <select value={fFines} onChange={e => setFFines(e.target.value)}
@@ -484,7 +578,7 @@ export default function NursingFacilitiesTab() {
       </div>
 
       {/* ── Two columns ──────────────────────────────────────────── */}
-      <div className="flex gap-4 items-start">
+      <div ref={containerRef} className="flex items-start" style={{ gap: 0 }}>
         {/* LIST */}
         <div className="flex-1 border rounded-lg overflow-hidden" style={{ borderColor: EV_LINE, backgroundColor: EV_PAPER }}>
           {loading ? (
@@ -523,22 +617,22 @@ export default function NursingFacilitiesTab() {
                         }}>
                         <td className="py-2.5 px-3">
                           <div className="text-[13px] font-semibold" style={{ color: EV_NAVY }}>
-                            {fac.name ?? '—'}
+                            {titleCase(fac.name) || '—'}
                             {fac.sff_status && (
                               <span className="ml-2 text-[9.5px] font-bold px-1.5 py-0.5 rounded"
                                 style={{ backgroundColor: EV_DANGER, color: '#fff' }}>Special Focus</span>
                             )}
                           </div>
                           <div className="text-[11px]" style={{ color: EV_MUTED }}>
-                            {fac.city ?? '—'} · {fac.county ?? '—'}
+                            {titleCase(fac.city) || '—'} · {titleCase(fac.county) || '—'}
                           </div>
                           <div className="text-[11px]" style={{ color: EV_FAINT }}>
-                            {(fac.chain_name ?? '').trim() || 'Independent (no chain)'}
+                            {titleCase(fac.chain_name) || 'Independent (no chain)'}
                           </div>
                         </td>
                         <td className="py-2.5 px-3">
-                          <div className="text-[12px]" style={{ color: EV_INK }}>{fac.admin_name ?? '—'}</div>
-                          <div className="text-[11px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{fac.phone ?? '—'}</div>
+                          <div className="text-[12px]" style={{ color: EV_INK }}>{displayAdmin(fac.admin_name) || '—'}</div>
+                          <div className="text-[11px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{displayPhone(fac.phone) || '—'}</div>
                         </td>
                         <td className="py-2.5 px-3 text-[13px]" style={{ color: EV_NAVY, fontFamily: MONO }}>{fac.k324 ?? 0}</td>
                         <td className="py-2.5 px-3 text-[13px]" style={{ color: EV_NAVY, fontFamily: MONO }}>{fac.f812 ?? 0}</td>
@@ -573,10 +667,41 @@ export default function NursingFacilitiesTab() {
           )}
         </div>
 
+        {/* RESIZE HANDLE — drag to size the card, double-click to reset,
+            Left/Right arrows to nudge it 16px when focused. */}
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize the call card"
+          tabIndex={0}
+          onMouseDown={e => { e.preventDefault(); setDragging(true); }}
+          onMouseEnter={() => setHandleHot(true)}
+          onMouseLeave={() => setHandleHot(false)}
+          onFocus={() => setHandleHot(true)}
+          onBlur={() => setHandleHot(false)}
+          onDoubleClick={() => commitWidth(CARD_DEFAULT)}
+          onKeyDown={e => {
+            if (e.key === 'ArrowLeft')  { e.preventDefault(); commitWidth(cardWidth + 16); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); commitWidth(cardWidth - 16); }
+          }}
+          title="Drag to resize · double-click to reset"
+          style={{
+            width: 8, flexShrink: 0, alignSelf: 'stretch', minHeight: 200,
+            cursor: 'col-resize', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', outline: 'none', background: 'transparent',
+          }}
+        >
+          <div style={{
+            width: dragging || handleHot ? 3 : 2, height: '100%', borderRadius: 2,
+            backgroundColor: dragging ? EV_EMBER : handleHot ? EV_MUTED : EV_LINE,
+            transition: dragging ? undefined : 'background-color 120ms, width 120ms',
+          }} />
+        </div>
+
         {/* CALL CARD */}
         <div className="border rounded-lg" style={{
           borderColor: EV_LINE, backgroundColor: EV_PAPER,
-          width: 520, flexShrink: 0, maxHeight: 760, overflowY: 'auto',
+          width: cardWidth, flexShrink: 0, maxHeight: 760, overflowY: 'auto',
         }}>
           {!sel ? (
             <div className="px-4 py-10 text-center text-[13px]" style={{ color: EV_MUTED }}>
@@ -584,18 +709,18 @@ export default function NursingFacilitiesTab() {
             </div>
           ) : (
             <div className="p-4">
-              <h2 className="text-xl font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>{sel.name ?? '—'}</h2>
+              <h2 className="text-xl font-bold" style={{ color: EV_NAVY, fontFamily: DISPLAY }}>{titleCase(sel.name) || '—'}</h2>
               <div className="text-[12px] mt-0.5" style={{ color: EV_MUTED }}>
-                {(sel.chain_name ?? '').trim() || 'Independent (no chain)'} · {sel.city ?? '—'}, {sel.county ?? '—'} · {sel.beds ?? '—'} beds
+                {titleCase(sel.chain_name) || 'Independent (no chain)'} · {titleCase(sel.city) || '—'}, {titleCase(sel.county) || '—'} · {sel.beds ?? '—'} beds
               </div>
 
               <div className="mt-3 pb-3 border-b" style={{ borderColor: EV_LINE }}>
                 <a href={`tel:${(sel.phone ?? '').replace(/[^0-9+]/g, '')}`}
                   className="text-xl font-bold no-underline" style={{ color: EV_EMBER, fontFamily: MONO }}>
-                  {sel.phone ?? '—'}
+                  {displayPhone(sel.phone) || '—'}
                 </a>
                 <div className="text-[11px] mt-1" style={{ color: EV_MUTED }}>Administrator</div>
-                <div className="text-[13px]" style={{ color: EV_INK }}>{sel.admin_name ?? '—'}</div>
+                <div className="text-[13px]" style={{ color: EV_INK }}>{displayAdmin(sel.admin_name) || '—'}</div>
                 {sel.admin_email && (
                   <a href={`mailto:${sel.admin_email}`} className="text-[12px]" style={{ color: EV_SLATE }}>
                     {sel.admin_email}
