@@ -67,6 +67,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Marketing',           path: '/admin/marketing/weekly-cadence', salesOnly: true },
       { label: 'Inspections',         path: '/admin/marketing/inspections', salesOnly: true },
+      { label: 'Nursing Facilities',  path: '/admin/marketing/nursing-facilities', salesOnly: true },
       { label: 'SEO',                 path: '/admin/seo',                 salesOnly: true },
       { label: 'Campaigns',           path: '/admin/campaigns',           salesOnly: true },
     ],

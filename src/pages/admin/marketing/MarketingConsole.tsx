@@ -26,6 +26,7 @@ import FunnelTab from './FunnelTab';
 import SegmentsTab from './SegmentsTab';
 import PartnersTab from './PartnersTab';
 import InspectionsTab from './InspectionsTab';
+import NursingFacilitiesTab from './NursingFacilitiesTab';
 import FounderWindowTab from './FounderWindowTab';
 import SEOTab from './SEOTab';
 import SERPTab from './SERPTab';
@@ -300,6 +301,7 @@ export default function MarketingConsole({ defaultTab }: MarketingConsoleProps) 
       {tab === 'segments'  && <SegmentsTab accounts={accounts} loading={loading} error={error} />}
       {tab === 'partners'  && <PartnersTab />}
       {tab === 'inspections' && <InspectionsTab />}
+      {tab === 'nursing-facilities' && <NursingFacilitiesTab />}
       {tab === 'sequence'  && <OutreachTab />}
       {tab === 'briefings' && <BriefingsTab />}
 
