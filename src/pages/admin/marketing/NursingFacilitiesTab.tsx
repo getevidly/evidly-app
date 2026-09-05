@@ -107,9 +107,22 @@ const fmtDateTime = (s: string | null) => {
  * stored value stays exactly as the source published it.
  */
 
-/** Tokens that stay upper-case: entity suffixes, numerals, known initialisms. */
+/**
+ * Tokens that stay upper-case: entity suffixes, numerals, known
+ * initialisms, and the chain names CMS publishes as acronyms.
+ *
+ * Matched as WHOLE WORDS only. titleCase splits on whitespace and tests
+ * the stripped token against this set, so a substring can never trigger
+ * it — "PACIFIC" is compared as PACIFIC, not scanned for "PACS", and so
+ * renders "Pacific" rather than "PACSific".
+ */
 const KEEP_UPPER = new Set([
-  'LLC', 'LP', 'INC', 'II', 'III', 'IV', 'SNF', 'LA', 'SF', 'DBA',
+  // entity suffixes and numerals
+  'LLC', 'LP', 'INC', 'II', 'III', 'IV', 'DBA',
+  // place and facility-type initialisms
+  'LA', 'SF', 'SNF', 'CCRC',
+  // chain and organisation initialisms
+  'AJC', 'PACS', 'RMG', 'HCSG', 'HHS', 'USA',
 ]);
 /** Lower-cased when they are not the first word. */
 const KEEP_LOWER = new Set(['&', 'AND', 'OF', 'AT', 'THE']);
