@@ -164,6 +164,12 @@ Deno.serve(async (req: Request) => {
   let violationsWritten = 0;
   const errors: string[] = [];
 
+  // NEVER write identity_status, is_client, or resolved_pipeline_id here.
+  // Those are operator decisions. A re-crawl that included
+  // identity_status: "unresolved" reset every facility an operator had
+  // resolved, because an upsert overwrites exactly the columns it names.
+  // Omitting them means an existing resolution survives the crawl and a
+  // brand-new facility still lands unresolved via the column default.
   const upsertFacilities = async (rows: Record<string, unknown>[]) => {
     if (rows.length === 0) return;
     const { error } = await supabase
@@ -209,7 +215,6 @@ Deno.serve(async (req: Request) => {
         city: b.city ?? null,
         zip: b.postal_code ?? null,
         phone: b.phone_number ?? null,
-        identity_status: "unresolved",
         last_crawled_at: new Date().toISOString(),
       })));
 
@@ -295,7 +300,6 @@ Deno.serve(async (req: Request) => {
           city: "San Francisco",
           zip: null, // the dataset publishes none
           phone: null,
-          identity_status: "unresolved",
           last_crawled_at: new Date().toISOString(),
         });
       }

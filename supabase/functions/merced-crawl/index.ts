@@ -235,7 +235,6 @@ Deno.serve(async (_req: Request) => {
         city: r.city || null,
         zip: null,
         phone: null,
-        identity_status: "unresolved",
         last_crawled_at: new Date().toISOString(),
       }));
       const { error } = await supabase

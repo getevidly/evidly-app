@@ -227,7 +227,6 @@ Deno.serve(async (_req: Request) => {
           city: r.city,
           zip: null,   // the fragment carries no zip
           phone: null, // nor a phone
-          identity_status: "unresolved",
           last_crawled_at: new Date().toISOString(),
         });
       }

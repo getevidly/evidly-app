@@ -313,7 +313,6 @@ Deno.serve(async (_req: Request) => {
           address: (firstFacility.Address || "").trim(),
           city: parsed.city,
           zip: parsed.zip,
-          identity_status: "unresolved",
         },
         { onConflict: "source_id,source_facility_key" },
       )

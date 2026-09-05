@@ -257,7 +257,6 @@ Deno.serve(async (_req: Request) => {
           city: r.city ?? null,
           zip: r.zip ?? null,
           ...(carriesPhone ? { phone: r.phone ?? null } : {}),
-          identity_status: "unresolved",
           last_crawled_at: new Date().toISOString(),
         });
       }
