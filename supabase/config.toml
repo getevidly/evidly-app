@@ -507,6 +507,14 @@ verify_jwt = false
 [functions.partner-listing]
 verify_jwt = false
 
+# Ventura crawler — was deployed with --no-verify-jwt at some point, which
+# left it reachable with no JWT at all. It writes facilities/inspections
+# and has no reason to be public, so this pins it back to the default.
+# The setting is per-function on the platform and is NOT reset by a plain
+# redeploy; it only changes when the CLI reads it from here.
+[functions.inspection-crawl-ventura]
+verify_jwt = true
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.

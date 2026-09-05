@@ -107,7 +107,33 @@ async function fetchSlice(
   throw new Error(lastErr);
 }
 
-Deno.serve(async (_req: Request) => {
+Deno.serve(async (req: Request) => {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+  // ── Admin gate: @getevidly.com operator, or the service role ───────
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) return Response.json({ ok: false, reason: "forbidden" }, { status: 403 });
+  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+  const roleClaim = (() => {
+    try {
+      const part = token.split(".")[1];
+      if (!part) return null;
+      const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
+      return (JSON.parse(atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4))) as { role?: string }).role ?? null;
+    } catch { return null; }
+  })();
+  if (!(roleClaim === "service_role" || token === serviceKey)) {
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user: caller } } = await userClient.auth.getUser();
+    if (!caller?.email?.endsWith("@getevidly.com")) {
+      return Response.json({ ok: false, reason: "forbidden" }, { status: 403 });
+    }
+  }
+
   const startTime = Date.now();
 
   const supabase = createClient(
