@@ -106,6 +106,12 @@ begin
       from inspections i
       where i.source_id = any(v_source_ids)
         and i.inspection_date >= current_date - p_recency_days
+        -- A jurisdiction can publish a date that has not happened yet
+        -- (San Francisco published 2031-05-16). Such a row would sort to
+        -- the top of this distinct-on and become the facility's "most
+        -- recent" inspection, hiding the real one. Defence in depth
+        -- alongside the rank clamp below.
+        and i.inspection_date <= current_date
       order by i.facility_id, i.inspection_date desc, i.id
     ),
     ev as (
@@ -163,7 +169,14 @@ begin
   -- mapped record is worth a fixed bonus, and type breaks the tie, so
   -- today's citations sit at the top of tomorrow's queue.
   update inspection_triggers t
-  set rank = greatest(0, 100 - (current_date - t.trigger_date))
+  -- The day-difference is clamped at 0 BEFORE the subtraction. A future
+  -- trigger_date makes (current_date - trigger_date) negative, and
+  -- subtracting a negative inflates the term instead of capping it: one
+  -- San Francisco row dated 2031-05-16 scored 1834 against a legitimate
+  -- maximum of 145, outranking every real lead by 12x for five years.
+  -- Clamping inside means a future date reads as today (recency 100),
+  -- never better than today.
+  set rank = greatest(0, 100 - greatest(0, current_date - t.trigger_date))
            + case when t.mapped_record is not null then 25 else 0 end
            + case t.trigger_type when 'cited' then 20 when 'clean' then 10 else 5 end
   where t.source_id = any(v_source_ids) and t.status = 'new';

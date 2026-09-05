@@ -61,11 +61,17 @@ declare
     'la-county-ca','san-diego-ca','san-francisco-ca',
     'santa-clara-ca','ventura-ca','merced-ca'
   ];
-  -- Counties whose code mappings carry form_item_code. Ventura's mappings
-  -- exist but were built against requirement_code only, and Merced has no
-  -- mappings at all, so neither can produce a category breakdown yet.
+  -- Counties whose code mappings carry form_item_code. Ventura joined in
+  -- 2026-09 once its 123 code mappings were completed (89.1% of its real
+  -- violations now reach a form item). Merced still has no mappings at all.
+  --
+  -- Membership here is INDEPENDENT of v_typed below: a county can be
+  -- categorized without having a facility-type field. Santa Clara and
+  -- Ventura are both in this list and neither is in v_typed, so the
+  -- bytype CTE's inner join to ftype yields nothing for them and
+  -- jsonb_strip_nulls drops the by_type key entirely.
   v_categorized text[] := array[
-    'la-county-ca','san-diego-ca','san-francisco-ca','santa-clara-ca'
+    'la-county-ca','san-diego-ca','san-francisco-ca','santa-clara-ca','ventura-ca'
   ];
   v_typed text[] := array['la-county-ca','san-diego-ca','san-francisco-ca'];
 begin
