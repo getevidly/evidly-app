@@ -19,11 +19,33 @@ import { supabase } from '../../../lib/supabase';
 import { KpiMini } from './marketingPrimitives';
 import {
   EV_NAVY, EV_EMBER, EV_MUTED, EV_FAINT, EV_LINE, EV_PAPER,
-  EV_LIGHT, EV_SUCCESS, EV_WARN, DISPLAY, BODY,
+  EV_LIGHT, EV_SUCCESS, EV_WARN, EV_CREAM, EV_DANGER, EV_INK,
+  DISPLAY, BODY,
 } from './marketingTokens';
 
 /** A source that has posted within this many days reads as a live feed. */
 const FRESH_WINDOW_DAYS = 21;
+
+/**
+ * Families refresh-jurisdiction has no crawler for, with the reason it
+ * would report. Keyed on platform_family — the same key the dispatcher
+ * routes on — so a renamed slug cannot silently turn one of these back
+ * into a live button that only ever returns a skip.
+ */
+const NO_REFRESH: Record<string, string> = {
+  arcgis_bulk: 'bulk load, no re-crawl function — needs a bulk reload',
+  contra_costa_webforms: 'the portal is VIEWSTATE-only and robots-disallowed',
+  decade_accela: 'the Ventura crawler is whole-county only — run it directly',
+};
+
+/**
+ * Refresh never passes recent_days, so the dispatcher applies its own
+ * 7-day default. This is deliberate rather than incidental: a 21-day
+ * San Diego refresh crawls ~13 pages and blows past the platform's 150s
+ * request ceiling, where 7 days lands at ~51s. Widening the window is a
+ * backfill operation, not something a button should do.
+ */
+const WINDOW_CHOICES = [7, 14, 30] as const;
 
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
@@ -33,6 +55,47 @@ interface SummaryPayload {
   facility_count: number;
   inspection_count: number;
   violation_count: number;
+}
+
+/** One county's outcome from refresh-jurisdiction. */
+interface RefreshResult {
+  jurisdiction: string;
+  platform_family?: string | null;
+  crawler_used?: string | null;
+  skipped_reason?: string | null;
+  drained?: boolean;
+  tasks_still_pending?: number | null;
+  crawl_summary?: Array<Record<string, number | null>>;
+  regenerate_summary?: Record<string, number | null> | null;
+  error?: string | null;
+}
+
+/**
+ * The one-line outcome an operator actually wants: what came in, and
+ * how many workable leads it turned into. Deliberately plain — a
+ * refresh that found nothing says so rather than showing zeros.
+ */
+function describeRefresh(r: RefreshResult): string {
+  if (r.error) return r.error;
+  if (r.skipped_reason) return `Skipped — ${r.skipped_reason}`;
+
+  const sum = (k: string) =>
+    (r.crawl_summary ?? []).reduce((a, c) => a + (typeof c[k] === 'number' ? (c[k] as number) : 0), 0);
+  const insp = sum('inspectionsWritten');
+  const fac = sum('facilitiesWritten');
+
+  const reg = r.regenerate_summary ?? {};
+  const leads = (reg.cited ?? 0)! + (reg.clean ?? 0)!;
+
+  const parts: string[] = [];
+  parts.push(insp === 0 ? 'No new inspections' : `${fmt(insp)} inspections`);
+  if (fac > 0) parts.push(`${fmt(fac)} facilities`);
+  parts.push(`${fmt(leads)} fresh leads`);
+  if (typeof reg.total_now === 'number') parts.push(`${fmt(reg.total_now)} in queue`);
+  if (r.drained === false) {
+    parts.push(`${fmt(r.tasks_still_pending ?? 0)} still pending — run again`);
+  }
+  return parts.join(' · ');
 }
 
 interface SourceRow {
@@ -276,6 +339,22 @@ export default function InspectionsTab() {
   /** Most recently staged postcard batch, so its mailer CSV can be pulled. */
   const [lastPostcardBatch, setLastPostcardBatch] = useState<string | null>(null);
   const [mailerBusy, setMailerBusy] = useState(false);
+
+  // ── Refresh + settings ──────────────────────────────────────────
+  /** Slug currently refreshing; only one runs at a time. */
+  const [refreshingSlug, setRefreshingSlug] = useState<string | null>(null);
+  /** Per-slug outcome line, keyed by slug so rows report independently. */
+  const [refreshMsg, setRefreshMsg] = useState<Record<string, string>>({});
+  const [refreshErr, setRefreshErr] = useState<Record<string, string>>({});
+  const [refreshAllBusy, setRefreshAllBusy] = useState(false);
+  const [refreshAllRows, setRefreshAllRows] = useState<RefreshResult[] | null>(null);
+  const [refreshAllNote, setRefreshAllNote] = useState<string | null>(null);
+
+  const [recencyDays, setRecencyDays] = useState<number | null>(null);
+  const [savingWindow, setSavingWindow] = useState(false);
+  const [windowMsg, setWindowMsg] = useState<string | null>(null);
+  const [regenBusy, setRegenBusy] = useState(false);
+  const [regenMsg, setRegenMsg] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [sendNote, setSendNote] = useState<string | null>(null);
 
@@ -286,7 +365,7 @@ export default function InspectionsTab() {
       // allSettled, not all: one slow or failing section must not blank the
       // whole tab. Each section's state is set from its own result, and a
       // section that fails records its own message while the rest render.
-      const SECTIONS = ['summary', 'sources', 'match', 'queue', 'ready', 'batches'] as const;
+      const SECTIONS = ['summary', 'sources', 'match', 'queue', 'ready', 'batches', 'settings'] as const;
       const settled = await Promise.allSettled(
         SECTIONS.map(s => supabase.functions.invoke('inspections-admin', {
           // the queue honours the jurisdiction filter server-side
@@ -320,6 +399,7 @@ export default function InspectionsTab() {
       const que = payloadOf(3);
       const rdy = payloadOf(4);
       const bat = payloadOf(5);
+      const set = payloadOf(6);
 
       if (sum) setSummary(sum.summary as SummaryPayload);
       if (src) setSources((src.sources ?? []) as SourceRow[]);
@@ -334,6 +414,9 @@ export default function InspectionsTab() {
         setEligible((rdy.eligible ?? { postcard: 0, call: 0, email: 0 }) as typeof eligible);
       }
       if (bat) setBatches((bat.batches ?? []) as BatchRow[]);
+      if (set?.settings?.recency_days != null) {
+        setRecencyDays(Number(set.settings.recency_days));
+      }
 
       // Surfaced as a banner above the sections that did load, never
       // instead of them.
@@ -372,6 +455,120 @@ export default function InspectionsTab() {
       setQueueLoading(false);
     }
   }, []);
+
+  /**
+   * Refresh one jurisdiction: crawl its recent inspections, then rebuild
+   * its triggers. Runs on the operator's own @getevidly.com session, so
+   * refresh-jurisdiction's admin gate passes without a service key ever
+   * reaching the browser.
+   *
+   * recent_days is deliberately NOT sent — the dispatcher's own 7-day
+   * default is the only window a button may use. See WINDOW_CHOICES.
+   */
+  const refreshSource = useCallback(async (slug: string) => {
+    setRefreshingSlug(slug);
+    setRefreshErr(prev => ({ ...prev, [slug]: '' }));
+    setRefreshMsg(prev => ({ ...prev, [slug]: '' }));
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('refresh-jurisdiction', {
+        body: { jurisdiction: slug },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok && !Array.isArray(data?.results)) {
+        throw new Error(data?.error || 'The refresh did not complete.');
+      }
+      const row = (data.results ?? [])[0] as RefreshResult | undefined;
+      if (!row) throw new Error('The refresh returned no result for this jurisdiction.');
+      if (row.error) throw new Error(row.error);
+
+      setRefreshMsg(prev => ({ ...prev, [slug]: describeRefresh(row) }));
+      // New counts and new leads both live elsewhere on the tab, so pull
+      // the whole thing rather than patching one row's numbers by hand.
+      await load();
+    } catch (e) {
+      setRefreshErr(prev => ({
+        ...prev,
+        [slug]: e instanceof Error ? e.message : 'The refresh failed.',
+      }));
+    } finally {
+      setRefreshingSlug(null);
+    }
+  }, [load]);
+
+  /**
+   * Refresh every county that has a crawler. The dispatcher walks them
+   * sequentially, which for 11 counties can outlast the platform's 150s
+   * request ceiling — the work continues server-side but the response is
+   * lost. That case is reported as exactly what it is rather than as a
+   * failure, because re-running a county is safe and idempotent.
+   */
+  const refreshAll = useCallback(async () => {
+    setRefreshAllBusy(true);
+    setRefreshAllRows(null);
+    setRefreshAllNote(null);
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('refresh-jurisdiction', {
+        body: { all: true },
+      });
+      if (invErr) throw new Error(invErr.message);
+      const rows = (data?.results ?? []) as RefreshResult[];
+      if (rows.length === 0) throw new Error(data?.error || 'The refresh returned no results.');
+      setRefreshAllRows(rows);
+      await load();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'The refresh failed.';
+      setRefreshAllNote(
+        `${msg} — a full refresh often runs past the 150-second request limit. ` +
+        'The crawl usually keeps running on the server, so give it a few minutes ' +
+        'and reload, or refresh the remaining counties one at a time.',
+      );
+    } finally {
+      setRefreshAllBusy(false);
+    }
+  }, [load]);
+
+  /** Persist the freshness window. Takes effect on the next regenerate. */
+  const saveWindow = useCallback(async (days: number) => {
+    setSavingWindow(true);
+    setWindowMsg(null);
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('inspections-admin', {
+        body: { section: 'set_setting', recency_days: days },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok) throw new Error(data?.error || 'The freshness window could not be saved.');
+      setRecencyDays(Number(data.settings?.recency_days ?? days));
+      setWindowMsg('Saved. Regenerate triggers to apply it.');
+    } catch (e) {
+      setWindowMsg(e instanceof Error ? e.message : 'The freshness window could not be saved.');
+    } finally {
+      setSavingWindow(false);
+    }
+  }, []);
+
+  /** Rebuild every jurisdiction's triggers against the current window. */
+  const regenerateAll = useCallback(async () => {
+    setRegenBusy(true);
+    setRegenMsg(null);
+    try {
+      const { data, error: invErr } = await supabase.functions.invoke('regenerate-triggers', {
+        body: { all: true },
+      });
+      if (invErr) throw new Error(invErr.message);
+      if (!data?.ok && !data?.processed) {
+        throw new Error(data?.error || 'The triggers could not be regenerated.');
+      }
+      setRegenMsg(
+        `Rebuilt ${fmt(data.processed)} jurisdictions at ${fmt(data.recency_days_used)} days — ` +
+        `${fmt((data.cited ?? 0) + (data.clean ?? 0))} fresh leads, ${fmt(data.total_now)} in queue.`,
+      );
+      await load();
+    } catch (e) {
+      setRegenMsg(e instanceof Error ? e.message : 'The triggers could not be regenerated.');
+    } finally {
+      setRegenBusy(false);
+    }
+  }, [load]);
 
   const platforms = useMemo(
     () => [...new Set(sources.map(s => s.platform_family).filter(Boolean) as string[])].sort(),
@@ -595,6 +792,73 @@ export default function InspectionsTab() {
 
       {/* ── 1 Sources ──────────────────────────────────────────── */}
       <Section n={1} title="Sources" note="One row per configured jurisdiction feed. Counts are live.">
+        {/* Freshness window — the dial that decides what counts as a lead. */}
+        <div
+          className="flex items-start gap-4 flex-wrap px-4 py-3 border-b"
+          style={{ borderColor: EV_LINE, backgroundColor: EV_CREAM }}
+        >
+          <div className="flex items-center gap-2 flex-wrap">
+            <label className="text-[12px] font-bold" style={{ color: EV_NAVY, fontFamily: BODY }}>
+              Freshness window
+            </label>
+            <select
+              value={recencyDays ?? ''}
+              disabled={recencyDays === null || savingWindow}
+              onChange={e => saveWindow(Number(e.target.value))}
+              className="py-[7px] px-[10px] text-[13px] border rounded-md outline-none bg-white"
+              style={{
+                borderColor: EV_LINE,
+                color: EV_NAVY,
+                fontFamily: BODY,
+                cursor: recencyDays === null || savingWindow ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {recencyDays === null && <option value="">Loading…</option>}
+              {/* A stored value outside the presets stays selectable. */}
+              {recencyDays !== null && !WINDOW_CHOICES.includes(recencyDays as 7 | 14 | 30) && (
+                <option value={recencyDays}>{recencyDays} days</option>
+              )}
+              {WINDOW_CHOICES.map(d => (
+                <option key={d} value={d}>{d} days</option>
+              ))}
+            </select>
+            {savingWindow && (
+              <span className="text-[11.5px]" style={{ color: EV_MUTED }}>Saving…</span>
+            )}
+          </div>
+
+          <button
+            onClick={regenerateAll}
+            disabled={regenBusy || refreshAllBusy || refreshingSlug !== null}
+            className="py-[7px] px-3 text-[12px] font-bold rounded-md"
+            style={{
+              backgroundColor: '#fff',
+              color: regenBusy ? EV_FAINT : EV_NAVY,
+              border: `1px solid ${regenBusy ? EV_LINE : EV_NAVY}`,
+              cursor: regenBusy ? 'not-allowed' : 'pointer',
+              fontFamily: BODY,
+            }}
+          >
+            {regenBusy ? 'Regenerating…' : 'Regenerate triggers'}
+          </button>
+
+          <div className="basis-full" />
+
+          <div className="text-[11.5px] leading-relaxed" style={{ color: EV_MUTED, maxWidth: 640 }}>
+            {recencyDays !== null
+              ? `Inspections newer than ${recencyDays} days become cited or clean leads; anything older can only produce a due prediction. `
+              : 'Inspections newer than the window become cited or clean leads; anything older can only produce a due prediction. '}
+            Changing it takes effect on the next regenerate.
+          </div>
+
+          {windowMsg && (
+            <div className="basis-full text-[11.5px]" style={{ color: EV_MUTED }}>{windowMsg}</div>
+          )}
+          {regenMsg && (
+            <div className="basis-full text-[11.5px]" style={{ color: EV_INK }}>{regenMsg}</div>
+          )}
+        </div>
+
         <div className="flex items-center gap-3 flex-wrap px-4 py-3 border-b" style={{ borderColor: EV_LINE }}>
           <input
             value={search}
@@ -634,7 +898,51 @@ export default function InspectionsTab() {
           <span className="ml-auto text-[12px] font-semibold" style={{ color: EV_MUTED }}>
             Showing {sorted.length} of {sources.length}
           </span>
+          <button
+            onClick={refreshAll}
+            disabled={refreshAllBusy || refreshingSlug !== null}
+            className="py-[7px] px-3 text-[12px] font-bold rounded-md border-none"
+            style={{
+              backgroundColor: refreshAllBusy || refreshingSlug ? EV_LINE : EV_EMBER,
+              color: refreshAllBusy || refreshingSlug ? EV_MUTED : '#fff',
+              cursor: refreshAllBusy || refreshingSlug ? 'not-allowed' : 'pointer',
+              fontFamily: BODY,
+            }}
+          >
+            {refreshAllBusy ? 'Refreshing all…' : 'Refresh all'}
+          </button>
         </div>
+
+        {(refreshAllBusy || refreshAllRows || refreshAllNote) && (
+          <div className="px-4 py-3 border-b" style={{ borderColor: EV_LINE, backgroundColor: EV_CREAM }}>
+            {refreshAllBusy && (
+              <div className="text-[12px]" style={{ color: EV_MUTED }}>
+                Refreshing every county with a crawler. This runs them one after another and
+                can take several minutes — a request that runs past 150 seconds may lose its
+                response while the crawl keeps going on the server.
+              </div>
+            )}
+
+            {refreshAllNote && (
+              <div className="text-[12px]" style={{ color: EV_WARN }}>{refreshAllNote}</div>
+            )}
+
+            {refreshAllRows && (
+              <div className="flex flex-col gap-1">
+                {refreshAllRows.map(r => (
+                  <div key={r.jurisdiction} className="text-[12px] flex gap-2">
+                    <span className="font-semibold shrink-0" style={{ color: EV_NAVY, minWidth: 150 }}>
+                      {r.jurisdiction}
+                    </span>
+                    <span style={{ color: r.error ? EV_DANGER : r.skipped_reason ? EV_MUTED : EV_INK }}>
+                      {describeRefresh(r)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {sorted.length === 0 ? (
           <EmptyState headline="No sources match these filters." />
@@ -662,6 +970,7 @@ export default function InspectionsTab() {
                     </th>
                   ))}
                   <th className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>Freshness</th>
+                  <th className="py-2 px-4 text-[10px] font-bold tracking-wider" style={{ color: EV_MUTED }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -680,6 +989,61 @@ export default function InspectionsTab() {
                     <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{fmt(s.inspection_count)}</td>
                     <td className="py-2.5 px-4 text-[13px]" style={{ color: EV_MUTED, fontFamily: MONO }}>{s.newest_inspection_date ?? '—'}</td>
                     <td className="py-2.5 px-4"><FreshnessPill kind={freshnessOf(s.newest_inspection_date)} /></td>
+                    <td className="py-2.5 px-4">
+                      {(() => {
+                        const blocked = NO_REFRESH[s.platform_family ?? ''];
+                        const slug = s.slug ?? '';
+                        const busy = refreshingSlug === slug;
+                        const anyBusy = refreshingSlug !== null || refreshAllBusy;
+
+                        if (blocked || !slug) {
+                          return (
+                            <span
+                              title={blocked ? `No auto-refresh — ${blocked}` : 'No jurisdiction slug on this source.'}
+                              className="inline-block py-[6px] px-3 text-[12px] font-semibold rounded-md select-none"
+                              style={{
+                                backgroundColor: EV_LIGHT,
+                                color: EV_FAINT,
+                                cursor: 'not-allowed',
+                                fontFamily: BODY,
+                              }}
+                            >
+                              No auto-refresh
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <div className="flex flex-col gap-1" style={{ minWidth: 150 }}>
+                            <button
+                              onClick={() => refreshSource(slug)}
+                              disabled={anyBusy}
+                              title={`Pull the last 7 days for ${slug} and rebuild its triggers.`}
+                              className="py-[6px] px-3 text-[12px] font-bold rounded-md self-start"
+                              style={{
+                                backgroundColor: '#fff',
+                                color: anyBusy ? EV_FAINT : EV_NAVY,
+                                border: `1px solid ${anyBusy ? EV_LINE : EV_NAVY}`,
+                                cursor: anyBusy ? 'not-allowed' : 'pointer',
+                                fontFamily: BODY,
+                              }}
+                            >
+                              {busy ? 'Refreshing…' : 'Refresh'}
+                            </button>
+                            {refreshMsg[slug] && (
+                              <span className="text-[10.5px]" style={{ color: EV_SUCCESS }}>
+                                {refreshMsg[slug]}
+                              </span>
+                            )}
+                            {refreshErr[slug] && (
+                              <span className="text-[10.5px]" style={{ color: EV_DANGER }}>
+                                {refreshErr[slug]}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </td>
                   </tr>
                 ))}
               </tbody>

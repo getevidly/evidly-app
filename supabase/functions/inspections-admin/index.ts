@@ -937,11 +937,59 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true, batches: data ?? [] });
     }
 
+    // ── Operator settings ─────────────────────────────────────────
+    // The freshness window is the number the whole lead pipeline turns
+    // on: an inspection newer than it becomes a cited/clean trigger,
+    // anything older can only produce a due prediction. It lives in one
+    // row so the crawlers, regenerate-triggers and this tab all read the
+    // same value rather than each carrying a literal.
+    if (section === "settings") {
+      const { data, error } = await supabase
+        .from("inspection_settings")
+        .select("recency_days, due_overdue_cap_days, updated_at")
+        .eq("id", 1)
+        .maybeSingle();
+      if (error) {
+        console.error("[inspections-admin] settings read failed:", error.message);
+        return json({ ok: false, error: "Could not load the inspection settings." }, 500);
+      }
+      return json({ ok: true, settings: data ?? null });
+    }
+
+    if (section === "set_setting") {
+      const raw = body.recency_days;
+      const n = typeof raw === "string" ? Number(raw) : raw;
+      // Bounded on the server, not just in the dropdown: this value sizes
+      // every regenerate query, and a wild number is a slow query.
+      if (typeof n !== "number" || !Number.isInteger(n) || n < 1 || n > 90) {
+        return json(
+          { ok: false, error: "The freshness window must be a whole number of days between 1 and 90." },
+          400,
+        );
+      }
+
+      const { data, error } = await supabase
+        .from("inspection_settings")
+        .update({ recency_days: n, updated_at: new Date().toISOString() })
+        .eq("id", 1)
+        .select("recency_days, due_overdue_cap_days, updated_at")
+        .maybeSingle();
+      if (error) {
+        console.error("[inspections-admin] settings write failed:", error.message);
+        return json({ ok: false, error: "Could not save the freshness window." }, 500);
+      }
+      console.log(
+        `[inspections-admin] recency_days set to ${n} by ${caller?.email ?? "unknown"}`,
+      );
+      return json({ ok: true, settings: data });
+    }
+
     return json(
       {
         ok: false,
         error:
-          "Unknown section. Expected sources, match, summary, queue, act, ready, send, export_email, export_mailer or batches.",
+          "Unknown section. Expected sources, match, summary, queue, act, ready, send, " +
+          "export_email, export_mailer, batches, settings or set_setting.",
       },
       400,
     );
