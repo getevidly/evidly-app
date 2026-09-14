@@ -23,7 +23,7 @@ const cors = PUBLIC_CORS_HEADERS;
 // Placeholder — replace with per-touch-type ladders when follow-up cadence rules are defined
 const DEFAULT_FOLLOW_UP_DAYS = 3;
 
-const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'client', 'other', 'research', 'stovio-home', 'stovio-food', 'stovio-fire', 'stovio-article']);
+const VALID_SOURCES = new Set(['call', 'show', 'email', 'social', 'page', 'cra', 'referral', 'client', 'other', 'research', 'stovio-home', 'stovio-food', 'stovio-fire', 'stovio-article', 'assessment']);
 
 /* Study kitchen_type → gtmReference SEGMENTS key (so ICP scoring works).
  * 'Hospital or senior living' maps to 'Senior Living' (fit 16). The survey
@@ -370,13 +370,147 @@ async function sendReferralEmail(
     result ? undefined : 'Resend send failed');
 }
 
+/* ── Risk Assessment findings email ───────────────────────────────
+ * Only for responses whose source is 'assessment'. The study senders
+ * above are untouched — this is an additional branch, not a variant. */
+
+const RA_RATING_RANK: Record<string, number> = {
+  critical: 0, high: 1, medium: 2, low: 3, onfile: 4,
+};
+const RA_RATING_LABEL: Record<string, string> = {
+  critical: 'Critical', high: 'High', medium: 'Medium',
+  low: 'Low', onfile: 'On file',
+};
+/* rating → days from completion until the record is due. 'onfile' has no
+ * offset — it keeps whatever date the operator already has scheduled. */
+const RA_DUE_DAYS: Record<string, number> = {
+  critical: 1, high: 3, medium: 7, low: 14,
+};
+/* QUESTION_META declaration order is fire records (hood, supp, sprink,
+ * alarm, ext) then food (cool, hold, sanit, handler) then vendor
+ * insurance. Used as the tiebreak inside a rating band, which is what
+ * puts fire before food when two records carry the same rating. */
+const RA_RECORD_ORDER: string[] = Object.keys(QUESTION_META);
+
+const RA_DAY_MS = 86_400_000;
+const RA_REASSESS_DAYS = 90;
+
+function esc(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function raDate(d: Date): string {
+  return d.toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+  });
+}
+
+/** Rated register + plan, plain text inside the standard HTML wrapper. */
+function buildAssessmentFindingsBody(
+  county: string | null,
+  assessmentId: string,
+  completedAt: Date,
+  answers: Array<{ question_id: string; value: string }>,
+): string {
+  const byId = new Map<string, string>();
+  for (const a of answers) byId.set(a.question_id, a.value);
+
+  const rows = RA_RECORD_ORDER
+    .map((id, idx) => ({
+      id, idx,
+      label: QUESTION_META[id].label,
+      rating: byId.get(`ra_rating_${id}`) ?? '',
+      reason: byId.get(`ra_reason_${id}`) ?? '',
+    }))
+    .filter(r => RA_RATING_RANK[r.rating] !== undefined)
+    .sort((a, b) =>
+      (RA_RATING_RANK[a.rating] - RA_RATING_RANK[b.rating]) || (a.idx - b.idx));
+
+  const p: string[] = [];
+  p.push(
+    `<p>Your Risk Assessment <strong>${esc(assessmentId)}</strong>` +
+    `${county ? ` for ${esc(county)} County` : ''}, completed ` +
+    `${raDate(completedAt)}.</p>`,
+  );
+
+  if (rows.length === 0) {
+    p.push('<p>No rated records were recorded on this assessment.</p>');
+  } else {
+    const reg = rows.map(r =>
+      `${esc(r.label)} — ${RA_RATING_LABEL[r.rating]}` +
+      `${r.reason ? ` — ${esc(r.reason)}` : ''}`,
+    ).join('<br>');
+    p.push(`<p><strong>Rated register</strong><br>${reg}</p>`);
+
+    const plan = rows.map(r => {
+      const days = RA_DUE_DAYS[r.rating];
+      const due = days === undefined
+        ? 'next date on your calendar'
+        : raDate(new Date(completedAt.getTime() + days * RA_DAY_MS));
+      return `${esc(r.label)} — ${RA_RATING_LABEL[r.rating]} — due ${due}`;
+    }).join('<br>');
+    p.push(`<p><strong>Plan</strong><br>${plan}</p>`);
+  }
+
+  p.push(
+    `<p>Re-assess on ` +
+    `${raDate(new Date(completedAt.getTime() + RA_REASSESS_DAYS * RA_DAY_MS))}.</p>`,
+  );
+  p.push(
+    '<p>This assessment was produced by EvidLY from your answers on ' +
+    'getevidly.com/risk-assessment. It is not an inspection and not a ' +
+    'coverage determination.</p>',
+  );
+
+  return p.join('');
+}
+
+async function sendAssessmentFindings(
+  sb: ReturnType<typeof createClient>,
+  responseId: string,
+  email: string,
+  county: string | null,
+  completedAt: string | null,
+) {
+  if (await alreadySent(sb, responseId, 'assessment_findings')) return;
+
+  const { data: answers } = await sb.from('market_research_answers')
+    .select('question_id, value').eq('response_id', responseId);
+
+  const rows = (answers || []) as Array<{ question_id: string; value: string }>;
+  const assessmentId =
+    rows.find(a => a.question_id === 'ra_assessment_id')?.value ?? '';
+  if (!assessmentId) {
+    await logSend(sb, responseId, 'assessment_findings', email, null,
+      'No ra_assessment_id on response');
+    return;
+  }
+
+  const completed = completedAt ? new Date(completedAt) : new Date();
+  const bodyHtml = buildAssessmentFindingsBody(county, assessmentId, completed, rows);
+  const html = buildEmailHtml({
+    recipientName: 'there',
+    bodyHtml,
+    footerNote: 'You received this because you asked for your findings when you completed the EvidLY Risk Assessment.',
+  });
+
+  const result = await sendEmail({
+    to: email,
+    subject: `Your Risk Assessment ${assessmentId}${county ? ` — ${county}` : ''}`,
+    html,
+  });
+  await logSend(sb, responseId, 'assessment_findings', email, result,
+    result ? undefined : 'Resend send failed');
+}
+
 /** Fire pending study emails for a response. Safe to call multiple times (deduped via log). */
 async function trySendStudyEmails(
   sb: ReturnType<typeof createClient>,
   responseId: string,
 ) {
   const { data: rows } = await sb.from('market_research_contacts')
-    .select('email, wants_county_report, wants_referral_link')
+    .select('email, wants_findings, wants_county_report, wants_referral_link')
     .eq('response_id', responseId).limit(1);
   const c = rows?.[0];
   if (!c?.email) return;
@@ -384,6 +518,20 @@ async function trySendStudyEmails(
   const jobs: Promise<void>[] = [];
   if (c.wants_county_report) jobs.push(sendGapReport(sb, responseId, c.email));
   if (c.wants_referral_link) jobs.push(sendReferralEmail(sb, responseId, c.email));
+
+  /* Risk Assessment findings — assessment-source responses only. The study
+   * senders above are unaffected: a study response never reaches this branch. */
+  if (c.wants_findings) {
+    const { data } = await sb.from('market_research_responses')
+      .select('source, county, completed_at')
+      .eq('id', responseId).single();
+    const resp = data as { source: string | null; county: string | null; completed_at: string | null } | null;
+    if (resp?.source === 'assessment') {
+      jobs.push(sendAssessmentFindings(
+        sb, responseId, c.email, resp.county ?? null, resp.completed_at ?? null));
+    }
+  }
+
   if (jobs.length) await Promise.allSettled(jobs);
 }
 
