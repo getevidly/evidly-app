@@ -40,6 +40,8 @@ export interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
+  /** text/plain alternative. Optional — omitted when not supplied. */
+  text?: string;
   from?: string;
   replyTo?: string;
 }
@@ -70,6 +72,7 @@ export async function sendEmail(params: SendEmailParams): Promise<{ id: string }
     subject: params.subject,
     html: params.html,
   };
+  if (params.text) body.text = params.text;
   if (params.replyTo) body.reply_to = params.replyTo;
 
   const MAX_ATTEMPTS = 2;

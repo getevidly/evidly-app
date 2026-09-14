@@ -375,25 +375,88 @@ async function sendReferralEmail(
  * above are untouched — this is an additional branch, not a variant. */
 
 const RA_RATING_RANK: Record<string, number> = {
-  critical: 0, high: 1, medium: 2, low: 3, onfile: 4,
+  critical: 0, high: 1, medium: 2, low: 3, onfile: 4, unrated: 5,
 };
 const RA_RATING_LABEL: Record<string, string> = {
   critical: 'Critical', high: 'High', medium: 'Medium',
-  low: 'Low', onfile: 'On file',
+  low: 'Low', onfile: 'On file', unrated: 'Not rated',
 };
 /* rating → days from completion until the record is due. 'onfile' has no
- * offset — it keeps whatever date the operator already has scheduled. */
+ * offset — it keeps whatever date the operator already has scheduled.
+ * 'unrated' is the policy question when the answer was not "yes": it is
+ * never given a band, but it still earns a week. */
 const RA_DUE_DAYS: Record<string, number> = {
-  critical: 1, high: 3, medium: 7, low: 14,
+  critical: 1, high: 3, medium: 7, low: 14, unrated: 7,
 };
-/* QUESTION_META declaration order is fire records (hood, supp, sprink,
- * alarm, ext) then food (cool, hold, sanit, handler) then vendor
- * insurance. Used as the tiebreak inside a rating band, which is what
- * puts fire before food when two records carry the same rating. */
-const RA_RECORD_ORDER: string[] = Object.keys(QUESTION_META);
+/* Plan ordering — bands in severity order, then the policy question,
+ * then everything already on file, last. */
+const RA_PLAN_RANK: Record<string, number> = {
+  critical: 0, high: 1, medium: 2, low: 3, unrated: 4, onfile: 9,
+};
+
+interface RaRecordDef { label: string; pillar: 'fire' | 'food'; }
+
+/* The fourteen records the assessment rates, in page order — fire first,
+ * then food. Labels match what the respondent saw on screen (the RECORDS
+ * table in evidly-landing src/lib/riskAssessmentRating.ts) so the email
+ * and the page name the same record the same way.
+ *
+ * The page's third pillar, 'policy' — the protective safeguards
+ * endorsement — reads under Fire Safety here: it is the insurance
+ * condition on the fire safeguards listed above it, and the document
+ * has only the two tables.
+ *
+ * QUESTION_META is NOT the source for this list. It knows only ten of
+ * the fourteen, which is why permit, cfpm, pest and pse were missing
+ * from the register. */
+const RA_RECORDS: Record<string, RaRecordDef> = {
+  hood:    { label: 'Hood and duct cleaning',            pillar: 'fire' },
+  supp:    { label: 'Hood suppression service',          pillar: 'fire' },
+  sprink:  { label: 'Fire sprinkler inspection',         pillar: 'fire' },
+  alarm:   { label: 'Fire alarm service',                pillar: 'fire' },
+  ext:     { label: 'Extinguisher service',              pillar: 'fire' },
+  vins:    { label: 'Vendor insurance certificates',     pillar: 'fire' },
+  pse:     { label: 'Protective safeguards endorsement', pillar: 'fire' },
+  permit:  { label: 'Health permit',                     pillar: 'food' },
+  cfpm:    { label: 'Food safety manager certificate',   pillar: 'food' },
+  handler: { label: 'Food handler cards',                pillar: 'food' },
+  cool:    { label: 'Cooling records',                   pillar: 'food' },
+  hold:    { label: 'Hot and cold holding logs',         pillar: 'food' },
+  sanit:   { label: 'Sanitizer concentration records',   pillar: 'food' },
+  pest:    { label: 'Pest control service',              pillar: 'food' },
+};
+const RA_RECORD_ORDER: string[] = Object.keys(RA_RECORDS);
+
+/* Pill colours — foreground on its own pale ground. */
+const RA_PILL: Record<string, { fg: string; bg: string }> = {
+  critical: { fg: '#A8352A', bg: '#F7E9E7' },
+  high:     { fg: '#B24A2E', bg: '#F8EBE5' },
+  medium:   { fg: '#7A5B14', bg: '#F6F0DF' },
+  low:      { fg: '#33556E', bg: '#E8EEF4' },
+  onfile:   { fg: '#33613F', bg: '#E6F0E9' },
+  unrated:  { fg: '#5A5A5A', bg: '#EFEFEF' },
+};
 
 const RA_DAY_MS = 86_400_000;
 const RA_REASSESS_DAYS = 90;
+const RA_PREFIX = 'ra_rating_';
+
+/* The wrapper (buildEmailHtml) carries no heading or table styles — it is
+ * a 600px Inter column with a padded body slot. These are the only styles
+ * the document adds, and they are inline so every client honours them. */
+const RA_H2 = "margin:28px 0 8px 0;font-family:'Inter',Arial,sans-serif;"
+  + 'font-size:16px;line-height:22px;font-weight:700;color:#1E2D4D;';
+const RA_TABLE = 'width:100%;max-width:600px;border-collapse:collapse;'
+  + 'margin:0 0 4px 0;';
+const RA_TH = 'padding:0 8px 6px 0;text-align:left;font-size:10px;'
+  + 'letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;'
+  + "font-weight:600;border-bottom:1px solid #E6E8EC;font-family:'Inter',Arial,sans-serif;";
+const RA_TD = 'padding:9px 8px 9px 0;border-bottom:1px solid #E6E8EC;'
+  + 'vertical-align:top;';
+const RA_NAME = "font-family:'Inter',Arial,sans-serif;font-size:14px;"
+  + 'line-height:20px;color:#1E2D4D;';
+const RA_WHY = "font-family:'Inter',Arial,sans-serif;font-size:12px;"
+  + 'line-height:18px;color:#6B7280;';
 
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -406,7 +469,134 @@ function raDate(d: Date): string {
   });
 }
 
-/** Rated register + plan, plain text inside the standard HTML wrapper. */
+/** County arrives as a slug ('merced'); the document shows it as written. */
+function raCounty(county: string | null): string {
+  if (!county) return '';
+  return county.split(/[\s_-]+/).filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
+interface RaRow {
+  id: string;
+  idx: number;
+  label: string;
+  pillar: 'fire' | 'food';
+  rating: string;
+  reason: string;
+  action: string;
+  owner: string;
+}
+
+/**
+ * Every record the respondent was rated on — driven by the ra_rating_<id>
+ * answers themselves, not by a fixed list, so a record the page adds
+ * later appears here without a change to this function.
+ */
+function raRows(byId: Map<string, string>): RaRow[] {
+  const ids: string[] = [];
+  for (const key of byId.keys()) {
+    if (key.startsWith(RA_PREFIX)) ids.push(key.slice(RA_PREFIX.length));
+  }
+
+  return ids
+    .map((id): RaRow => {
+      const def = RA_RECORDS[id];
+      const known = RA_RECORD_ORDER.indexOf(id);
+      return {
+        id,
+        /* Unknown ids sort after the fourteen rather than ahead of them. */
+        idx: known === -1 ? RA_RECORD_ORDER.length : known,
+        label: def?.label ?? QUESTION_META[id]?.label ?? id,
+        pillar: def?.pillar ?? 'food',
+        rating: byId.get(RA_PREFIX + id) ?? '',
+        reason: byId.get(`ra_reason_${id}`) ?? '',
+        action: byId.get(`ra_action_${id}`) ?? '',
+        owner: byId.get(`ra_owner_${id}`) ?? '',
+      };
+    })
+    .filter(r => RA_RATING_RANK[r.rating] !== undefined)
+    .sort((a, b) =>
+      (RA_RATING_RANK[a.rating] - RA_RATING_RANK[b.rating]) || (a.idx - b.idx));
+}
+
+/** "7 Critical, 4 Medium, and 2 of 14 records you could send today." */
+function raSummary(rows: RaRow[]): string {
+  const parts: string[] = [];
+  for (const band of ['critical', 'high', 'medium', 'low']) {
+    const n = rows.filter(r => r.rating === band).length;
+    if (n > 0) parts.push(`${n} ${RA_RATING_LABEL[band]}`);
+  }
+  const ready = rows.filter(r => r.rating === 'onfile').length;
+  const tail = `${ready} of ${rows.length} records you could send today.`;
+  return parts.length ? `${parts.join(', ')}, and ${tail}` : tail;
+}
+
+function raPill(rating: string): string {
+  const c = RA_PILL[rating] ?? RA_PILL.unrated;
+  return '<span style="display:inline-block;padding:2px 8px;border-radius:10px;'
+    + `background:${c.bg};color:${c.fg};font-size:11px;line-height:16px;`
+    + `font-weight:600;white-space:nowrap;font-family:'Inter',Arial,sans-serif;">`
+    + `${RA_RATING_LABEL[rating] ?? 'Not rated'}</span>`;
+}
+
+/** Due date for a row — on-file records keep the date already scheduled. */
+function raDue(rating: string, completedAt: Date): string {
+  const days = RA_DUE_DAYS[rating];
+  return days === undefined
+    ? 'Next date on your calendar'
+    : raDate(new Date(completedAt.getTime() + days * RA_DAY_MS));
+}
+
+/** Record | Rating | Why, for one pillar. */
+function raPillarTable(rows: RaRow[]): string {
+  const body = rows.map(r =>
+    `<tr><td style="${RA_TD}${RA_NAME}width:44%;">${esc(r.label)}</td>`
+    + `<td style="${RA_TD}width:20%;">${raPill(r.rating)}</td>`
+    + `<td style="${RA_TD}${RA_WHY}width:36%;">${esc(r.reason)}</td></tr>`,
+  ).join('');
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="${RA_TABLE}">`
+    + `<tr><th style="${RA_TH}">Record</th><th style="${RA_TH}">Rating</th>`
+    + `<th style="${RA_TH}">Why</th></tr>${body}</table>`;
+}
+
+/**
+ * The plan. Action and Owner are shown only when the page actually sent
+ * ra_action_<id> / ra_owner_<id>; today it sends neither, so the table
+ * renders Record | Rating | Due.
+ */
+function raPlanTable(rows: RaRow[], completedAt: Date): string {
+  const withText = rows.some(r => r.action || r.owner);
+  const ordered = [...rows].sort((a, b) =>
+    (RA_PLAN_RANK[a.rating] - RA_PLAN_RANK[b.rating]) || (a.idx - b.idx));
+
+  const head = withText
+    ? ['Record', 'Action', 'Owner', 'Due']
+    : ['Record', 'Rating', 'Due'];
+  const ths = head.map(h => `<th style="${RA_TH}">${h}</th>`).join('');
+
+  const body = ordered.map(r => {
+    const due = raDue(r.rating, completedAt);
+    const cells = withText
+      ? `<td style="${RA_TD}${RA_NAME}width:28%;">${esc(r.label)}</td>`
+        + `<td style="${RA_TD}${RA_WHY}width:34%;">${esc(r.action)}</td>`
+        + `<td style="${RA_TD}${RA_WHY}width:18%;">${esc(r.owner)}</td>`
+        + `<td style="${RA_TD}${RA_WHY}width:20%;">${esc(due)}</td>`
+      : `<td style="${RA_TD}${RA_NAME}width:44%;">${esc(r.label)}</td>`
+        + `<td style="${RA_TD}width:20%;">${raPill(r.rating)}</td>`
+        + `<td style="${RA_TD}${RA_WHY}width:36%;">${esc(due)}</td>`;
+    return `<tr>${cells}</tr>`;
+  }).join('');
+
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="${RA_TABLE}">`
+    + `<tr>${ths}</tr>${body}</table>`;
+}
+
+const RA_DISCLAIMER = 'This assessment was produced by EvidLY from your '
+  + 'answers on getevidly.com/risk-assessment. It is not an inspection '
+  + 'and not a coverage determination.';
+
+/** The findings document, HTML, for the standard wrapper's body slot. */
 function buildAssessmentFindingsBody(
   county: string | null,
   assessmentId: string,
@@ -416,54 +606,110 @@ function buildAssessmentFindingsBody(
   const byId = new Map<string, string>();
   for (const a of answers) byId.set(a.question_id, a.value);
 
-  const rows = RA_RECORD_ORDER
-    .map((id, idx) => ({
-      id, idx,
-      label: QUESTION_META[id].label,
-      rating: byId.get(`ra_rating_${id}`) ?? '',
-      reason: byId.get(`ra_reason_${id}`) ?? '',
-    }))
-    .filter(r => RA_RATING_RANK[r.rating] !== undefined)
-    .sort((a, b) =>
-      (RA_RATING_RANK[a.rating] - RA_RATING_RANK[b.rating]) || (a.idx - b.idx));
+  const rows = raRows(byId);
+  const reassess = new Date(completedAt.getTime() + RA_REASSESS_DAYS * RA_DAY_MS);
+  const countyName = raCounty(county);
 
   const p: string[] = [];
+
   p.push(
-    `<p>Your Risk Assessment <strong>${esc(assessmentId)}</strong>` +
-    `${county ? ` for ${esc(county)} County` : ''}, completed ` +
-    `${raDate(completedAt)}.</p>`,
+    `<h2 style="margin:0;font-family:'Inter',Arial,sans-serif;font-size:20px;`
+    + `line-height:26px;font-weight:700;color:#1E2D4D;">Risk Assessment `
+    + `${esc(assessmentId)}</h2>`,
+  );
+  p.push(
+    `<p style="margin:6px 0 0 0;font-family:'SFMono-Regular',Consolas,`
+    + `'Liberation Mono',Menlo,monospace;font-size:12px;line-height:18px;`
+    + `color:#6B7280;">`
+    + `${countyName ? `${esc(countyName)} County &middot; ` : ''}`
+    + `Taken ${raDate(completedAt)} &middot; Re-assess by ${raDate(reassess)}`
+    + ` &middot; ${rows.length} record${rows.length === 1 ? '' : 's'}</p>`,
   );
 
   if (rows.length === 0) {
-    p.push('<p>No rated records were recorded on this assessment.</p>');
+    p.push(`<p style="${RA_NAME}margin:24px 0 0 0;">No rated records were `
+      + 'recorded on this assessment.</p>');
   } else {
-    const reg = rows.map(r =>
-      `${esc(r.label)} — ${RA_RATING_LABEL[r.rating]}` +
-      `${r.reason ? ` — ${esc(r.reason)}` : ''}`,
-    ).join('<br>');
-    p.push(`<p><strong>Rated register</strong><br>${reg}</p>`);
+    p.push(`<h2 style="${RA_H2}">What this says</h2>`);
+    p.push(`<p style="${RA_NAME}margin:0;">${esc(raSummary(rows))}</p>`);
 
-    const plan = rows.map(r => {
-      const days = RA_DUE_DAYS[r.rating];
-      const due = days === undefined
-        ? 'next date on your calendar'
-        : raDate(new Date(completedAt.getTime() + days * RA_DAY_MS));
-      return `${esc(r.label)} — ${RA_RATING_LABEL[r.rating]} — due ${due}`;
-    }).join('<br>');
-    p.push(`<p><strong>Plan</strong><br>${plan}</p>`);
+    /* Fire is always first. */
+    const fire = rows.filter(r => r.pillar === 'fire');
+    const food = rows.filter(r => r.pillar === 'food');
+    if (fire.length) {
+      p.push(`<h2 style="${RA_H2}">Fire Safety</h2>`);
+      p.push(raPillarTable(fire));
+    }
+    if (food.length) {
+      p.push(`<h2 style="${RA_H2}">Food Safety</h2>`);
+      p.push(raPillarTable(food));
+    }
+
+    p.push(`<h2 style="${RA_H2}">Your plan</h2>`);
+    p.push(raPlanTable(rows, completedAt));
   }
 
-  p.push(
-    `<p>Re-assess on ` +
-    `${raDate(new Date(completedAt.getTime() + RA_REASSESS_DAYS * RA_DAY_MS))}.</p>`,
-  );
-  p.push(
-    '<p>This assessment was produced by EvidLY from your answers on ' +
-    'getevidly.com/risk-assessment. It is not an inspection and not a ' +
-    'coverage determination.</p>',
-  );
+  p.push(`<p style="${RA_NAME}margin:28px 0 0 0;">Re-assess by `
+    + `${raDate(reassess)}.</p>`);
+  p.push(`<p style="${RA_WHY}margin:16px 0 0 0;">${RA_DISCLAIMER}</p>`);
 
   return p.join('');
+}
+
+/** The same document, same order, no markup — the text/plain alternative. */
+function buildAssessmentFindingsText(
+  county: string | null,
+  assessmentId: string,
+  completedAt: Date,
+  answers: Array<{ question_id: string; value: string }>,
+): string {
+  const byId = new Map<string, string>();
+  for (const a of answers) byId.set(a.question_id, a.value);
+
+  const rows = raRows(byId);
+  const reassess = new Date(completedAt.getTime() + RA_REASSESS_DAYS * RA_DAY_MS);
+  const countyName = raCounty(county);
+
+  const out: string[] = [];
+  out.push(`Risk Assessment ${assessmentId}`);
+  out.push(
+    `${countyName ? `${countyName} County · ` : ''}`
+    + `Taken ${raDate(completedAt)} · Re-assess by ${raDate(reassess)}`
+    + ` · ${rows.length} record${rows.length === 1 ? '' : 's'}`,
+  );
+
+  if (rows.length === 0) {
+    out.push('', 'No rated records were recorded on this assessment.');
+  } else {
+    out.push('', 'WHAT THIS SAYS', raSummary(rows));
+
+    const section = (title: string, list: RaRow[]) => {
+      if (!list.length) return;
+      out.push('', title.toUpperCase());
+      for (const r of list) {
+        out.push(`  ${r.label} — ${RA_RATING_LABEL[r.rating]}`
+          + `${r.reason ? ` — ${r.reason}` : ''}`);
+      }
+    };
+    section('Fire Safety', rows.filter(r => r.pillar === 'fire'));
+    section('Food Safety', rows.filter(r => r.pillar === 'food'));
+
+    out.push('', 'YOUR PLAN');
+    const withText = rows.some(r => r.action || r.owner);
+    const ordered = [...rows].sort((a, b) =>
+      (RA_PLAN_RANK[a.rating] - RA_PLAN_RANK[b.rating]) || (a.idx - b.idx));
+    for (const r of ordered) {
+      const due = raDue(r.rating, completedAt);
+      out.push(withText
+        ? `  ${r.label} — ${r.action} — ${r.owner} — ${due}`
+        : `  ${r.label} — ${RA_RATING_LABEL[r.rating]} — ${due}`);
+    }
+  }
+
+  out.push('', `Re-assess by ${raDate(reassess)}.`);
+  out.push('', RA_DISCLAIMER);
+
+  return out.join('\n');
 }
 
 async function sendAssessmentFindings(
@@ -492,13 +738,18 @@ async function sendAssessmentFindings(
   const html = buildEmailHtml({
     recipientName: 'there',
     bodyHtml,
+    /* The body opens with its own heading — the wrapper's "Hi there," would
+     * sit above a document that is not a letter. */
+    skipGreeting: true,
     footerNote: 'You received this because you asked for your findings when you completed the EvidLY Risk Assessment.',
   });
+  const text = buildAssessmentFindingsText(county, assessmentId, completed, rows);
 
   const result = await sendEmail({
     to: email,
-    subject: `Your Risk Assessment ${assessmentId}${county ? ` — ${county}` : ''}`,
+    subject: `Your Risk Assessment ${assessmentId}${county ? ` — ${raCounty(county)}` : ''}`,
     html,
+    text,
   });
   await logSend(sb, responseId, 'assessment_findings', email, result,
     result ? undefined : 'Resend send failed');
