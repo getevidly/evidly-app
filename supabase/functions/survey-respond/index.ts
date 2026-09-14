@@ -592,6 +592,21 @@ function raPlanTable(rows: RaRow[], completedAt: Date): string {
     + `<tr>${ths}</tr>${body}</table>`;
 }
 
+const RA_TITLE = 'Your Commercial Kitchen Risk Assessment';
+
+const RA_INTRO = 'Here is the Risk Assessment you took on getevidly.com. It '
+  + 'rates each of the fourteen records a commercial kitchen can be asked to '
+  + 'produce — by what kind of record it is and how far past its interval '
+  + 'it is — and gives you a plan with a date for each one. Keep the '
+  + 'reference number; it identifies this assessment if you send it to your '
+  + 'carrier or your property manager.';
+
+/** "Hi Arthur," when the contact row carries a name, otherwise "Hi,". */
+function raGreeting(contactName: string | null): string {
+  const first = (contactName ?? '').trim().split(/\s+/)[0] ?? '';
+  return first ? `Hi ${first},` : 'Hi,';
+}
+
 const RA_DISCLAIMER = 'This assessment was produced by EvidLY from your '
   + 'answers on getevidly.com/risk-assessment. It is not an inspection '
   + 'and not a coverage determination.';
@@ -602,6 +617,7 @@ function buildAssessmentFindingsBody(
   assessmentId: string,
   completedAt: Date,
   answers: Array<{ question_id: string; value: string }>,
+  contactName: string | null,
 ): string {
   const byId = new Map<string, string>();
   for (const a of answers) byId.set(a.question_id, a.value);
@@ -614,8 +630,7 @@ function buildAssessmentFindingsBody(
 
   p.push(
     `<h2 style="margin:0;font-family:'Inter',Arial,sans-serif;font-size:20px;`
-    + `line-height:26px;font-weight:700;color:#1E2D4D;">Risk Assessment `
-    + `${esc(assessmentId)}</h2>`,
+    + `line-height:26px;font-weight:700;color:#1E2D4D;">${RA_TITLE}</h2>`,
   );
   p.push(
     `<p style="margin:6px 0 0 0;font-family:'SFMono-Regular',Consolas,`
@@ -623,8 +638,12 @@ function buildAssessmentFindingsBody(
     + `color:#6B7280;">`
     + `${countyName ? `${esc(countyName)} County &middot; ` : ''}`
     + `Taken ${raDate(completedAt)} &middot; Re-assess by ${raDate(reassess)}`
-    + ` &middot; ${rows.length} record${rows.length === 1 ? '' : 's'}</p>`,
+    + ` &middot; ${rows.length} record${rows.length === 1 ? '' : 's'}`
+    + ` &middot; Reference ${esc(assessmentId)}</p>`,
   );
+  p.push(`<p style="${RA_NAME}margin:24px 0 0 0;">`
+    + `${esc(raGreeting(contactName))}</p>`);
+  p.push(`<p style="${RA_NAME}margin:12px 0 0 0;">${RA_INTRO}</p>`);
 
   if (rows.length === 0) {
     p.push(`<p style="${RA_NAME}margin:24px 0 0 0;">No rated records were `
@@ -662,6 +681,7 @@ function buildAssessmentFindingsText(
   assessmentId: string,
   completedAt: Date,
   answers: Array<{ question_id: string; value: string }>,
+  contactName: string | null,
 ): string {
   const byId = new Map<string, string>();
   for (const a of answers) byId.set(a.question_id, a.value);
@@ -671,12 +691,14 @@ function buildAssessmentFindingsText(
   const countyName = raCounty(county);
 
   const out: string[] = [];
-  out.push(`Risk Assessment ${assessmentId}`);
+  out.push(RA_TITLE);
   out.push(
     `${countyName ? `${countyName} County · ` : ''}`
     + `Taken ${raDate(completedAt)} · Re-assess by ${raDate(reassess)}`
-    + ` · ${rows.length} record${rows.length === 1 ? '' : 's'}`,
+    + ` · ${rows.length} record${rows.length === 1 ? '' : 's'}`
+    + ` · Reference ${assessmentId}`,
   );
+  out.push('', raGreeting(contactName), '', RA_INTRO);
 
   if (rows.length === 0) {
     out.push('', 'No rated records were recorded on this assessment.');
@@ -733,21 +755,34 @@ async function sendAssessmentFindings(
     return;
   }
 
+  /* The greeting's name. Its own query rather than a column on the shared
+   * contact select in trySendStudyEmails, so the study senders are untouched
+   * and a missing column (migration 20260914120000 not yet applied) costs
+   * this email a first name instead of failing every study email. */
+  let contactName: string | null = null;
+  try {
+    const { data: contact } = await sb.from('market_research_contacts')
+      .select('name').eq('response_id', responseId).limit(1);
+    contactName = (contact?.[0] as { name?: string } | undefined)?.name ?? null;
+  } catch { /* column absent — fall back to "Hi," */ }
+
   const completed = completedAt ? new Date(completedAt) : new Date();
-  const bodyHtml = buildAssessmentFindingsBody(county, assessmentId, completed, rows);
+  const bodyHtml = buildAssessmentFindingsBody(
+    county, assessmentId, completed, rows, contactName);
   const html = buildEmailHtml({
     recipientName: 'there',
     bodyHtml,
-    /* The body opens with its own heading — the wrapper's "Hi there," would
-     * sit above a document that is not a letter. */
+    /* The body opens with its own heading and greeting — the wrapper's
+     * "Hi there," would sit above a document that is not a letter. */
     skipGreeting: true,
     footerNote: 'You received this because you asked for your findings when you completed the EvidLY Risk Assessment.',
   });
-  const text = buildAssessmentFindingsText(county, assessmentId, completed, rows);
+  const text = buildAssessmentFindingsText(
+    county, assessmentId, completed, rows, contactName);
 
   const result = await sendEmail({
     to: email,
-    subject: `Your Risk Assessment ${assessmentId}${county ? ` — ${raCounty(county)}` : ''}`,
+    subject: `${RA_TITLE}${county ? ` — ${raCounty(county)}` : ''}`,
     html,
     text,
   });
@@ -895,31 +930,45 @@ Deno.serve(async (req: Request) => {
         return json({ ok: true, response_id });
       }
 
-      const { error } = await sb
+      const consent = {
+        wants_findings: !!c.wants_findings,
+        wants_county_report: !!c.wants_county_report,
+        wants_referral_link: !!c.wants_referral_link,
+        wants_meeting: !!c.wants_meeting,
+      };
+      /* `name` is stored when the contact action sends one. The column
+       * arrives with migration 20261228000000; until that migration is
+       * applied to PROD, Postgres answers 42703 and the write is retried
+       * without the field, so an unapplied migration costs the findings
+       * greeting a first name rather than breaking every contact write. */
+      const withName = { response_id, email: c.email || null, name: c.name || null, ...consent };
+      const withoutName = { response_id, email: c.email || null, ...consent };
+
+      let { error } = await sb
         .from('market_research_contacts')
-        .upsert({
-          response_id,
-          email: c.email || null,
-          wants_findings: !!c.wants_findings,
-          wants_county_report: !!c.wants_county_report,
-          wants_referral_link: !!c.wants_referral_link,
-          wants_meeting: !!c.wants_meeting,
-        }, { onConflict: 'response_id' });
+        .upsert(withName, { onConflict: 'response_id' });
+      if (error?.code === '42703') {
+        console.warn('[survey-respond] market_research_contacts.name missing — migration 20261228000000 not applied');
+        ({ error } = await sb
+          .from('market_research_contacts')
+          .upsert(withoutName, { onConflict: 'response_id' }));
+      }
       // Note: onConflict on response_id needs a unique index; for now we just insert
       // since each response should only have one contact row.
       if (error) {
         // If duplicate, try update instead
         if (error.code === '23505') {
-          await sb
+          const { email: _e, response_id: _r, ...rest } = withName;
+          const { error: updErr } = await sb
             .from('market_research_contacts')
-            .update({
-              email: c.email || null,
-              wants_findings: !!c.wants_findings,
-              wants_county_report: !!c.wants_county_report,
-              wants_referral_link: !!c.wants_referral_link,
-              wants_meeting: !!c.wants_meeting,
-            })
+            .update({ email: c.email || null, ...rest })
             .eq('response_id', response_id);
+          if (updErr?.code === '42703') {
+            await sb
+              .from('market_research_contacts')
+              .update({ email: c.email || null, ...consent })
+              .eq('response_id', response_id);
+          }
         } else {
           return json({ error: error.message }, 500);
         }
