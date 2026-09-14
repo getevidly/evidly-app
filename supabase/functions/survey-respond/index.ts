@@ -995,9 +995,13 @@ async function sendAssessmentCountyReport(
   }
   if (resp.status !== 'completed') return; // not time yet — fires on completion
 
+  /* ilike, not eq: the assessment page submits a slug ('merced') while
+   * jurisdictions stores the county title-cased ('Merced'). An eq match
+   * would return nothing and this email would carry no requirements at
+   * all. The Study's sendGapReport keeps its eq — untouched on purpose. */
   const { data: jurs } = await sb.from('jurisdictions')
     .select('agency_name, grading_type, grading_config, scoring_methodology, violation_weight_map, fire_ahj_name, fire_jurisdiction_config, hood_cleaning_default')
-    .eq('state', 'CA').eq('county', resp.county).eq('is_active', true).limit(1);
+    .eq('state', 'CA').ilike('county', resp.county).eq('is_active', true).limit(1);
 
   const contactName = await raContactName(sb, responseId);
   const html = buildEmailHtml({
