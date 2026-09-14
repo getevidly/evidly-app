@@ -538,10 +538,13 @@ Deno.serve(async (req: Request) => {
 //       seal vendor_service_records → update schedule → return IDs
 //
 // Seal path: DIRECT INLINE — same SHA-256 algorithm as seal-service-record but
-// without JWT auth (webhook uses shared secret). sealed_by = platform_admin UUID.
+// without JWT auth (webhook uses shared secret). sealed_by = SEAL_SYSTEM_USER_ID,
+// a dedicated system account holding no role powers and no staff role.
 //
-// Idempotency: compliance_documents UNIQUE(external_source, external_id).
-// Replaying the same event returns 200 with idempotent=true.
+// Idempotency: compliance_documents UNIQUE(external_source, external_id), and
+// a row counts as done only once bridged_service_id is set. A row without one
+// is an orphan from a failed seal — it is reused and sealed, never reported
+// as an idempotent success.
 //
 // Cert chaining: document.cert finds the report's sealed vendor_service_records
 // row via compliance_documents.bridged_service_id, uses its content_hash as
@@ -861,14 +864,21 @@ async function handleDocumentEvent(
     }
 
     // ── 5. Idempotency check ─────────────────────────────────────
+    /* A row alone does not mean the work finished. The document is inserted
+     * at step 8 and sealed at step 9, so a failed seal leaves the row behind
+     * with bridged_service_id still null. Returning "idempotent" on that row
+     * reported success for a document that was never sealed, and every retry
+     * repeated the lie. Completion is bridged_service_id, not row existence. */
     const externalDocId = `${event}:${hoodops_document_id}`;
-    const { data: existingDoc } = await supabase
-      .from("compliance_documents").select("id")
+    const { data: existingDocRow } = await supabase
+      .from("compliance_documents").select("id, bridged_service_id")
       .eq("external_source", "hoodops")
       .eq("external_id", externalDocId)
       .maybeSingle();
+    const existingDoc = existingDocRow as
+      { id: string; bridged_service_id: string | null } | null;
 
-    if (existingDoc) {
+    if (existingDoc?.bridged_service_id) {
       return jsonResp({
         ok: true,
         event,
@@ -876,8 +886,14 @@ async function handleDocumentEvent(
         organization_id: orgId,
         location_id: locId,
         document_id: existingDoc.id,
+        sealed_record_id: existingDoc.bridged_service_id,
       }, 200);
     }
+
+    /* Orphan from a prior failed seal: reuse the row rather than insert a
+     * second one — idx_cd_external_identity is unique on
+     * (external_source, external_id) — and fall through to seal it. */
+    const orphanDocId: string | null = existingDoc?.id ?? null;
 
     // ── 6. Fetch PDF from HoodOps ────────────────────────────────
     let pdfBytes: ArrayBuffer;
@@ -914,29 +930,40 @@ async function handleDocumentEvent(
     const docLabel = event === "document.cert" ? "Certificate" : "Report";
     const effectiveCertNumber = cert_number || "NONE";
 
-    const { data: compDoc, error: docErr } = await supabase
-      .from("compliance_documents")
-      .insert({
-        organization_id: orgId,
-        location_id: locId,
-        category: "service",
-        type: "KEC",
-        name: `Hood Cleaning ${docLabel} — ${service_date}`,
-        status: "current",
-        service_type_code: effectiveServiceCode,
-        storage_path: `${storageBucket}/${storagePath}`,
-        mime_type: "application/pdf",
-        file_size_bytes: pdfBytes.byteLength,
-        issued_date: service_date,
-        expiry_date: next_service_due || null,
-        vendor_id: vendorId,
-        import_source: "api",
-        import_source_metadata: { source: "hoodops_webhook", hoodops_document_id, event, document_url },
-        external_source: "hoodops",
-        external_id: externalDocId,
-      })
-      .select("id")
-      .single();
+    const docFields: Record<string, unknown> = {
+      organization_id: orgId,
+      location_id: locId,
+      category: "service",
+      type: "KEC",
+      name: `Hood Cleaning ${docLabel} — ${service_date}`,
+      status: "current",
+      service_type_code: effectiveServiceCode,
+      storage_path: `${storageBucket}/${storagePath}`,
+      mime_type: "application/pdf",
+      file_size_bytes: pdfBytes.byteLength,
+      issued_date: service_date,
+      expiry_date: next_service_due || null,
+      vendor_id: vendorId,
+      import_source: "api",
+      import_source_metadata: { source: "hoodops_webhook", hoodops_document_id, event, document_url },
+      external_source: "hoodops",
+      external_id: externalDocId,
+    };
+
+    /* Orphan retry updates the row in place; the unique index on
+     * (external_source, external_id) makes a second insert impossible. */
+    const { data: compDoc, error: docErr } = orphanDocId
+      ? await supabase
+          .from("compliance_documents")
+          .update(docFields)
+          .eq("id", orphanDocId)
+          .select("id")
+          .single()
+      : await supabase
+          .from("compliance_documents")
+          .insert(docFields)
+          .select("id")
+          .single();
 
     if (docErr || !compDoc) {
       await logDocAudit(false, docErr?.message || "Document creation failed");
@@ -947,16 +974,27 @@ async function handleDocumentEvent(
     const safeguardType = SERVICE_CODE_TO_SAFEGUARD[effectiveServiceCode] || "hood_cleaning";
     const sealedAtCanonical = canonicalTimestamp(new Date());
 
-    // sealed_by = platform_admin (FK to auth.users required)
+    /* sealed_by = the dedicated system identity (FK to auth.users required).
+     * This is an unattended machine seal, so it is attributed to a system
+     * account that holds no role powers and no staff role — not to a person,
+     * and not to whichever platform_admin happened to sort first. Fail closed:
+     * an unset or unknown id must never seal. */
+    const sealSystemUserId = Deno.env.get("SEAL_SYSTEM_USER_ID");
+    if (!sealSystemUserId) {
+      console.error("[hoodops-webhook] SEAL_SYSTEM_USER_ID is not configured — refusing to seal");
+      await logDocAudit(false, "SEAL_SYSTEM_USER_ID not configured");
+      return jsonResp({ error: "Cannot seal: seal identity not configured" }, 500);
+    }
+
     const { data: sysUser } = await supabase
       .from("user_profiles").select("id")
-      .eq("role", "platform_admin")
-      .limit(1)
+      .eq("id", sealSystemUserId)
       .maybeSingle();
 
     if (!sysUser) {
-      await logDocAudit(false, "No platform_admin user found for seal");
-      return jsonResp({ error: "Cannot seal: no platform_admin user" }, 500);
+      console.error(`[hoodops-webhook] SEAL_SYSTEM_USER_ID ${sealSystemUserId} has no user_profiles row — refusing to seal`);
+      await logDocAudit(false, "Seal system user not found");
+      return jsonResp({ error: "Cannot seal: seal identity not found" }, 500);
     }
     const sealedBy = sysUser.id;
 
