@@ -209,34 +209,16 @@ function buildGapReportBody(
     }
   }
 
-  /* ── Hood cleaning frequency ───────────────────────────────── */
+  /* ── Hood cleaning frequency ───────────────────────────────────
+   * The county does not set this interval, so neither hood_cleaning_default
+   * nor the Table 12.4 rows are stated as county enforcement. NFPA 96 sets
+   * it, by what the kitchen cooks. Removed, not reworded. */
   if (fc) {
     let s = h3('Hood Cleaning Frequency');
-    if (jur?.hood_cleaning_default) {
-      s += `<p>This county enforces <strong>${freqLabel(jur.hood_cleaning_default)}</strong> hood cleaning as the default schedule.</p>`;
-    }
-    // deno-lint-ignore no-explicit-any
-    const t124 = fc.nfpa_96_table_12_4 as Record<string, any> | undefined;
-    if (t124) {
-      s += '<p style="margin-top:8px;">Your specific frequency depends on cooking volume (NFPA 96 Table 12.4):</p>';
-      s += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">';
-      s += '<tr style="background:#f1f5f9;"><th style="padding:6px 8px;text-align:left;">Hood / Cooking Type</th>' +
-        '<th style="padding:6px 8px;text-align:right;">Frequency</th></tr>';
-      const rows: [string, string][] = [
-        ['Type I \u2014 Heavy volume', t124.type_i_heavy_volume],
-        ['Type I \u2014 Moderate volume', t124.type_i_moderate_volume],
-        ['Type I \u2014 Low volume', t124.type_i_low_volume],
-        ['Type II hood', t124.type_ii],
-        ['Solid fuel cooking', t124.solid_fuel_cooking],
-      ];
-      for (const [lbl, freq] of rows) {
-        if (freq) {
-          s += `<tr><td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;">${lbl}</td>` +
-            `<td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:right;">${freqLabel(freq)}</td></tr>`;
-        }
-      }
-      s += '</table>';
-    }
+    s += '<p>NFPA 96 Table 12.4 sets the interval by what the kitchen '
+      + 'cooks: monthly for solid fuel, quarterly for high-volume cooking, '
+      + 'semiannually for moderate volume, annually for low-volume or '
+      + 'seasonal cooking.</p>';
     p.push(s);
   }
 
@@ -320,7 +302,7 @@ async function sendGapReport(
   if (resp.status !== 'completed') return; // not time yet — fires on completion
 
   const { data: jurs } = await sb.from('jurisdictions')
-    .select('agency_name, grading_type, grading_config, scoring_methodology, violation_weight_map, fire_ahj_name, fire_jurisdiction_config, hood_cleaning_default')
+    .select('agency_name, grading_type, grading_config, scoring_methodology, violation_weight_map, fire_ahj_name, fire_jurisdiction_config')
     .eq('state', 'CA').eq('county', resp.county).eq('is_active', true).limit(1);
 
   const { data: answers } = await sb.from('market_research_answers')
