@@ -601,6 +601,17 @@ const RA_INTRO = 'Here is the Risk Assessment you took on getevidly.com. It '
   + 'reference number; it identifies this assessment if you send it to your '
   + 'carrier or your property manager.';
 
+/* True when the write failed only because market_research_contacts.name is
+ * absent — migration 20261228000000 not yet applied to this database.
+ * PostgREST answers PGRST204 from its schema cache; Postgres itself answers
+ * 42703 when the cache is stale rather than empty. Both mean the same thing. */
+// deno-lint-ignore no-explicit-any
+function raMissingNameColumn(err: any): boolean {
+  if (!err) return false;
+  return err.code === 'PGRST204' || err.code === '42703'
+    || /'?name'? column/i.test(err.message ?? '');
+}
+
 /** "Hi Arthur," when the contact row carries a name, otherwise "Hi,". */
 function raGreeting(contactName: string | null): string {
   const first = (contactName ?? '').trim().split(/\s+/)[0] ?? '';
@@ -947,7 +958,7 @@ Deno.serve(async (req: Request) => {
       let { error } = await sb
         .from('market_research_contacts')
         .upsert(withName, { onConflict: 'response_id' });
-      if (error?.code === '42703') {
+      if (raMissingNameColumn(error)) {
         console.warn('[survey-respond] market_research_contacts.name missing — migration 20261228000000 not applied');
         ({ error } = await sb
           .from('market_research_contacts')
@@ -963,7 +974,7 @@ Deno.serve(async (req: Request) => {
             .from('market_research_contacts')
             .update({ email: c.email || null, ...rest })
             .eq('response_id', response_id);
-          if (updErr?.code === '42703') {
+          if (raMissingNameColumn(updErr)) {
             await sb
               .from('market_research_contacts')
               .update({ email: c.email || null, ...consent })
