@@ -861,34 +861,20 @@ function buildAssessmentCountySections(
     p.push(s);
   }
 
-  /* ── Fire: hood cleaning frequency ─────────────────────────── */
-  if (fc) {
-    let s = h3('Hood Cleaning Frequency');
-    if (jur?.hood_cleaning_default) {
-      s += `<p>This county enforces <strong>${freqLabel(jur.hood_cleaning_default)}</strong> hood cleaning as the default schedule.</p>`;
-    }
-    // deno-lint-ignore no-explicit-any
-    const t124 = fc.nfpa_96_table_12_4 as Record<string, any> | undefined;
-    if (t124) {
-      s += '<p style="margin-top:8px;">Your specific frequency depends on cooking volume (NFPA 96 Table 12.4):</p>';
-      s += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">';
-      s += '<tr style="background:#f1f5f9;"><th style="padding:6px 8px;text-align:left;">Hood / Cooking Type</th>' +
-        '<th style="padding:6px 8px;text-align:right;">Frequency</th></tr>';
-      const rows: [string, string][] = [
-        ['Type I — Heavy volume', t124.type_i_heavy_volume],
-        ['Type I — Moderate volume', t124.type_i_moderate_volume],
-        ['Type I — Low volume', t124.type_i_low_volume],
-        ['Type II hood', t124.type_ii],
-        ['Solid fuel cooking', t124.solid_fuel_cooking],
-      ];
-      for (const [lbl, freq] of rows) {
-        if (freq) {
-          s += `<tr><td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;">${lbl}</td>` +
-            `<td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:right;">${freqLabel(freq)}</td></tr>`;
-        }
-      }
-      s += '</table>';
-    }
+  /* ── Fire: the authority and the standards, no interval ──────
+   * A county does not set the hood-cleaning interval — NFPA 96 does, and
+   * what the kitchen cooks decides which interval applies. Stating
+   * hood_cleaning_default or the Table 12.4 rows here read as county
+   * requirements, which they are not. Both are gone, not reworded. */
+  {
+    let s = h3('Fire Safety Standards');
+    s += '<p>Hood and duct cleaning follows NFPA 96, on the interval set by '
+      + 'what the kitchen cooks: monthly for solid fuel, quarterly for '
+      + 'high-volume, semiannually for moderate volume, annually for low '
+      + 'volume. Suppression, sprinkler, alarm and extinguisher service '
+      + 'follow NFPA 17A, 25, 72 and 10 on their own schedules.';
+    if (fireAhj) s += ` Your fire authority is ${fireAhj}.`;
+    s += '</p>';
     p.push(s);
   }
 
@@ -1000,7 +986,9 @@ async function sendAssessmentCountyReport(
    * would return nothing and this email would carry no requirements at
    * all. The Study's sendGapReport keeps its eq — untouched on purpose. */
   const { data: jurs } = await sb.from('jurisdictions')
-    .select('agency_name, grading_type, grading_config, scoring_methodology, violation_weight_map, fire_ahj_name, fire_jurisdiction_config, hood_cleaning_default')
+    /* hood_cleaning_default is deliberately not selected: this email states
+     * no interval as a county requirement, so the column cannot reach it. */
+    .select('agency_name, grading_type, grading_config, scoring_methodology, violation_weight_map, fire_ahj_name, fire_jurisdiction_config')
     .eq('state', 'CA').ilike('county', resp.county).eq('is_active', true).limit(1);
 
   const contactName = await raContactName(sb, responseId);
