@@ -129,6 +129,9 @@ export interface EmailTemplateParams {
   campaign?: boolean;
   /** When true, suppress the wrapper "Hi name," — the body provides its own. */
   skipGreeting?: boolean;
+  /** Product category line under the wordmark, mono. Opt-in: omitted and the
+   *  header renders exactly as before. */
+  category?: string;
 }
 
 /**
@@ -153,6 +156,10 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
     ? `${unsubBase}?token=${params.unsubscribeToken}`
     : 'https://app.getevidly.com/settings/notifications';
 
+  const categoryLine = params.category
+    ? `\n    <p style="margin: 6px 0 0 0; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 12px; line-height: 18px; color: #A8B4C8;">${params.category}</p>`
+    : '';
+
   const reasonLine = params.footerNote
     ? `<p style="margin: 0 0 10px 0; font-size: 11px; color: #999;">${params.footerNote}</p>`
     : '';
@@ -162,7 +169,7 @@ export function buildEmailHtml(params: EmailTemplateParams): string {
   <div style="background: #1E2D4D; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
       <span style="color: #B24A2E;">E</span><span style="color: #ffffff;">vid</span><span style="color: #B24A2E;">LY</span>
-    </h1>
+    </h1>${categoryLine}
   </div>
   ${urgencyBlock}
   <div style="padding: 32px;">

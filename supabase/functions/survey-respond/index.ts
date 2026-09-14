@@ -786,6 +786,7 @@ async function sendAssessmentFindings(
     /* The body opens with its own heading and greeting — the wrapper's
      * "Hi there," would sit above a document that is not a letter. */
     skipGreeting: true,
+    category: RA_CATEGORY,
     footerNote: 'You received this because you asked for your findings when you completed the EvidLY Risk Assessment.',
   });
   const text = buildAssessmentFindingsText(
@@ -801,6 +802,267 @@ async function sendAssessmentFindings(
     result ? undefined : 'Resend send failed');
 }
 
+/* ── Risk Assessment: the county-requirements and referral emails ──
+ * The assessment path's counterparts to sendGapReport and
+ * sendReferralEmail. Separate builders and senders on purpose: the two
+ * Study functions above are left byte-identical, and neither of these
+ * may name the Study or link getstovio.com. */
+
+const RA_URL = 'https://www.getevidly.com/risk-assessment';
+const RA_CATEGORY = 'Commercial Kitchen Risk Management';
+
+/** The wrapper's CTA button, rendered inside the body so the disclaimer
+ *  stays the last line of every assessment email. */
+function raButton(text: string, url: string): string {
+  return '<div style="text-align:center;margin:24px 0 0 0;">'
+    + `<a href="${url}" style="background:#1E2D4D;color:#ffffff;`
+    + 'padding:14px 32px;border-radius:8px;text-decoration:none;'
+    + `font-weight:600;display:inline-block;">${text}</a></div>`;
+}
+
+/** First name for the greeting. Tolerates the `name` column being absent
+ *  (migration 20260914120000) the same way sendAssessmentFindings does —
+ *  a missing column costs a first name, never the email. */
+async function raContactName(
+  sb: ReturnType<typeof createClient>,
+  responseId: string,
+): Promise<string | null> {
+  try {
+    const { data } = await sb.from('market_research_contacts')
+      .select('name').eq('response_id', responseId).limit(1);
+    return (data?.[0] as { name?: string } | undefined)?.name ?? null;
+  } catch { return null; }
+}
+
+/* The jurisdiction requirement sections, fire first then food — the order
+ * the assessment's own opening line promises, and the order the findings
+ * email uses. Section content is the gap report's, unchanged. The record
+ * readiness table is deliberately absent: the rated register lives in the
+ * findings email, which this email's closing line points at. */
+function buildAssessmentCountySections(
+  // deno-lint-ignore no-explicit-any
+  jur: Record<string, any> | null,
+): string[] {
+  const p: string[] = [];
+  // deno-lint-ignore no-explicit-any
+  const fc = jur?.fire_jurisdiction_config as Record<string, any> | null;
+  const fireAhj = fc?.fire_ahj_name || jur?.fire_ahj_name;
+
+  /* ── Who inspects you — fire first ─────────────────────────── */
+  if (jur?.agency_name || fireAhj) {
+    let s = h3('Who Inspects You');
+    if (fireAhj) {
+      s += `<p><strong>Fire safety:</strong> ${fireAhj}</p>`;
+      if (fc?.ahj_split_notes) {
+        s += `<p style="font-size:13px;color:#64748b;margin-top:2px;">${fc.ahj_split_notes}</p>`;
+      }
+    }
+    if (jur?.agency_name) s += `<p><strong>Food safety:</strong> ${jur.agency_name}</p>`;
+    p.push(s);
+  }
+
+  /* ── Fire: hood cleaning frequency ─────────────────────────── */
+  if (fc) {
+    let s = h3('Hood Cleaning Frequency');
+    if (jur?.hood_cleaning_default) {
+      s += `<p>This county enforces <strong>${freqLabel(jur.hood_cleaning_default)}</strong> hood cleaning as the default schedule.</p>`;
+    }
+    // deno-lint-ignore no-explicit-any
+    const t124 = fc.nfpa_96_table_12_4 as Record<string, any> | undefined;
+    if (t124) {
+      s += '<p style="margin-top:8px;">Your specific frequency depends on cooking volume (NFPA 96 Table 12.4):</p>';
+      s += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">';
+      s += '<tr style="background:#f1f5f9;"><th style="padding:6px 8px;text-align:left;">Hood / Cooking Type</th>' +
+        '<th style="padding:6px 8px;text-align:right;">Frequency</th></tr>';
+      const rows: [string, string][] = [
+        ['Type I — Heavy volume', t124.type_i_heavy_volume],
+        ['Type I — Moderate volume', t124.type_i_moderate_volume],
+        ['Type I — Low volume', t124.type_i_low_volume],
+        ['Type II hood', t124.type_ii],
+        ['Solid fuel cooking', t124.solid_fuel_cooking],
+      ];
+      for (const [lbl, freq] of rows) {
+        if (freq) {
+          s += `<tr><td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;">${lbl}</td>` +
+            `<td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:right;">${freqLabel(freq)}</td></tr>`;
+        }
+      }
+      s += '</table>';
+    }
+    p.push(s);
+  }
+
+  /* ── Food: how this county grades ──────────────────────────── */
+  if (jur?.grading_type || jur?.grading_config) {
+    const labels: Record<string, string> = {
+      letter_grade: 'letter grades', pass_fail: 'pass / fail scoring',
+      color_placard: 'color-coded placards', numeric: 'numeric scoring',
+    };
+    let s = h3('How This County Grades');
+    s += `<p>This county uses <strong>${labels[jur.grading_type] || 'standard inspection reports'}</strong> to evaluate food safety inspections.</p>`;
+    if (jur.scoring_methodology) {
+      s += `<p style="font-size:13px;color:#475569;">${jur.scoring_methodology}</p>`;
+    }
+    p.push(s);
+  }
+
+  /* ── Food: what it weights heaviest ────────────────────────── */
+  const wm = jur?.violation_weight_map as Record<string, unknown> | null;
+  if (wm && typeof wm === 'object' && Object.keys(wm).length > 0) {
+    const desc = wm.methodology_description || wm.deduction_methodology;
+    const rows: Array<{ label: string; pts: number }> = [];
+    for (const [key, val] of Object.entries(wm)) {
+      if (!val || typeof val !== 'object') continue;
+      const v = val as Record<string, unknown>;
+      const pts = typeof v.points === 'number' ? v.points
+                : typeof v.points_max === 'number' ? v.points_max
+                : typeof v.major === 'number' ? v.major
+                : typeof v.out === 'number' ? v.out
+                : null;
+      if (pts !== null && pts > 0) {
+        rows.push({ label: key.replace(/_/g, ' '), pts });
+      }
+    }
+    rows.sort((a, b) => b.pts - a.pts);
+
+    if (typeof desc === 'string' || rows.length > 0) {
+      let s = h3('What It Weights Heaviest');
+      if (typeof desc === 'string') {
+        s += `<p style="font-size:13px;color:#475569;">${desc}</p>`;
+      }
+      if (rows.length > 0) {
+        s += '<table style="width:100%;border-collapse:collapse;font-size:14px;">';
+        for (const r of rows) {
+          s += `<tr><td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;">${r.label}</td>` +
+            `<td style="padding:6px 8px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:600;">${r.pts} pts</td></tr>`;
+        }
+        s += '</table>';
+      }
+      p.push(s);
+    }
+  }
+
+  return p;
+}
+
+/** EDIT B — what the county requires, on the assessment path. */
+function buildAssessmentCountyBody(
+  county: string,
+  // deno-lint-ignore no-explicit-any
+  jur: Record<string, any> | null,
+  contactName: string | null,
+): string {
+  const countyName = raCounty(county);
+  const p: string[] = [];
+
+  p.push(`<p style="${RA_NAME}margin:0;">${esc(raGreeting(contactName))}</p>`);
+  p.push(`<p style="${RA_NAME}margin:12px 0 0 0;">Here is what `
+    + `${esc(countyName)} County asks a commercial kitchen to produce, `
+    + 'fire first, then food — the requirements behind the Risk '
+    + 'Assessment you took on getevidly.com.</p>');
+
+  const sections = buildAssessmentCountySections(jur);
+  if (sections.length > 0) {
+    p.push(...sections);
+  } else {
+    p.push('<p style="color:#64748b;">We could not locate jurisdiction '
+      + 'configuration for this county. When data becomes available, an '
+      + 'updated summary may follow.</p>');
+  }
+
+  p.push(`<p style="${RA_NAME}margin:28px 0 0 0;">Your rated register and `
+    + 'plan are in the assessment email that came with this.</p>');
+  p.push(raButton('Take It Again in 90 Days', RA_URL));
+  p.push(`<p style="${RA_WHY}margin:16px 0 0 0;">${RA_DISCLAIMER}</p>`);
+
+  return p.join('');
+}
+
+async function sendAssessmentCountyReport(
+  sb: ReturnType<typeof createClient>,
+  responseId: string,
+  email: string,
+) {
+  if (await alreadySent(sb, responseId, 'assessment_county_report')) return;
+
+  const { data: respRow } = await sb.from('market_research_responses')
+    .select('county, status').eq('id', responseId).single();
+  const resp = respRow as { county: string | null; status: string | null } | null;
+  if (!resp?.county) {
+    await logSend(sb, responseId, 'assessment_county_report', email, null,
+      'No county on response');
+    return;
+  }
+  if (resp.status !== 'completed') return; // not time yet — fires on completion
+
+  const { data: jurs } = await sb.from('jurisdictions')
+    .select('agency_name, grading_type, grading_config, scoring_methodology, violation_weight_map, fire_ahj_name, fire_jurisdiction_config, hood_cleaning_default')
+    .eq('state', 'CA').eq('county', resp.county).eq('is_active', true).limit(1);
+
+  const contactName = await raContactName(sb, responseId);
+  const html = buildEmailHtml({
+    recipientName: 'there',
+    bodyHtml: buildAssessmentCountyBody(resp.county, jurs?.[0] ?? null, contactName),
+    skipGreeting: true,
+    category: RA_CATEGORY,
+    footerNote: 'You received this because you asked what your county requires when you completed the EvidLY Risk Assessment.',
+  });
+
+  const result = await sendEmail({
+    to: email,
+    subject: `What ${raCounty(resp.county)} County requires — fire and food records`,
+    html,
+  });
+  await logSend(sb, responseId, 'assessment_county_report', email, result,
+    result ? undefined : 'Resend send failed');
+}
+
+/** EDIT A — the forwardable link, on the assessment path. */
+function buildAssessmentReferralBody(contactName: string | null): string {
+  const url = `${RA_URL}?from=referral`;
+  const p: string[] = [];
+
+  p.push(`<p style="${RA_NAME}margin:0;">${esc(raGreeting(contactName))}</p>`);
+  p.push(`<p style="${RA_NAME}margin:12px 0 0 0;">You asked for a link to `
+    + "forward. Send this to whoever answers for the kitchen's records:</p>");
+  p.push('<p style="margin:16px 0 0 0;padding:12px 16px;background:#f1f5f9;'
+    + 'border-radius:6px;word-break:break-all;">'
+    + `<a href="${url}" style="color:#1E2D4D;font-weight:600;">${url}</a></p>`);
+  p.push(`<p style="${RA_NAME}margin:16px 0 0 0;">It takes three minutes and `
+    + 'asks which fire and food safety records they could produce today. No '
+    + 'account, no login. They get their own rated register and a plan with '
+    + 'a date on every record.</p>');
+  p.push(raButton('Take the Risk Assessment', url));
+  p.push(`<p style="${RA_WHY}margin:16px 0 0 0;">${RA_DISCLAIMER}</p>`);
+
+  return p.join('');
+}
+
+async function sendAssessmentReferral(
+  sb: ReturnType<typeof createClient>,
+  responseId: string,
+  email: string,
+) {
+  if (await alreadySent(sb, responseId, 'assessment_referral')) return;
+
+  const contactName = await raContactName(sb, responseId);
+  const html = buildEmailHtml({
+    recipientName: 'there',
+    bodyHtml: buildAssessmentReferralBody(contactName),
+    skipGreeting: true,
+    category: RA_CATEGORY,
+    footerNote: 'You received this because you asked for a link to forward when you completed the EvidLY Risk Assessment.',
+  });
+
+  const result = await sendEmail({
+    to: email,
+    subject: 'The Risk Assessment — a link to forward',
+    html,
+  });
+  await logSend(sb, responseId, 'assessment_referral', email, result,
+    result ? undefined : 'Resend send failed');
+}
+
 /** Fire pending study emails for a response. Safe to call multiple times (deduped via log). */
 async function trySendStudyEmails(
   sb: ReturnType<typeof createClient>,
@@ -809,24 +1071,36 @@ async function trySendStudyEmails(
   const { data: rows } = await sb.from('market_research_contacts')
     .select('email, wants_findings, wants_county_report, wants_referral_link')
     .eq('response_id', responseId).limit(1);
-  const c = rows?.[0];
+  const c = rows?.[0] as {
+    email: string | null; wants_findings: boolean | null;
+    wants_county_report: boolean | null; wants_referral_link: boolean | null;
+  } | undefined;
   if (!c?.email) return;
+  const to = c.email;
+
+  /* Source decides which document each opt-in produces. One fetch, shared by
+   * all three senders — every email on the assessment path is the Risk
+   * Assessment's, and a study response reaches only the study senders. */
+  const { data } = await sb.from('market_research_responses')
+    .select('source, county, completed_at')
+    .eq('id', responseId).single();
+  const resp = data as { source: string | null; county: string | null; completed_at: string | null } | null;
+  const isAssessment = resp?.source === 'assessment';
 
   const jobs: Promise<void>[] = [];
-  if (c.wants_county_report) jobs.push(sendGapReport(sb, responseId, c.email));
-  if (c.wants_referral_link) jobs.push(sendReferralEmail(sb, responseId, c.email));
-
-  /* Risk Assessment findings — assessment-source responses only. The study
-   * senders above are unaffected: a study response never reaches this branch. */
-  if (c.wants_findings) {
-    const { data } = await sb.from('market_research_responses')
-      .select('source, county, completed_at')
-      .eq('id', responseId).single();
-    const resp = data as { source: string | null; county: string | null; completed_at: string | null } | null;
-    if (resp?.source === 'assessment') {
-      jobs.push(sendAssessmentFindings(
-        sb, responseId, c.email, resp.county ?? null, resp.completed_at ?? null));
-    }
+  if (c.wants_county_report) {
+    jobs.push(isAssessment
+      ? sendAssessmentCountyReport(sb, responseId, c.email)
+      : sendGapReport(sb, responseId, c.email));
+  }
+  if (c.wants_referral_link) {
+    jobs.push(isAssessment
+      ? sendAssessmentReferral(sb, responseId, c.email)
+      : sendReferralEmail(sb, responseId, c.email));
+  }
+  if (c.wants_findings && isAssessment) {
+    jobs.push(sendAssessmentFindings(
+      sb, responseId, c.email, resp?.county ?? null, resp?.completed_at ?? null));
   }
 
   if (jobs.length) await Promise.allSettled(jobs);
