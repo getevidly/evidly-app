@@ -842,6 +842,10 @@ async function handleDocumentEvent(
         external_source: "hoodops",
         external_id: hoodops_location_id,
         status: "active",
+        /* NOT NULL with no default — migration 20260429000011 leaves it to the
+         * application deliberately. Omitting it failed every webhook location
+         * insert with 23502, so the org was created and the seal died here. */
+        business_hours_timezone: "America/Los_Angeles",
       };
       if (derivedJurisdictionId) {
         insertPayload.jurisdiction_id = derivedJurisdictionId;
