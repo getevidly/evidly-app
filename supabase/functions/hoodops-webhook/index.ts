@@ -87,16 +87,6 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  // Verify HMAC-SHA256 signature — fail CLOSED: reject if secret is missing
-  const secret = Deno.env.get("HOODOPS_WEBHOOK_SECRET");
-  if (!secret) {
-    console.error("[hoodops-webhook] HOODOPS_WEBHOOK_SECRET is not configured — rejecting request");
-    return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   // Read raw body BEFORE parsing — HMAC must match the exact bytes HoodOps signed
   const rawBody = await req.text();
 
@@ -108,18 +98,81 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const expectedSignature = await hmacSha256Hex(secret, rawBody);
+  // Service-role client is needed BEFORE verification so a per-tenant secret can
+  // be looked up. Constructing it does no I/O, so this is safe to hoist.
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  /* Tenant identity, if the caller sent one. Parsed leniently and ONLY to pick a
+   * verification secret — malformed JSON falls through to the global path so the
+   * pre-existing "verify first, then 400 Invalid JSON" ordering below is preserved
+   * and an unauthenticated caller still cannot tell valid JSON from invalid.
+   * Body wins over header: the body is inside the HMAC-covered bytes, the header
+   * is not. */
+  let tenantSlug: string | null = null;
+  try {
+    const peek = JSON.parse(rawBody);
+    const raw = peek?.data?.hoodops_tenant_slug ?? peek?.hoodops_tenant_slug;
+    if (typeof raw === "string" && raw.trim()) tenantSlug = raw.trim();
+  } catch {
+    // Not JSON — global path decides, exactly as before.
+  }
+  if (!tenantSlug) {
+    const hdr = req.headers.get("x-hoodops-tenant");
+    if (hdr && hdr.trim()) tenantSlug = hdr.trim();
+  }
+
+  // Select the verification secret.
+  let verifySecret: string;
+
+  if (tenantSlug) {
+    // Per-tenant path. An unknown or inactive slug must NEVER fall back to the
+    // global secret — that would let anyone downgrade to the shared key by
+    // naming a tenant that does not exist.
+    const { data: tenant, error: tenantErr } = await supabase
+      .from("hoodops_tenants")
+      .select("signing_secret")
+      .eq("tenant_slug", tenantSlug)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (tenantErr) {
+      console.error(`[hoodops-webhook] Tenant lookup failed for ${tenantSlug}:`, tenantErr.message);
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    if (!tenant?.signing_secret) {
+      console.error(`[hoodops-webhook] Unknown or inactive tenant: ${tenantSlug}`);
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    verifySecret = tenant.signing_secret;
+  } else {
+    // Legacy path, unchanged: verify with the global secret. Fail CLOSED if unset.
+    const globalSecret = Deno.env.get("HOODOPS_WEBHOOK_SECRET");
+    if (!globalSecret) {
+      console.error("[hoodops-webhook] HOODOPS_WEBHOOK_SECRET is not configured — rejecting request");
+      return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    verifySecret = globalSecret;
+  }
+
+  const expectedSignature = await hmacSha256Hex(verifySecret, rawBody);
   if (!timingSafeEqual(expectedSignature, signatureHeader)) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
     });
   }
-
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
 
   let body: any;
   try {
