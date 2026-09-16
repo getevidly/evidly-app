@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { supabase } from './supabase';
 
 // Canonical bucket names — matches Supabase storage exactly
@@ -47,6 +48,52 @@ export async function getSignedUrl(
 
   if (error) throw new Error(`Signed URL error: ${error.message}`);
   return data.signedUrl;
+}
+
+/**
+ * Open a stored document from either a real URL or a `bucket:path` token.
+ *
+ * Sealed certificates arrive from the HoodOps bridge as
+ * `documents:hoodops/<org>/document.cert:<job>.pdf` — a bucket:path token, not
+ * a URL. Passing that straight to window.open does nothing: the browser treats
+ * `documents:` as an unknown URI scheme and fails silently, which is how the
+ * cert links looked "clickable" while never opening anything.
+ *
+ * The path itself contains a colon (`document.cert:<job>.pdf`), so the token
+ * splits on the FIRST colon only — split(':')[1] would truncate the path and
+ * drop the job id and extension.
+ */
+export async function openStorageDocument(
+  token: string | null | undefined,
+  expiresIn = 300
+): Promise<void> {
+  if (!token) return;
+
+  // Already a real URL — open as-is (back-compat for records storing one).
+  if (/^https?:\/\//i.test(token)) {
+    window.open(token, '_blank', 'noopener,noreferrer');
+    return;
+  }
+
+  const idx = token.indexOf(':');
+  if (idx === -1) {
+    console.error('[openStorageDocument] Unrecognized document reference:', token);
+    return;
+  }
+
+  const bucket = token.slice(0, idx) as BucketName;
+  const path = token.slice(idx + 1);
+
+  try {
+    const signedUrl = await getSignedUrl(bucket, path, expiresIn);
+    window.open(signedUrl, '_blank', 'noopener,noreferrer');
+  } catch (e) {
+    // Never fail silently — that was the original bug. Swallowed here rather
+    // than rethrown because every caller is an onClick, where a rejected
+    // promise would go unhandled.
+    console.error('[openStorageDocument] Failed to open document:', token, e);
+    toast.error('Could not open the document');
+  }
 }
 
 export async function deleteFile(bucket: BucketName, path: string) {

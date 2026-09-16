@@ -18,6 +18,7 @@ import { useServiceCostIntelligence } from '../../hooks/useServiceCostIntelligen
 import { useServiceSubscriptions } from '../../hooks/useServiceSubscriptions';
 import { supabase } from '../../lib/supabase';
 import { colors, shadows, radius, typography } from '../../lib/designSystem';
+import { openStorageDocument } from '../../lib/storage';
 
 const UploadServiceRecordModal = lazy(() => import('../../components/services/UploadServiceRecordModal'));
 const RequestServiceModal = lazy(() => import('../../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal })));
@@ -511,10 +512,8 @@ export default function KitchenExhaustCleaning() {
                       </span>
                     )}
                     {(rec.document_url || rec.certificate_url) && (
-                      <FileText size={14} color={colors.textMuted} style={{ cursor: 'pointer' }} onClick={() => {
-                        const url = rec.certificate_url || rec.document_url;
-                        if (url) window.open(url, '_blank');
-                      }} />
+                      <FileText size={14} color={colors.textMuted} style={{ cursor: 'pointer' }}
+                        onClick={() => openStorageDocument(rec.certificate_url || rec.document_url)} />
                     )}
                   </div>
                 </div>

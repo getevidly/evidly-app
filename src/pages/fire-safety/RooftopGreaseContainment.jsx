@@ -17,6 +17,7 @@ import { useServiceHistory } from '../../hooks/useServiceHistory';
 import { useServiceCostIntelligence } from '../../hooks/useServiceCostIntelligence';
 import { supabase } from '../../lib/supabase';
 import { colors, shadows, radius, typography } from '../../lib/designSystem';
+import { openStorageDocument } from '../../lib/storage';
 
 const UploadServiceRecordModal = lazy(() => import('../../components/services/UploadServiceRecordModal'));
 const RequestServiceModal = lazy(() => import('../../components/services/RequestServiceModal').then(m => ({ default: m.RequestServiceModal })));
@@ -255,7 +256,7 @@ export default function RooftopGreaseContainment() {
                           <span className="rounded-full" style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, padding: '2px 8px', background: '#EEF2FF', color: '#3730A3' }}>{fmtCurrency(rec.price_charged)}</span>
                         )}
                         {(rec.document_url || rec.certificate_url) && (
-                          <FileText size={14} color={colors.textMuted} style={{ cursor: 'pointer' }} onClick={() => { const url = rec.certificate_url || rec.document_url; if (url) window.open(url, '_blank'); }} />
+                          <FileText size={14} color={colors.textMuted} style={{ cursor: 'pointer' }} onClick={() => openStorageDocument(rec.certificate_url || rec.document_url)} />
                         )}
                       </div>
                     </div>

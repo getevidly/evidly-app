@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { AlertTriangle, ChevronDown, ChevronRight, Shield } from 'lucide-react';
 import { useVendorServiceRecords } from '../../hooks/useVendorServiceRecords';
+import { openStorageDocument } from '../../lib/storage';
 import { SAMPLE_PSE_SAFEGUARDS } from '../../data/workforceRiskDemoData';
 
 // ── Brand ─────────────────────────────────────────────────────
@@ -302,14 +303,20 @@ export function PSESafeguardsSection({ organizationId, locationId, isGuidedTour 
                   )}
                   {sg.record?.certificate_url && (
                     <div style={{ marginTop: 6 }}>
-                      <a
-                        href={sg.record.certificate_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: NAVY, fontWeight: 600, textDecoration: 'underline' }}
+                      {/* Button, not an anchor: the stored value is a
+                          bucket:path token and signing is async, so no valid
+                          href exists at render time. */}
+                      <button
+                        type="button"
+                        onClick={() => openStorageDocument(sg.record!.certificate_url)}
+                        style={{
+                          color: NAVY, fontWeight: 600, textDecoration: 'underline',
+                          background: 'none', border: 'none', padding: 0,
+                          font: 'inherit', cursor: 'pointer',
+                        }}
                       >
                         View certificate ↗
-                      </a>
+                      </button>
                     </div>
                   )}
                 </div>
