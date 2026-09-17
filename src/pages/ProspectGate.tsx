@@ -774,48 +774,48 @@ export function ProspectGate() {
           {/* ===== FOUNDING COHORT PRICING CARD ===== */}
           <section style={{ marginTop: 26, background: NAVY, borderRadius: 16, padding: '28px 32px' }}>
             <div style={{ marginBottom: 18 }}>
-              <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Founder pricing</span>
+              <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: '10.5px', letterSpacing: '.09em', textTransform: 'uppercase' as const, color: NAVY, background: CREAM, padding: '5px 11px', borderRadius: 999 }}>Pricing</span>
             </div>
 
             {/* RESTAURANT tier */}
             <div style={{ borderTop: `1px solid ${NAVY_LINE}`, paddingTop: 16 }}>
               <span style={{ fontFamily: FONT_MONO, fontWeight: 700, fontSize: 11, letterSpacing: '.10em', textTransform: 'uppercase' as const, color: EMBER_BRIGHT }}>RESTAURANT</span>
               <div style={{ margin: '10px 0 0', fontSize: '14.5px', color: '#c7d0e2' }}>
-                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$99/mo</b> first kitchen</span>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$129/mo</b> first kitchen</span>
                 <span style={{ color: '#5b6b8a' }}> &middot; </span>
-                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$49/mo</b> each after</span>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$99/mo</b> each after</span>
               </div>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: '#a9b4cb' }}>250 seats &middot; price locked 24 months</p>
+              <p style={{ margin: '6px 0 0', fontSize: 13, color: '#a9b4cb' }}>Kitchens 2 through 9 are $99 each.</p>
             </div>
 
             {/* INSTITUTION tier */}
             <div style={{ borderTop: `1px solid ${NAVY_LINE}`, marginTop: 16, paddingTop: 16 }}>
               <span style={{ fontFamily: FONT_MONO, fontWeight: 700, fontSize: 11, letterSpacing: '.10em', textTransform: 'uppercase' as const, color: EMBER_BRIGHT }}>INSTITUTION</span>
               <div style={{ margin: '10px 0 0', fontSize: '14.5px', color: '#c7d0e2' }}>
-                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$199/mo</b> first kitchen</span>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$399/mo</b> first kitchen</span>
                 <span style={{ color: '#5b6b8a' }}> &middot; </span>
-                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$99/mo</b> each after</span>
+                <span><b style={{ color: '#fff', fontWeight: 700, fontFamily: FONT_MONT, fontSize: 17 }}>$199/mo</b> each after</span>
               </div>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: '#a9b4cb' }}>Price locked 24 months</p>
+              <p style={{ margin: '6px 0 0', fontSize: 13, color: '#a9b4cb' }}>Kitchens 2 through 9 are $199 each.</p>
             </div>
 
             {/* Day timeline — stacked full-width rows */}
             <div style={{ margin: '18px 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '12px 16px' }}>
-                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 1&ndash;15</span>
-                <span style={{ fontSize: 13, color: '#c7d0e2' }}>Set up your account</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '12px 16px' }}>
-                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 16&ndash;60</span>
-                <span style={{ fontSize: 13, color: '#c7d0e2' }}>Use it &mdash; 45 days</span>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>Days 1–15</span>
+                <span style={{ fontSize: 13, color: '#c7d0e2' }}>Setup and training</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#E3ECE1', border: '1px solid #C4DBCB', borderRadius: 10, padding: '12px 16px' }}>
-                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#3E5E4B' }}>Day 61</span>
-                <span style={{ fontSize: 13, color: '#3E5E4B' }}>First payment</span>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#3E5E4B' }}>Day 16</span>
+                <span style={{ fontSize: 13, color: '#3E5E4B' }}>Billing begins</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,.05)', border: `1px solid ${NAVY_LINE}`, borderRadius: 10, padding: '12px 16px' }}>
+                <span style={{ fontFamily: FONT_MONT, fontWeight: 700, fontSize: 12, letterSpacing: '.05em', textTransform: 'uppercase' as const, color: '#fff' }}>First 30 days</span>
+                <span style={{ fontSize: 13, color: '#c7d0e2' }}>Refund if it isn’t what you expected</span>
               </div>
             </div>
             <p style={{ margin: '15px 0 0', fontSize: 13, color: '#a9b4cb' }}>
-              A full 60 days to set up and run EvidLY before your first payment.
+              Fifteen days of setup and training before billing starts.
             </p>
           </section>
 
