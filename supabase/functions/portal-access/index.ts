@@ -21,6 +21,11 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const PORTAL_BASE = 'https://app.getevidly.com/portal';
 
+/* Written by buildCertLinkForRecipient (county-briefing/index.ts:131, 210).
+ * Must match that string exactly — it is how a warm outreach certificate link
+ * is told apart from a staff document send or a third-party share. */
+const OUTREACH_CERT_PURPOSE = 'Outreach step 2 — certificate link';
+
 /** Onward shares expire sooner than the link they came from. */
 const SHARE_EXPIRY_DAYS = 14;
 /** Public endpoint — cap onward shares per originating token. */
@@ -65,7 +70,8 @@ Deno.serve(async (req: Request) => {
   // ── Look up send record by token ──────────────────────────────
   const { data: record, error: recErr } = await supabase
     .from('compliance_document_send_records')
-    .select('id, organization_id, recipient_name, recipient_type, cover_message, sent_at, secure_token_expires_at, revoked_at, opened_at, opened_count, download_count')
+    // `purpose` identifies a warm outreach certificate link — see OUTREACH_CERT_PURPOSE below.
+    .select('id, organization_id, recipient_name, recipient_type, purpose, cover_message, sent_at, secure_token_expires_at, revoked_at, opened_at, opened_count, download_count')
     .eq('secure_token', token)
     .limit(1)
     .maybeSingle();
@@ -171,6 +177,25 @@ Deno.serve(async (req: Request) => {
       };
     });
 
+    /* Sealed first, newest seal first; unsealed keep their original order
+     * behind them. A stable comparator, so equal keys do not reshuffle. */
+    documents.sort((a, b) => {
+      const aSealed = a.seal ? 1 : 0;
+      const bSealed = b.seal ? 1 : 0;
+      if (aSealed !== bSealed) return bSealed - aSealed;
+      if (!a.seal || !b.seal) return 0;
+      return new Date(b.seal.sealed_at).getTime() - new Date(a.seal.sealed_at).getTime();
+    });
+
+    /* A warm outreach certificate link is about ONE certificate — the newest
+     * sealed one. Older certs were listed with their own Download button, and
+     * those downloads 404 when the earlier file is gone. Every other
+     * send-record (staff document sends, third-party shares) still returns
+     * every included document, now in the sorted order. */
+    const visibleDocuments = record.purpose === OUTREACH_CERT_PURPOSE
+      ? documents.slice(0, 1)
+      : documents;
+
     return jsonResponse({
       status: 'valid',
       record: {
@@ -180,7 +205,7 @@ Deno.serve(async (req: Request) => {
         expires_at: record.secure_token_expires_at,
         org_name: org?.name || 'Organization',
       },
-      documents,
+      documents: visibleDocuments,
     }, 200);
   }
 
