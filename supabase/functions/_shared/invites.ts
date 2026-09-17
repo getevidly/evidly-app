@@ -37,7 +37,6 @@ export function buildCompanyInviteEmail(
       plain-language breakdown of where you stand.</p>`,
     ctaText: "Get Your Policy Review",
     ctaUrl: referralLink,
-    footerNote: `EvidLY is in its Founder rollout — the first 250 restaurants to join lock in Founder pricing. ${senderName} thought you'd want to claim a spot before they're gone.`,
     campaign: true,
   });
 
@@ -66,7 +65,6 @@ export function buildAgentInviteEmail(
       a look. Upload a client's policy and see what it finds.</p>`,
     ctaText: "Try Policy Lens",
     ctaUrl: referralLink,
-    footerNote: `EvidLY is in its Founder rollout — the first 250 restaurants to join lock in Founder pricing. ${senderName} thought you'd want to claim a spot before they're gone.`,
     campaign: true,
   });
 
