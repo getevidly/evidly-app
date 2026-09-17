@@ -69,19 +69,36 @@ function shortHash(hash: string): string {
   return hash.length > 16 ? `${hash.slice(0, 8)}…${hash.slice(-4)}` : hash;
 }
 
+/* service_date and next_due_date are DATE columns, so they arrive as bare
+ * "YYYY-MM-DD". `new Date("2026-09-15")` is parsed as UTC midnight, which
+ * formats as Sep 14 anywhere west of UTC — every Pacific viewer saw these a
+ * day early. Building the date from its parts pins it to the local calendar
+ * day, so the stored day is the displayed day in every timezone. */
+const DATE_ONLY_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+function toLocalDate(value: string): Date {
+  const m = DATE_ONLY_RE.exec(value.trim());
+  if (!m) return new Date(value);
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
 /** "Sep 15, 2026" — the hero card's date treatment. */
 function formatShortDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-US', {
+  return toLocalDate(value).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   });
 }
 
-/** Whole days from today to the next service date. Null when unknown. */
+/** Whole days from today's local calendar date to the next service date. */
 function daysOut(nextDue: string | null): number | null {
   if (!nextDue) return null;
-  const diff = new Date(nextDue).getTime() - Date.now();
-  if (Number.isNaN(diff)) return null;
-  return Math.max(0, Math.ceil(diff / 86400000));
+  const due = toLocalDate(nextDue);
+  if (Number.isNaN(due.getTime())) return null;
+  // Both ends normalised to local midnight so the count is whole calendar days.
+  const dueMidnight = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+  const now = new Date();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.max(0, Math.round((dueMidnight.getTime() - todayMidnight.getTime()) / 86400000));
 }
 
 /* Bridge-written names carry a raw ISO timestamp
