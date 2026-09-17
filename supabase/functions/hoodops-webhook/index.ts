@@ -999,7 +999,11 @@ async function handleDocumentEvent(
       name: `Hood Cleaning ${docLabel} — ${service_date}`,
       status: "current",
       service_type_code: effectiveServiceCode,
-      storage_path: `${storageBucket}/${storagePath}`,
+      /* Bucket-RELATIVE, matching every other writer and reader of this column
+       * (Documents.tsx, SendToThirdPartyModal, DocumentDetailModal,
+       * portal-access). Prefixing the bucket name made portal-access sign
+       * documents/documents/... and 404. */
+      storage_path: storagePath,
       mime_type: "application/pdf",
       file_size_bytes: pdfBytes.byteLength,
       issued_date: service_date,
