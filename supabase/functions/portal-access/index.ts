@@ -26,6 +26,9 @@ const PORTAL_BASE = 'https://app.getevidly.com/portal';
  * is told apart from a staff document send or a third-party share. */
 const OUTREACH_CERT_PURPOSE = 'Outreach step 2 — certificate link';
 
+/** Written by the share action below; marks a link forwarded to a third party. */
+const SHARED_FROM_PORTAL_PURPOSE = 'Shared from portal';
+
 /** Onward shares expire sooner than the link they came from. */
 const SHARE_EXPIRY_DAYS = 14;
 /** Public endpoint — cap onward shares per originating token. */
@@ -58,6 +61,52 @@ function cleanDocName(name: string): string {
     /(\d{4}-\d{2}-\d{2})T[\d:.+-]+/,
     (_m, d: string) => formatDateOnly(d),
   );
+}
+
+/* ONE description per document, shared by the share email and the load action
+ * so the third party reads the same name in both places. A literal middot,
+ * not an entity — this string is both interpolated into HTML and returned as
+ * JSON for React to render. */
+// deno-lint-ignore no-explicit-any
+function describeDocument(doc: Record<string, unknown>, seal: Record<string, unknown> | undefined): {
+  name: string;
+  refLine: string;
+  isSealed: boolean;
+  certNumber: string | null;
+} {
+  const isSealed = Boolean(seal);
+
+  if (isSealed) {
+    const label = SAFEGUARD_LABELS[(seal!.safeguard_type as string) || ''];
+    /* external_id is `${event}:${id}` — 'document.cert:…' or
+     * 'document.report:…' (hoodops-webhook/index.ts:930,1016). It is the only
+     * stored field that tells a certificate from a report; the name is not
+     * authoritative. */
+    const externalId = (doc.external_id as string | null) || '';
+    const kind = externalId.startsWith('document.report:')
+      ? 'Report of Service'
+      : 'Certificate of Service';
+
+    // No label for this safeguard type — fall back, never invent one.
+    const name = label ? `${label} ${kind}` : cleanDocName(doc.name as string);
+
+    const certNumber = (seal!.cert_number as string | null) || null;
+    const servicedAt = (seal!.service_date as string | null) || null;
+    const refLine = [
+      certNumber,
+      servicedAt ? `Serviced ${formatDateOnly(servicedAt)}` : null,
+    ].filter(Boolean).join(' · ');
+
+    return { name, refLine, isSealed: true, certNumber };
+  }
+
+  const expiry = (doc.expiry_date as string | null) || null;
+  return {
+    name: cleanDocName(doc.name as string),
+    refLine: expiry ? `Expires ${formatDateOnly(expiry)}` : '',
+    isSealed: false,
+    certNumber: null,
+  };
 }
 
 /* service_date and expiry_date are DATE columns arriving as "YYYY-MM-DD".
@@ -154,7 +203,8 @@ Deno.serve(async (req: Request) => {
       // expiry_date, not expiration_date — the latter does not exist on
       // compliance_documents, so this select threw 42703 and the load action
       // returned 500 for every token.
-      .select('document_id, compliance_documents(id, name, type, expiry_date, storage_path, service_type_code, bridged_service_id)')
+      // external_id distinguishes a certificate from a report for display_name.
+      .select('document_id, compliance_documents(id, name, type, expiry_date, storage_path, service_type_code, external_id, bridged_service_id)')
       .eq('send_record_id', record.id)
       .eq('included_in_send', true);
 
@@ -183,7 +233,8 @@ Deno.serve(async (req: Request) => {
     if (sealIds.length > 0) {
       const { data: seals, error: sealErr } = await supabase
         .from('vendor_service_records')
-        .select('id, content_hash, sealed_at, cert_number, service_date, next_due_date')
+        // safeguard_type feeds the canonical service label in display_name.
+        .select('id, content_hash, sealed_at, cert_number, service_date, next_due_date, safeguard_type')
         .in('id', sealIds);
 
       if (sealErr) {
@@ -199,6 +250,10 @@ Deno.serve(async (req: Request) => {
       const seal = bridgedId ? sealById.get(bridgedId) : undefined;
       const isSealed = Boolean(seal && seal.sealed_at && seal.content_hash);
 
+      /* Same description the share email uses, so a third party reads the same
+       * name on the page as in the mail that brought them. */
+      const described = describeDocument(doc, isSealed ? seal : undefined);
+
       return {
         id: doc.id as string,
         name: doc.name as string,
@@ -206,6 +261,9 @@ Deno.serve(async (req: Request) => {
         // Response field keeps its name so PortalPage is unaffected.
         expiration_date: doc.expiry_date as string | null,
         has_file: !!(doc.storage_path),
+        display_name: described.name,
+        ref_line: described.refLine,
+        is_sealed: described.isSealed,
         seal: isSealed
           ? {
             hash: seal!.content_hash as string,
@@ -239,6 +297,9 @@ Deno.serve(async (req: Request) => {
 
     return jsonResponse({
       status: 'valid',
+      /* A third party who received a forward sees the shared-record view; the
+       * client who was sent the link originally sees their certificate page. */
+      view: record.purpose === SHARED_FROM_PORTAL_PURPOSE ? 'shared' : 'client',
       record: {
         recipient_name: record.recipient_name,
         cover_message: record.cover_message,
@@ -423,34 +484,9 @@ Deno.serve(async (req: Request) => {
       const seal = sealOf(item);
       const sealed = Boolean(seal);
 
-      let name: string;
-      let refLine = '';
-
-      if (sealed) {
-        const label = SAFEGUARD_LABELS[(seal!.safeguard_type as string) || ''];
-        /* external_id is `${event}:${id}` — 'document.cert:…' or
-         * 'document.report:…' (hoodops-webhook/index.ts:930,1016). It is the
-         * only stored field that tells a certificate from a report; the name
-         * is not authoritative. */
-        const externalId = (doc.external_id as string | null) || '';
-        const kind = externalId.startsWith('document.report:')
-          ? 'Report of Service'
-          : 'Certificate of Service';
-
-        // No label for this safeguard type — fall back, never invent one.
-        name = label ? `${label} ${kind}` : cleanDocName(doc.name as string);
-
-        const certNumber = (seal!.cert_number as string | null) || null;
-        const servicedAt = (seal!.service_date as string | null) || null;
-        refLine = [
-          certNumber,
-          servicedAt ? `Serviced ${formatDateOnly(servicedAt)}` : null,
-        ].filter(Boolean).join(' &middot; ');
-      } else {
-        name = cleanDocName(doc.name as string);
-        const expiry = (doc.expiry_date as string | null) || null;
-        refLine = expiry ? `Expires ${formatDateOnly(expiry)}` : '';
-      }
+      const described = describeDocument(doc, seal);
+      const name = described.name;
+      const refLine = described.refLine;
 
       const storagePath = (doc.storage_path as string | null) || '';
       if (!storagePath) {
@@ -508,7 +544,7 @@ Deno.serve(async (req: Request) => {
         recipient_name: to,
         recipient_email: to,
         // Never the outreach marker — the recipient's page uses the normal path.
-        purpose: 'Shared from portal',
+        purpose: SHARED_FROM_PORTAL_PURPOSE,
         cover_message: `${escHtml(orgName)} has shared a record with you.`,
         secure_token: newToken,
         secure_token_expires_at: newExpiry,
@@ -571,7 +607,7 @@ Deno.serve(async (req: Request) => {
           ? '<span style="color:#2E7D32;font-weight:700;">Sealed</span>'
           : '<span style="color:#8A8F99;">On file</span>';
         const ref = d.refLine
-          ? `<br><span style="font-family:Consolas,Menlo,monospace;font-size:11.5px;color:#8A8F99;">${escHtml(d.refLine).replace(/&amp;middot;/g, '&middot;')}</span>`
+          ? `<br><span style="font-family:Consolas,Menlo,monospace;font-size:11.5px;color:#8A8F99;">${escHtml(d.refLine)}</span>`
           : '';
         return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px 0;border-top:1px solid #E5E0D8;">
          <tr>

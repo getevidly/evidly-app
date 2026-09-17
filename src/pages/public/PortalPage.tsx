@@ -62,7 +62,23 @@ interface PortalDocument {
   has_file: boolean;
   /** Present only when the linked service record carries a real seal. */
   seal?: PortalSeal | null;
+  /* Supplied by portal-access using the same description as the share email,
+   * so a third party reads the same name here as in the mail. */
+  display_name?: string;
+  ref_line?: string;
+  is_sealed?: boolean;
 }
+
+/** 'shared' = a link forwarded to a third party; 'client' = the original page. */
+type PortalView = 'shared' | 'client';
+
+/* The shared view is its own small design system — the client page's tokens
+ * stay exactly as they are. */
+const SHARED_SANS = "'Instrument Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+const SHARED_MONO = "'IBM Plex Mono',Consolas,Menlo,monospace";
+const SHARED_SEALED = '#2E7D32';
+const SHARED_MUTED = '#8A8F99';
+const SHARED_BORDER = '#C9CED8';
 
 /** First 8 and last 4 of the digest — full value stays available on hover. */
 function shortHash(hash: string): string {
@@ -117,6 +133,7 @@ export function PortalPage() {
   const [status, setStatus] = useState<PortalStatus>('loading');
   const [record, setRecord] = useState<PortalRecord | null>(null);
   const [documents, setDocuments] = useState<PortalDocument[]>([]);
+  const [view, setView] = useState<PortalView>('client');
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
 
@@ -151,6 +168,8 @@ export function PortalPage() {
         if (result.status === 'valid') {
           setRecord(result.record as PortalRecord);
           setDocuments(result.documents as PortalDocument[]);
+          // Absent on an older response → the client page, unchanged.
+          setView(result.view === 'shared' ? 'shared' : 'client');
           setStatus('valid');
 
           // Record the open (fire-and-forget)
@@ -276,6 +295,120 @@ export function PortalPage() {
   const expDateLabel = new Date(record.expires_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   });
+
+  /* ── Shared view — a third party who received a forward ──────────
+   * Returns before any of the client page below, so none of it renders. */
+  if (view === 'shared') {
+    const n = documents.length;
+    const first = documents[0];
+    const anySealed = documents.some((d) => d.is_sealed);
+
+    const headline = n === 1
+      ? (first?.is_sealed
+        ? `${record.org_name} shared a sealed ${first.display_name || first.name} with you.`
+        : `${record.org_name} shared a ${first?.display_name || first?.name} with you.`)
+      : `${record.org_name} shared ${n} records with you.`;
+
+    return (
+      <div style={{ minHeight: '100vh', background: CREAM, fontFamily: SHARED_SANS }}>
+
+        {/* Header — unchanged from the client page. */}
+        <div style={{ background: NAVY, padding: '22px 24px', textAlign: 'center' }}>
+          <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>
+            <span style={{ color: EMBER }}>E</span>
+            <span style={{ color: '#FFFFFF' }}>vid</span>
+            <span style={{ color: EMBER }}>LY</span>
+          </div>
+          <div style={{ ...MONO_CAPTION, color: '#A8B4C8', marginTop: 6 }}>
+            Commercial Kitchen Risk Management
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          <div style={{ padding: '28px 32px 0' }}>
+            <div style={{ fontSize: 26, lineHeight: '32px', fontWeight: 700, color: NAVY }}>
+              {headline}
+            </div>
+
+            {documents.map((doc) => (
+              <div key={doc.id} style={{
+                border: `1px solid ${LINE}`, borderRadius: 8, background: '#FFFFFF',
+                padding: '18px 20px', marginTop: 14,
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 17, lineHeight: '24px', fontWeight: 700, color: NAVY }}>
+                      {doc.display_name || doc.name}
+                    </div>
+                    {doc.ref_line && (
+                      <div style={{
+                        fontFamily: SHARED_MONO, fontWeight: 500,
+                        fontSize: 11.5, lineHeight: '18px', color: SHARED_MUTED,
+                      }}>
+                        {doc.ref_line}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flexShrink: 0, fontSize: 12.5 }}>
+                    {doc.is_sealed
+                      ? <span style={{ color: SHARED_SEALED, fontWeight: 700 }}>Sealed</span>
+                      : <span style={{ color: SHARED_MUTED }}>On file</span>}
+                  </div>
+                </div>
+
+                {/* flexWrap drops the buttons onto separate lines on narrow screens. */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 14 }}>
+                  {doc.is_sealed && doc.seal?.cert_number && (
+                    <a
+                      href={`/verify/${encodeURIComponent(doc.seal.cert_number)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        background: '#FFFFFF', color: NAVY, border: `1px solid ${SHARED_BORDER}`,
+                        borderRadius: 6, padding: '10px 18px', fontWeight: 700, fontSize: 14,
+                        textDecoration: 'none', fontFamily: 'inherit',
+                      }}
+                    >
+                      Verify It Yourself
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleDownload(doc.id)}
+                    disabled={downloading === doc.id}
+                    style={{
+                      background: EMBER, color: '#FFFFFF', border: 'none', borderRadius: 6,
+                      padding: '11px 18px', fontWeight: 700, fontSize: 14,
+                      fontFamily: 'inherit', cursor: 'pointer',
+                      opacity: downloading === doc.id ? 0.6 : 1,
+                    }}
+                  >
+                    {downloading === doc.id ? 'Loading…' : 'Download'}
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {anySealed && (
+              <div style={{ fontSize: 14, lineHeight: '22px', color: TEXT_SEC, marginTop: 18 }}>
+                {n === 1
+                  ? 'The record is tamper-evident: it carries a cryptographic seal, so you can confirm it has not been altered since it was filed.'
+                  : 'Records marked Sealed are tamper-evident: each carries a cryptographic seal, so you can confirm it has not been altered since it was filed.'}
+              </div>
+            )}
+
+            <div style={{
+              textAlign: 'center', fontSize: 11, lineHeight: '18px',
+              color: SHARED_MUTED, paddingTop: 26, paddingBottom: 32,
+            }}>
+              This link expires {expDateLabel}.
+              <div>Powered by EvidLY, a Cleaning Pros Plus, LLC company.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const sentDateLabel = new Date(record.sent_at).toLocaleDateString('en-US', {
     month: 'long', day: 'numeric', year: 'numeric',
