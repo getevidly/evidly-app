@@ -26,12 +26,33 @@ interface PortalRecord {
   org_name: string;
 }
 
+interface PortalSeal {
+  hash: string;
+  sealed_at: string;
+  cert_number: string | null;
+  service_date: string | null;
+  next_due_date: string | null;
+}
+
 interface PortalDocument {
   id: string;
   name: string;
   type: string | null;
   expiration_date: string | null;
   has_file: boolean;
+  /** Present only when the linked service record carries a real seal. */
+  seal?: PortalSeal | null;
+}
+
+/** First 8 and last 4 of the digest — full value stays available on hover. */
+function shortHash(hash: string): string {
+  return hash.length > 16 ? `${hash.slice(0, 8)}…${hash.slice(-4)}` : hash;
+}
+
+function formatSealDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric',
+  });
 }
 
 type PortalStatus = 'loading' | 'valid' | 'expired' | 'revoked' | 'invalid' | 'error';
@@ -224,6 +245,25 @@ export function PortalPage() {
                         <span>Expires {new Date(doc.expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                       )}
                     </div>
+                    {doc.seal && (
+                      <div style={{ marginTop: 6 }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: PROVE, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          <span>✓ Sealed &amp; Verified</span>
+                          {doc.seal.cert_number && <span>· {doc.seal.cert_number}</span>}
+                          <span>· Sealed {formatSealDate(doc.seal.sealed_at)}</span>
+                        </div>
+                        <div
+                          title={doc.seal.hash}
+                          style={{
+                            fontSize: 10, color: TEXT_MUTED, marginTop: 2,
+                            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                            wordBreak: 'break-all',
+                          }}
+                        >
+                          Tamper-Evident Seal · {shortHash(doc.seal.hash)}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   {doc.has_file ? (
                     <button

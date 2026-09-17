@@ -89,7 +89,7 @@ Deno.serve(async (req: Request) => {
     // Fetch documents via send_items → compliance_documents
     const { data: items, error: itemsErr } = await supabase
       .from('compliance_document_send_items')
-      .select('document_id, compliance_documents(id, name, type, expiration_date, storage_path)')
+      .select('document_id, compliance_documents(id, name, type, expiration_date, storage_path, service_type_code, bridged_service_id)')
       .eq('send_record_id', record.id)
       .eq('included_in_send', true);
 
@@ -98,17 +98,59 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: 'Internal error' }, 500);
     }
 
-    const documents = (items || []).map((item: Record<string, unknown>) => {
-      const doc = item.compliance_documents as Record<string, unknown> | null;
-      if (!doc) return null;
+    const docRows = (items || [])
+      .map((item: Record<string, unknown>) => item.compliance_documents as Record<string, unknown> | null)
+      .filter(Boolean) as Record<string, unknown>[];
+
+    /* Seal evidence. compliance_documents.bridged_service_id is a bare uuid with
+     * no FK, so PostgREST cannot embed vendor_service_records — hence a second,
+     * batched lookup rather than a join.
+     *
+     * The badge is gated on sealed_at, NOT on the link existing: the bridge is
+     * bidirectional, and a record synthesized from an uploaded document
+     * (source 'document_bridge') also sets bridged_service_id but carries no
+     * seal. Only a real seal produces a content_hash worth showing. */
+    const sealIds = docRows
+      .map((d) => d.bridged_service_id as string | null)
+      .filter((id): id is string => Boolean(id));
+
+    const sealById = new Map<string, Record<string, unknown>>();
+    if (sealIds.length > 0) {
+      const { data: seals, error: sealErr } = await supabase
+        .from('vendor_service_records')
+        .select('id, content_hash, sealed_at, cert_number, service_date, next_due_date')
+        .in('id', sealIds);
+
+      if (sealErr) {
+        // Non-fatal: the package still lists, just without seal evidence.
+        console.error('DB error fetching seal records:', sealErr.message);
+      } else {
+        for (const s of seals || []) sealById.set(s.id as string, s);
+      }
+    }
+
+    const documents = docRows.map((doc) => {
+      const bridgedId = doc.bridged_service_id as string | null;
+      const seal = bridgedId ? sealById.get(bridgedId) : undefined;
+      const isSealed = Boolean(seal && seal.sealed_at && seal.content_hash);
+
       return {
         id: doc.id as string,
         name: doc.name as string,
         type: doc.type as string | null,
         expiration_date: doc.expiration_date as string | null,
         has_file: !!(doc.storage_path),
+        seal: isSealed
+          ? {
+            hash: seal!.content_hash as string,
+            sealed_at: seal!.sealed_at as string,
+            cert_number: (seal!.cert_number as string | null) || null,
+            service_date: (seal!.service_date as string | null) || null,
+            next_due_date: (seal!.next_due_date as string | null) || null,
+          }
+          : null,
       };
-    }).filter(Boolean);
+    });
 
     return jsonResponse({
       status: 'valid',
