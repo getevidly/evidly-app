@@ -89,7 +89,10 @@ Deno.serve(async (req: Request) => {
     // Fetch documents via send_items → compliance_documents
     const { data: items, error: itemsErr } = await supabase
       .from('compliance_document_send_items')
-      .select('document_id, compliance_documents(id, name, type, expiration_date, storage_path, service_type_code, bridged_service_id)')
+      // expiry_date, not expiration_date — the latter does not exist on
+      // compliance_documents, so this select threw 42703 and the load action
+      // returned 500 for every token.
+      .select('document_id, compliance_documents(id, name, type, expiry_date, storage_path, service_type_code, bridged_service_id)')
       .eq('send_record_id', record.id)
       .eq('included_in_send', true);
 
@@ -138,7 +141,8 @@ Deno.serve(async (req: Request) => {
         id: doc.id as string,
         name: doc.name as string,
         type: doc.type as string | null,
-        expiration_date: doc.expiration_date as string | null,
+        // Response field keeps its name so PortalPage is unaffected.
+        expiration_date: doc.expiry_date as string | null,
         has_file: !!(doc.storage_path),
         seal: isSealed
           ? {

@@ -143,7 +143,14 @@ export function PortalPage() {
   }
 
   // ── Error states ──────────────────────────────────────────────
-  if (status === 'invalid' || status === 'error') {
+  /* A failed invoke is NOT an invalid token. Collapsing the two hid a server
+   * error behind "Invalid Link" and sent people checking the URL instead of
+   * retrying. */
+  if (status === 'error') {
+    return <ErrorCard title="Something Went Wrong" message="We could not load this document link. Please try again in a moment, or contact the sender if it keeps happening." />;
+  }
+
+  if (status === 'invalid') {
     return <ErrorCard title="Invalid Link" message="This document link is invalid. Please check the URL or contact the sender for a new link." />;
   }
 
