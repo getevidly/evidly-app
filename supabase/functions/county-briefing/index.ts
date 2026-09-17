@@ -1215,23 +1215,37 @@ Deno.serve(async (req: Request) => {
       const county = body.county as string;
       if (!county) return jsonResponse({ error: "county required" }, 400);
 
+      /* An optional FILTER on which recipients are selected — nothing more.
+       * It previously also decided which email was composed, so when it was
+       * absent every recipient fell back to email_kind 'briefing' and a
+       * step-2 'invite' recipient was sent the step-1 briefing. The kind and
+       * subject are now resolved per recipient, from that recipient's own
+       * step_number. */
       const sendStepNumber = body.step_number as number | undefined;
 
-      // If step_number supplied, fetch the step's subject_template + email_kind
-      let stepSubjectTemplate: string | null = null;
-      let stepEmailKind: string = 'briefing';
-      if (sendStepNumber !== undefined) {
+      /* Cached per distinct step so a county-wide send does not re-query
+       * outreach_steps for every row. `null` caches a genuine miss. */
+      const stepCache = new Map<number, { subject_template: string | null; email_kind: string } | null>();
+      const resolveStep = async (
+        stepNumber: number | null | undefined,
+      ): Promise<{ subject_template: string | null; email_kind: string } | null> => {
+        if (stepNumber === null || stepNumber === undefined) return null;
+        if (stepCache.has(stepNumber)) return stepCache.get(stepNumber) ?? null;
         const { data: stepRow } = await supabase
           .from('outreach_steps')
           .select('subject_template, email_kind')
-          .eq('step_number', sendStepNumber)
+          .eq('step_number', stepNumber)
           .eq('is_active', true)
           .maybeSingle();
-        if (stepRow) {
-          stepSubjectTemplate = stepRow.subject_template;
-          stepEmailKind = stepRow.email_kind || 'briefing';
-        }
-      }
+        const resolved = stepRow
+          ? {
+            subject_template: stepRow.subject_template as string | null,
+            email_kind: (stepRow.email_kind as string) || 'briefing',
+          }
+          : null;
+        stepCache.set(stepNumber, resolved);
+        return resolved;
+      };
 
       // Fetch approval
       const { data: approval } = await supabase
@@ -1329,6 +1343,22 @@ Deno.serve(async (req: Request) => {
           held++;
           continue;
         }
+
+        /* Resolved from THIS recipient's step, never from body.step_number.
+         * No active step means we do not know which email they should get, so
+         * hold them — falling back to the briefing is what sent a step-2
+         * recipient the step-1 email. */
+        const recipientStep = await resolveStep(r.step_number);
+        if (!recipientStep) {
+          await supabase
+            .from('county_briefing_recipients')
+            .update({ status: 'held', hold_reason: "No active step for this recipient's step_number" })
+            .eq('id', r.id);
+          held++;
+          continue;
+        }
+        const stepEmailKind = recipientStep.email_kind;
+        const stepSubjectTemplate = recipientStep.subject_template;
 
         let sendAccessVia: string | undefined;
         let sendInviteOrgId: string | null = null;
