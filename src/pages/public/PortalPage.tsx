@@ -310,7 +310,9 @@ export function PortalPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 16 }}>
               <span aria-hidden="true" style={{ color: SEAL_GREEN, fontSize: 13 }}>&#128274;</span>
-              <span style={{ ...MONO_CAPTION, color: SEAL_GREEN }}>On File and Sealed</span>
+              {/* Just "Sealed" — the headline above already says "on file and
+                  sealed", and repeating it verbatim read as filler. */}
+              <span style={{ ...MONO_CAPTION, color: SEAL_GREEN }}>Sealed</span>
             </div>
 
             <div style={{ fontSize: 19, fontWeight: 700, marginBottom: 4 }}>
@@ -508,15 +510,19 @@ export function PortalPage() {
           <div style={{ fontSize: 14, lineHeight: 1.6, color: TEXT_SEC, marginBottom: 18 }}>
             See every record for your kitchen, sealed the same way.
           </div>
-          <a
-            href="#"
-            style={{
-              display: 'inline-block', padding: '12px 24px', background: EMBER, color: '#FFFFFF',
-              borderRadius: 8, fontSize: 13.5, fontWeight: 600, textDecoration: 'none',
-            }}
-          >
-            See All Your Records
-          </a>
+          {/* No button yet. The full records view lives behind /dashboard,
+              which requires a login this visitor does not have, and the
+              account-setup step is not wired — so an enabled CTA here would
+              either 404 or bounce to a login screen. An honest line beats a
+              dead link. */}
+          <div style={{
+            fontSize: 13, lineHeight: 1.6, color: TEXT_SEC,
+            background: '#F3EFE6', border: `1px solid ${LINE}`,
+            borderRadius: 8, padding: '12px 14px',
+          }}>
+            Your full records view is being set up. Whoever sent you this link can
+            walk you through it.
+          </div>
         </div>
 
         {/* ── Footer ───────────────────────────────────────── */}

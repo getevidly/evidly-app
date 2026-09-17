@@ -65,7 +65,7 @@ Deno.serve(async (req: Request) => {
   // ── Look up send record by token ──────────────────────────────
   const { data: record, error: recErr } = await supabase
     .from('compliance_document_send_records')
-    .select('id, organization_id, recipient_name, cover_message, sent_at, secure_token_expires_at, revoked_at, opened_at, opened_count, download_count')
+    .select('id, organization_id, recipient_name, recipient_type, cover_message, sent_at, secure_token_expires_at, revoked_at, opened_at, opened_count, download_count')
     .eq('secure_token', token)
     .limit(1)
     .maybeSingle();
@@ -297,7 +297,11 @@ Deno.serve(async (req: Request) => {
       .from('compliance_document_send_records')
       .insert({
         organization_id: record.organization_id,
-        recipient_type: 'custom',
+        /* Inherit the source record's type. 'custom' appears in migration
+         * 20260520100001's CHECK list but is NOT in the live constraint, so
+         * hardcoding it failed every share with 23514. Inheriting a value that
+         * already passed the constraint cannot violate it. */
+        recipient_type: record.recipient_type || 'client_legal',
         recipient_name: to,
         recipient_email: to,
         purpose: 'Shared from portal',
