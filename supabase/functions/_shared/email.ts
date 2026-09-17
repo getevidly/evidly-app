@@ -44,6 +44,8 @@ export interface SendEmailParams {
   text?: string;
   from?: string;
   replyTo?: string;
+  /** Passed straight through to Resend's `attachments`. content is base64. */
+  attachments?: { filename: string; content: string }[];
 }
 
 /**
@@ -74,6 +76,7 @@ export async function sendEmail(params: SendEmailParams): Promise<{ id: string }
   };
   if (params.text) body.text = params.text;
   if (params.replyTo) body.reply_to = params.replyTo;
+  if (params.attachments && params.attachments.length > 0) body.attachments = params.attachments;
 
   const MAX_ATTEMPTS = 2;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
