@@ -1,174 +1,354 @@
+/**
+ * PublicVerification — /verify/:code
+ *
+ * Public, no login. Anyone holding a certificate can confirm it is genuine.
+ *
+ * Two levels of claim, kept deliberately distinct:
+ *   Lookup only  — "a sealed certificate exists with this number"
+ *   Document drop — "THIS file matches its seal", the real tamper check
+ *
+ * The second recomputes the seal hash server-side over the uploaded bytes. A
+ * single altered byte changes the digest, so a modified PDF fails.
+ */
+
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Star, Crown, Diamond, CheckCircle2, Award, ExternalLink } from 'lucide-react';
-import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { supabase } from '../lib/supabase';
 
-// ── Demo verification data ──────────────────────────────────────────
+const NAVY = '#1E2D4D';
+const EMBER = '#B24A2E';
+const CREAM = '#FAF7F0';
+const TEXT_SEC = '#6B7F96';
+const TEXT_MUTED = '#9CA3AF';
+const LINE = '#E5E0D8';
+const SEAL_GREEN = '#2E7D32';
+const WARN = '#B42318';
 
-interface VerificationData {
-  businessName: string;
-  city: string;
-  state: string;
-  badgeTier: 'verified' | 'excellence' | 'elite' | 'platinum';
-  qualifyingPeriod: string;
-  overallPercentile: number;
-  foodSafetyPercentile: number;
-  facilitySafetyPercentile: number;
-  verifiedSince: string;
+const BODY = "'Inter', Arial, sans-serif";
+const MONO_STACK = "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace";
+
+const MONO_CAPTION = {
+  fontFamily: MONO_STACK,
+  fontSize: 10.5,
+  fontWeight: 600,
+  letterSpacing: '0.16em',
+  textTransform: 'uppercase' as const,
+};
+
+interface VerifyRecord {
+  cert_number: string;
+  content_hash: string;
+  sealed_at: string;
+  service_date: string | null;
+  next_due_date: string | null;
+  vendor_name: string | null;
+  safeguard_type: string | null;
+  service_type_code: string | null;
+  superseded: boolean;
+  superseded_by_cert_number: string | null;
 }
 
-const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
-  'DWN-2024-EXCL': {
-    businessName: 'Location 1', // demo
-    city: 'Fresno',
-    state: 'CA',
-    badgeTier: 'excellence',
-    qualifyingPeriod: 'Dec 2025 — Feb 2026',
-    overallPercentile: 89,
-    foodSafetyPercentile: 92,
-    facilitySafetyPercentile: 87,
-    verifiedSince: 'September 2025',
-  },
-  'DWN-2024-VRFD': {
-    businessName: 'Location 1', // demo
-    city: 'Fresno',
-    state: 'CA',
-    badgeTier: 'verified',
-    qualifyingPeriod: 'Sep 2025 — Nov 2025',
-    overallPercentile: 82,
-    foodSafetyPercentile: 85,
-    facilitySafetyPercentile: 80,
-    verifiedSince: 'June 2025',
-  },
+interface VerifyResponse {
+  found: boolean;
+  checked_document?: boolean;
+  match?: boolean;
+  record?: VerifyRecord;
+  error?: string;
+}
+
+function formatDate(value: string | null): string {
+  if (!value) return '—';
+  return new Date(value).toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric',
+  });
+}
+
+const SAFEGUARD_LABELS: Record<string, string> = {
+  hood_cleaning: 'Kitchen Exhaust Cleaning',
+  fire_suppression: 'Fire Suppression System',
+  fire_extinguisher: 'Fire Extinguisher Service',
 };
 
-const BADGE_CONFIG = {
-  verified: { label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Compliance score 80+ for 3 consecutive months' },
-  excellence: { label: 'EvidLY Excellence', icon: Star, color: '#3D5068', bg: '#f1f5f9', desc: 'Compliance score 90+ for 3 consecutive months' },
-  elite: { label: 'EvidLY Elite', icon: Crown, color: '#B24A2E', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
-  platinum: { label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months' },
-};
+export default function PublicVerification() {
+  const { code } = useParams<{ code: string }>();
 
-function PercentileBar({ label, value }: { label: string; value: number }) {
-  const color = value >= 80 ? '#22c55e' : value >= 50 ? '#B24A2E' : '#ef4444';
+  const [certInput, setCertInput] = useState(code || '');
+  const [result, setResult] = useState<VerifyResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const runLookup = useCallback(async (certNumber: string) => {
+    const n = certNumber.trim();
+    if (!n) return;
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('verify-certificate', {
+        body: { cert_number: n },
+      });
+      if (fnErr) { setError('Verification is temporarily unavailable. Please try again.'); return; }
+      setResult(data as VerifyResponse);
+    } catch {
+      setError('Verification is temporarily unavailable. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // A code in the URL verifies on arrival.
+  useEffect(() => { if (code) runLookup(code); }, [code, runLookup]);
+
+  const checkDocument = useCallback(async (file: File) => {
+    const n = (certInput || code || '').trim();
+    if (!n) { setError('Enter the certificate number first.'); return; }
+
+    setChecking(true);
+    setError(null);
+    try {
+      const buf = await file.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      let bin = '';
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      const pdf_base64 = btoa(bin);
+
+      const { data, error: fnErr } = await supabase.functions.invoke('verify-certificate', {
+        body: { cert_number: n, pdf_base64 },
+      });
+      if (fnErr) { setError('Could not check that file. Please try again.'); return; }
+      setResult(data as VerifyResponse);
+    } catch {
+      setError('Could not read that file.');
+    } finally {
+      setChecking(false);
+    }
+  }, [certInput, code]);
+
+  const onDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) checkDocument(file);
+  }, [checkDocument]);
+
+  const record = result?.record;
+  const matched = result?.checked_document === true && result?.match === true;
+  const mismatched = result?.checked_document === true && result?.match === false;
+
   return (
-    <div className="flex items-center gap-3">
-      <div className="w-40 text-sm text-[#1E2D4D]/70">{label}</div>
-      <div className="flex-1 h-3 bg-[#1E2D4D]/5 rounded-full overflow-hidden">
-        <div className="h-full rounded-full transition-all" style={{ width: `${value}%`, backgroundColor: color }} />
+    <div style={{ minHeight: '100vh', background: CREAM, fontFamily: BODY }}>
+
+      {/* Header */}
+      <div style={{ background: NAVY, padding: '22px 24px', textAlign: 'center' }}>
+        <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>
+          <span style={{ color: EMBER }}>E</span>
+          <span style={{ color: '#FFFFFF' }}>vid</span>
+          <span style={{ color: EMBER }}>LY</span>
+        </div>
+        <div style={{ ...MONO_CAPTION, color: '#A8B4C8', marginTop: 6 }}>
+          Certificate Verification
+        </div>
       </div>
-      <div className="w-14 text-right text-sm font-bold" style={{ color }}>{value}th</div>
+
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '36px 20px 64px' }}>
+
+        <h1 style={{
+          fontSize: 24, lineHeight: 1.25, fontWeight: 800, color: NAVY,
+          margin: '0 0 8px', letterSpacing: '-0.02em',
+        }}>
+          Verify a compliance certificate.
+        </h1>
+        <p style={{ fontSize: 14, lineHeight: 1.6, color: TEXT_SEC, margin: '0 0 24px' }}>
+          Enter the certificate number to confirm a sealed record exists, then drop the
+          PDF itself to confirm the document has not been altered.
+        </p>
+
+        {/* Cert number */}
+        <form
+          onSubmit={(e) => { e.preventDefault(); runLookup(certInput); }}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}
+        >
+          <input
+            value={certInput}
+            onChange={(e) => setCertInput(e.target.value)}
+            placeholder="CERT-K-2026-0011"
+            style={{
+              flex: '1 1 240px', minWidth: 0, padding: '11px 13px', borderRadius: 8,
+              border: `1px solid ${LINE}`, background: '#FFFFFF', color: NAVY,
+              fontSize: 14, fontFamily: MONO_STACK,
+            }}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: '11px 22px', background: NAVY, color: '#FFFFFF', border: 'none',
+              borderRadius: 8, fontSize: 13.5, fontWeight: 600, fontFamily: 'inherit',
+              cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+            }}
+          >
+            {loading ? 'Checking…' : 'Verify'}
+          </button>
+        </form>
+
+        {error && (
+          <div style={{
+            fontSize: 13, color: WARN, background: '#FEF3F2', border: '1px solid #FECDCA',
+            borderRadius: 8, padding: '11px 13px', marginBottom: 20,
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Not found */}
+        {result && !result.found && (
+          <div style={{
+            background: '#FFFFFF', border: `1px solid ${LINE}`, borderRadius: 12,
+            padding: '22px 20px', marginBottom: 24,
+          }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, marginBottom: 6 }}>
+              No sealed certificate found for this number.
+            </div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: TEXT_SEC }}>
+              Check the number as printed on the certificate. If it is correct, the record
+              may not have been sealed by EvidLY.
+            </div>
+          </div>
+        )}
+
+        {/* Found */}
+        {record && (
+          <div style={{
+            background: '#FFFFFF',
+            border: `1px solid ${mismatched ? '#FECDCA' : LINE}`,
+            borderTop: `4px solid ${mismatched ? WARN : matched ? SEAL_GREEN : NAVY}`,
+            borderRadius: 12, padding: '22px 20px', marginBottom: 24,
+          }}>
+
+            {matched && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ ...MONO_CAPTION, color: SEAL_GREEN, marginBottom: 6 }}>Verified</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: SEAL_GREEN, lineHeight: 1.35 }}>
+                  This Certificate Is Authentic and Has Not Been Altered
+                </div>
+              </div>
+            )}
+
+            {mismatched && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ ...MONO_CAPTION, color: WARN, marginBottom: 6 }}>Does Not Match</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: WARN, lineHeight: 1.35 }}>
+                  This Document Does Not Match Its Seal — It May Have Been Altered
+                </div>
+                <div style={{ fontSize: 13.5, lineHeight: 1.6, color: TEXT_SEC, marginTop: 8 }}>
+                  A sealed record exists for {record.cert_number}, but the file you provided is
+                  not the document that was sealed. Request the original from whoever issued it.
+                </div>
+              </div>
+            )}
+
+            {!result?.checked_document && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ ...MONO_CAPTION, color: NAVY, marginBottom: 6 }}>Sealed Record Found</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: NAVY, lineHeight: 1.4 }}>
+                  A sealed certificate exists with this number.
+                </div>
+                <div style={{ fontSize: 13.5, lineHeight: 1.6, color: TEXT_SEC, marginTop: 6 }}>
+                  To confirm your copy is the sealed document, drop the PDF below.
+                </div>
+              </div>
+            )}
+
+            {record.superseded && (
+              <div style={{
+                fontSize: 13, lineHeight: 1.6, color: '#92400E', background: '#FEF3C7',
+                border: '1px solid #FDE68A', borderRadius: 8, padding: '10px 12px', marginBottom: 16,
+              }}>
+                This certificate has been superseded by a corrected record
+                {record.superseded_by_cert_number ? ` (${record.superseded_by_cert_number})` : ''}.
+                Use the current certificate for compliance purposes.
+              </div>
+            )}
+
+            <div style={{ borderTop: `1px solid ${LINE}`, paddingTop: 14, display: 'grid', gap: 10 }}>
+              <Row label="Certificate" value={record.cert_number} mono />
+              <Row label="Service" value={
+                (record.safeguard_type && SAFEGUARD_LABELS[record.safeguard_type]) ||
+                record.service_type_code || '—'
+              } />
+              <Row label="Service Company" value={record.vendor_name || '—'} />
+              <Row label="Serviced" value={formatDate(record.service_date)} />
+              {record.next_due_date && <Row label="Next Service Due" value={formatDate(record.next_due_date)} />}
+              <Row label="Sealed" value={formatDate(record.sealed_at)} />
+              <Row label="Seal Hash" value={record.content_hash} mono wrap />
+            </div>
+          </div>
+        )}
+
+        {/* Document drop */}
+        {result?.found && (
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+            style={{
+              border: `2px dashed ${dragOver ? EMBER : LINE}`,
+              background: dragOver ? '#FBF3EF' : '#FFFFFF',
+              borderRadius: 12, padding: '26px 20px', textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: 15, fontWeight: 700, color: NAVY, marginBottom: 6 }}>
+              Verify the document
+            </div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: TEXT_SEC, marginBottom: 14 }}>
+              Drop your certificate PDF here to confirm it{'’'}s authentic and unaltered.
+              The file is checked against its seal and is not stored.
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/pdf"
+              style={{ display: 'none' }}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) checkDocument(f); }}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={checking}
+              style={{
+                padding: '11px 22px', background: EMBER, color: '#FFFFFF', border: 'none',
+                borderRadius: 8, fontSize: 13.5, fontWeight: 600, fontFamily: 'inherit',
+                cursor: checking ? 'default' : 'pointer', opacity: checking ? 0.6 : 1,
+              }}
+            >
+              {checking ? 'Checking the document…' : 'Choose a PDF'}
+            </button>
+          </div>
+        )}
+
+        <div style={{ marginTop: 40, fontSize: 11, lineHeight: 1.6, color: TEXT_MUTED, textAlign: 'center' }}>
+          Powered by EvidLY, a Cleaning Pros Plus, LLC company.
+        </div>
+      </div>
     </div>
   );
 }
 
-export default function PublicVerification() {
-  const { code } = useParams<{ code: string }>();
-  const data = code ? DEMO_VERIFICATIONS[code] : null;
-
-  if (!data) {
-    return (
-      <div className="min-h-screen bg-[#FAF7F0] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 max-w-md w-full p-8 text-center">
-          <EvidlyIcon size={48} className="mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-[#1E2D4D] mb-2">Verification Not Found</h1>
-          <p className="text-sm text-[#1E2D4D]/50 mb-6">This verification code is invalid or has expired. Please check the URL and try again.</p>
-          <a href="https://evidly.com" className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
-            Learn more about EvidLY &rarr;
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  const badge = BADGE_CONFIG[data.badgeTier];
-  const BadgeIcon = badge.icon;
-
+function Row({ label, value, mono, wrap }: {
+  label: string; value: string; mono?: boolean; wrap?: boolean;
+}) {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#faf8f3' }}>
-      {/* Header */}
-      <div className="py-6 px-4" style={{ backgroundColor: '#1E2D4D' }}>
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <EvidlyIcon size={32} />
-            <span className="text-xl font-bold">
-              <span className="text-white">Evid</span>
-              <span style={{ color: '#B24A2E' }}>LY</span>
-            </span>
-          </div>
-          <span className="text-xs text-[#1E2D4D]/30">Answers before you ask.</span>
-        </div>
-      </div>
-
-      <div className="max-w-2xl mx-auto p-4 -mt-6">
-        <div className="bg-white rounded-xl border border-[#1E2D4D]/10 overflow-hidden">
-          {/* Badge hero */}
-          <div className="p-8 text-center" style={{ backgroundColor: badge.bg }}>
-            <BadgeIcon className="h-16 w-16 mx-auto mb-4" style={{ color: badge.color }} />
-            <h1 className="text-2xl font-bold tracking-tight text-[#1E2D4D] mb-1">{badge.label}</h1>
-            <p className="text-sm text-[#1E2D4D]/50">{badge.desc}</p>
-          </div>
-
-          {/* Business info */}
-          <div className="p-6 border-b border-[#1E2D4D]/5">
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-[#1E2D4D]">{data.businessName}</h2>
-              <p className="text-sm text-[#1E2D4D]/50">{data.city}, {data.state}</p>
-              <div className="flex items-center justify-center gap-2 mt-3">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium text-green-700">Verified by EvidLY</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="p-6 border-b border-[#1E2D4D]/5">
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-                <div className="text-xs text-[#1E2D4D]/50 mb-1">Overall Percentile Rank</div>
-                <div className="text-3xl font-bold tracking-tight" style={{ color: '#1E2D4D' }}>{data.overallPercentile}th</div>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-[#FAF7F0]">
-                <div className="text-xs text-[#1E2D4D]/50 mb-1">Qualifying Period</div>
-                <div className="text-sm font-semibold text-[#1E2D4D]/90 mt-1">{data.qualifyingPeriod}</div>
-              </div>
-            </div>
-
-            <h3 className="text-sm font-bold text-[#1E2D4D] mb-3">Category Rankings</h3>
-            <div className="space-y-3">
-              <PercentileBar label="Food Safety" value={data.foodSafetyPercentile} />
-              <PercentileBar label="Fire Safety" value={data.facilitySafetyPercentile} />
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="p-6 text-center" style={{ backgroundColor: '#faf8f3' }}>
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <EvidlyIcon size={20} />
-              <span className="text-sm font-semibold text-[#1E2D4D]/80">Verified by EvidLY — Answers before you ask.</span>
-            </div>
-            <p className="text-xs text-[#1E2D4D]/50 mb-1">Verification code: {code}</p>
-            <p className="text-xs text-[#1E2D4D]/30">Member since {data.verifiedSince}</p>
-
-            <div className="mt-6 p-4 rounded-xl" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-              <Award className="h-6 w-6 mx-auto mb-2" style={{ color: '#1E2D4D' }} />
-              <p className="text-sm font-semibold" style={{ color: '#1E2D4D' }}>Want this for your kitchen?</p>
-              <p className="text-xs text-[#1E2D4D]/70 mb-3">Join 2,340+ commercial kitchens benchmarking with EvidLY</p>
-              <a
-                href="https://evidly.com"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold text-white"
-                style={{ backgroundColor: '#1E2D4D' }}
-              >
-                Get Started <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Privacy notice */}
-        <div className="text-center mt-4 text-xs text-[#1E2D4D]/30 pb-8">
-          <p>This page displays publicly verifiable compliance rankings only.</p>
-          <p>No raw scores, specific violation data, or employee information is disclosed.</p>
-        </div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'baseline' }}>
+      <div style={{ ...MONO_CAPTION, color: TEXT_MUTED, flex: '0 0 140px' }}>{label}</div>
+      <div style={{
+        flex: '1 1 200px', minWidth: 0, fontSize: 13.5, color: NAVY, fontWeight: 500,
+        fontFamily: mono ? MONO_STACK : 'inherit',
+        wordBreak: wrap ? 'break-all' : 'normal',
+      }}>
+        {value}
       </div>
     </div>
   );
