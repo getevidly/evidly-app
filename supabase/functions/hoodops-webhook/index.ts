@@ -970,7 +970,11 @@ async function handleDocumentEvent(
 
     // ── 7. Upload to Supabase storage ────────────────────────────
     const storageBucket = "documents";
-    const storagePath = `hoodops/${orgId}/${externalDocId}.pdf`;
+    /* Org id FIRST. The documents_org_select storage policy checks
+     * (storage.foldername(name))[1] against the caller's org ids, so a
+     * `hoodops/<org>/...` layout is unreadable by everyone — including the
+     * owning org. `<org>/hoodops/...` matches every other document. */
+    const storagePath = `${orgId}/hoodops/${externalDocId}.pdf`;
     const { error: uploadErr } = await supabase.storage
       .from(storageBucket)
       .upload(storagePath, new Uint8Array(pdfBytes), {
