@@ -4,7 +4,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 import { QUESTION_META } from '../_shared/study-questions.ts';
 import { sortedJsonStringify, sha256 } from '../_shared/seal-canonicalization.ts';
-import { buildChecklistEmail } from '../_shared/checklist-email.ts';
+import { buildCertificateEmail, CERTIFICATE_EMAIL_SUBJECT } from '../_shared/certificate-email.ts';
 
 const corsHeaders = getCorsHeaders(null);
 
@@ -137,6 +137,9 @@ async function buildCertLinkForRecipient(
   r: Record<string, any>,
   fallbackOrgId: string | null,
   firstName: string,
+  /* evidly_client_invites.token — block-scoped at both call sites, so it is
+   * hoisted and passed in the same way fallbackOrgId is. */
+  joinToken: string | null,
 ): Promise<CertLinkOutcome> {
   const certOrgId = r.organization_id || fallbackOrgId || null;
   if (!certOrgId) {
@@ -145,7 +148,8 @@ async function buildCertLinkForRecipient(
 
   const { data: sealedRecords } = await supabase
     .from('vendor_service_records')
-    .select('id, cert_number, service_date, sealed_at')
+    // next_due_date and content_hash feed the cert card — same table already read.
+    .select('id, cert_number, service_date, sealed_at, next_due_date, content_hash')
     .eq('organization_id', certOrgId)
     .not('sealed_at', 'is', null)
     .order('sealed_at', { ascending: false });
@@ -234,30 +238,68 @@ async function buildCertLinkForRecipient(
     secureToken = newToken;
   }
 
-  /* Warm recipients get the SAME 39-record required-documents list the cold
-   * count form sends — the only difference is that their hood and exhaust
-   * cleaning row shows as already on file, linking the sealed certificate.
-   * One document for both audiences; the cert is connected, not bolted on. */
+  /* The certificate email carries its own header and footer, so it is NOT
+   * wrapped in buildEmailHtml — wrapping would render both twice. */
   const newest = sealedRecords[0];
-  // buildChecklistEmail returns a BODY fragment (form-submit wraps it the same
-  // way); county-briefing hands full HTML to sendEmail, so wrap it here.
-  const html = buildEmailHtml({
-    recipientName: firstName,
-    bodyHtml: buildChecklistEmail(
-      firstName,
-      { first_name: firstName, business_name: r.org_name || '' },
-      'count',
-      {
-        certNumber: newest.cert_number,
-        sealedDate: newest.sealed_at,
-        serviceDate: newest.service_date,
-        portalUrl: `https://app.getevidly.com/portal/${secureToken}`,
-      },
-    ),
-    skipGreeting: true,
+
+  // Every field must resolve from real data; never send with a placeholder.
+  if (!newest.cert_number) {
+    return { ok: false, holdReason: 'Sealed record has no cert_number', skipLabel: 'No cert_number' };
+  }
+  if (!newest.service_date) {
+    return { ok: false, holdReason: 'Sealed record has no service_date', skipLabel: 'No service_date' };
+  }
+  if (!newest.next_due_date) {
+    return { ok: false, holdReason: 'Sealed record has no next_due_date', skipLabel: 'No next_due_date' };
+  }
+  if (!newest.content_hash) {
+    return { ok: false, holdReason: 'Sealed record has no content_hash', skipLabel: 'No content_hash' };
+  }
+  if (!r.county) {
+    return { ok: false, holdReason: 'Recipient has no county', skipLabel: 'No county' };
+  }
+  if (!r.org_name) {
+    return { ok: false, holdReason: 'Recipient has no org_name', skipLabel: 'No org_name' };
+  }
+  if (!joinToken) {
+    return { ok: false, holdReason: 'No invite token for this recipient', skipLabel: 'No invite token' };
+  }
+
+  const portalUrl = `https://app.getevidly.com/portal/${secureToken}`;
+
+  // Same shortening PortalPage's shortHash() produces: first 8, ellipsis, last 4.
+  const hash = newest.content_hash as string;
+  const shortHash = hash.length > 16 ? `${hash.slice(0, 8)}…${hash.slice(-4)}` : hash;
+
+  const fmt = (v: string) =>
+    new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  const daysOut = Math.max(
+    0,
+    Math.ceil((new Date(newest.next_due_date as string).getTime() - Date.now()) / 86400000),
+  );
+
+  const unsubBase = `${Deno.env.get('SUPABASE_URL') || 'https://irxgmhxhmxtzfwuieblc.supabase.co'}/functions/v1/email-unsubscribe`;
+  const unsubUrl = r.unsub_token
+    ? `${unsubBase}?token=${encodeURIComponent(r.unsub_token)}`
+    : 'https://app.getevidly.com/settings/notifications';
+
+  const html = buildCertificateEmail({
+    orgName: r.org_name,
+    county: r.county,
+    certNumber: newest.cert_number,
+    servicedLabel: fmt(newest.service_date as string),
+    nextDueLabel: fmt(newest.next_due_date as string),
+    daysOut,
+    shortHash,
+    portalUrl,
+    joinUrl: `https://app.getevidly.com/join/${joinToken}`,
+    verifyUrl: `https://app.getevidly.com/verify/${encodeURIComponent(newest.cert_number as string)}`,
+    unsubUrl,
+    certThumbUrl: null,
   });
 
-  return { ok: true, html, subject: 'Your compliance record checklist' };
+  return { ok: true, html, subject: CERTIFICATE_EMAIL_SUBJECT };
 }
 
 // deno-lint-ignore no-explicit-any
@@ -1362,6 +1404,7 @@ Deno.serve(async (req: Request) => {
 
         let sendAccessVia: string | undefined;
         let sendInviteOrgId: string | null = null;
+        let sendInviteToken: string | null = null;
 
         if (r.variant === 'warm' || stepEmailKind === 'invite') {
           // Look up invite token + org for access_via / invite branching
@@ -1382,6 +1425,7 @@ Deno.serve(async (req: Request) => {
             continue;
           }
           sendInviteOrgId = invite.organization_id || null;
+          sendInviteToken = invite.token || null;
           const slug = county.toLowerCase().replace(/\s+/g, '-');
 
           if (invite.organization_id) {
@@ -1402,7 +1446,7 @@ Deno.serve(async (req: Request) => {
         if (stepEmailKind === 'invite') {
           // Same certificate link the cron dispatch sends — not /join.
           const certOutcome = await buildCertLinkForRecipient(
-            supabase, r, sendInviteOrgId, firstName,
+            supabase, r, sendInviteOrgId, firstName, sendInviteToken,
           );
           if (!certOutcome.ok) {
             await supabase
@@ -1907,7 +1951,7 @@ Deno.serve(async (req: Request) => {
              * /join sample dashboard. Shared with the operator "send" action so
              * the two paths cannot drift. */
             const certOutcome = await buildCertLinkForRecipient(
-              supabase, r, invite.organization_id || null, firstName,
+              supabase, r, invite.organization_id || null, firstName, invite.token || null,
             );
             if (!certOutcome.ok) {
               await supabase.from('county_briefing_recipients')
