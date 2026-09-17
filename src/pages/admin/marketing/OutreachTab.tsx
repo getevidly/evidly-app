@@ -1391,9 +1391,14 @@ export default function OutreachTab() {
                           disabled={status !== 'approved' || !!actionLoading || paused}
                           title={status !== 'approved' ? 'Approve first' : paused ? 'Sending is paused' : `Send to ${countyRecs.filter((r: any) => r.status === 'queued').length} recipient(s)`}
                           onClick={() => {
-                            const queued = countyRecs.filter((r: any) => r.status === 'queued').length;
-                            if (queued === 0) { flash(`No queued recipients for ${c.county}`); return; }
-                            handleSend(c.county, queued);
+                            const queuedRecs = countyRecs.filter((r: any) => r.status === 'queued');
+                            if (queuedRecs.length === 0) { flash(`No queued recipients for ${c.county}`); return; }
+                            /* Send the step these recipients are actually on.
+                             * Omitted when they span several steps, so the
+                             * function keeps its existing unfiltered behaviour. */
+                            const stepNums = [...new Set(queuedRecs.map((r: any) => r.step_number))];
+                            const stepNumber = stepNums.length === 1 ? (stepNums[0] as number) : undefined;
+                            handleSend(c.county, queuedRecs.length, stepNumber);
                           }}
                           style={{
                             ...BTN(EV_NAVY, '#FFF'),

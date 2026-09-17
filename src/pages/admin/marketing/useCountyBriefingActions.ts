@@ -69,12 +69,19 @@ export function useCountyBriefingActions(deps: CountyBriefingActionDeps) {
   );
 
   const handleSend = useCallback(
-    async (county: string, queuedCount: number) => {
+    async (county: string, queuedCount: number, stepNumber?: number) => {
       if (paused) { flash('Sending is paused'); return; }
       if (!confirm(`Send the ${county} briefing to ${queuedCount} recipient${queuedCount !== 1 ? 's' : ''} now?`)) return;
       setActionLoading(`send-${county}`);
+      /* step_number must reach the function: without it the send falls back to
+       * email_kind 'briefing', so a step-2 recipient would get the briefing
+       * rather than their certificate email. Undefined when the queued
+       * recipients span more than one step, which preserves the previous
+       * unfiltered behaviour rather than guessing. */
       const { data, error } = await supabase.functions.invoke('county-briefing', {
-        body: { action: 'send', county },
+        body: stepNumber === undefined
+          ? { action: 'send', county }
+          : { action: 'send', county, step_number: stepNumber },
       });
       setActionLoading(null);
       if (error) {
