@@ -11,6 +11,7 @@ import { InactivityProvider } from './contexts/InactivityContext';
 import { BrandingProvider } from './contexts/BrandingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { EmulationProvider } from './contexts/EmulationContext';
+import { ScopedOrgProvider } from './contexts/ScopedOrgContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { BrandingSync } from './components/BrandingSync';
@@ -981,6 +982,7 @@ function App() {
             <LanguageProvider>
               <RoleProvider>
                 <EmulationProvider>
+                <ScopedOrgProvider>
                 <OperatingHoursProvider>
                   <OfflineProvider>
                     <InactivityProvider>
@@ -994,6 +996,7 @@ function App() {
                     </InactivityProvider>
                   </OfflineProvider>
                 </OperatingHoursProvider>
+                </ScopedOrgProvider>
                 </EmulationProvider>
               </RoleProvider>
             </LanguageProvider>

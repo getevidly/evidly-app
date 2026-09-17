@@ -11,6 +11,8 @@ import {
   Loader2, Wind,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useScopedOrg } from '../../contexts/ScopedOrgContext';
+import OrgPicker from '../../components/admin/OrgPicker';
 import { useRole } from '../../contexts/RoleContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useServiceHistory } from '../../hooks/useServiceHistory';
@@ -54,7 +56,7 @@ export default function FanPerformanceManagement() {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const showCost = COST_ROLES.includes(userRole);
-  const orgId = profile?.organization_id;
+  const orgId = useScopedOrg();
 
   const [locations, setLocations] = useState([]);
   const [locationId, setLocationId] = useState(null);
@@ -140,6 +142,7 @@ export default function FanPerformanceManagement() {
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', paddingBottom: 100 }} className="space-y-4 px-4 pt-4">
+      <OrgPicker />
 
       {/* Header */}
       <div>

@@ -11,6 +11,8 @@ import {
   Loader2, Shield,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useScopedOrg } from '../../contexts/ScopedOrgContext';
+import OrgPicker from '../../components/admin/OrgPicker';
 import { useRole } from '../../contexts/RoleContext';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { useServiceHistory } from '../../hooks/useServiceHistory';
@@ -54,7 +56,7 @@ export default function RooftopGreaseContainment() {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const showCost = COST_ROLES.includes(userRole);
-  const orgId = profile?.organization_id;
+  const orgId = useScopedOrg();
 
   const [locations, setLocations] = useState([]);
   const [locationId, setLocationId] = useState(null);
@@ -134,6 +136,7 @@ export default function RooftopGreaseContainment() {
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', paddingBottom: 100 }} className="space-y-4 px-4 pt-4">
+      <OrgPicker />
       <div>
         <p style={{ fontSize: typography.size.xs, fontWeight: typography.weight.semibold, color: '#D85A30', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Fire Safety</p>
         <h2 style={{ fontSize: typography.size.h2, fontWeight: typography.weight.bold, color: colors.textPrimary, margin: '2px 0 0' }}>Rooftop Grease Containment</h2>
