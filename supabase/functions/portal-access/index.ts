@@ -305,7 +305,7 @@ Deno.serve(async (req: Request) => {
         recipient_name: to,
         recipient_email: to,
         purpose: 'Shared from portal',
-        cover_message: `${orgName} has shared a sealed compliance certificate with you.`,
+        cover_message: `${orgName} has shared a sealed Certificate of Service with you.`,
         secure_token: newToken,
         secure_token_expires_at: newExpiry,
         metadata: { shared_from_send_record_id: record.id },
@@ -345,7 +345,7 @@ Deno.serve(async (req: Request) => {
       recipientName: 'there',
       category: 'Commercial Kitchen Risk Management',
       bodyHtml: `
-        <p>${orgName} has shared a sealed compliance certificate with you.</p>
+        <p>${orgName} has shared a sealed Certificate of Service with you.</p>
         <p>The record is tamper-evident: it carries a cryptographic seal, so you
         can confirm it has not been altered since it was filed.</p>
       `,
@@ -356,7 +356,7 @@ Deno.serve(async (req: Request) => {
 
     const result = await sendEmail({
       to,
-      subject: `${orgName} has shared a sealed compliance certificate with you`,
+      subject: `${orgName} has shared a sealed Certificate of Service with you`,
       html,
     });
 
