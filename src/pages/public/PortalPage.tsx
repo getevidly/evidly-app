@@ -466,7 +466,7 @@ export function PortalPage() {
             </div>
 
             <div style={{ fontSize: 19, fontWeight: 700, marginBottom: 4 }}>
-              Hood Cleaning Certificate
+              Kitchen Exhaust Cleaning Certificate
             </div>
             <div style={{ fontSize: 12.5, color: '#A8B4C8', marginBottom: 20 }}>
               NFPA 96 (2024){sealedDoc.seal.cert_number ? ` · ${sealedDoc.seal.cert_number}` : ''}

@@ -129,7 +129,7 @@ export function buildCertificateEmail(p: CertificateEmailParams): string {
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;">
               <tr>
                 <td valign="top">
-                  <div style="font-family:${SANS};font-size:19px;line-height:25px;font-weight:700;color:#FFFFFF;">Hood Cleaning Certificate</div>
+                  <div style="font-family:${SANS};font-size:19px;line-height:25px;font-weight:700;color:#FFFFFF;">Kitchen Exhaust Cleaning Certificate</div>
                   <div style="margin-top:2px;font-family:${SANS};font-size:12.5px;line-height:18px;color:#A8B4C8;">NFPA 96 (2024) &middot; ${certNumber}</div>
                 </td>
                 ${thumbCell}

@@ -283,8 +283,19 @@ async function buildCertLinkForRecipient(
   const hash = newest.content_hash as string;
   const shortHash = hash.length > 16 ? `${hash.slice(0, 8)}…${hash.slice(-4)}` : hash;
 
-  const fmt = (v: string) =>
-    new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  /* service_date and next_due_date are DATE columns arriving as "YYYY-MM-DD".
+   * new Date("2026-09-15") is UTC midnight, which formats as Sep 14 in any
+   * zone west of UTC. Reading the parts and rendering in UTC pins the stored
+   * day to the displayed day wherever this runs. */
+  const fmt = (v: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v).trim());
+    const d = m
+      ? new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+      : new Date(v);
+    return d.toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+    });
+  };
 
   const daysOut = Math.max(
     0,
