@@ -4,7 +4,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 import { QUESTION_META } from '../_shared/study-questions.ts';
 import { sortedJsonStringify, sha256 } from '../_shared/seal-canonicalization.ts';
-import { buildClientInviteEmail, buildCertLinkEmail } from '../_shared/invites.ts';
+import { buildCertLinkEmail } from '../_shared/invites.ts';
 
 const corsHeaders = getCorsHeaders(null);
 
@@ -111,6 +111,142 @@ async function computeStepContentHash(step: Record<string, any>): Promise<string
  * The word "County" lives inside the returned name rather than beside every
  * call site, which is what let a city inherit it in the first place.
  */
+/**
+ * Step 2 ('invite') certificate link — shared by BOTH send paths.
+ *
+ * The cron dispatch and the operator "send" action each compose step 2, and
+ * they drifted: cron linked the sealed cert page while the operator path still
+ * linked the /join sample dashboard. Extracted so one change covers both and
+ * they cannot diverge again.
+ *
+ * Resolves the recipient's org, collects every sealed record newest-first,
+ * mints (or reuses) a portal send-record plus one send-item per certificate,
+ * and returns the composed email. Never throws and never sends: the caller
+ * holds the recipient on a failure outcome.
+ */
+type CertLinkOutcome =
+  | { ok: true; html: string; subject: string }
+  | { ok: false; holdReason: string; skipLabel: string };
+
+const OUTREACH_CERT_PURPOSE = 'Outreach step 2 — certificate link';
+
+// deno-lint-ignore no-explicit-any
+async function buildCertLinkForRecipient(
+  supabase: any,
+  // deno-lint-ignore no-explicit-any
+  r: Record<string, any>,
+  fallbackOrgId: string | null,
+  firstName: string,
+): Promise<CertLinkOutcome> {
+  const certOrgId = r.organization_id || fallbackOrgId || null;
+  if (!certOrgId) {
+    return { ok: false, holdReason: 'No organization linked to this recipient', skipLabel: 'No organization linked' };
+  }
+
+  const { data: sealedRecords } = await supabase
+    .from('vendor_service_records')
+    .select('id, cert_number, service_date, sealed_at')
+    .eq('organization_id', certOrgId)
+    .not('sealed_at', 'is', null)
+    .order('sealed_at', { ascending: false });
+
+  if (!sealedRecords || sealedRecords.length === 0) {
+    return { ok: false, holdReason: 'No sealed certificate on file', skipLabel: 'No sealed certificate' };
+  }
+
+  const { data: certDocs } = await supabase
+    .from('compliance_documents')
+    .select('id, bridged_service_id')
+    // deno-lint-ignore no-explicit-any
+    .in('bridged_service_id', sealedRecords.map((s: any) => s.id));
+
+  const docByRecord = new Map<string, string>();
+  for (const d of certDocs || []) docByRecord.set(d.bridged_service_id as string, d.id as string);
+
+  const orderedDocIds = sealedRecords
+    // deno-lint-ignore no-explicit-any
+    .map((s: any) => docByRecord.get(s.id))
+    .filter((id: string | undefined): id is string => Boolean(id));
+
+  if (orderedDocIds.length === 0) {
+    return { ok: false, holdReason: 'Sealed record has no document on file', skipLabel: 'Sealed record has no document' };
+  }
+
+  /* Idempotent per (org, recipient email, purpose): both paths retry, and a
+   * fresh token per attempt would leave orphaned live links and a different
+   * URL in each send. */
+  let secureToken: string | null = null;
+  const { data: existingSend } = await supabase
+    .from('compliance_document_send_records')
+    .select('secure_token, secure_token_expires_at, revoked_at')
+    .eq('organization_id', certOrgId)
+    .eq('recipient_email', r.email)
+    .eq('purpose', OUTREACH_CERT_PURPOSE)
+    .order('sent_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (
+    existingSend?.secure_token &&
+    !existingSend.revoked_at &&
+    new Date(existingSend.secure_token_expires_at as string) > new Date()
+  ) {
+    secureToken = existingSend.secure_token as string;
+  } else {
+    const newToken = crypto.randomUUID();
+    const { data: newSend, error: sendErr } = await supabase
+      .from('compliance_document_send_records')
+      .insert({
+        organization_id: certOrgId,
+        /* 'client_legal' is in the LIVE CHECK; 'custom' appears in migration
+         * 20260520100001 but is rejected. */
+        recipient_type: 'client_legal',
+        recipient_name: r.org_name || r.email,
+        recipient_email: r.email,
+        purpose: OUTREACH_CERT_PURPOSE,
+        cover_message: 'Your hood cleaning certificate is on file and sealed.',
+        secure_token: newToken,
+        secure_token_expires_at: new Date(Date.now() + 30 * 86400000).toISOString(),
+      })
+      .select('id')
+      .single();
+
+    if (sendErr || !newSend) {
+      console.error('[county-briefing] Portal send-record insert failed:', sendErr?.message);
+      return { ok: false, holdReason: 'Could not prepare certificate link', skipLabel: 'Could not prepare certificate link' };
+    }
+
+    // included_in_send MUST be true — portal-access filters on it.
+    const { error: itemsErr } = await supabase
+      .from('compliance_document_send_items')
+      .insert(orderedDocIds.map((docId) => ({
+        send_record_id: newSend.id,
+        document_id: docId,
+        recommendation_tier: 'manual',
+        included_in_send: true,
+      })));
+
+    if (itemsErr) {
+      console.error('[county-briefing] Portal send-items insert failed:', itemsErr.message);
+      return { ok: false, holdReason: 'Could not prepare certificate link', skipLabel: 'Could not prepare certificate link' };
+    }
+
+    secureToken = newToken;
+  }
+
+  const newest = sealedRecords[0];
+  const certResult = buildCertLinkEmail({
+    recipientName: firstName,
+    businessName: r.org_name || 'your kitchen',
+    certLink: `https://app.getevidly.com/portal/${secureToken}`,
+    certNumber: newest.cert_number,
+    serviceDate: newest.service_date,
+    certCount: orderedDocIds.length,
+  });
+
+  return { ok: true, html: certResult.html, subject: certResult.subject };
+}
+
 // deno-lint-ignore no-explicit-any
 function jurisdictionDisplayName(county: string, jur: Record<string, any> | null | undefined): string {
   const city = typeof jur?.city === 'string' ? jur.city.trim() : '';
@@ -1182,7 +1318,7 @@ Deno.serve(async (req: Request) => {
         }
 
         let sendAccessVia: string | undefined;
-        let sendInviteToken: string | undefined;
+        let sendInviteOrgId: string | null = null;
 
         if (r.variant === 'warm' || stepEmailKind === 'invite') {
           // Look up invite token + org for access_via / invite branching
@@ -1202,7 +1338,7 @@ Deno.serve(async (req: Request) => {
             held++;
             continue;
           }
-          sendInviteToken = invite.token;
+          sendInviteOrgId = invite.organization_id || null;
           const slug = county.toLowerCase().replace(/\s+/g, '-');
 
           if (invite.organization_id) {
@@ -1221,15 +1357,20 @@ Deno.serve(async (req: Request) => {
         let html: string;
         let subject: string;
         if (stepEmailKind === 'invite') {
-          const inviteResult = await buildClientInviteEmail({
-            recipientName: firstName,
-            businessName: r.org_name || 'your kitchen',
-            inviteLink: `https://app.getevidly.com/join/${sendInviteToken}`,
-            accessVia: sendAccessVia,
-            supabase,
-          });
-          html = inviteResult.html;
-          subject = inviteResult.subject;
+          // Same certificate link the cron dispatch sends — not /join.
+          const certOutcome = await buildCertLinkForRecipient(
+            supabase, r, sendInviteOrgId, firstName,
+          );
+          if (!certOutcome.ok) {
+            await supabase
+              .from('county_briefing_recipients')
+              .update({ status: 'held', hold_reason: certOutcome.holdReason })
+              .eq('id', r.id);
+            held++;
+            continue;
+          }
+          html = certOutcome.html;
+          subject = certOutcome.subject;
         } else {
           html = buildBriefingEmail(county, firstName, r.org_name, jur, r.variant, sendAccessVia, r.unsub_token);
           subject = buildSubject(stepSubjectTemplate, jurisdictionDisplayName(county, jur), firstName);
@@ -1720,146 +1861,21 @@ Deno.serve(async (req: Request) => {
           let emailSubject: string;
           if ((step.email_kind || 'briefing') === 'invite') {
             /* Step 2 links the recipient to THEIR sealed certificate, not the
-             * /join sample dashboard. The recipient row carries organization_id
-             * directly; evidly_client_invites is only consulted above for
-             * access_via. */
-            const certOrgId = r.organization_id || invite.organization_id || null;
-
-            if (!certOrgId) {
+             * /join sample dashboard. Shared with the operator "send" action so
+             * the two paths cannot drift. */
+            const certOutcome = await buildCertLinkForRecipient(
+              supabase, r, invite.organization_id || null, firstName,
+            );
+            if (!certOutcome.ok) {
               await supabase.from('county_briefing_recipients')
-                .update({ status: 'held', hold_reason: 'No organization linked to this recipient' })
+                .update({ status: 'held', hold_reason: certOutcome.holdReason })
                 .eq('id', r.id);
               held++;
-              trackSkip('No organization linked');
+              trackSkip(certOutcome.skipLabel);
               continue;
             }
-
-            /* Every sealed record for the org, newest first. The newest is what
-             * the email names; the rest ride along as additional send-items so
-             * the portal lists them without needing a second token. */
-            const { data: sealedRecords } = await supabase
-              .from('vendor_service_records')
-              .select('id, cert_number, service_date, sealed_at')
-              .eq('organization_id', certOrgId)
-              .not('sealed_at', 'is', null)
-              .order('sealed_at', { ascending: false });
-
-            if (!sealedRecords || sealedRecords.length === 0) {
-              await supabase.from('county_briefing_recipients')
-                .update({ status: 'held', hold_reason: 'No sealed certificate on file' })
-                .eq('id', r.id);
-              held++;
-              trackSkip('No sealed certificate');
-              continue;
-            }
-
-            // Each sealed record's document, in the same newest-first order.
-            const { data: certDocs } = await supabase
-              .from('compliance_documents')
-              .select('id, bridged_service_id')
-              .in('bridged_service_id', sealedRecords.map((s: any) => s.id));
-
-            const docByRecord = new Map<string, string>();
-            for (const d of certDocs || []) {
-              docByRecord.set(d.bridged_service_id as string, d.id as string);
-            }
-            const orderedDocIds = sealedRecords
-              .map((s: any) => docByRecord.get(s.id))
-              .filter((id: string | undefined): id is string => Boolean(id));
-
-            if (orderedDocIds.length === 0) {
-              await supabase.from('county_briefing_recipients')
-                .update({ status: 'held', hold_reason: 'Sealed record has no document on file' })
-                .eq('id', r.id);
-              held++;
-              trackSkip('Sealed record has no document');
-              continue;
-            }
-
-            /* Idempotent per (recipient email, org): the dispatcher retries, and
-             * a fresh token per attempt would leave orphaned live links and a
-             * different URL in each send. Reuse any un-revoked, unexpired token
-             * already minted for this recipient. */
-            let secureToken: string | null = null;
-            const { data: existingSend } = await supabase
-              .from('compliance_document_send_records')
-              .select('secure_token, secure_token_expires_at, revoked_at')
-              .eq('organization_id', certOrgId)
-              .eq('recipient_email', r.email)
-              .eq('purpose', 'Outreach step 2 — certificate link')
-              .order('sent_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-
-            if (
-              existingSend?.secure_token &&
-              !existingSend.revoked_at &&
-              new Date(existingSend.secure_token_expires_at as string) > new Date()
-            ) {
-              secureToken = existingSend.secure_token as string;
-            } else {
-              const newToken = crypto.randomUUID();
-              const { data: newSend, error: sendErr } = await supabase
-                .from('compliance_document_send_records')
-                .insert({
-                  organization_id: certOrgId,
-                  /* 'client_legal' is in the LIVE CHECK constraint; 'custom'
-                   * appears in migration 20260520100001 but is rejected. */
-                  recipient_type: 'client_legal',
-                  recipient_name: r.org_name || r.email,
-                  recipient_email: r.email,
-                  purpose: 'Outreach step 2 — certificate link',
-                  cover_message: 'Your hood cleaning certificate is on file and sealed.',
-                  secure_token: newToken,
-                  secure_token_expires_at: new Date(Date.now() + 30 * 86400000).toISOString(),
-                })
-                .select('id')
-                .single();
-
-              if (sendErr || !newSend) {
-                console.error('[county-briefing] Portal send-record insert failed:', sendErr?.message);
-                await supabase.from('county_briefing_recipients')
-                  .update({ status: 'held', hold_reason: 'Could not prepare certificate link' })
-                  .eq('id', r.id);
-                held++;
-                trackSkip('Could not prepare certificate link');
-                continue;
-              }
-
-              // included_in_send MUST be true — portal-access filters on it.
-              const { error: itemsErr } = await supabase
-                .from('compliance_document_send_items')
-                .insert(orderedDocIds.map((docId) => ({
-                  send_record_id: newSend.id,
-                  document_id: docId,
-                  recommendation_tier: 'manual',
-                  included_in_send: true,
-                })));
-
-              if (itemsErr) {
-                console.error('[county-briefing] Portal send-items insert failed:', itemsErr.message);
-                await supabase.from('county_briefing_recipients')
-                  .update({ status: 'held', hold_reason: 'Could not prepare certificate link' })
-                  .eq('id', r.id);
-                held++;
-                trackSkip('Could not prepare certificate link');
-                continue;
-              }
-
-              secureToken = newToken;
-            }
-
-            const newest = sealedRecords[0];
-            const certResult = buildCertLinkEmail({
-              recipientName: firstName,
-              businessName: r.org_name || 'your kitchen',
-              certLink: `https://app.getevidly.com/portal/${secureToken}`,
-              certNumber: newest.cert_number,
-              serviceDate: newest.service_date,
-              certCount: orderedDocIds.length,
-            });
-            html = certResult.html;
-            emailSubject = certResult.subject;
+            html = certOutcome.html;
+            emailSubject = certOutcome.subject;
           } else {
             const slug = r.county.toLowerCase().replace(/\s+/g, '-');
             html = buildBriefingEmail(r.county, firstName, r.org_name, jur, r.variant, cronAccessVia, r.unsub_token);
