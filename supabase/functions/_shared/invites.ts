@@ -490,3 +490,61 @@ export function buildPolicyholderInviteEmail(
 
   return { subject, html };
 }
+
+/**
+ * Certificate link — warm outreach step 2.
+ *
+ * Replaces the /join sample dashboard for recipients who already have a sealed
+ * Certificate of Service on file. The point of the email is the document, not
+ * account activation: it says the certificate exists, that it is sealed, and
+ * links straight to the portal page showing it.
+ */
+export interface CertLinkEmailParams {
+  recipientName: string;
+  businessName: string;
+  /** The /portal/<token> URL. */
+  certLink: string;
+  certNumber?: string | null;
+  serviceDate?: string | null;
+  certCount?: number;
+}
+
+export function buildCertLinkEmail(
+  params: CertLinkEmailParams,
+): { subject: string; html: string } {
+  const { recipientName, businessName, certLink, certNumber, serviceDate, certCount } = params;
+  const firstName = (recipientName || "there").split(" ")[0];
+
+  const subject = "Your hood cleaning certificate is on file";
+
+  const servicedLine = serviceDate
+    ? `<p style="margin:0 0 6px 0;"><strong>Serviced</strong> ${new Date(serviceDate)
+      .toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>`
+    : "";
+
+  const certLine = certNumber
+    ? `<p style="margin:0 0 6px 0;"><strong>Certificate</strong> ${certNumber}</p>`
+    : "";
+
+  const olderLine = (certCount && certCount > 1)
+    ? `<p>Your earlier certificates are listed on the same page.</p>`
+    : "";
+
+  const html = buildEmailHtml({
+    recipientName: firstName,
+    bodyHtml: `
+      <p>Your hood cleaning certificate for <strong>${businessName}</strong> is
+      on file and sealed.</p>
+      ${certLine}
+      ${servicedLine}
+      <p>Sealed means the record carries a cryptographic seal, so anyone you
+      send it to — an insurer, a landlord, a fire marshal — can confirm it has
+      not been altered since it was filed.</p>
+      ${olderLine}`,
+    ctaText: "View Your Certificate",
+    ctaUrl: certLink,
+    footerNote: "You are receiving this because your service company files your certificates with EvidLY.",
+  });
+
+  return { subject, html };
+}
