@@ -345,14 +345,51 @@ Deno.serve(async (req: Request) => {
 
     const { data: srcItems } = await supabase
       .from('compliance_document_send_items')
-      .select('document_id, recommendation_tier')
+      .select('document_id, recommendation_tier, compliance_documents(bridged_service_id)')
       .eq('send_record_id', record.id)
       .eq('included_in_send', true);
 
-    if (srcItems && srcItems.length > 0) {
+    /* Carry ONLY what the sharer was actually looking at. The parent of a warm
+     * outreach link holds every sealed cert for the org, but the page shows one
+     * — the newest. Copying them all handed the third party older certificates
+     * they were never shown, some with files that no longer exist. Same
+     * ordering rule as the load action. */
+    let shareItems = srcItems || [];
+    if (shareItems.length > 1 && record.purpose === OUTREACH_CERT_PURPOSE) {
+      const bridgedIds = shareItems
+        // deno-lint-ignore no-explicit-any
+        .map((i: any) => i.compliance_documents?.bridged_service_id as string | null)
+        .filter((id: string | null): id is string => Boolean(id));
+
+      const sealedAtById = new Map<string, string>();
+      if (bridgedIds.length > 0) {
+        const { data: seals } = await supabase
+          .from('vendor_service_records')
+          .select('id, sealed_at')
+          .in('id', bridgedIds)
+          .not('sealed_at', 'is', null);
+        for (const s of seals || []) sealedAtById.set(s.id as string, s.sealed_at as string);
+      }
+
+      // deno-lint-ignore no-explicit-any
+      const sealedAtOf = (i: any): string | null => {
+        const b = i.compliance_documents?.bridged_service_id as string | null;
+        return b ? (sealedAtById.get(b) ?? null) : null;
+      };
+
+      shareItems = [...shareItems].sort((a, b) => {
+        const av = sealedAtOf(a);
+        const bv = sealedAtOf(b);
+        if (!!av !== !!bv) return av ? -1 : 1;
+        if (!av || !bv) return 0;
+        return new Date(bv).getTime() - new Date(av).getTime();
+      }).slice(0, 1);
+    }
+
+    if (shareItems.length > 0) {
       const { error: itemsCopyErr } = await supabase
         .from('compliance_document_send_items')
-        .insert(srcItems.map((i: Record<string, unknown>) => ({
+        .insert(shareItems.map((i: Record<string, unknown>) => ({
           send_record_id: newRecord.id,
           document_id: i.document_id,
           recommendation_tier: i.recommendation_tier || 'manual',
