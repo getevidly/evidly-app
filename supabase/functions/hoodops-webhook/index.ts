@@ -20,6 +20,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOrgNotification } from "../_shared/notify.ts";
+import { resolveJurisdictionId } from "../_shared/resolve-jurisdiction.ts";
 import {
   canonicalTimestamp,
   canonicalDateField,
@@ -784,54 +785,22 @@ async function handleDocumentEvent(
       }
     }
 
+    /* Address the location sits at. Declared out here because the same values
+     * drive both the new-location insert and the backfill of an existing row. */
+    const locCity = (location_city || "").trim();
+    const locState = location_state || "CA";
+    let locationWasCreated = false;
+
     if (!locId) {
-      // Derive jurisdiction from city → county lookup
-      const locCity = (location_city || "").trim();
-      const locState = location_state || "CA";
-      let derivedJurisdictionId: string | null = null;
-
-      if (locCity && locState) {
-        // Try city-level jurisdiction first, fall back to county-level
-        const { data: cityJ } = await supabase
-          .from("jurisdictions")
-          .select("id")
-          .eq("state", locState)
-          .ilike("city", locCity)
-          .limit(1)
-          .maybeSingle();
-
-        if (cityJ) {
-          derivedJurisdictionId = cityJ.id;
-        } else {
-          // County-level: look up county from city name pattern in jurisdictions
-          const { data: countyJ } = await supabase
-            .from("jurisdictions")
-            .select("id, county")
-            .eq("state", locState)
-            .is("city", null)
-            .order("county");
-
-          // Zip-prefix county mapping for known CA regions
-          const zipCountyMap: Record<string, string> = {
-            "936": "Fresno", "937": "Fresno",
-            "933": "Kern",
-            "953": "Merced", "954": "Merced",
-            "952": "Stanislaus",
-            "951": "Madera",
-            "934": "San Luis Obispo",
-            "935": "Tulare",
-          };
-          const zip3 = (location_zip || "").substring(0, 3);
-          const countyFromZip = zipCountyMap[zip3];
-
-          if (countyFromZip && countyJ) {
-            const match = countyJ.find((j: { county: string }) =>
-              j.county?.toLowerCase() === countyFromZip.toLowerCase()
-            );
-            if (match) derivedJurisdictionId = match.id;
-          }
-        }
-      }
+      /* Jurisdiction comes from `zip_jurisdictions` (all 58 CA counties, HUD-USPS
+       * crosswalk) via _shared/resolve-jurisdiction.ts — not from the 8-entry
+       * ZIP-prefix map this used to carry. Returns null rather than throwing;
+       * a location is still created without a jurisdiction, and the seal lives. */
+      const derivedJurisdictionId = await resolveJurisdictionId(supabase, {
+        city: locCity,
+        state: locState,
+        zip: location_zip,
+      });
 
       const insertPayload: Record<string, unknown> = {
         organization_id: orgId,
@@ -863,6 +832,7 @@ async function handleDocumentEvent(
         return jsonResp({ error: "Failed to create location", detail: locErr?.message }, 500);
       }
       locId = newLoc.id;
+      locationWasCreated = true;
 
       // Seed location_jurisdictions rows if jurisdiction was derived
       if (derivedJurisdictionId) {
@@ -879,6 +849,58 @@ async function handleDocumentEvent(
       .update({ external_source: "hoodops", external_id: hoodops_location_id })
       .eq("id", locId)
       .is("external_source", null);
+
+    /* Backfill jurisdiction_id on a location that already existed but never got
+     * one - the 8-entry ZIP map left most bridge locations NULL. Guarded by
+     * .is("jurisdiction_id", null) on both the read and the write, so a
+     * jurisdiction a human already set is never overwritten. */
+    if (!locationWasCreated) {
+      /* The client here carries no generated DB types, so PostgREST infers
+       * `never` for the row. State the shape we read rather than let that spread. */
+      const { data: existingLoc, error: existingLocErr } = await supabase
+        .from("locations")
+        .select("id, city, state, zip, jurisdiction_id")
+        .eq("id", locId)
+        .maybeSingle() as {
+          data: {
+            city: string | null;
+            state: string | null;
+            zip: string | null;
+            jurisdiction_id: string | null;
+          } | null;
+          error: { message?: string } | null;
+        };
+
+      if (existingLocErr) {
+        console.error(
+          `[hoodops-webhook] jurisdiction backfill: could not read location ${locId}: ${existingLocErr.message}`,
+        );
+      } else if (existingLoc && !existingLoc.jurisdiction_id) {
+        const backfillId = await resolveJurisdictionId(supabase, {
+          city: existingLoc.city || locCity,
+          state: existingLoc.state || locState,
+          zip: existingLoc.zip || location_zip,
+        });
+
+        if (backfillId) {
+          const { error: backfillErr } = await supabase
+            .from("locations")
+            .update({ jurisdiction_id: backfillId } as never)
+            .eq("id", locId)
+            .is("jurisdiction_id", null);
+
+          if (backfillErr) {
+            console.error(
+              `[hoodops-webhook] jurisdiction backfill failed for location ${locId}: ${backfillErr.message}`,
+            );
+          } else {
+            console.log(
+              `[hoodops-webhook] Backfilled jurisdiction ${backfillId} on location ${locId}`,
+            );
+          }
+        }
+      }
+    }
 
     // ── 4b. Find-or-create vendor ────────────────────────────────
     //    Normalized lookup (trim + case-insensitive) so "Cleaning Pros Plus"
