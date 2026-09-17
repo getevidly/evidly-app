@@ -102,8 +102,13 @@ export function PortalPage() {
   const [documents, setDocuments] = useState<PortalDocument[]>([]);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
-  // Public send is Build B; until then the button explains itself.
-  const [shareNotice, setShareNotice] = useState(false);
+
+  // Share — EvidLY sends server-side; this never opens a mail client.
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareState, setShareState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [shareError, setShareError] = useState<string | null>(null);
+  const [sharedTo, setSharedTo] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) { setStatus('invalid'); return; }
@@ -165,6 +170,49 @@ export function PortalPage() {
       setDownloading(null);
     }
   }, [token, downloading]);
+
+  const handleShare = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || shareState === 'sending') return;
+
+    const email = shareEmail.trim();
+    if (!email) { setShareError('Please enter an email address.'); setShareState('error'); return; }
+
+    setShareState('sending');
+    setShareError(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('portal-access', {
+        body: { token, action: 'share', recipient_email: email },
+      });
+
+      // supabase-js reports a non-2xx as FunctionsHttpError with data === null;
+      // the real message is on error.context.
+      if (error) {
+        let msg = 'Could not send. Please try again.';
+        try {
+          const body = await (error as { context?: Response }).context?.json?.();
+          if (body?.error) msg = String(body.error);
+        } catch { /* fall back to the generic message */ }
+        setShareError(msg);
+        setShareState('error');
+        return;
+      }
+
+      if (data?.status !== 'shared') {
+        setShareError('Could not send. Please try again.');
+        setShareState('error');
+        return;
+      }
+
+      setSharedTo(email);
+      setShareEmail('');
+      setShareState('sent');
+    } catch {
+      setShareError('Could not send. Please try again.');
+      setShareState('error');
+    }
+  }, [token, shareEmail, shareState]);
 
   // ── Loading ───────────────────────────────────────────────────
   if (status === 'loading') {
@@ -312,7 +360,7 @@ export function PortalPage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
               <button
                 type="button"
-                onClick={() => setShareNotice(true)}
+                onClick={() => setShareOpen(true)}
                 style={{
                   padding: '11px 20px', background: EMBER, color: '#FFFFFF', border: 'none',
                   borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
@@ -337,10 +385,59 @@ export function PortalPage() {
               )}
             </div>
 
-            {shareNotice && (
-              <div style={{ fontSize: 12, color: '#A8B4C8', marginBottom: 12 }}>
-                Sending from this page is coming shortly. For now, download the certificate
-                and forward it, or reply to the message that brought you here.
+            {shareOpen && shareState !== 'sent' && (
+              <form onSubmit={handleShare} style={{ marginBottom: 14 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  <input
+                    type="email"
+                    value={shareEmail}
+                    onChange={(e) => setShareEmail(e.target.value)}
+                    placeholder="their@email.com"
+                    autoComplete="email"
+                    disabled={shareState === 'sending'}
+                    style={{
+                      flex: '1 1 220px', minWidth: 0, padding: '10px 12px',
+                      borderRadius: 8, border: '1px solid rgba(255,255,255,0.28)',
+                      background: 'rgba(255,255,255,0.06)', color: '#FFFFFF',
+                      fontSize: 13, fontFamily: 'inherit',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={shareState === 'sending'}
+                    style={{
+                      padding: '10px 20px', background: EMBER, color: '#FFFFFF', border: 'none',
+                      borderRadius: 8, fontSize: 13, fontWeight: 600, fontFamily: 'inherit',
+                      cursor: shareState === 'sending' ? 'default' : 'pointer',
+                      opacity: shareState === 'sending' ? 0.6 : 1,
+                    }}
+                  >
+                    {shareState === 'sending' ? 'Sending…' : 'Send'}
+                  </button>
+                </div>
+                <div style={{ fontSize: 11.5, color: '#8494AC', marginTop: 8 }}>
+                  EvidLY sends it for you — nothing opens on your device.
+                </div>
+                {shareState === 'error' && shareError && (
+                  <div style={{ fontSize: 12, color: '#FFB4A2', marginTop: 8 }}>{shareError}</div>
+                )}
+              </form>
+            )}
+
+            {shareState === 'sent' && sharedTo && (
+              <div style={{ fontSize: 12.5, color: SEAL_GREEN, marginBottom: 14, lineHeight: 1.55 }}>
+                Sent to {sharedTo} — they{'’'}ll get a link to this sealed certificate.
+                <button
+                  type="button"
+                  onClick={() => { setShareState('idle'); setShareOpen(true); }}
+                  style={{
+                    background: 'none', border: 'none', padding: 0, marginLeft: 8,
+                    color: '#A8B4C8', fontSize: 12, textDecoration: 'underline',
+                    cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Send to someone else
+                </button>
               </div>
             )}
 
@@ -425,7 +522,7 @@ export function PortalPage() {
         {/* ── Footer ───────────────────────────────────────── */}
         <div style={{ marginTop: 40, fontSize: 11, lineHeight: 1.6, color: TEXT_MUTED, textAlign: 'center' }}>
           Shared {sentDateLabel} &#183; This link expires {expDateLabel}
-          <div style={{ marginTop: 6 }}>EvidLY &#183; a Cleaning Pros Plus, LLC Company</div>
+          <div style={{ marginTop: 6 }}>Powered by EvidLY, a Cleaning Pros Plus, LLC company.</div>
         </div>
       </div>
     </div>

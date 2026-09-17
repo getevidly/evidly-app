@@ -6,14 +6,26 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { PUBLIC_CORS_HEADERS } from '../_shared/cors.ts';
+import { checkRateLimit } from '../_shared/rateLimit.ts';
+import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 
 interface RequestBody {
   token: string;
-  action: 'load' | 'open' | 'download';
+  action: 'load' | 'open' | 'download' | 'share';
   document_id?: string;
+  recipient_email?: string;
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+const PORTAL_BASE = 'https://app.getevidly.com/portal';
+
+/** Onward shares expire sooner than the link they came from. */
+const SHARE_EXPIRY_DAYS = 14;
+/** Public endpoint — cap onward shares per originating token. */
+const SHARE_MAX_PER_WINDOW = 5;
+const SHARE_WINDOW_SECONDS = 3600;
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -35,16 +47,19 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Invalid JSON' }, 400);
   }
 
-  const { token, action, document_id } = body;
+  const { token, action, document_id, recipient_email } = body;
 
   if (!token || typeof token !== 'string') {
     return jsonResponse({ error: 'Missing token' }, 400);
   }
-  if (!action || !['load', 'open', 'download'].includes(action)) {
+  if (!action || !['load', 'open', 'download', 'share'].includes(action)) {
     return jsonResponse({ error: 'Invalid action' }, 400);
   }
   if (action === 'download' && (!document_id || !UUID_RE.test(document_id))) {
     return jsonResponse({ error: 'Missing or invalid document_id' }, 400);
+  }
+  if (action === 'share' && (!recipient_email || !EMAIL_RE.test(recipient_email.trim()))) {
+    return jsonResponse({ error: 'Please enter a valid email address' }, 400);
   }
 
   // ── Look up send record by token ──────────────────────────────
@@ -241,6 +256,112 @@ Deno.serve(async (req: Request) => {
       url: signedData.signedUrl,
       filename: doc.name,
     }, 200);
+  }
+
+  /* ── share ────────────────────────────────────────────────────
+   * A visitor forwards the sealed record onward. EvidLY sends the mail
+   * server-side; nothing opens the visitor's mail client.
+   *
+   * The recipient gets a BRAND NEW token, never the one in the visitor's
+   * address bar: echoing it would let anyone who received a forward revoke
+   * or outlive the original, and would make the two links indistinguishable
+   * in the audit trail. The new link also expires sooner. The original
+   * record is not mutated. */
+  if (action === 'share') {
+    const to = recipient_email!.trim();
+
+    const { allowed } = await checkRateLimit({
+      key: `portal_share:${token}`,
+      maxRequests: SHARE_MAX_PER_WINDOW,
+      windowSeconds: SHARE_WINDOW_SECONDS,
+      supabase,
+    });
+    if (!allowed) {
+      return jsonResponse({
+        error: 'This link has been shared several times recently. Please try again later.',
+      }, 429);
+    }
+
+    const { data: org } = await supabase
+      .from('organizations')
+      .select('name')
+      .eq('id', record.organization_id)
+      .single();
+    const orgName = org?.name || 'A kitchen';
+
+    // Same org, same documents, fresh token, shorter life.
+    const newToken = crypto.randomUUID();
+    const newExpiry = new Date(Date.now() + SHARE_EXPIRY_DAYS * 86400000).toISOString();
+
+    const { data: newRecord, error: newRecErr } = await supabase
+      .from('compliance_document_send_records')
+      .insert({
+        organization_id: record.organization_id,
+        recipient_type: 'custom',
+        recipient_name: to,
+        recipient_email: to,
+        purpose: 'Shared from portal',
+        cover_message: `${orgName} has shared a sealed compliance certificate with you.`,
+        secure_token: newToken,
+        secure_token_expires_at: newExpiry,
+        metadata: { shared_from_send_record_id: record.id },
+      })
+      .select('id')
+      .single();
+
+    if (newRecErr || !newRecord) {
+      console.error('DB error creating shared send record:', newRecErr?.message);
+      return jsonResponse({ error: 'Could not share this document' }, 500);
+    }
+
+    const { data: srcItems } = await supabase
+      .from('compliance_document_send_items')
+      .select('document_id, recommendation_tier')
+      .eq('send_record_id', record.id)
+      .eq('included_in_send', true);
+
+    if (srcItems && srcItems.length > 0) {
+      const { error: itemsCopyErr } = await supabase
+        .from('compliance_document_send_items')
+        .insert(srcItems.map((i: Record<string, unknown>) => ({
+          send_record_id: newRecord.id,
+          document_id: i.document_id,
+          recommendation_tier: i.recommendation_tier || 'manual',
+          included_in_send: true,
+        })));
+
+      if (itemsCopyErr) {
+        console.error('DB error copying send items:', itemsCopyErr.message);
+        return jsonResponse({ error: 'Could not share this document' }, 500);
+      }
+    }
+
+    const portalUrl = `${PORTAL_BASE}/${newToken}`;
+    const html = buildEmailHtml({
+      recipientName: 'there',
+      category: 'Commercial Kitchen Risk Management',
+      bodyHtml: `
+        <p>${orgName} has shared a sealed compliance certificate with you.</p>
+        <p>The record is tamper-evident: it carries a cryptographic seal, so you
+        can confirm it has not been altered since it was filed.</p>
+      `,
+      ctaText: 'View the Sealed Record',
+      ctaUrl: portalUrl,
+      footerNote: `This link expires in ${SHARE_EXPIRY_DAYS} days.`,
+    });
+
+    const result = await sendEmail({
+      to,
+      subject: `${orgName} has shared a sealed compliance certificate with you`,
+      html,
+    });
+
+    if (!result) {
+      console.error('Share email failed to send to', to);
+      return jsonResponse({ error: 'Could not send to that address' }, 502);
+    }
+
+    return jsonResponse({ status: 'shared', recipient: to }, 200);
   }
 
   return jsonResponse({ error: 'Unknown action' }, 400);
