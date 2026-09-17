@@ -4,7 +4,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 import { QUESTION_META } from '../_shared/study-questions.ts';
 import { sortedJsonStringify, sha256 } from '../_shared/seal-canonicalization.ts';
-import { buildCertLinkEmail } from '../_shared/invites.ts';
+import { buildChecklistEmail } from '../_shared/checklist-email.ts';
 
 const corsHeaders = getCorsHeaders(null);
 
@@ -234,17 +234,30 @@ async function buildCertLinkForRecipient(
     secureToken = newToken;
   }
 
+  /* Warm recipients get the SAME 39-record required-documents list the cold
+   * count form sends — the only difference is that their hood and exhaust
+   * cleaning row shows as already on file, linking the sealed certificate.
+   * One document for both audiences; the cert is connected, not bolted on. */
   const newest = sealedRecords[0];
-  const certResult = buildCertLinkEmail({
+  // buildChecklistEmail returns a BODY fragment (form-submit wraps it the same
+  // way); county-briefing hands full HTML to sendEmail, so wrap it here.
+  const html = buildEmailHtml({
     recipientName: firstName,
-    businessName: r.org_name || 'your kitchen',
-    certLink: `https://app.getevidly.com/portal/${secureToken}`,
-    certNumber: newest.cert_number,
-    serviceDate: newest.service_date,
-    certCount: orderedDocIds.length,
+    bodyHtml: buildChecklistEmail(
+      firstName,
+      { first_name: firstName, business_name: r.org_name || '' },
+      'count',
+      {
+        certNumber: newest.cert_number,
+        sealedDate: newest.sealed_at,
+        serviceDate: newest.service_date,
+        portalUrl: `https://app.getevidly.com/portal/${secureToken}`,
+      },
+    ),
+    skipGreeting: true,
   });
 
-  return { ok: true, html: certResult.html, subject: certResult.subject };
+  return { ok: true, html, subject: 'Your compliance record checklist' };
 }
 
 // deno-lint-ignore no-explicit-any
