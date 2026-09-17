@@ -56,10 +56,28 @@ interface VerifyResponse {
   error?: string;
 }
 
+/* service_date and next_due_date are DATE columns arriving as "YYYY-MM-DD".
+ * new Date("2026-09-15") is UTC midnight, which formats as September 14 in any
+ * zone west of UTC. Reading the parts and rendering in UTC pins the stored day
+ * to the displayed day everywhere. */
 function formatDate(value: string | null): string {
   if (!value) return '—';
-  return new Date(value).toLocaleDateString('en-US', {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  const d = m
+    ? new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])))
+    : new Date(value);
+  return d.toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+  });
+}
+
+/* sealed_at is a full timestamptz — the instant the seal was taken. Shown in
+ * the viewer's own zone, with the zone named, so the moment is unambiguous. */
+function formatSealedAt(value: string | null): string {
+  if (!value) return '—';
+  return new Date(value).toLocaleString('en-US', {
     month: 'long', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
   });
 }
 
@@ -280,9 +298,9 @@ export default function PublicVerification() {
                 record.service_type_code || '—'
               } />
               <Row label="Service Company" value={record.vendor_name || '—'} />
-              <Row label="Serviced" value={formatDate(record.service_date)} />
+              <Row label="Service Date" value={formatDate(record.service_date)} />
               {record.next_due_date && <Row label="Next Service Due" value={formatDate(record.next_due_date)} />}
-              <Row label="Sealed" value={formatDate(record.sealed_at)} />
+              <Row label="Seal Date and Time" value={formatSealedAt(record.sealed_at)} />
               <Row label="Seal Hash" value={record.content_hash} mono wrap />
             </div>
           </div>
