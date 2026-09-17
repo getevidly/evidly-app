@@ -258,7 +258,19 @@ async function buildCertLinkForRecipient(
   if (!r.county) {
     return { ok: false, holdReason: 'Recipient has no county', skipLabel: 'No county' };
   }
-  if (!r.org_name) {
+  /* The recipient row's org_name is often blank, but the organization is
+   * already resolved on this path — fall back to its name rather than holding
+   * a recipient whose org we can name. */
+  let orgName = (r.org_name || '').trim();
+  if (!orgName) {
+    const { data: orgRow } = await supabase
+      .from('organizations')
+      .select('name')
+      .eq('id', certOrgId)
+      .maybeSingle();
+    orgName = (orgRow?.name || '').trim();
+  }
+  if (!orgName) {
     return { ok: false, holdReason: 'Recipient has no org_name', skipLabel: 'No org_name' };
   }
   if (!joinToken) {
@@ -285,7 +297,7 @@ async function buildCertLinkForRecipient(
     : 'https://app.getevidly.com/settings/notifications';
 
   const html = buildCertificateEmail({
-    orgName: r.org_name,
+    orgName,
     county: r.county,
     certNumber: newest.cert_number,
     servicedLabel: fmt(newest.service_date as string),
