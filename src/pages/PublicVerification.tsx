@@ -159,7 +159,7 @@ export default function PublicVerification() {
           fontSize: 24, lineHeight: 1.25, fontWeight: 800, color: NAVY,
           margin: '0 0 8px', letterSpacing: '-0.02em',
         }}>
-          Verify a compliance certificate.
+          Verify a Certificate of Service.
         </h1>
         <p style={{ fontSize: 14, lineHeight: 1.6, color: TEXT_SEC, margin: '0 0 24px' }}>
           Enter the certificate number to confirm a sealed record exists, then drop the
