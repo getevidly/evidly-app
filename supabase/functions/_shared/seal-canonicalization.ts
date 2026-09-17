@@ -382,6 +382,33 @@ export function canonicalTimestampField(value: unknown): string | null {
 }
 
 // ---------------------------------------------------------------------------
+// 4b. CANONICAL DATE FIELD  ("YYYY-MM-DD")
+//
+// For a canonical field backed by a Postgres DATE column.
+//
+// The bug this exists to prevent: a caller passed a full timestamptz
+// ("2026-09-10T00:00:00+00:00") into the canonical JSON while writing the same
+// value to a DATE column. Postgres truncated the stored value to "2026-09-10",
+// so every verifier rebuilt a DIFFERENT canonical string than the one hashed
+// and no seal could ever reproduce. Normalizing BOTH sides through this makes
+// hashed == stored by construction rather than by luck.
+//
+// Deliberately a STRING SLICE, not a Date round-trip. Re-parsing and calling
+// toISOString() shifts a local-midnight value backwards a day for anyone west
+// of UTC — the same Pacific-evening trap that produced past-dated jobs. The
+// leading 10 characters of an ISO-8601 string are already the calendar date
+// Postgres will store.
+//
+// null / undefined / empty  ->  null
+// shorter than 10 chars     ->  the raw value, unchanged (never drops data)
+// ---------------------------------------------------------------------------
+export function canonicalDateField(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
+  const s = String(value);
+  return s.length >= 10 ? s.slice(0, 10) : s;
+}
+
+// ---------------------------------------------------------------------------
 // Shared row normalizer for the two history arrays (timeline / CA history).
 //
 // Sorts by (created_at, id) ascending - a total order - and canonicalizes each

@@ -22,6 +22,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { createOrgNotification } from "../_shared/notify.ts";
 import {
   canonicalTimestamp,
+  canonicalDateField,
   buildCanonicalServiceJson,
   buildSealHashInput,
   sha256,
@@ -1089,6 +1090,15 @@ async function handleDocumentEvent(
     }
 
     // Canonical JSON (9-field immutable key order)
+    /* Date-only, and the SAME string goes into both the hash and the INSERT.
+     * The dispatch sends jobs.completed_at, a full timestamptz; service_date is
+     * a Postgres DATE column, so storing the raw value truncated it and every
+     * verifier rebuilt a different canonical string than the one hashed — no
+     * seal could reproduce. Normalizing both sides makes them equal by
+     * construction. String slice, not a Date round-trip: re-parsing shifts
+     * local midnight back a day west of UTC. */
+    const serviceDateCanonical = canonicalDateField(service_date);
+
     const canonicalJson = buildCanonicalServiceJson({
       location_id: locId,
       safeguard_type: safeguardType,
@@ -1097,7 +1107,7 @@ async function handleDocumentEvent(
       vendor_id: vendorId,
       technician_name: technician_name || null,
       cert_number: effectiveCertNumber,
-      service_date,
+      service_date: serviceDateCanonical,
       organization_id: orgId,
     });
 
@@ -1138,7 +1148,8 @@ async function handleDocumentEvent(
         vendor_id: vendorId,
         technician_name: technician_name || null,
         cert_number: effectiveCertNumber,
-        service_date,
+        // Same normalized value that was hashed — not the raw payload.
+        service_date: serviceDateCanonical,
         certificate_url: `${storageBucket}:${storagePath}`,
         next_due_date: nextDueDate,
         source: "evidentiary_seal",
