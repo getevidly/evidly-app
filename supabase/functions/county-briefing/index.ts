@@ -1685,13 +1685,23 @@ Deno.serve(async (req: Request) => {
         return jsonResponse({ error: "step_number and label required" }, 400);
       }
 
-      // Compute content hash over every rendered field
-      const hashInput = {
+      /* Normalize ONCE, then hash and store the very same values.
+       *
+       * This used to hash a three-key object while sign-off-step and both
+       * drift checks hashed the stored row against STEP_HASH_FIELDS, which is
+       * five. delay_days and trigger_type therefore hashed as '' on the way in
+       * and as their real values on the way out, so the comparison could never
+       * match: every sign-off hit the 422 path, which nulls signed_off_at on
+       * its way past. Building the row first and hashing that row is what stops
+       * the two from drifting apart again. */
+      const stepRow = {
+        delay_days: delay_days ?? 0,
+        trigger_type: trigger_type || 'manual',
+        variant_scope: variant_scope || 'both',
         subject_template: subject_template || '',
         body_template: body_template || '',
-        variant_scope: variant_scope || 'both',
       };
-      const contentHash = await computeStepContentHash(hashInput);
+      const contentHash = await computeStepContentHash(stepRow);
 
       // Check if step exists
       const { data: existing } = await supabase
@@ -1703,11 +1713,7 @@ Deno.serve(async (req: Request) => {
       const row: Record<string, any> = {
         step_number,
         label,
-        delay_days: delay_days ?? 0,
-        trigger_type: trigger_type || 'manual',
-        variant_scope: variant_scope || 'both',
-        subject_template: subject_template || '',
-        body_template: body_template || '',
+        ...stepRow,
         content_hash: contentHash,
         updated_at: new Date().toISOString(),
         // If content changed, clear sign-off
@@ -1743,12 +1749,21 @@ Deno.serve(async (req: Request) => {
       const currentHash = await computeStepContentHash(step);
       if (currentHash !== step.content_hash) {
         // Content was modified outside upsert — update hash, clear any stale sign-off
-        await supabase.from('outreach_steps').update({
+        const { error: driftErr } = await supabase.from('outreach_steps').update({
           content_hash: currentHash,
           signed_off_by: null,
           signed_off_at: null,
           updated_at: new Date().toISOString(),
         }).eq('id', step.id);
+
+        /* This write used to go unchecked. If it fails the row keeps its old
+         * hash, so the next click lands here again and the operator is told
+         * "content changed" forever while the real fault goes unreported. */
+        if (driftErr) {
+          console.error(`[county-briefing] sign-off drift rewrite failed for step ${step_number}: ${driftErr.message}`);
+          return jsonResponse({ error: `Could not record the content change: ${driftErr.message}` }, 500);
+        }
+
         return jsonResponse({ error: "Content hash mismatch — step content changed. Re-review before signing off." }, 422);
       }
 
