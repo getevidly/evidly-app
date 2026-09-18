@@ -36,6 +36,11 @@ const INPUT: React.CSSProperties = {
   color: EV_NAVY, background: '#FFF',
 };
 
+/** Inline validation message, under the field it belongs to. */
+const FIELD_ERR: React.CSSProperties = {
+  fontSize: 10, color: EV_DANGER, marginTop: 4, fontFamily: BODY, lineHeight: 1.4,
+};
+
 const BTN = (bg: string, fg: string): React.CSSProperties => ({
   padding: '7px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
   fontSize: 12, fontWeight: 700, background: bg, color: fg, fontFamily: BODY,
@@ -136,6 +141,17 @@ export default function OutreachTab() {
   // county's name, so the id is the only unambiguous handle.
   const [addJurId, setAddJurId] = useState('');
   const [addVariant, setAddVariant] = useState('cold');
+  /* The EvidLY organization this recipient belongs to. Without it a warm
+   * recipient is held at send time with "No organization linked to this
+   * recipient" — buildCertLinkForRecipient has no org to find a sealed
+   * certificate under. */
+  const [addOrgId, setAddOrgId] = useState('');
+  const [addOrgFilter, setAddOrgFilter] = useState('');
+  /* Which email of the sequence this recipient is on. The column defaults to
+   * 1, so a step-2 recipient added here used to be filtered straight out of a
+   * step-2 send. */
+  const [addStep, setAddStep] = useState('1');
+  const [addErrors, setAddErrors] = useState<Record<string, string>>({});
   const [pasteMode, setPasteMode] = useState(false);
   const [pasteText, setPasteText] = useState('');
 
@@ -170,6 +186,9 @@ export default function OutreachTab() {
   // Missing clients reconciliation
   type MissingClient = { id: string; name: string; email: string | null; county: string | null; jurisdiction_id: string | null; created_at: string; reason: string };
   const [missingClients, setMissingClients] = useState<MissingClient[]>([]);
+  /* Kept from the same organizations read loadAll already performs for the
+   * reconciliation below — the picker adds no second query. */
+  const [organizations, setOrganizations] = useState<{ id: string; name: string }[]>([]);
   const [enrollingId, setEnrollingId] = useState<string | null>(null);
 
   const flash = (msg: string) => {
@@ -205,6 +224,7 @@ export default function OutreachTab() {
     // Reconcile: orgs whose contact email is NOT in county_briefing_recipients
     const recipientEmails = new Set(recs.map((r: any) => (r.email || '').toLowerCase()));
     const orgs = orgsRes.data || [];
+    setOrganizations(orgs.map((o: any) => ({ id: o.id, name: o.name })));
     const missing: MissingClient[] = [];
     for (const org of orgs) {
       const email = (org.primary_contact_email || '').trim().toLowerCase();
@@ -272,8 +292,22 @@ export default function OutreachTab() {
   const handleAddSingle = async (e: React.FormEvent) => {
     e.preventDefault();
     const addJur = counties.find((c: any) => c.jurisdiction_id === addJurId);
-    if (!addEmail || !addJur) return;
-    const addCounty = addJur.county;
+
+    /* Checked here and shown under the field rather than in an alert, so the
+     * operator can see which box is wrong while they fix it. A warm recipient
+     * needs an organization: the send resolves its sealed certificate through
+     * that org, and without one the row is held rather than sent. */
+    const errs: Record<string, string> = {};
+    if (!addEmail.trim()) errs.email = 'Email is required.';
+    if (!addJur) errs.county = 'Choose a county.';
+    if (!addStep) errs.step = 'Choose which step this recipient starts on.';
+    if (addVariant === 'warm' && !addOrgId) {
+      errs.organization = 'A warm recipient needs an organization — the send finds their certificate through it.';
+    }
+    setAddErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    const addCounty = addJur!.county;
     setActionLoading('add');
     const { data, error } = await supabase.functions.invoke('county-briefing', {
       body: {
@@ -284,18 +318,33 @@ export default function OutreachTab() {
           org_name: addOrgName || undefined,
           county: addCounty,
           variant: addVariant,
-          jurisdiction_id: addJur.jurisdiction_id,
+          jurisdiction_id: addJur!.jurisdiction_id,
+          organization_id: addOrgId || undefined,
+          step_number: Number(addStep),
         }],
       },
     });
     setActionLoading(null);
     if (error || !data?.inserted) {
-      flash(`Add failed: ${error?.message || data?.error || 'Unknown error'}`);
+      const detail = error ? await invokeErrorDetail(error) : (data?.error || 'Unknown error');
+      flash(`Add failed: ${detail}`);
       return;
     }
     flash(`Added ${addEmail} for ${addCounty}`);
     setAddEmail(''); setAddFirstName(''); setAddOrgName('');
+    setAddOrgId(''); setAddOrgFilter(''); setAddErrors({});
     loadAll();
+  };
+
+  /* Choosing an organization fills a blank Org name from it — the same name,
+   * typed once. An Org name already entered by hand is never overwritten. */
+  const chooseAddOrg = (orgId: string) => {
+    setAddOrgId(orgId);
+    setAddErrors(prev => { const { organization: _drop, ...rest } = prev; return rest; });
+    if (!addOrgName.trim()) {
+      const org = organizations.find(o => o.id === orgId);
+      if (org?.name) setAddOrgName(org.name);
+    }
   };
 
   const handlePaste = async () => {
@@ -843,13 +892,14 @@ export default function OutreachTab() {
           </div>
         ) : (
           <form onSubmit={handleAddSingle} style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr auto auto',
+            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.3fr auto 1fr auto auto',
             gap: 10, alignItems: 'end',
           }}>
             <div>
               <div style={LABEL}>Email *</div>
-              <input type="email" required value={addEmail} onChange={e => setAddEmail(e.target.value)}
+              <input type="email" value={addEmail} onChange={e => setAddEmail(e.target.value)}
                 placeholder="name@example.com" style={INPUT} />
+              {addErrors.email && <div style={FIELD_ERR}>{addErrors.email}</div>}
             </div>
             <div>
               <div style={LABEL}>First name</div>
@@ -862,8 +912,40 @@ export default function OutreachTab() {
                 placeholder="Optional" style={INPUT} />
             </div>
             <div>
+              <div style={LABEL}>Organization {addVariant === 'warm' ? '*' : ''}</div>
+              {/* Filter above the list rather than a combobox: the list is short,
+                  and a native select keeps keyboard and screen-reader behaviour. */}
+              <input
+                value={addOrgFilter}
+                onChange={e => setAddOrgFilter(e.target.value)}
+                placeholder="Search organizations"
+                style={{ ...INPUT, marginBottom: 4, fontSize: 12 }}
+              />
+              <select value={addOrgId} onChange={e => chooseAddOrg(e.target.value)}
+                style={{ ...INPUT, background: '#FFF' }}>
+                <option value="">{addVariant === 'warm' ? 'Select' : 'None'}</option>
+                {organizations
+                  .filter(o => !addOrgFilter.trim() ||
+                    (o.name || '').toLowerCase().includes(addOrgFilter.trim().toLowerCase()))
+                  .map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+              </select>
+              {addErrors.organization && <div style={FIELD_ERR}>{addErrors.organization}</div>}
+            </div>
+            <div>
+              <div style={LABEL}>Step *</div>
+              <select value={addStep} onChange={e => { setAddStep(e.target.value); setAddErrors(prev => { const { step: _drop, ...rest } = prev; return rest; }); }}
+                style={{ ...INPUT, background: '#FFF' }}>
+                {steps.filter((st: any) => st.is_active !== false).map((st: any) => (
+                  <option key={st.step_number} value={String(st.step_number)}>
+                    #{st.step_number} {st.label}
+                  </option>
+                ))}
+              </select>
+              {addErrors.step && <div style={FIELD_ERR}>{addErrors.step}</div>}
+            </div>
+            <div>
               <div style={LABEL}>County *</div>
-              <select value={addJurId} onChange={e => setAddJurId(e.target.value)} required
+              <select value={addJurId} onChange={e => { setAddJurId(e.target.value); setAddErrors(prev => { const { county: _drop, ...rest } = prev; return rest; }); }}
                 style={{ ...INPUT, background: '#FFF' }}>
                 <option value="">Select</option>
                 {/* Every active CA jurisdiction, cities included — they are valid
@@ -872,10 +954,11 @@ export default function OutreachTab() {
                   <option key={c.jurisdiction_id} value={c.jurisdiction_id}>{jurLabel(c)}</option>
                 ))}
               </select>
+              {addErrors.county && <div style={FIELD_ERR}>{addErrors.county}</div>}
             </div>
             <div>
               <div style={LABEL}>Variant</div>
-              <select value={addVariant} onChange={e => setAddVariant(e.target.value)}
+              <select value={addVariant} onChange={e => { setAddVariant(e.target.value); setAddErrors(prev => { const { organization: _drop, ...rest } = prev; return rest; }); }}
                 style={{ ...INPUT, background: '#FFF' }}>
                 <option value="cold">Cold</option>
                 <option value="warm">Warm</option>

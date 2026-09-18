@@ -1544,10 +1544,37 @@ Deno.serve(async (req: Request) => {
         email: string; first_name?: string; org_name?: string;
         county: string; variant?: string; jurisdiction_id?: string;
         sales_pipeline_id?: string;
+        organization_id?: string; step_number?: number;
       }>;
 
       if (!list || !Array.isArray(list) || list.length === 0) {
         return jsonResponse({ error: "recipients array required" }, 400);
+      }
+
+      /* organization_id is what a warm send resolves a sealed certificate
+       * through, so a wrong one fails later, at send time, as a hold nobody
+       * connects back to this form. Check the ids exist before writing.
+       * One query for the whole batch, not one per row. */
+      const orgIds = [...new Set(
+        list.map(r => r.organization_id).filter((id): id is string => !!id),
+      )];
+      if (orgIds.length > 0) {
+        const { data: foundOrgs, error: orgErr } = await supabase
+          .from('organizations')
+          .select('id')
+          .in('id', orgIds);
+
+        if (orgErr) {
+          return jsonResponse({ error: `Could not verify the organization: ${orgErr.message}` }, 500);
+        }
+
+        const found = new Set((foundOrgs || []).map((o: { id: string }) => o.id));
+        const missing = orgIds.filter(id => !found.has(id));
+        if (missing.length > 0) {
+          return jsonResponse({
+            error: `No such organization: ${missing.join(', ')}. Pick an existing organization, or leave it blank for a cold recipient.`,
+          }, 400);
+        }
       }
 
       const rows = list.map(r => ({
@@ -1559,6 +1586,13 @@ Deno.serve(async (req: Request) => {
         variant: r.variant || 'cold',
         status: 'queued',
         unsub_token: crypto.randomUUID(),
+        /* The org the certificate is found under. Null for a cold recipient,
+         * who is never sent from EvidLY at all. */
+        organization_id: r.organization_id || null,
+        /* Which email of the sequence they start on. The column defaults to 1,
+         * but writing it explicitly is what lets the caller say otherwise — a
+         * step-2 recipient added without it is filtered out of a step-2 send. */
+        step_number: r.step_number ?? 1,
         ...(r.jurisdiction_id ? { jurisdiction_id: r.jurisdiction_id } : {}),
         // Optional link back to the CRM prospect this recipient was added
         // alongside. Omitted entirely when absent, so existing callers that
