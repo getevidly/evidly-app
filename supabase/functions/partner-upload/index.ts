@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
+import { notifyHoodopsUpload } from "../_shared/notifyHoodopsUpload.ts";
 
 /**
  * partner-upload — receives one document for one slot of a partner
@@ -120,7 +121,7 @@ Deno.serve(async (req) => {
 
     const { data: app, error: appErr } = await supabase
       .from("partner_applications")
-      .select("id, business_name, token_expires_at")
+      .select("id, business_name, token_expires_at, hoodops_tenant_id")
       .eq("upload_token", token)
       .maybeSingle();
 
@@ -313,6 +314,25 @@ Deno.serve(async (req) => {
         );
       }
     }
+
+    /* ── Tell HoodOps, if this application belongs to a tenant ────
+     *
+     * Deliberately NOT awaited: the document is already stored, the row is
+     * already written and `state` is already what the browser will get, so
+     * nothing here can change the answer — it can only delay it. The helper
+     * swallows its own failures, so the floating promise cannot reject.
+     *
+     * waitUntil keeps the runtime alive for it where the platform offers it,
+     * and where it does not the promise simply runs to whatever extent it
+     * gets. Either way the response goes out now. */
+    const notice = notifyHoodopsUpload(
+      supabase,
+      { id: applicationId, hoodops_tenant_id: (app as { hoodops_tenant_id?: string | null }).hoodops_tenant_id },
+      [docType],
+    );
+    // deno-lint-ignore no-explicit-any
+    const runtime = (globalThis as any).EdgeRuntime;
+    if (runtime?.waitUntil) runtime.waitUntil(notice);
 
     return json({ ok: true, docs: state });
   } catch (err) {
