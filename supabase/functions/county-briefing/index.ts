@@ -307,6 +307,33 @@ async function buildCertLinkForRecipient(
     ? `${unsubBase}?token=${encodeURIComponent(r.unsub_token)}`
     : 'https://app.getevidly.com/settings/notifications';
 
+  /* Certificate thumbnail. hoodops-webhook copies the picture into the public
+   * email-assets bucket under the seal's content hash, the same bucket and
+   * public-URL shape the ring images use (_shared/ring-renderer.ts:129).
+   *
+   * HEAD first, with a 2-second ceiling: an email that references an image that
+   * is not there renders a broken box in every client. A slow or failed check
+   * yields null and the email goes out without the picture — it must never hold
+   * or fail a send. */
+  let certThumbUrl: string | null = null;
+  {
+    const supaUrl = Deno.env.get('SUPABASE_URL') || 'https://irxgmhxhmxtzfwuieblc.supabase.co';
+    const candidate = `${supaUrl}/storage/v1/object/public/email-assets/cert-thumbs/${hash}.png`;
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 2000);
+      try {
+        const head = await fetch(candidate, { method: 'HEAD', signal: ctrl.signal });
+        if (head.status === 200) certThumbUrl = candidate;
+      } finally {
+        clearTimeout(timer);
+      }
+    } catch {
+      // Timed out or unreachable — send without the picture.
+      certThumbUrl = null;
+    }
+  }
+
   const html = buildCertificateEmail({
     orgName,
     county: r.county,
@@ -319,7 +346,7 @@ async function buildCertLinkForRecipient(
     joinUrl: `https://app.getevidly.com/join/${joinToken}`,
     verifyUrl: `https://app.getevidly.com/verify/${encodeURIComponent(newest.cert_number as string)}`,
     unsubUrl,
-    certThumbUrl: null,
+    certThumbUrl,
   });
 
   return { ok: true, html, subject: CERTIFICATE_EMAIL_SUBJECT };

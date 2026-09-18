@@ -641,6 +641,10 @@ async function handleDocumentEvent(
     technician_name,
     cert_number,
     document_url,
+    /* Preview picture of the certificate. Decoration for the client's email and
+     * nothing else: it is absent from the canonical JSON, from the seal hash and
+     * from every stored field on the sealed record. */
+    thumbnail_url,
     hoodops_document_id,
     report_document_id,
     frequency,
@@ -1200,6 +1204,65 @@ async function handleDocumentEvent(
         metadata: { seal_record_id: sealedRecord.id, sealed_at: sealedRecord.sealed_at },
       })
       .eq("id", compDoc.id);
+
+    /* ── 9b. Keep a permanent copy of the certificate thumbnail ───
+     *
+     * HoodOps sends a 7-day signed URL; the warm email can go out long after
+     * that expires, so the bytes are copied into the public email-assets bucket
+     * the ring images already use. Keyed by the seal's content hash: no schema
+     * change, one copy per sealed record, and a path nobody can guess.
+     *
+     * Runs ONLY after the seal insert succeeded, and cannot affect it. Every
+     * failure below is caught, logged on one line, and stepped over — the 201,
+     * the sealed record, the hash input, the canonical JSON and the stored PDF
+     * are identical whether this works or not. */
+    if (event === "document.cert" && thumbnail_url) {
+      /* The client carries no generated DB types, so PostgREST infers `never`
+       * for the sealed row. Read the hash once through a stated shape rather
+       * than let that spread into the new code. */
+      const sealHash = (sealedRecord as unknown as { content_hash: string }).content_hash;
+      try {
+        const thumbUrl = new URL(String(thumbnail_url));
+        const docUrl = new URL(String(document_url));
+
+        if (thumbUrl.protocol !== "https:") {
+          throw new Error(`thumbnail_url is not https (${thumbUrl.protocol})`);
+        }
+        /* Same host as the document we already trust and fetched. Stops the
+         * webhook being turned into a fetcher for arbitrary hosts. */
+        if (thumbUrl.host !== docUrl.host) {
+          throw new Error(`thumbnail_url host ${thumbUrl.host} does not match document_url host ${docUrl.host}`);
+        }
+
+        const thumbRes = await fetch(thumbUrl.toString());
+        if (!thumbRes.ok) {
+          throw new Error(`thumbnail fetch returned ${thumbRes.status}`);
+        }
+
+        const contentType = (thumbRes.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+        if (contentType !== "image/png") {
+          throw new Error(`thumbnail content-type is ${contentType || "missing"}, expected image/png`);
+        }
+
+        const thumbBytes = new Uint8Array(await thumbRes.arrayBuffer());
+        const MAX_THUMB_BYTES = 500 * 1024;
+        if (thumbBytes.byteLength > MAX_THUMB_BYTES) {
+          throw new Error(`thumbnail is ${thumbBytes.byteLength} bytes, over the ${MAX_THUMB_BYTES} limit`);
+        }
+
+        const thumbKey = `cert-thumbs/${sealHash}.png`;
+        const { error: thumbUploadErr } = await supabase.storage
+          .from("email-assets")
+          .upload(thumbKey, thumbBytes, { contentType: "image/png", upsert: true });
+        if (thumbUploadErr) throw thumbUploadErr;
+
+        console.log(`[hoodops-webhook] Stored certificate thumbnail at ${thumbKey}`);
+      } catch (thumbErr: any) {
+        console.error(
+          `[hoodops-webhook] Certificate thumbnail skipped for seal ${sealHash}: ${thumbErr?.message || thumbErr}`,
+        );
+      }
+    }
 
     // ── 10. Update service schedule ──────────────────────────────
     await supabase

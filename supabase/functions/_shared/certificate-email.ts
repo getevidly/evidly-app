@@ -79,7 +79,7 @@ export function buildCertificateEmail(p: CertificateEmailParams): string {
   const stripHtml = buildStrip();
 
   const thumbCell = p.certThumbUrl
-    ? `<td width="78" valign="top" align="right" style="width:78px;padding-left:14px;"><a href="${portalUrl}"><img src="${p.certThumbUrl}" width="78" height="101" alt="Page one of your sealed certificate" style="display:block;border:0;border-radius:3px;"></a></td>`
+    ? `<td width="120" valign="top" align="right" style="width:120px;padding-left:14px;"><a href="${portalUrl}"><img src="${p.certThumbUrl}" width="120" height="93" alt="Your sealed certificate" style="display:block;border:0;border-radius:3px;"></a></td>`
     : '';
 
   return `<!DOCTYPE html>
