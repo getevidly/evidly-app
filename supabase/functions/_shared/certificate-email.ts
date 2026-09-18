@@ -93,16 +93,16 @@ const SECTIONS: RecordSection[] = [
 /** The three steps in the navy panel. */
 const PROCESS_STEPS: { title: string; body: string }[] = [
   {
-    title: 'We ask your vendors, not you',
-    body: 'Your fire, food and service companies send their records straight to us.',
+    title: 'We request the records',
+    body: 'We contact your fire, food and service companies and request what they hold.',
   },
   {
-    title: 'Every record is sealed and dated',
-    body: 'Filed the way your certificate is &mdash; tamper-evident, provable to anyone who asks.',
+    title: 'You watch the progress',
+    body: 'Your portal shows what has come in, what is outstanding, and who we are waiting on.',
   },
   {
-    title: 'You hear before something runs out',
-    body: 'While it is still small and easier to manage, not after it has cost you.',
+    title: 'Your records are filed, sealed and dated',
+    body: 'Each one lands in your account the way your certificate did, with the date it expires.',
   },
 ];
 
@@ -190,6 +190,7 @@ function buildRecordsBlock(): string {
           <div style="font-family:${MONO};font-size:10px;line-height:16px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#A8B4C8;">How the Other 38 Get on File</div>
           <div style="margin-top:6px;font-family:${SANS};font-size:16px;line-height:23px;font-weight:700;color:#FFFFFF;">You do not collect them. We do.</div>
           ${steps}
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid #34456A;font-family:${SANS};font-size:13px;line-height:19px;color:#C9D3E3;">Once you are set up, the system watches every date and tells you before anything slips.</div>
         </td>
       </tr></table>
     </td>
@@ -305,7 +306,7 @@ ${recordsBlock}
         <tr><td style="border-top:3px solid #B24A2E;font-size:0;line-height:0;height:0;">&nbsp;</td></tr>
       </table>
       <div style="margin-top:20px;font-family:${SANS};font-size:17px;line-height:24px;font-weight:700;color:#1E2D4D;">Having them and having them available are not the same thing.</div>
-      <div style="margin-top:6px;font-family:${SANS};font-size:14px;line-height:21px;color:#6B7F96;">See what all 39 look like on the EvidLY dashboard.</div>
+      <div style="margin-top:6px;font-family:${SANS};font-size:14px;line-height:21px;color:#6B7F96;">See how it works on a sample dashboard.</div>
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
         <tr>
           <td bgcolor="#B24A2E" style="background:#B24A2E;border-radius:6px;">
