@@ -287,6 +287,53 @@ export default function OutreachTab() {
     setPauseLoading(false);
   };
 
+  // ── Per-recipient actions ────────────────────────────────────
+
+  /* One row, through the SAME send action the county button uses. The
+   * function narrows its query by id on top of every existing filter, so this
+   * passes the approval, lapsed, jurisdiction, hash, dedupe, invite and
+   * cert-link gates exactly as a county-wide send does. */
+  const sendOneRecipient = async (r: any) => {
+    if (paused) { flash('Sending is paused'); return; }
+    if (!confirm(`Send step ${r.step_number} to ${r.email} now?`)) return;
+    setActionLoading(`send-rec-${r.id}`);
+    const { data, error } = await supabase.functions.invoke('county-briefing', {
+      body: {
+        action: 'send',
+        county: r.county,
+        step_number: r.step_number,
+        recipient_id: r.id,
+      },
+    });
+    setActionLoading(null);
+    if (error) {
+      flash(`Send failed: ${await invokeErrorDetail(error)}`);
+      loadAll();
+      return;
+    }
+    if (data?.error) { flash(`Send failed: ${data.error}`); loadAll(); return; }
+    flash(`${r.email}: ${data.sent} sent, ${data.failed} failed, ${data.held} held`);
+    loadAll();
+  };
+
+  /* Held rows go back in the queue through the function, never a table write
+   * from here: county_briefing_recipients is service-role-only for writes. */
+  const requeueRecipient = async (r: any) => {
+    if (!confirm(`Put ${r.email} back in the queue? The hold reason is cleared.`)) return;
+    setActionLoading(`requeue-${r.id}`);
+    const { data, error } = await supabase.functions.invoke('county-briefing', {
+      body: { action: 'requeue-recipient', recipient_id: r.id },
+    });
+    setActionLoading(null);
+    if (error) {
+      flash(`Re-queue failed: ${await invokeErrorDetail(error)}`);
+      return;
+    }
+    if (data?.error) { flash(`Re-queue failed: ${data.error}`); return; }
+    flash(`${r.email} is queued again`);
+    loadAll();
+  };
+
   // ── Add recipients ───────────────────────────────────────────
 
   const handleAddSingle = async (e: React.FormEvent) => {
@@ -1431,6 +1478,7 @@ export default function OutreachTab() {
                               {['Email', 'Name', 'Variant', 'Status', 'Reason'].map(h => (
                                 <th key={h} style={TH}>{h}</th>
                               ))}
+                              <th style={{ ...TH, textAlign: 'right' as const }}>Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1455,6 +1503,39 @@ export default function OutreachTab() {
                                   </td>
                                   <td style={{ padding: '6px 10px', fontSize: 11, color: r.hold_reason ? EV_WARN : EV_FAINT }}>
                                     {r.hold_reason || '\u2014'}
+                                  </td>
+                                  <td style={{ padding: '6px 10px', textAlign: 'right' as const }}>
+                                    {r.status === 'held' ? (
+                                      <button
+                                        onClick={() => requeueRecipient(r)}
+                                        disabled={!!actionLoading}
+                                        title="Clear the hold and put this recipient back in the queue"
+                                        style={{ ...BTN(EV_LIGHT, EV_NAVY), fontSize: 11, padding: '4px 10px' }}
+                                      >
+                                        {actionLoading === `requeue-${r.id}` ? '...' : 'Re-queue'}
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => sendOneRecipient(r)}
+                                        disabled={r.status !== 'queued' || r.variant === 'cold' || !!actionLoading || paused}
+                                        title={
+                                          r.variant === 'cold'
+                                            ? 'Cold recipients never send from EvidLY — export the list instead'
+                                            : r.status !== 'queued'
+                                              ? `Only a queued recipient can be sent — this one is ${r.status}`
+                                              : paused
+                                                ? 'Sending is paused'
+                                                : `Send step ${r.step_number} to ${r.email}`
+                                        }
+                                        style={{
+                                          ...BTN(EV_NAVY, '#FFF'), fontSize: 11, padding: '4px 10px',
+                                          cursor: r.status === 'queued' && r.variant !== 'cold' && !paused ? 'pointer' : 'not-allowed',
+                                          opacity: r.status === 'queued' && r.variant !== 'cold' && !paused ? 1 : 0.3,
+                                        }}
+                                      >
+                                        {actionLoading === `send-rec-${r.id}` ? '...' : 'Send'}
+                                      </button>
+                                    )}
                                   </td>
                                 </tr>
                               );

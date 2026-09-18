@@ -40,6 +40,9 @@ const corsHeaders = getCorsHeaders(null);
  *   sign-off-step   { step_number }
  *                   → { step }
  *
+ *   requeue-recipient  { recipient_id }
+ *                   → { ok, recipient }
+ *
  *   cron-process    {} (called by pg_cron, no user auth)
  *                   → { processed, sent, held, skipped_reasons }
  *
@@ -1315,6 +1318,13 @@ Deno.serve(async (req: Request) => {
        * step_number. */
       const sendStepNumber = body.step_number as number | undefined;
 
+      /* Optional, and a NARROWING only. It is applied on top of every filter
+       * below, never instead of one, and it changes nothing about the loop that
+       * follows: a single recipient passes through the same approval, lapsed,
+       * jurisdiction, hash, dedupe, invite and cert-link gates a county-wide
+       * send puts them through. */
+      const sendRecipientId = body.recipient_id as string | undefined;
+
       /* Cached per distinct step so a county-wide send does not re-query
        * outreach_steps for every row. `null` caches a genuine miss. */
       const stepCache = new Map<number, { subject_template: string | null; email_kind: string } | null>();
@@ -1409,9 +1419,45 @@ Deno.serve(async (req: Request) => {
       if (sendStepNumber !== undefined) {
         recipientQuery = recipientQuery.eq('step_number', sendStepNumber);
       }
+      if (sendRecipientId) {
+        recipientQuery = recipientQuery.eq('id', sendRecipientId);
+      }
       const { data: recipients } = await recipientQuery;
 
       if (!recipients || recipients.length === 0) {
+        /* A county-wide send with nothing queued is ordinary. A send aimed at
+         * one recipient that matches nothing is not — the operator clicked a
+         * row and deserves to know which filter rejected it rather than a
+         * silent zero. Read the row unfiltered and say. */
+        if (sendRecipientId) {
+          const { data: row } = await supabase
+            .from('county_briefing_recipients')
+            .select('email, county, state_code, status, variant, step_number, hold_reason')
+            .eq('id', sendRecipientId)
+            .maybeSingle();
+
+          if (!row) {
+            return jsonResponse({ error: 'That recipient no longer exists.' }, 404);
+          }
+          const who = row.email || 'That recipient';
+          if (row.variant === 'cold') {
+            return jsonResponse({ error: `${who} is a cold recipient — cold never sends from EvidLY. Export the list instead.` }, 400);
+          }
+          if (row.status === 'sent') {
+            return jsonResponse({ error: `${who} has already been sent.` }, 400);
+          }
+          if (row.status !== 'queued') {
+            const why = row.hold_reason ? `: ${row.hold_reason}` : '';
+            return jsonResponse({ error: `${who} is ${row.status}, not queued${why}.` }, 400);
+          }
+          if (row.county !== county || row.state_code !== 'CA') {
+            return jsonResponse({ error: `${who} belongs to ${row.county || 'no county'}, not ${county}.` }, 400);
+          }
+          if (sendStepNumber !== undefined && row.step_number !== sendStepNumber) {
+            return jsonResponse({ error: `${who} is on step ${row.step_number}, not step ${sendStepNumber}.` }, 400);
+          }
+          return jsonResponse({ error: `${who} did not match this send.` }, 400);
+        }
         return jsonResponse({ sent: 0, failed: 0, held: 0, detail: "No queued recipients" });
       }
 
@@ -1815,6 +1861,44 @@ Deno.serve(async (req: Request) => {
       if (error) return jsonResponse({ error: error.message }, 500);
 
       return jsonResponse({ step: updated });
+    }
+
+    // ── REQUEUE-RECIPIENT ───────────────────────────────────────
+    // Puts one held recipient back in the queue. Deliberately an action here
+    // rather than a table write from the browser: county_briefing_recipients
+    // is service-role-only for writes, and routing it through the function
+    // keeps the @getevidly.com gate above in front of it.
+    if (action === "requeue-recipient") {
+      const recipientId = body.recipient_id as string | undefined;
+      if (!recipientId) return jsonResponse({ error: "recipient_id required" }, 400);
+
+      const { data: row, error: readErr } = await supabase
+        .from('county_briefing_recipients')
+        .select('id, email, status')
+        .eq('id', recipientId)
+        .maybeSingle();
+
+      if (readErr) return jsonResponse({ error: readErr.message }, 500);
+      if (!row) return jsonResponse({ error: 'That recipient no longer exists.' }, 404);
+
+      /* Only a held row. Re-queueing a sent one would invite a second send of
+       * the same email, and a queued one is already where this would put it. */
+      if (row.status !== 'held') {
+        return jsonResponse({ error: `${row.email || 'That recipient'} is ${row.status}, not held — nothing to re-queue.` }, 400);
+      }
+
+      const { data: updated, error: updErr } = await supabase
+        .from('county_briefing_recipients')
+        .update({ status: 'queued', hold_reason: null })
+        .eq('id', recipientId)
+        .eq('status', 'held')
+        .select('id, email, status')
+        .maybeSingle();
+
+      if (updErr) return jsonResponse({ error: updErr.message }, 500);
+      if (!updated) return jsonResponse({ error: 'That recipient is no longer held.' }, 409);
+
+      return jsonResponse({ ok: true, recipient: updated });
     }
 
     // ── CRON-PROCESS ────────────────────────────────────────────
