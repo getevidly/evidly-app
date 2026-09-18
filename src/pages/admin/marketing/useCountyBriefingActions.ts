@@ -15,6 +15,7 @@
  */
 import { useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { invokeErrorDetail } from './invokeErrorDetail';
 
 export interface CountyBriefingActionDeps {
   /** Master pause flag — a paused console refuses to send. */
@@ -85,7 +86,10 @@ export function useCountyBriefingActions(deps: CountyBriefingActionDeps) {
       });
       setActionLoading(null);
       if (error) {
-        flash(`Send failed: ${error.message || data?.error || 'Unknown'}`);
+        /* The reason lives on the error, not on data: invoke() reports any
+         * non-2xx as a FunctionsHttpError with data null, so error.message
+         * alone always read "Edge Function returned a non-2xx status code". */
+        flash(`Send failed: ${await invokeErrorDetail(error)}`);
         return;
       }
       flash(`${county}: ${data.sent} sent, ${data.failed} failed, ${data.held} held`);
