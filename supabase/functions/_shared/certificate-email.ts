@@ -36,37 +36,164 @@ function esc(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
-/** Fire 5 · Food 13 · Business 6 · Vendor 15 = 39 segments, one of them held. */
-const STRIP_GROUPS: { name: string; count: number; label: string; tint: string }[] = [
-  { name: 'Fire', count: 5, label: '#B24A2E', tint: '#EBCFC6' },
-  { name: 'Food', count: 13, label: '#3E6B8A', tint: '#CBD8E1' },
-  { name: 'Business', count: 6, label: '#D8A93A', tint: '#F3E6C2' },
-  { name: 'Vendor', count: 15, label: '#7C8EA3', tint: '#DADFE6' },
+/* Fire 5 · Food 13 · Business 6 · Vendor 15 = 39. Every count, name and
+ * citation below is fixed copy, not data: nothing is queried to build this
+ * block, and the only record on file is the certificate this email is about. */
+const TOTAL_RECORDS = 39;
+
+interface RecordRow { name: string; citation: string; onFile?: boolean }
+
+interface RecordSection {
+  chip: string;
+  heading: string;
+  color: string;
+  total: number;
+  onFile: number;
+  rows: RecordRow[];
+  more: string;
+}
+
+const SECTIONS: RecordSection[] = [
+  {
+    chip: 'Fire', heading: 'Fire Safety', color: '#B24A2E', total: 5, onFile: 1,
+    rows: [
+      { name: 'Kitchen Exhaust Cleaning', citation: 'NFPA 96-2024 &middot; CFC 609', onFile: true },
+      { name: 'Fire Suppression Service', citation: '19 CCR &sect;904(a)(2) &middot; NFPA 17A-2024' },
+      { name: 'Fire Sprinkler Inspection', citation: 'NFPA 25 (2013 CA ed.) &middot; CFC 901' },
+    ],
+    more: 'Fire Alarm Inspection, Fire Extinguisher Inspection &middot; 2 more',
+  },
+  {
+    chip: 'Food', heading: 'Food Safety', color: '#3E6B8A', total: 13, onFile: 0,
+    rows: [
+      { name: 'Health Permit', citation: '&sect;114381 &middot; &sect;114387' },
+      { name: 'Food Protection Manager Certificate', citation: '&sect;113947.1(g)' },
+      { name: 'Food Handler Cards', citation: '&sect;113948(g)' },
+    ],
+    more: 'Temperature Logs, Pest Control, Warewash &middot; 10 more',
+  },
+  {
+    chip: 'Business', heading: 'Kitchen Business Records', color: '#D8A93A', total: 6, onFile: 0,
+    rows: [
+      { name: 'General Liability Insurance', citation: 'Carrier certificate' },
+      { name: 'Workers&rsquo; Compensation Insurance', citation: 'Carrier certificate' },
+    ],
+    more: 'Business Licence, Seller&rsquo;s Permit, and 2 more',
+  },
+  {
+    chip: 'Vendor', heading: 'Vendor Business Records', color: '#7C8EA3', total: 15, onFile: 0,
+    rows: [
+      { name: 'General Liability COI', citation: 'Per service company' },
+      { name: 'Professional Licence', citation: 'State issued &middot; e.g. C-16' },
+    ],
+    more: 'Workers&rsquo; Comp COI, Business Licence, W-9 &middot; &times; 3 service companies',
+  },
 ];
 
-const TOTAL_SEGMENTS = 39;
-/** The hood certificate — the one record already on file. */
-const HELD_COLOR = '#2E9E7A';
+/** The three steps in the navy panel. */
+const PROCESS_STEPS: { title: string; body: string }[] = [
+  {
+    title: 'We ask your vendors, not you',
+    body: 'Your fire, food and service companies send their records straight to us.',
+  },
+  {
+    title: 'Every record is sealed and dated',
+    body: 'Filed the way your certificate is &mdash; tamper-evident, provable to anyone who asks.',
+  },
+  {
+    title: 'You hear before something runs out',
+    body: 'While it is still small and easier to manage, not after it has cost you.',
+  },
+];
 
-function buildStrip(): string {
-  const cells = STRIP_GROUPS.map((g, gi) => {
-    const width = ((g.count / TOTAL_SEGMENTS) * 100).toFixed(2);
-    const padding = gi === STRIP_GROUPS.length - 1 ? '0' : '0 6px 0 0';
+/** One pill: the section dot, its count, and how many are on file. */
+function buildChip(sec: RecordSection): string {
+  const onFileStyle = sec.onFile > 0
+    ? 'color:#2E7D32;font-weight:700;'
+    : 'color:#9AA3AE;';
+  return `<td width="50%" valign="top" style="width:50%;padding:0 6px 6px 0;">` +
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td bgcolor="#FFFFFF" style="background:#FFFFFF;border:1px solid #E5E0D8;border-radius:999px;padding:6px 12px;font-family:${MONO};font-size:10.5px;line-height:16px;color:#1E2D4D;white-space:nowrap;">` +
+    `<span style="color:${sec.color};">&#9679;</span> ${sec.chip} ${sec.total} &middot; <span style="${onFileStyle}">${sec.onFile} on file</span>` +
+    `</td></tr></table></td>`;
+}
 
-    let segs = '';
-    for (let i = 0; i < g.count; i++) {
-      const bg = gi === 0 && i === 0 ? HELD_COLOR : g.tint;
-      segs +=
-        `<td bgcolor="${bg}" height="18" style="background:${bg};height:18px;font-size:0;line-height:0;border-right:2px solid #FFFFFF;">&nbsp;</td>`;
-    }
+/** One record: what it is, what requires it, and whether we hold it. */
+function buildRecordRow(row: RecordRow): string {
+  const border = row.onFile ? '#BFE3D0' : '#E5E0D8';
+  const state = row.onFile
+    ? `<span style="color:#2E7D32;font-weight:700;">&#10003; On file</span>`
+    : `<span style="color:#9AA3AE;">&#9711; Required</span>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" style="margin-top:6px;background:#FFFFFF;border:1px solid ${border};border-radius:6px;"><tr>` +
+    `<td valign="top" style="padding:10px 14px;">` +
+    `<div style="font-family:${SANS};font-size:13.5px;line-height:19px;color:#1E2D4D;">${row.name}</div>` +
+    `<div style="font-family:${MONO};font-size:10px;line-height:15px;color:#A7AEB8;">${row.citation}</div>` +
+    `</td>` +
+    `<td valign="top" align="right" style="padding:10px 14px 10px 8px;font-family:${SANS};font-size:12px;white-space:nowrap;">${state}</td>` +
+    `</tr></table>`;
+}
 
-    return `<td width="${width}%" valign="top" style="width:${width}%;padding:${padding};">` +
-      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${segs}</tr></table>` +
-      `<div style="margin-top:6px;font-family:${MONO};font-size:10.5px;line-height:15px;font-weight:600;color:${g.label};white-space:nowrap;">${g.name} ${g.count}</div>` +
-      `</td>`;
+/** The dashed row that stands for everything not listed. */
+function buildMoreRow(text: string): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FAF7F0" style="margin-top:6px;background:#FAF7F0;border:1px dashed #DDD6C8;border-radius:6px;"><tr>` +
+    `<td valign="top" style="padding:9px 14px;font-family:${SANS};font-size:13px;line-height:19px;color:#9AA3AE;">${text}</td>` +
+    `<td valign="top" align="right" style="padding:9px 14px 9px 8px;font-family:${MONO};font-size:10.5px;color:#A7AEB8;white-space:nowrap;">See All &rarr;</td>` +
+    `</tr></table>`;
+}
+
+/** One numbered step in the navy panel. */
+function buildProcessStep(n: number, title: string, body: string): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:13px;"><tr>` +
+    `<td width="21" valign="top" style="width:21px;">` +
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>` +
+    `<td width="21" height="21" align="center" bgcolor="#B24A2E" style="width:21px;height:21px;background:#B24A2E;border-radius:11px;font-family:${SANS};font-weight:700;font-size:11px;line-height:21px;color:#FFFFFF;text-align:center;">${n}</td>` +
+    `</tr></table></td>` +
+    `<td valign="top" style="padding-left:11px;">` +
+    `<div style="font-family:${SANS};font-size:14px;line-height:20px;font-weight:700;color:#FFFFFF;">${title}</div>` +
+    `<div style="font-family:${SANS};font-size:13px;line-height:19px;color:#C9D3E3;">${body}</div>` +
+    `</td></tr></table>`;
+}
+
+/**
+ * The whole records block: the count, the four chips, a teaser checklist per
+ * section, and the panel explaining who actually gathers the other 38.
+ *
+ * Returned as a complete <tr> so the document below reads as one list of rows.
+ */
+function buildRecordsBlock(): string {
+  const chipRows =
+    `<tr>${buildChip(SECTIONS[0])}${buildChip(SECTIONS[1])}</tr>` +
+    `<tr>${buildChip(SECTIONS[2])}${buildChip(SECTIONS[3])}</tr>`;
+
+  const sectionsHtml = SECTIONS.map((sec) => {
+    const header =
+      `<div style="margin-top:20px;font-family:${MONO};font-size:10px;line-height:16px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#B24A2E;">` +
+      `${sec.heading} &middot; ${sec.onFile} of ${sec.total} on file</div>`;
+    return header + sec.rows.map(buildRecordRow).join('') + buildMoreRow(sec.more);
   }).join('');
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;"><tr>${cells}</tr></table>`;
+  const steps = PROCESS_STEPS
+    .map((st, i) => buildProcessStep(i + 1, st.title, st.body))
+    .join('');
+
+  return `  <tr>
+    <td class="pad" bgcolor="#FAF7F0" style="background:#FAF7F0;padding:28px 32px 26px 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td valign="top" style="padding-right:14px;font-family:'Montserrat','Arial Black',Arial,sans-serif;font-weight:800;font-size:44px;line-height:46px;color:#B24A2E;">${TOTAL_RECORDS}</td>
+        <td valign="top" style="font-family:${SANS};font-size:16px;line-height:22px;font-weight:700;color:#1E2D4D;">Records to keep current,<br>at all times</td>
+      </tr></table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">${chipRows}</table>
+      <div style="margin-top:8px;font-family:${SANS};font-size:12.5px;line-height:19px;color:#6B7F96;">That&rsquo;s one kitchen with three service companies. Six more apply only to some kitchens and are not counted in the ${TOTAL_RECORDS}.</div>
+      ${sectionsHtml}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#1E2D4D" style="margin-top:26px;background:#1E2D4D;border-radius:8px;"><tr>
+        <td bgcolor="#1E2D4D" style="background:#1E2D4D;border-radius:8px;padding:20px 20px 22px 20px;">
+          <div style="font-family:${MONO};font-size:10px;line-height:16px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#A8B4C8;">How the Other 38 Get on File</div>
+          <div style="margin-top:6px;font-family:${SANS};font-size:16px;line-height:23px;font-weight:700;color:#FFFFFF;">You do not collect them. We do.</div>
+          ${steps}
+        </td>
+      </tr></table>
+    </td>
+  </tr>`;
 }
 
 export function buildCertificateEmail(p: CertificateEmailParams): string {
@@ -76,7 +203,7 @@ export function buildCertificateEmail(p: CertificateEmailParams): string {
 
   const { servicedLabel, nextDueLabel, daysOut, shortHash, portalUrl, joinUrl, verifyUrl, unsubUrl } = p;
 
-  const stripHtml = buildStrip();
+  const recordsBlock = buildRecordsBlock();
 
   const thumbCell = p.certThumbUrl
     ? `<td width="120" valign="top" align="right" style="width:120px;padding-left:14px;"><a href="${portalUrl}"><img src="${p.certThumbUrl}" width="120" height="93" alt="Your sealed certificate" style="display:block;border:0;border-radius:3px;"></a></td>`
@@ -129,7 +256,7 @@ export function buildCertificateEmail(p: CertificateEmailParams): string {
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;">
               <tr>
                 <td valign="top">
-                  <div style="font-family:${SANS};font-size:19px;line-height:25px;font-weight:700;color:#FFFFFF;">Kitchen Exhaust Cleaning Certificate</div>
+                  <div style="font-family:${SANS};font-size:19px;line-height:25px;font-weight:700;color:#FFFFFF;">Kitchen Exhaust Cleaning Certificate of Service</div>
                   <div style="margin-top:2px;font-family:${SANS};font-size:12.5px;line-height:18px;color:#A8B4C8;">NFPA 96 (2024) &middot; ${certNumber}</div>
                 </td>
                 ${thumbCell}
@@ -169,16 +296,8 @@ export function buildCertificateEmail(p: CertificateEmailParams): string {
       </table>
     </td>
   </tr>
-  <!-- What comes next -->
-  <tr>
-    <td class="pad" bgcolor="#FFFFFF" style="background:#FFFFFF;padding:30px 32px 0 32px;">
-      <div style="font-family:${MONO};font-size:10.5px;line-height:16px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#B24A2E;">What Comes Next</div>
-      <div style="margin-top:8px;font-family:${SANS};font-size:19px;line-height:26px;font-weight:700;color:#1E2D4D;">One of 39 records your kitchen keeps current &mdash; sealed, dated, and tracked.</div>
-      ${stripHtml}
-      <div style="margin-top:10px;font-family:${SANS};font-size:12.5px;line-height:19px;color:#6B7F96;"><span style="color:#2E9E7A;font-weight:700;">&#9632;</span>&nbsp; What EvidLY holds for you today: 1 of 39. Not a compliance score.</div>
-      <div style="margin-top:10px;font-family:${SANS};font-size:14px;line-height:22px;color:#6B7F96;">A ${county} County kitchen maintains 39 records across fire safety, food safety, business, and vendors. We just showed you what one looks like on file.</div>
-    </td>
-  </tr>
+  <!-- The 39 records -->
+${recordsBlock}
   <!-- Close + single CTA -->
   <tr>
     <td class="pad" bgcolor="#FFFFFF" style="background:#FFFFFF;padding:26px 32px 32px 32px;">
