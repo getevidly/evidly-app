@@ -28,6 +28,11 @@ import {
   buildSealHashInput,
   sha256,
 } from "../_shared/seal-canonicalization.ts";
+import {
+  addDocumentsToSendRecord,
+  createPortalSendRecord,
+  portalUrlFor,
+} from "../_shared/portalSendRecord.ts";
 
 // Maps HoodOps service_type_code → PSE safeguard_type
 const SERVICE_CODE_TO_SAFEGUARD: Record<string, string> = {
@@ -611,6 +616,83 @@ function jsonResp(body: Record<string, unknown>, status: number): Response {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+// ── Client portal link ─────────────────────────────────────────────────────
+// One live /portal/<token> link per organization, owned by this webhook.
+// Ownership is the purpose AND metadata.source together: county-briefing
+// writes 'Outreach step 2 — certificate link' and portal-access writes
+// 'Shared from portal', so neither can match and neither is ever touched here.
+const HOODOPS_PORTAL_PURPOSE = "HoodOps — client portal link";
+const HOODOPS_PORTAL_SOURCE = "hoodops_webhook";
+// Counted from the newest document's arrival, so the link outlives each
+// certificate by 90 days and every new one pushes it out again.
+const HOODOPS_PORTAL_EXPIRY_DAYS = 90;
+
+async function ensureHoodopsPortalLink(
+  /* Untyped on purpose, like _shared/portalSendRecord.ts: the client has no
+   * generated DB types, so a typed one infers `never` for every row. */
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  p: {
+    orgId: string;
+    documentId: string;
+    clientName: string | null;
+    clientEmail: string | null;
+  },
+): Promise<string> {
+  const expiresAt = new Date(Date.now() + HOODOPS_PORTAL_EXPIRY_DAYS * 86400000);
+
+  const { data: existing, error: findErr } = await supabase
+    .from("compliance_document_send_records")
+    .select("id, secure_token, secure_token_expires_at")
+    .eq("organization_id", p.orgId)
+    .eq("purpose", HOODOPS_PORTAL_PURPOSE)
+    .eq("metadata->>source", HOODOPS_PORTAL_SOURCE)
+    .is("revoked_at", null)
+    .gt("secure_token_expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (findErr) throw new Error(`portal lookup failed: ${findErr.message}`);
+
+  if (existing) {
+    const rec = existing as { id: string; secure_token: string; secure_token_expires_at: string };
+    await addDocumentsToSendRecord(supabase, rec.id, [p.documentId]);
+
+    // Extend only — an out-of-order older document never shortens the link.
+    if (expiresAt > new Date(rec.secure_token_expires_at)) {
+      const { error: extErr } = await supabase
+        .from("compliance_document_send_records")
+        .update({
+          secure_token_expires_at: expiresAt.toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", rec.id);
+      if (extErr) throw new Error(`portal expiry extend failed: ${extErr.message}`);
+    }
+    return rec.secure_token;
+  }
+
+  // recipient_name is NOT NULL: the client's name, else the org's.
+  let recipientName = (p.clientName || "").trim();
+  if (!recipientName) {
+    const { data: org } = await supabase
+      .from("organizations").select("name").eq("id", p.orgId).maybeSingle();
+    recipientName = ((org as { name?: string } | null)?.name || "").trim() || "Client";
+  }
+
+  const created = await createPortalSendRecord(supabase, {
+    organizationId: p.orgId,
+    recipientName,
+    recipientEmail: p.clientEmail?.trim() || null,
+    purpose: HOODOPS_PORTAL_PURPOSE,
+    expiresAt,
+    documentIds: [p.documentId],
+    metadata: { source: HOODOPS_PORTAL_SOURCE },
+  });
+  return created.secureToken;
 }
 
 async function handleDocumentEvent(
@@ -1304,6 +1386,25 @@ async function handleDocumentEvent(
 
     await logDocAudit(true);
 
+    /* ── 12. Client portal link ─────────────────────────────────
+     * Runs after the seal and cannot affect it: any failure is logged and
+     * the reply goes out without portal_token. HoodOps never sees an error
+     * for a document that is already sealed. */
+    const portalDocId = (compDoc as unknown as { id: string }).id;
+    let portalToken: string | null = null;
+    try {
+      portalToken = await ensureHoodopsPortalLink(supabase, {
+        orgId: orgId as string,
+        documentId: portalDocId,
+        clientName: client_name || null,
+        clientEmail: client_email || null,
+      });
+    } catch (portalErr: any) {
+      console.error(
+        `[hoodops-webhook] Portal link skipped for org ${orgId}, document ${portalDocId}: ${portalErr?.message || portalErr}`,
+      );
+    }
+
     return jsonResp({
       ok: true,
       event,
@@ -1313,6 +1414,9 @@ async function handleDocumentEvent(
       sealed_record_id: sealedRecord.id,
       content_hash: sealedRecord.content_hash,
       sealed_at: sealedRecord.sealed_at,
+      ...(portalToken
+        ? { portal_token: portalToken, portal_url: portalUrlFor(portalToken) }
+        : {}),
     }, 201);
   } catch (err: any) {
     console.error(`[hoodops-webhook] ${event} error:`, err);
