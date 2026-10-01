@@ -32,7 +32,6 @@ const MONO_CAPTION = {
   fontSize: 10.5,
   fontWeight: 600,
   letterSpacing: '0.16em',
-  textTransform: 'uppercase',
 };
 
 /* Static, matching the county briefing. The pillar_requirements catalog is
@@ -107,7 +106,7 @@ function SampleNote({ color, style }) {
 function SampleLabel() {
   return (
     <div style={{
-      ...MONO_CAPTION, textTransform: 'none', background: '#F3EFE6', color: EMBER,
+      ...MONO_CAPTION, background: '#F3EFE6', color: EMBER,
       textAlign: 'center', padding: '7px 12px', borderBottom: `1px solid ${LINE}`,
     }}>
       Sample Record
