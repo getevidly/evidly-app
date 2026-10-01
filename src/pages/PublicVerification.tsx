@@ -32,7 +32,6 @@ const MONO_CAPTION = {
   fontSize: 10.5,
   fontWeight: 600,
   letterSpacing: '0.16em',
-  textTransform: 'uppercase' as const,
 };
 
 interface VerifyRecord {
