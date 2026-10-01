@@ -107,7 +107,7 @@ function SampleNote({ color, style }) {
 function SampleLabel() {
   return (
     <div style={{
-      ...MONO_CAPTION, background: '#F3EFE6', color: EMBER,
+      ...MONO_CAPTION, textTransform: 'none', background: '#F3EFE6', color: EMBER,
       textAlign: 'center', padding: '7px 12px', borderBottom: `1px solid ${LINE}`,
     }}>
       Sample Record
