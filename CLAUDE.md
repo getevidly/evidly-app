@@ -43,6 +43,8 @@ Approved exceptions (guided tour ONLY — never in production render path):
 - Leaderboard
 - Re-Score Alerts
 
+Exception (approved by Arthur, 30 Sep 2026): /portal/sample — the HoodOps demo's sample record page. Static sample data, labeled 'Sample Record', noindex, reads and writes no database rows, and its buttons make no requests. This is the only exception to ZERO FAKE DATA in the production render path.
+
 ---
 
 ## NO UNAUTHORIZED MIGRATIONS

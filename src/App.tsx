@@ -247,6 +247,7 @@ const PredictiveAnalysis = lazy(() => import('./pages/PredictiveAnalysis'));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
 const SealedEvidenceShare = lazy(() => import('./pages/SealedEvidenceShare'));
 const PortalPage = lazy(() => import('./pages/public/PortalPage').then(m => ({ default: m.PortalPage })));
+const PortalSamplePage = lazy(() => import('./pages/public/PortalSamplePage'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -601,6 +602,8 @@ function AppRoutes() {
         {/* Carrier share — public, the token in the URL is the auth */}
         <Route path="/share/evidence/:token" element={<Suspense fallback={<PageSkeleton />}><SealedEvidenceShare /></Suspense>} />
         <Route path="/reports/view/:shareToken" element={<Suspense fallback={<PageSkeleton />}><ReportViewer /></Suspense>} />
+        {/* HoodOps demo sample record — static, noindex; before /portal/:token so "sample" is never a token */}
+        <Route path="/portal/sample" element={<Suspense fallback={<PageSkeleton />}><PortalSamplePage /></Suspense>} />
         <Route path="/portal/:token" element={<Suspense fallback={<PageSkeleton />}><PortalPage /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
