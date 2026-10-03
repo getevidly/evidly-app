@@ -1285,7 +1285,14 @@ Deno.serve(async (req: Request) => {
        * applied to PROD, Postgres answers 42703 and the write is retried
        * without the field, so an unapplied migration costs the findings
        * greeting a first name rather than breaking every contact write. */
-      const withName = { response_id, email: c.email || null, name: c.name || null, ...consent };
+      /* phone and business_name: migration 20270101000000. Trimmed, one
+       * line, max 120 chars, null when empty. */
+      const withName = {
+        response_id, email: c.email || null, name: c.name || null,
+        phone: raLeadField(c.phone) || null,
+        business_name: raLeadField(c.business_name) || null,
+        ...consent,
+      };
       const withoutName = { response_id, email: c.email || null, ...consent };
 
       let { error } = await sb
