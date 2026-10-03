@@ -1037,6 +1037,91 @@ async function sendAssessmentReferral(
     result ? undefined : 'Resend send failed');
 }
 
+/* ── Risk Assessment: the internal lead email ──
+ * One email to EvidLY on every contact submit for an assessment response.
+ * Phone and business name come straight from the request payload — the
+ * contact row has no columns for them yet, so they are not stored. */
+const RA_LEAD_TO = 'founders@getevidly.com';
+
+/** Optional free-text field from the payload: trimmed, one line, max 120 chars. */
+function raLeadField(v: unknown): string {
+  return typeof v === 'string' ? v.replace(/[\r\n]+/g, ' ').trim().slice(0, 120) : '';
+}
+
+async function sendAssessmentLeadInternal(
+  sb: ReturnType<typeof createClient>,
+  responseId: string,
+  contact: Record<string, unknown>,
+) {
+  const { data } = await sb.from('market_research_responses')
+    .select('source, county, kitchen_count')
+    .eq('id', responseId).single();
+  const resp = data as { source: string | null; county: string | null; kitchen_count: string | null } | null;
+  if (resp?.source !== 'assessment') return;
+
+  const { data: answers } = await sb.from('market_research_answers')
+    .select('question_id, value').eq('response_id', responseId);
+  const byId = new Map<string, string>();
+  for (const a of (answers || []) as Array<{ question_id: string; value: string }>) {
+    byId.set(a.question_id, a.value);
+  }
+  const rows = raRows(byId);
+
+  const name = raLeadField(contact.name);
+  const email = raLeadField(contact.email);
+  const phone = raLeadField(contact.phone);
+  const business = raLeadField(contact.business_name);
+  const yesNo = (v: unknown) => (v ? 'Yes' : 'No');
+
+  const fields: [string, string][] = [
+    ['Name', name || '—'],
+    ['Email', email || '—'],
+    ['Phone', phone || '—'],
+    ['Business name', business || '—'],
+    ['State', byId.get('ra_state') || '—'],
+    ['County', resp?.county ? raCounty(resp.county) : '—'],
+    ['Kitchen count', resp?.kitchen_count || '—'],
+    ['Assessment code', byId.get('ra_assessment_id') || '—'],
+  ];
+  for (const pillar of ['fire', 'food'] as const) {
+    const list = rows.filter(r => r.pillar === pillar);
+    const counts = ['critical', 'high', 'medium', 'low']
+      .map(b => `${RA_RATING_LABEL[b]} ${list.filter(r => r.rating === b).length}`)
+      .join(' · ');
+    fields.push([pillar === 'fire' ? 'Fire Safety' : 'Food Safety', counts]);
+  }
+  fields.push(
+    ['Wants findings', yesNo(contact.wants_findings)],
+    ['Wants county report', yesNo(contact.wants_county_report)],
+    ['Wants referral link', yesNo(contact.wants_referral_link)],
+    ['Wants meeting', yesNo(contact.wants_meeting)],
+  );
+
+  const bodyHtml = `<table style="${RA_TABLE}">`
+    + fields.map(([k, v]) =>
+      `<tr><td style="${RA_TD}color:#64748b;width:170px;">${esc(k)}</td>`
+      + `<td style="${RA_TD}">${esc(v)}</td></tr>`).join('')
+    + '</table>';
+  const html = buildEmailHtml({
+    recipientName: 'team',
+    bodyHtml,
+    skipGreeting: true,
+    category: RA_CATEGORY,
+    footerNote: 'Internal: sent to EvidLY on each Risk Assessment contact submit.',
+  });
+  const text = fields.map(([k, v]) => `${k}: ${v}`).join('\n');
+
+  const result = await sendEmail({
+    to: RA_LEAD_TO,
+    subject: `New Risk Assessment lead: ${business || name || email || 'unnamed'}`,
+    html,
+    text,
+    replyTo: email || undefined,
+  });
+  await logSend(sb, responseId, 'assessment_lead_internal', RA_LEAD_TO, result,
+    result ? undefined : 'Resend send failed');
+}
+
 /** Fire pending study emails for a response. Safe to call multiple times (deduped via log). */
 async function trySendStudyEmails(
   sb: ReturnType<typeof createClient>,
@@ -1241,6 +1326,11 @@ Deno.serve(async (req: Request) => {
       // Study emails — county gap report + referral link (best-effort, deduped)
       if (c.email) {
         try { await trySendStudyEmails(sb, response_id); } catch { /* best-effort */ }
+      }
+
+      // Internal lead email to EvidLY — assessment responses only, never blocks the visitor
+      try { await sendAssessmentLeadInternal(sb, response_id, c); } catch (e) {
+        console.error('[survey-respond] lead email failed', e);
       }
 
       return json({ ok: true, response_id });
