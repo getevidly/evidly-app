@@ -472,7 +472,7 @@ function AddLocModal({ orgs, onClose, onSaved }: { orgs: Org[]; onClose: () => v
             <option value="all_other">Moderate / standard restaurant (Semi-annually)</option>
             <option value="low_volume">Low volume — seasonal, church, day camp (Annually)</option>
           </select>
-          <p className="text-[10px] text-[#6B7F96] mt-1">Sets the required hood-cleaning cadence per CFC §606.3.3.1 / Table 606.3.3.1, adopting NFPA 96 (2021) Table 12.4.</p>
+          <p className="text-[10px] text-[#6B7F96] mt-1">Sets the required hood-cleaning cadence per CFC §606.3.3.1 / Table 606.3.3.1, adopting NFPA 96 (2021), 12.6.</p>
         </div>
         {/* Governing Jurisdiction */}
         <div><label className={labelCls}>Governing Jurisdiction *</label>
@@ -1006,7 +1006,7 @@ function LocDrawer({ loc, onClose, onRefresh }: { loc: Location; onClose: () => 
                   <option value="all_other">Moderate / standard restaurant (Semi-annually)</option>
                   <option value="low_volume">Low volume — seasonal, church, day camp (Annually)</option>
                 </select>
-                <p className="text-[10px] text-[#6B7F96] mt-1">Sets the required hood-cleaning cadence per CFC §606.3.3.1 / Table 606.3.3.1, adopting NFPA 96 (2021) Table 12.4.</p>
+                <p className="text-[10px] text-[#6B7F96] mt-1">Sets the required hood-cleaning cadence per CFC §606.3.3.1 / Table 606.3.3.1, adopting NFPA 96 (2021), 12.6.</p>
                 {cookingType !== (loc.cooking_type || '') && (
                   <button
                     onClick={handleSaveCookingType}

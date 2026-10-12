@@ -46,7 +46,7 @@ export interface FacilityDetailData {
 
 const COMPLIANCE: Record<string, Omit<ComplianceRequirement, 'jurisdiction'>> = {
   Permit: { frequency: 'Annual renewal', authorityReference: 'Local Fire Code', notes: 'Operational permit required for commercial cooking' },
-  Hood: { frequency: 'Semi-annual / Quarterly', authorityReference: 'NFPA 96 Chapter 11, Table 12.4', notes: 'Frequency depends on cooking volume and type' },
+  Hood: { frequency: 'Semi-annual / Quarterly', authorityReference: 'NFPA 96 Chapter 11, 12.6', notes: 'Frequency depends on cooking volume and type' },
   Ext: { frequency: 'Annual (professional) / Monthly (visual)', authorityReference: 'NFPA 10 Section 7.3', notes: 'K-class extinguisher required within 30ft of cooking equipment' },
   Extinguisher: { frequency: 'Annual (professional) / Monthly (visual)', authorityReference: 'NFPA 10 Section 7.3', notes: 'K-class extinguisher required within 30ft of cooking equipment' },
   Ansul: { frequency: 'Semi-annual', authorityReference: 'NFPA 17A §8.3 / UL 300', notes: 'Wet chemical fire suppression system inspection' },

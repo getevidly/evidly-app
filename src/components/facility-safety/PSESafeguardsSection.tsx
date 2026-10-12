@@ -22,7 +22,7 @@ const PSE_SAFEGUARDS = [
   {
     key: 'hood_cleaning',
     label: 'Hood & Exhaust Cleaning',
-    standard: 'NFPA 96 (2021) · Table 12.4',
+    standard: 'NFPA 96 (2021) · 12.6',
     authority: 'AHJ (Fire)',
     defaultInterval: 'Semi-annual (verify cooking type)',
   },

@@ -70,7 +70,7 @@ LEVEL 1 — INSPECTION CATCH: AHJ finds expired documentation. Specific conseque
 
 LEVEL 2 — ENFORCEMENT ACTION: If operator does not proactively address. Fines + closure duration + remediation + documentation to reopen + inspection fee cascade.
 
-LEVEL 3 — INSURANCE EXPOSURE: Expired permits at time of covered incident (fire, illness, injury) give carrier grounds to contest. Calculate as percentage of coverage value. Reference NFPA 96 Table 12.4 for hood cleaning certificate requirements.
+LEVEL 3 — INSURANCE EXPOSURE: Expired permits at time of covered incident (fire, illness, injury) give carrier grounds to contest. Calculate as percentage of coverage value. Reference NFPA 96, 12.6 for hood cleaning certificate requirements.
 
 For each level: probability, timeline, single action that breaks the cascade.`,
   },
@@ -82,7 +82,7 @@ For each level: probability, timeline, single action that breaks the cascade.`,
     description: 'The real cost of delaying hood cleaning, fan service, or roof containment by 6–12 months.',
     contextFields: [
       { key: 'deferredService', label: 'Service Being Deferred', placeholder: '', type: 'select', required: true,
-        options: ['Hood & Duct Cleaning — past NFPA 96 Table 12.4 schedule', 'Fan Performance Management — 12+ months no service', 'Filter Exchange — filters washed on-site', 'Rooftop Grease Containment — no system installed', 'Multiple services deferred'] },
+        options: ['Hood & Duct Cleaning — past NFPA 96, 12.6 schedule', 'Fan Performance Management — 12+ months no service', 'Filter Exchange — filters washed on-site', 'Rooftop Grease Containment — no system installed', 'Multiple services deferred'] },
       { key: 'monthsDeferred',  label: 'Months Since Last Service (or Never)', placeholder: 'e.g. 18',       type: 'text',   required: true },
       { key: 'dailyRevenue',    label: 'Average Daily Revenue',                placeholder: 'e.g. 3000',     type: 'text',   required: false },
       { key: 'propertyValue',   label: 'Building / Leasehold Value',           placeholder: 'e.g. 400000',   type: 'text',   required: false },
@@ -96,7 +96,7 @@ THREE time horizons:
 
 90-DAY: How does deferral compound? Additional cleaning cost from buildup (hood/filter). Increased fan failure probability (fan service). Additional membrane degradation (rooftop). Dollar difference between acting now vs. 90 days.
 
-12-MONTH: Full annual cost of continued deferral — additional service frequency to return to compliance, equipment replacement probability, insurance premium impact, regulatory exposure. Compare to annual cost if maintained on schedule. Reference NFPA 96 Table 12.4 for hood cleaning intervals.
+12-MONTH: Full annual cost of continued deferral — additional service frequency to return to compliance, equipment replacement probability, insurance premium impact, regulatory exposure. Compare to annual cost if maintained on schedule. Reference NFPA 96, 12.6 for hood cleaning intervals.
 
 End with specific breakeven: when does cost of deferral exceed cost of the service?`,
   },

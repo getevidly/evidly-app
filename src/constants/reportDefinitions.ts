@@ -179,7 +179,7 @@ export const REPORT_DEFINITIONS: ReportDefinition[] = [
   {
     slug: 'nfpa96-compliance',
     title: 'NFPA 96 Compliance',
-    description: 'Hood cleaning compliance by Table 12.4 schedule.',
+    description: 'Hood cleaning compliance by the 12.6 schedule.',
     category: 'compliance',
     icon: Flame,
     parameters: [LOCATION_FILTER],

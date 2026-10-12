@@ -59,18 +59,18 @@ export const CPP_SERVICES: ServiceLine[] = [
   {
     id: 'hood_cleaning',
     name: 'Hood & Duct Cleaning',
-    shortDescription: 'NFPA 96 Table 12.4 compliant exhaust system cleaning with IKECA-certified documentation',
-    fullDescription: `Complete cleaning of hood filters, plenum, ducts, and fans per NFPA 96 Table 12.4 frequency schedules. Includes before/after photography, grease weight documentation, IKECA-certified service certificate, and automatic upload to your EvidLY fire safety record.`,
-    nfpaReference: 'NFPA 96 Table 12.4',
+    shortDescription: 'NFPA 96, 12.6 compliant exhaust system cleaning with IKECA-certified documentation',
+    fullDescription: `Complete cleaning of hood filters, plenum, ducts, and fans per NFPA 96, 12.6 frequency schedules. Includes before/after photography, grease weight documentation, IKECA-certified service certificate, and automatic upload to your EvidLY fire safety record.`,
+    nfpaReference: 'NFPA 96, 12.6',
     additionalRegs: [
       'NFPA 96 Chapter 11 — Procedures for the Use of the System',
       'California Fire Code §904.12',
       'CalCode §114149.1',
     ],
-    frequency: 'Monthly, Quarterly, Semi-Annual, or Annual — per NFPA 96 Table 12.4 based on cooking type and volume',
+    frequency: 'Monthly, Quarterly, Semi-Annual, or Annual — per NFPA 96, 12.6 based on cooking type and volume',
     businessBenefit: `Hood cleaning is not just a compliance checkbox — it is the foundation of kitchen fire safety. A clean duct system means lower fire risk, lower insurance premiums, and a certificate that protects you when the AHJ or insurance adjuster comes calling. Operators with documented NFPA 96 cleaning history have a measurable advantage in claim disputes.`,
     operationalImpact: `Expired or missing certificate = immediate Fire Safety FAIL in EvidLY. AHJ can issue a closure notice without warning. Insurance carriers can deny fire claims when NFPA 96 maintenance records are absent at the time of loss — turning a covered event into a total business loss.`,
-    whyOperatorsSkipIt: `"It looks clean" or extending intervals past NFPA 96 Table 12.4 schedules to reduce costs.`,
+    whyOperatorsSkipIt: `"It looks clean" or extending intervals past NFPA 96, 12.6 schedules to reduce costs.`,
     rebuttal: `Grease accumulation in ducts is invisible to the naked eye and irrelevant to inspection — what the AHJ checks is the certificate date and frequency. A duct that "looks fine" can carry significant grease buildup behind the baffle that ignites from a single flare-up. The certificate protects you legally and financially even more than the cleaning protects you physically.`,
     complianceConsequence: `No current certificate = Fire Safety FAIL in EvidLY and on AHJ inspection. Insurance policy may be voided for fire events occurring after certificate expiration.`,
     costDrivers: [
@@ -103,7 +103,7 @@ export const CPP_SERVICES: ServiceLine[] = [
           'Standard cooking — Semi-Annual required',
           'Low-volume / non-grease — Annual required',
         ],
-        helpText: 'Determines required cleaning frequency per NFPA 96 Table 12.4',
+        helpText: 'Determines required cleaning frequency per NFPA 96, 12.6',
       },
       {
         id: 'property_value',
@@ -125,7 +125,7 @@ export const CPP_SERVICES: ServiceLine[] = [
       {
         riskLabel: 'Insurance claim denial — fire event with expired certificate',
         formula: 'Property value × denial probability (10%–100% of loss depending on carrier)',
-        regulatoryBasis: 'NFPA 96 Table 12.4 — standard insurer compliance requirement',
+        regulatoryBasis: 'NFPA 96, 12.6 — standard insurer compliance requirement',
         probability: 'High',
         calculate: (i) => ({ low: (i.property_value || 0) * 0.10, high: (i.property_value || 0) * 1.0 }),
       },
@@ -217,7 +217,7 @@ export const CPP_SERVICES: ServiceLine[] = [
       {
         riskLabel: 'Additional hood cleaning cycles from degraded fan airflow',
         formula: 'Reduced capture velocity increases grease load in ductwork — typically requires 1–2 additional cleanings per fan per year',
-        regulatoryBasis: 'NFPA 96 Table 12.4 — cleaning frequency tied to system performance',
+        regulatoryBasis: 'NFPA 96, 12.6 — cleaning frequency tied to system performance',
         probability: 'High',
         calculate: (i) => ({
           low: (i.num_fans || 1) * (i.hood_cleaning_cost || 300) * 1,
@@ -253,7 +253,7 @@ export const CPP_SERVICES: ServiceLine[] = [
       'California Porter-Cologne Water Quality Control Act',
     ],
     frequency: 'Monthly to quarterly based on cooking volume and filter saturation rate',
-    businessBenefit: `Clean, properly maintained baffle filters are the first and most cost-effective line of defense in the exhaust system. They capture grease before it enters the duct — reducing duct grease load by 40–60%, directly extending the required cleaning interval under NFPA 96 Table 12.4 and reducing that cost. Filter Exchange also eliminates a federal liability that most operators don't know they have: washing grease-laden filters in any sink connected to a drain is a Clean Water Act violation every time it happens.`,
+    businessBenefit: `Clean, properly maintained baffle filters are the first and most cost-effective line of defense in the exhaust system. They capture grease before it enters the duct — reducing duct grease load by 40–60%, directly extending the required cleaning interval under NFPA 96, 12.6 and reducing that cost. Filter Exchange also eliminates a federal liability that most operators don't know they have: washing grease-laden filters in any sink connected to a drain is a Clean Water Act violation every time it happens.`,
     operationalImpact: `Saturated filters restrict hood airflow, increase kitchen heat, and allow grease to bypass directly into the duct system — accelerating the rate at which the duct becomes non-compliant. Missing or damaged filters are an immediate NFPA 96 Chapter 9 citation. Every kitchen washing its own filters in a dish sink is generating a potential Clean Water Act violation — a federal issue governed by the same law that applies to industrial discharge, not just a local health code issue.`,
     whyOperatorsSkipIt: `"We wash them ourselves to save money." Operators don't realize on-site filter washing is a federal water quality violation, and that the grease discharged accelerates grease trap failures and municipal surcharges that cost more than filter exchange.`,
     rebuttal: `Washing grease-laden baffle filters in any sink connected to the municipal sewer or a storm drain is an unpermitted discharge of a pollutant under the Clean Water Act — a federal violation with penalties up to $25,000 per day. This is not theoretical or rarely enforced. Beyond the legal exposure, grease discharged from filter washing is the primary driver of grease trap overload, which causes emergency pump-outs and municipal surcharges. Most operators who calculate their annual grease trap costs vs. filter exchange costs find filter exchange is cheaper — before counting the federal liability.`,

@@ -59,7 +59,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     executive:
       'Fire safety is binary — Pass or Fail. A single failed system exposes the entire location to permit suspension or closure.',
     compliance_manager:
-      'Verified against NFPA 96 Table 12.4. Each AHJ is mapped to your specific location — no generic defaults.',
+      'Verified against NFPA 96, 12.6. Each AHJ is mapped to your specific location — no generic defaults.',
     chef:
       'All four systems must show green for your location to pass fire inspection. Contact your Facilities Manager if any bar is red.',
     facilities_manager:

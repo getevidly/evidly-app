@@ -109,7 +109,7 @@ export function usePSESchedules(
         cert: null,
         lastService: formatDate(best.last_service_date),
         nextDue: formatDate(best.next_due_date),
-        interval: best.frequency ? formatFrequency(best.frequency as ServiceFrequency) : 'Per NFPA 96 Table 12.4',
+        interval: best.frequency ? formatFrequency(best.frequency as ServiceFrequency) : 'Per NFPA 96, 12.6',
         status: worstStatus(kecRows),
       });
     } else {
@@ -121,7 +121,7 @@ export function usePSESchedules(
         cert: null,
         lastService: null,
         nextDue: null,
-        interval: 'Per NFPA 96 Table 12.4',
+        interval: 'Per NFPA 96, 12.6',
         status: 'unverified',
       });
     }

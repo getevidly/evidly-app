@@ -112,7 +112,7 @@ function FireDetails({ fc }) {
   if (t124) {
     sections.push(
       <div key="t124" style={{ marginBottom: 14 }}>
-        <SL>NFPA 96 Table 12.4 — Cleaning Frequencies</SL>
+        <SL>NFPA 96, 12.6 — Cleaning Frequencies</SL>
         <div style={{ background: E.cream, borderRadius: 8, padding: 12, border: "1px solid " + E.g2 }}>
           <table style={{ width: "100%", fontSize: "0.78rem", borderCollapse: "collapse" }}>
             <tbody>
@@ -242,7 +242,7 @@ function buildFaq(j, stateInfo, gc, fc) {
     var heavyFreq = FREQ_LABELS[fc.nfpa_96_table_12_4.type_i_heavy_volume] || fc.nfpa_96_table_12_4.type_i_heavy_volume || "monthly";
     faq.push({
       q: "How often must commercial kitchen hoods be cleaned in " + county + "?",
-      a: "Under NFPA 96 Table 12.4, heavy-volume Type I hoods in " + county + " require " + heavyFreq.toLowerCase() + " cleaning. Moderate-volume hoods require semi-annual cleaning, and low-volume hoods require annual cleaning. All cleaning must be performed by certified hood cleaning contractors.",
+      a: "Under NFPA 96, 12.6, heavy-volume Type I hoods in " + county + " require " + heavyFreq.toLowerCase() + " cleaning. Moderate-volume hoods require semi-annual cleaning, and low-volume hoods require annual cleaning. All cleaning must be performed by certified hood cleaning contractors.",
     });
   }
 

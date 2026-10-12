@@ -150,7 +150,7 @@ const facilitiesManager: MobileRoleData = {
     { id: 'report', label: 'Report Issue', icon: '🔧', path: '/incidents' },
   ],
   alerts: [
-    { id: 'a1', text: 'Hood cleaning overdue by 2 weeks — NFPA 96 Table 12.4', type: 'critical', path: '/facility-safety' },
+    { id: 'a1', text: 'Hood cleaning overdue by 2 weeks — NFPA 96, 12.6', type: 'critical', path: '/facility-safety' },
     { id: 'a2', text: 'Fire extinguisher 6-year maintenance due', type: 'warning', path: '/equipment' },
     { id: 'a3', text: 'Pest control contract expires in 30 days', type: 'warning', path: '/vendors' },
   ],

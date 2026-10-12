@@ -21,7 +21,7 @@ const viewPrompts: Record<string, string> = {
     Paragraph 1: Current liability exposure across locations — which locations represent the highest legal and regulatory risk and why.
     Paragraph 2: Specific threats — permit expirations, failed fire safety items, open violations, reinspection requirements, and their potential legal/regulatory consequences.
     Paragraph 3: Risk mitigation priorities ranked by urgency and potential liability reduction.
-    Be precise about regulatory citations. Reference NFPA 96 Table 12.4 where relevant.`,
+    Be precise about regulatory citations. Reference NFPA 96, 12.6 where relevant.`,
 
   financial: `You are a financial risk analyst. Analyze this commercial kitchen compliance data and write a 3-paragraph executive briefing for a CFO.
     Paragraph 1: Quantify the total financial risk exposure from non-compliance — insurance implications, potential fines, closure risk, and litigation exposure.

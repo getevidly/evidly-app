@@ -78,7 +78,7 @@ export const DECISION_TREE: Record<string, DiagnosisNode> = {
         description: 'The fan is running but smoke, heat, or steam is escaping the hood. This indicates reduced airflow \u2014 the system is not capturing at the required velocity.',
         likelyCauses: ['Heavily soiled filters restricting airflow', 'Belt slipping (fan running but not at full RPM)', 'Ductwork obstruction or grease accumulation', 'Make-up air imbalance creating competing pressure'],
         immediateSteps: ['Check and clean hood filters \u2014 if heavily soiled, this is the most likely cause', 'Reduce cooking intensity on affected section until resolved', 'Check if other fans or HVAC are creating competing airflow', 'Schedule service if filter cleaning does not resolve'],
-        preventionSteps: ['Clean hood filters daily or per shift', 'Regular filter exchange service', 'Hood and duct cleaning per NFPA 96 Table 12.4 schedule'],
+        preventionSteps: ['Clean hood filters daily or per shift', 'Regular filter exchange service', 'Hood and duct cleaning per NFPA 96, 12.6 schedule'],
         whenToCallProfessional: 'Within 24 hours if filter cleaning does not resolve.',
         regulatoryNote: 'NFPA 96 Chapter 11 covers air movement requirements. Verify specific requirements with your AHJ.',
         estimatedDIYTime: '15\u201330 minutes for filter cleaning and assessment',

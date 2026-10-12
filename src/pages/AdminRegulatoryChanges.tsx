@@ -73,7 +73,7 @@ export function AdminRegulatoryChanges() {
       sourceName: 'NFPA 96 — Ventilation Control',
       changeType: 'new_edition',
       title: 'NFPA 96-2026 — Hood Cleaning Frequency Table Update',
-      summary: 'NFPA 96 Table 12.4 updated cleaning frequency requirements for Type I hoods based on cooking volume and grease-laden vapors.',
+      summary: 'NFPA 96, 12.6 updated cleaning frequency requirements for Type I hoods based on cooking volume and grease-laden vapors.',
       impactDescription: 'Verify your hood cleaning schedule meets the updated frequency table. High-volume operations may require monthly cleaning.',
       impactLevel: 'critical',
       affectedPillars: ['facility_safety'],

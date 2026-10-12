@@ -860,7 +860,7 @@ const en = {
       scheduledFor: 'Scheduled for',
       overdue: 'Overdue',
       upToDate: 'Up to Date',
-      referenceNote: 'Per NFPA 96 Table 12.4',
+      referenceNote: 'Per NFPA 96, 12.6',
       checklist: 'Fire Safety Checklist',
       completed: 'Completed',
       passed: 'Passed',

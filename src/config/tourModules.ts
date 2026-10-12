@@ -34,7 +34,7 @@ export const ALL_MODULES = [
     description: 'Fire safety, equipment, and physical plant compliance',
     modules: [
       { id: 'fire_safety', label: 'Fire Safety', description: 'Hood cleaning schedule, NFPA 96 compliance, AHJ info, fire suppression' },
-      { id: 'hood_cleaning', label: 'Hood Cleaning Schedule', description: 'NFPA 96 Table 12.4 frequency tracking per appliance type' },
+      { id: 'hood_cleaning', label: 'Hood Cleaning Schedule', description: 'NFPA 96, 12.6 frequency tracking per appliance type' },
       { id: 'fire_suppression', label: 'Fire Suppression System', description: 'Semi-annual inspection tracking and certificate storage' },
       { id: 'portable_extinguishers', label: 'Portable Fire Extinguishers', description: 'Monthly visual checks and annual inspection logs' },
       { id: 'equipment_maintenance', label: 'Equipment Maintenance', description: 'Preventive maintenance logs and service history per asset' },
