@@ -699,7 +699,7 @@ async function buildInsuranceReport(svc: any, orgId: string): Promise<ContentJso
         ? `${orgName} has no vendor service records on file. Documenting hood cleaning, fire suppression, alarm, and sprinkler services is essential for carrier evaluation.`
         : undefined,
       citations: safeguardRows.length > 0
-        ? ['NFPA 96 Table 12.4 · NFPA 17A §7.3 · CFC §906 — as enforced by the county fire department']
+        ? ['NFPA 96, 12.6 · NFPA 17A §7.3 · CFC §906 — as enforced by the county fire department']
         : undefined,
     },
     {
@@ -1530,7 +1530,7 @@ async function buildExhaustHistoryReport(svc: any, orgId: string): Promise<Conte
         ? { cols: ['System', 'Required Interval', 'Last Cleaned', 'Next Due', 'Standing'], rows: standingRows }
         : undefined,
       body: standingRows.length === 0 ? 'No exhaust cleaning schedules or service records on file yet.' : undefined,
-      citations: ['NFPA 96 (2021) Table 12.4, §12.4.2 — interval by cooking volume, as enforced by the fire authority'],
+      citations: ['NFPA 96 (2021), 12.6, §12.4.2 — interval by cooking volume, as enforced by the fire authority'],
     },
     {
       act: 'reduce',

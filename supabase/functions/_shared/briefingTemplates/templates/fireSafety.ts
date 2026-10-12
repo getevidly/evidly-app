@@ -8,7 +8,7 @@ import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import type { Posture, DataSnapshot, BriefingInput } from '../types.ts';
 
 // Fire safety citation strings — plain text until NFPA is seeded in citations table
-const HOOD_CLEANING_REF = 'NFPA 96 Table 12.4 hood cleaning';
+const HOOD_CLEANING_REF = 'NFPA 96, 12.6 hood cleaning';
 const SUPPRESSION_REF = 'NFPA 17A / UL 300 suppression service';
 
 function credentialStrap(snapshot: DataSnapshot): string {

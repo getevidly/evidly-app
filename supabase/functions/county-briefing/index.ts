@@ -868,7 +868,7 @@ function buildBriefingBody(county: string, jur: Record<string, any>): string {
     // deno-lint-ignore no-explicit-any
     const t124 = fc?.nfpa_96_table_12_4 as Record<string, any> | undefined;
     if (t124) {
-      s += `<p style="font-family:${fInstrument};font-size:13px;color:#5F6875;margin-top:8px;">Your specific frequency depends on cooking volume (NFPA 96 Table 12.4):</p>`;
+      s += `<p style="font-family:${fInstrument};font-size:13px;color:#5F6875;margin-top:8px;">Your specific frequency depends on cooking volume (NFPA 96, 12.6):</p>`;
       s += `<table style="width:100%;border-collapse:collapse;font-family:${fInstrument};font-size:13px;margin-top:4px;">`;
       s += `<tr style="background:#F7F1E6;"><th style="padding:6px 8px;text-align:left;">Hood / Cooking Type</th>` +
         `<th style="padding:6px 8px;text-align:right;">Frequency</th></tr>`;

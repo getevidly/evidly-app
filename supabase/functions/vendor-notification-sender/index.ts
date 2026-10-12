@@ -249,7 +249,7 @@ Deno.serve(async (req: Request) => {
                   <div style="background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:16px;margin:16px 0;">
                     <p style="margin:0 0 4px;color:#991b1b;"><strong>Last service:</strong> ${fmtDate(record.service_due_date)}</p>
                     <p style="margin:0 0 4px;color:#991b1b;"><strong>Due date:</strong> ${fmtDate(record.service_due_date)} (${daysOverdue} days ago)</p>
-                    <p style="margin:0;color:#991b1b;"><strong>${hoodCitation} Table 12.4 frequency:</strong> ${esc(frequency)}</p>
+                    <p style="margin:0;color:#991b1b;"><strong>${hoodCitation}, 12.6 frequency:</strong> ${esc(frequency)}</p>
                   </div>
                   <p>Overdue fire safety services may represent potential subrogation exposure. Consult your carrier for guidance.</p>
                 `,

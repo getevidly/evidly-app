@@ -215,7 +215,7 @@ function buildGapReportBody(
    * it, by what the kitchen cooks. Removed, not reworded. */
   if (fc) {
     let s = h3('Fire Safety Standards');
-    s += '<p>NFPA 96 Table 12.4 sets the interval by what the kitchen '
+    s += '<p>NFPA 96, 12.6 sets the interval by what the kitchen '
       + 'cooks: monthly for solid fuel, quarterly for high-volume cooking, '
       + 'semiannually for moderate volume, annually for low-volume or '
       + 'seasonal cooking.</p>';

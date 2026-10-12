@@ -157,8 +157,8 @@ Deno.serve(async (req: Request) => {
               alert_type: "critical",
               category: "equipment_service",
               title: `Hood cleaning OVERDUE — ${eqName}`,
-              message: `The hood system "${eqName}" cleaning is overdue (was due ${nextClean.toLocaleDateString()}). NFPA 96 Table 12.4 requires cleaning based on cooking type/volume. Schedule IKECA-certified cleaning immediately.`,
-              authority_reference: "NFPA 96 Table 12.4",
+              message: `The hood system "${eqName}" cleaning is overdue (was due ${nextClean.toLocaleDateString()}). NFPA 96, 12.6 requires cleaning based on cooking type/volume. Schedule IKECA-certified cleaning immediately.`,
+              authority_reference: "NFPA 96, 12.6",
             });
           } else if (nextClean.toISOString() < in14Days) {
             alertsToCreate.push({
@@ -169,7 +169,7 @@ Deno.serve(async (req: Request) => {
               category: "equipment_service",
               title: `Hood cleaning due within 2 weeks — ${eqName}`,
               message: `The hood system "${eqName}" cleaning is due by ${nextClean.toLocaleDateString()}. Contact your cleaning vendor to schedule.`,
-              authority_reference: "NFPA 96 Table 12.4",
+              authority_reference: "NFPA 96, 12.6",
             });
           }
         }
