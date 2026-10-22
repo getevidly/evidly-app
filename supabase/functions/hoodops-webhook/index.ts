@@ -695,6 +695,76 @@ async function ensureHoodopsPortalLink(
   return created.secureToken;
 }
 
+// ── Sealed document link ───────────────────────────────────────────────────
+// One non-expiring /sealed/<token> link per sealed document, in
+// sealed_document_links keyed by vendor_service_records.id — the sealed row
+// itself is write-once, so the token cannot live on it. 32 random bytes,
+// base64url: 256 bits, 43 characters.
+const SEALED_BASE_URL = "https://app.getevidly.com/sealed";
+
+function newSealedToken(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function ensureSealedDocumentLink(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  sealedRecordId: string,
+  orgId: string,
+): Promise<string> {
+  const findLive = async (): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from("sealed_document_links")
+      .select("token")
+      .eq("sealed_record_id", sealedRecordId)
+      .is("revoked_at", null)
+      .maybeSingle();
+    if (error) throw new Error(`sealed link lookup failed: ${error.message}`);
+    return (data as { token: string } | null)?.token ?? null;
+  };
+
+  const existing = await findLive();
+  if (existing) return existing;
+
+  const token = newSealedToken();
+  const { error: insErr } = await supabase
+    .from("sealed_document_links")
+    .insert({ sealed_record_id: sealedRecordId, organization_id: orgId, token });
+  if (!insErr) return token;
+
+  // A concurrent delivery minted first; the live unique index kept its token.
+  if (insErr.code === "23505") {
+    const winner = await findLive();
+    if (winner) return winner;
+  }
+  throw new Error(`sealed link insert failed: ${insErr.message}`);
+}
+
+/** The "document" object HoodOps reads. Null when the link could not be
+ *  minted — the seal stands either way, and the reply goes out without it. */
+async function sealedDocumentFor(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  rec: { id: string; sealed_at: string; event: string; orgId: string },
+): Promise<Record<string, string> | null> {
+  try {
+    const token = await ensureSealedDocumentLink(supabase, rec.id, rec.orgId);
+    return {
+      type: rec.event === "document.report" ? "report" : "cert",
+      id: rec.id,
+      sealed_at: new Date(rec.sealed_at).toISOString(),
+      sealed_url: `${SEALED_BASE_URL}/${token}`,
+    };
+  } catch (err: any) {
+    console.error(`[hoodops-webhook] Sealed link skipped for record ${rec.id}: ${err?.message || err}`);
+    return null;
+  }
+}
+
 async function handleDocumentEvent(
   supabase: ReturnType<typeof createClient>,
   body: { event: string; data: Record<string, any> },
@@ -1045,6 +1115,21 @@ async function handleDocumentEvent(
       { id: string; bridged_service_id: string | null } | null;
 
     if (existingDoc?.bridged_service_id) {
+      /* Replays get the same "document" object as the first delivery. */
+      const { data: priorSeal } = await supabase
+        .from("vendor_service_records").select("id, sealed_at")
+        .eq("id", existingDoc.bridged_service_id)
+        .maybeSingle();
+      const prior = priorSeal as { id: string; sealed_at: string | null } | null;
+      const document = prior?.sealed_at
+        ? await sealedDocumentFor(supabase, {
+            id: prior.id,
+            sealed_at: prior.sealed_at,
+            event,
+            orgId: orgId as string,
+          })
+        : null;
+
       return jsonResp({
         ok: true,
         event,
@@ -1053,6 +1138,7 @@ async function handleDocumentEvent(
         location_id: locId,
         document_id: existingDoc.id,
         sealed_record_id: existingDoc.bridged_service_id,
+        ...(document ? { document } : {}),
       }, 200);
     }
 
@@ -1405,6 +1491,16 @@ async function handleDocumentEvent(
       );
     }
 
+    /* ── 13. Sealed document link ───────────────────────────────
+     * Also after the seal and unable to affect it: a failure omits
+     * "document" and changes nothing else in the reply. */
+    const document = await sealedDocumentFor(supabase, {
+      id: sealedRecord.id,
+      sealed_at: sealedRecord.sealed_at,
+      event,
+      orgId: orgId as string,
+    });
+
     return jsonResp({
       ok: true,
       event,
@@ -1417,6 +1513,7 @@ async function handleDocumentEvent(
       ...(portalToken
         ? { portal_token: portalToken, portal_url: portalUrlFor(portalToken) }
         : {}),
+      ...(document ? { document } : {}),
     }, 201);
   } catch (err: any) {
     console.error(`[hoodops-webhook] ${event} error:`, err);
