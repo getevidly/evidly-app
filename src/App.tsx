@@ -246,6 +246,7 @@ const ClientReports = lazy(() => import('./pages/ClientReports').then(m => ({ de
 const PredictiveAnalysis = lazy(() => import('./pages/PredictiveAnalysis'));
 const SharedReport = lazy(() => import('./pages/public/SharedReport').then(m => ({ default: m.SharedReport })));
 const SealedEvidenceShare = lazy(() => import('./pages/SealedEvidenceShare'));
+const SealedDocument = lazy(() => import('./pages/SealedDocument'));
 const PortalPage = lazy(() => import('./pages/public/PortalPage').then(m => ({ default: m.PortalPage })));
 const PortalSamplePage = lazy(() => import('./pages/public/PortalSamplePage'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
@@ -601,6 +602,8 @@ function AppRoutes() {
         <Route path="/report/:token" element={<Suspense fallback={<PageSkeleton />}><SharedReport /></Suspense>} />
         {/* Carrier share — public, the token in the URL is the auth */}
         <Route path="/share/evidence/:token" element={<Suspense fallback={<PageSkeleton />}><SealedEvidenceShare /></Suspense>} />
+        {/* One sealed HoodOps report or certificate — public, non-expiring token */}
+        <Route path="/sealed/:token" element={<Suspense fallback={<PageSkeleton />}><SealedDocument /></Suspense>} />
         <Route path="/reports/view/:shareToken" element={<Suspense fallback={<PageSkeleton />}><ReportViewer /></Suspense>} />
         {/* HoodOps demo sample record — static, noindex; before /portal/:token so "sample" is never a token */}
         <Route path="/portal/sample" element={<Suspense fallback={<PageSkeleton />}><PortalSamplePage /></Suspense>} />

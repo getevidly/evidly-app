@@ -11,7 +11,7 @@ import { sendEmail, buildEmailHtml } from '../_shared/email.ts';
 
 interface RequestBody {
   token: string;
-  action: 'load' | 'open' | 'download' | 'share';
+  action: 'load' | 'open' | 'download' | 'share' | 'sealed_pdf';
   document_id?: string;
   recipient_email?: string;
 }
@@ -146,6 +146,11 @@ Deno.serve(async (req: Request) => {
 
   if (!token || typeof token !== 'string') {
     return jsonResponse({ error: 'Missing token' }, 400);
+  }
+
+  // /sealed/<token> — its own token table, never a send record.
+  if (action === 'sealed_pdf') {
+    return await sealedPdf(supabase, token);
   }
   if (!action || !['load', 'open', 'download', 'share'].includes(action)) {
     return jsonResponse({ error: 'Invalid action' }, 400);
@@ -643,6 +648,51 @@ Deno.serve(async (req: Request) => {
 
   return jsonResponse({ error: 'Unknown action' }, 400);
 });
+
+/* sealed_pdf — a 5-minute signed link to the ONE sealed PDF behind a
+ * /sealed/<token> link (sealed_document_links). The path comes only from that
+ * token's vendor_service_records row; the caller supplies nothing else. An
+ * unknown, short or revoked token, or a row without a documents-bucket file,
+ * gets the same answer as a bad portal token. */
+// deno-lint-ignore no-explicit-any
+async function sealedPdf(supabase: any, token: string): Promise<Response> {
+  const notFound = () => jsonResponse({ status: 'invalid' }, 200);
+  if (token.length < 43) return notFound();
+
+  const { data: link, error: linkErr } = await supabase
+    .from('sealed_document_links')
+    .select('sealed_record_id')
+    .eq('token', token)
+    .is('revoked_at', null)
+    .maybeSingle();
+
+  if (linkErr) {
+    console.error('DB error looking up sealed token:', linkErr.message);
+    return jsonResponse({ error: 'Internal error' }, 500);
+  }
+  if (!link) return notFound();
+
+  const { data: rec } = await supabase
+    .from('vendor_service_records')
+    .select('certificate_url')
+    .eq('id', link.sealed_record_id)
+    .maybeSingle();
+
+  // hoodops-webhook stores "documents:<org_id>/hoodops/<external_id>.pdf".
+  const ref = (rec?.certificate_url as string | null) || '';
+  if (!ref.startsWith('documents:')) return notFound();
+
+  const { data: signedData, error: signErr } = await supabase.storage
+    .from('documents')
+    .createSignedUrl(ref.slice('documents:'.length), 300);
+
+  if (signErr || !signedData) {
+    console.error('Storage signed URL error (sealed):', signErr?.message);
+    return jsonResponse({ error: 'Could not generate download link' }, 500);
+  }
+
+  return jsonResponse({ url: signedData.signedUrl }, 200);
+}
 
 function jsonResponse(body: Record<string, unknown>, status: number) {
   return new Response(JSON.stringify(body), {
