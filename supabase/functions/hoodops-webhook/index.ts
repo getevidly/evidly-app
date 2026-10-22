@@ -199,6 +199,11 @@ Deno.serve(async (req: Request) => {
     );
   }
 
+  // ── Sealed document lookup — same HMAC as every other event, already verified ──
+  if (event === "document.lookup") {
+    return await handleDocumentLookup(supabase, data, tenantSlug);
+  }
+
   // ── DOCUMENT-BRIDGE-01: Document events route to dedicated handler ──
   if (event === "document.report" || event === "document.cert") {
     return await handleDocumentEvent(supabase, body, event);
@@ -763,6 +768,86 @@ async function sealedDocumentFor(
     console.error(`[hoodops-webhook] Sealed link skipped for record ${rec.id}: ${err?.message || err}`);
     return null;
   }
+}
+
+// ── document.lookup ────────────────────────────────────────────────────────
+// Backfill for documents sealed before the "document" reply existed. Input:
+//   { organization_id, hoodops_job_id, document_type: "report" | "cert" }
+//   or { organization_id, cert_number [, document_type] }
+// Returns the same "document" object as a seal, minting the link on first
+// lookup. organization_id must match the sealed record's, so one org's
+// document is never returned for another. A tenant-signed request sees only
+// records whose stored payload names that same tenant. Every miss, whatever
+// the cause, is the same 404.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function handleDocumentLookup(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  data: Record<string, any>,
+  tenantSlug: string | null,
+): Promise<Response> {
+  const { organization_id, hoodops_job_id, document_type, cert_number } = data;
+  const notFound = () => jsonResp({ ok: false, error: "Not found" }, 404);
+
+  if (typeof organization_id !== "string" || !UUID_RE.test(organization_id)) {
+    return jsonResp({ error: "Missing or invalid organization_id" }, 400);
+  }
+  if (document_type !== undefined && document_type !== "report" && document_type !== "cert") {
+    return jsonResp({ error: "document_type must be report or cert" }, 400);
+  }
+  const jobId = hoodops_job_id === undefined || hoodops_job_id === null ? "" : String(hoodops_job_id).trim();
+  const certNo = typeof cert_number === "string" ? cert_number.trim() : "";
+  if (jobId && !document_type) {
+    return jsonResp({ error: "document_type is required with hoodops_job_id" }, 400);
+  }
+  if (!jobId && !certNo) {
+    return jsonResp({ error: "Provide hoodops_job_id and document_type, or cert_number" }, 400);
+  }
+
+  let q = supabase
+    .from("vendor_service_records")
+    .select("id, organization_id, sealed_at, event:webhook_payload->>event, tenant:webhook_payload->data->>hoodops_tenant_slug")
+    .eq("organization_id", organization_id)
+    .eq("source", "evidentiary_seal")
+    .not("sealed_at", "is", null);
+  if (jobId) q = q.eq("webhook_payload->data->>hoodops_job_id", jobId);
+  if (certNo) q = q.eq("cert_number", certNo);
+  q = document_type
+    ? q.eq("webhook_payload->>event", `document.${document_type}`)
+    : q.in("webhook_payload->>event", ["document.report", "document.cert"]);
+  if (tenantSlug) q = q.eq("webhook_payload->data->>hoodops_tenant_slug", tenantSlug);
+
+  const { data: rows, error } = await q.order("sealed_at", { ascending: false }).limit(1);
+  if (error) {
+    console.error("[hoodops-webhook] document.lookup query failed:", error.message);
+    return jsonResp({ error: "Internal error" }, 500);
+  }
+
+  const rec = (rows as Array<{ id: string; organization_id: string; sealed_at: string; event: string }> | null)?.[0];
+  if (!rec || rec.organization_id !== organization_id) return notFound();
+
+  const document = await sealedDocumentFor(supabase, {
+    id: rec.id,
+    sealed_at: rec.sealed_at,
+    event: rec.event,
+    orgId: rec.organization_id,
+  });
+  if (!document) return jsonResp({ error: "Internal error" }, 500);
+
+  await supabase.rpc("log_audit_event", {
+    p_action: "edge_fn.hoodops_webhook.document.lookup",
+    p_organization_id: rec.organization_id,
+    p_resource_type: "vendor_service_record",
+    p_resource_id: rec.id,
+    p_success: true,
+    p_error_message: null,
+    p_metadata: { by: jobId ? "hoodops_job_id" : "cert_number", document_type: document.type },
+  }).then(({ error: auditErr }: { error: { message: string } | null }) => {
+    if (auditErr) console.error("[hoodops-webhook] Audit log failed:", auditErr.message);
+  });
+
+  return jsonResp({ ok: true, event: "document.lookup", organization_id: rec.organization_id, document }, 200);
 }
 
 async function handleDocumentEvent(
