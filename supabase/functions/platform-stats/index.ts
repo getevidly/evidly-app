@@ -33,7 +33,10 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const [orgsRes, tempRes, checklistRes] = await Promise.all([
-      supabase.from('organizations').select('id', { count: 'exact', head: true }),
+      // The HoodOps demo's sample organization is not a kitchen. NULL-safe:
+      // a bare neq() would also drop every org with no external_source.
+      supabase.from('organizations').select('id', { count: 'exact', head: true })
+        .or('external_source.is.null,external_source.neq.hoodops_sample'),
       supabase.from('temperature_logs').select('id', { count: 'exact', head: true }),
       supabase.from('checklist_completions').select('id', { count: 'exact', head: true }),
     ]);
