@@ -25,6 +25,7 @@ import {
   type Db,
   ensureRecordsSet,
   findRecordsSet,
+  linkByEstimate,
   listCertifications,
   listPolicies,
   loadOptions,
@@ -134,7 +135,47 @@ const proofLinkCreate: Handler = async (ctx) => {
   }, r.created ? 201 : 200];
 };
 
+/** The estimate is Approved: unlocks /proof/<token>/insurance. Idempotent. */
+const proofLinkApprove: Handler = async (ctx) => {
+  const companyId = await companyOrNull(ctx);
+  if (!companyId) return NOT_CONNECTED;
+  const estimateRef = str(ctx.body.estimate_id ?? ctx.body.estimate_ref, 200);
+  if (!estimateRef) return [{ error: "estimate_id is required." }, 400];
+  const link = await linkByEstimate(ctx.db, companyId, estimateRef);
+  if (!link) return [{ error: "No proof link for this estimate. Call proof_link.create first." }, 404];
+
+  const patch: Json = {};
+  if (!link.approved_at) patch.approved_at = new Date().toISOString();
+  const clientEmail = str(ctx.body.client_email, 320);
+  if (clientEmail) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) return [{ error: "client_email is not a valid email." }, 400];
+    patch.client_email = clientEmail;
+  }
+  if (str(ctx.body.client_name)) patch.client_name = str(ctx.body.client_name);
+
+  let current = link;
+  if (Object.keys(patch).length) {
+    const { data, error } = await ctx.db
+      .from("estimate_proof_links")
+      .update(patch)
+      .eq("id", link.id)
+      .eq("company_id", companyId)
+      .select("id, company_id, token, estimate_ref, location_name, location_ref, client_name, client_email, approved_at, created_at")
+      .single();
+    if (error) throw new Error(`approve: ${error.message}`);
+    current = data;
+  }
+
+  const [policies, options] = await Promise.all([listPolicies(ctx.db, companyId), loadOptions(ctx.db, companyId)]);
+  return [{
+    ...shapeLink(current),
+    // For the approval email's "Our Insurance" box: current policies only.
+    insurance: policies.map((p) => shapePolicy(p, options, ctx.todayMs)).filter((p) => p.status === "current"),
+  }, 200];
+};
+
 const HANDLERS: Record<string, Handler> = {
+  "proof_link.approve": proofLinkApprove,
   "records.list": recordsList,
   "certification.save": certificationSave,
   "certification.archive": archive("company_certifications"),
