@@ -304,6 +304,7 @@ export function shapePolicy(p: PolicyRow, options: RequirementOption[], todayMs:
     per_occurrence_limit: p.per_occurrence_limit,
     aggregate_limit: p.aggregate_limit,
     limits: limitsSummary(p),
+    limits_text: p.limits_text,
     endorsements: p.endorsements ?? [],
     endorsement_labels: endorsementLabels,
     notice_of_cancellation_days: p.notice_of_cancellation_days,
@@ -683,6 +684,39 @@ export function shapeRequest(
     has_updated_certificate: !!r.answer_file_path,
     client_notified_at: r.client_notified_at,
   };
+}
+
+// ── Requests, listed ─────────────────────────────────────────
+
+async function requestsWithLinks(db: Db, companyId: string, onlyRequirements = true) {
+  let q = db.from("insurance_requests").select(REQUEST_COLS).eq("company_id", companyId);
+  if (onlyRequirements) q = q.eq("kind", "requirements");
+  const { data, error } = await q.order("submitted_at", { ascending: false }).limit(200);
+  if (error) throw new Error(`requests: ${error.message}`);
+  const rows = (data ?? []) as RequestRow[];
+  const linkIds = [...new Set(rows.map((r) => r.link_id))];
+  const links = new Map<string, { location_name: string; estimate_ref: string; location_ref: string | null; token: string; client_email: string | null }>();
+  if (linkIds.length) {
+    const { data: ls } = await db
+      .from("estimate_proof_links")
+      .select("id, location_name, estimate_ref, location_ref, token, client_email")
+      .eq("company_id", companyId)
+      .in("id", linkIds);
+    for (const l of ls ?? []) links.set(l.id, l);
+  }
+  return { rows, links };
+}
+
+/** Requests with their link, compared against current policies. */
+export async function shapedRequests(db: Db, companyId: string, todayMs: number, status: "open" | "all") {
+  const [{ rows, links }, policies, options] = await Promise.all([
+    requestsWithLinks(db, companyId),
+    listPolicies(db, companyId),
+    loadOptions(db, companyId),
+  ]);
+  return rows
+    .filter((r) => status === "all" || r.status === "open")
+    .map((r) => shapeRequest(r, links.get(r.link_id) ?? null, policies, options, todayMs));
 }
 
 // ── Company area links ───────────────────────────────────────

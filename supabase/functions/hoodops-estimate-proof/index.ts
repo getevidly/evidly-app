@@ -30,7 +30,9 @@ import {
   listPolicies,
   loadOptions,
   loadSettings,
+  mintCompanyAreaLink,
   saveCertification,
+  shapedRequests,
   savePolicy,
   saveSettings,
   shapeCertification,
@@ -174,7 +176,35 @@ const proofLinkApprove: Handler = async (ctx) => {
   }, 200];
 };
 
+// ── Insurance requests (a task in HoodOps) ───────────────────
+
+const insuranceRequestsList: Handler = async (ctx) => {
+  const companyId = await companyOrNull(ctx);
+  if (!companyId) return [{ connected: false, requests: [] }, 200];
+  const status = str(ctx.body.status, 10) === "all" ? "all" : "open";
+  const requests = await shapedRequests(ctx.db, companyId, ctx.todayMs, status);
+  // One link into the company's area for the task's "Answer" button.
+  const area = requests.length ? await mintCompanyAreaLink(ctx.db, companyId) : null;
+  return [{
+    connected: true,
+    requests,
+    open_count: requests.filter((r) => r.status === "open").length,
+    answer_url: area?.url ?? null,
+    answer_url_expires_at: area?.expires_at ?? null,
+  }, 200];
+};
+
+/** A 7-day link to the company's Estimate Proof area in EvidLY. */
+const companyAreaLink: Handler = async (ctx) => {
+  const ensured = await ensureRecordsSet(ctx.db, ctx.tenant, ctx.body);
+  if ("error" in ensured) return [{ error: ensured.error }, ensured.status];
+  const area = await mintCompanyAreaLink(ctx.db, ensured.companyId);
+  return [{ url: area.url, expires_at: area.expires_at, account_created: ensured.created }, 200];
+};
+
 const HANDLERS: Record<string, Handler> = {
+  "insurance_requests.list": insuranceRequestsList,
+  "company_area.link": companyAreaLink,
   "proof_link.approve": proofLinkApprove,
   "records.list": recordsList,
   "certification.save": certificationSave,

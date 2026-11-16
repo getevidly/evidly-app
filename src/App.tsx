@@ -249,6 +249,8 @@ const SealedEvidenceShare = lazy(() => import('./pages/SealedEvidenceShare'));
 const SealedDocument = lazy(() => import('./pages/SealedDocument'));
 const ProofCertifications = lazy(() => import('./pages/proof/ProofCertifications'));
 const ProofInsurance = lazy(() => import('./pages/proof/ProofInsurance'));
+const CompanyProof = lazy(() => import('./pages/proof/CompanyProof'));
+const CompanyProofLink = lazy(() => import('./pages/proof/CompanyProofLink'));
 const PortalPage = lazy(() => import('./pages/public/PortalPage').then(m => ({ default: m.PortalPage })));
 const PortalSamplePage = lazy(() => import('./pages/public/PortalSamplePage'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
@@ -609,6 +611,9 @@ function AppRoutes() {
         {/* Estimate Proof — public, one token per estimate (hoodops-estimate-proof) */}
         <Route path="/proof/:token" element={<Suspense fallback={<PageSkeleton />}><ProofCertifications /></Suspense>} />
         <Route path="/proof/:token/insurance" element={<Suspense fallback={<PageSkeleton />}><ProofInsurance /></Suspense>} />
+        {/* Estimate Proof — the company's own area, 7-day token (no password) */}
+        <Route path="/company-proof" element={<Suspense fallback={<PageSkeleton />}><CompanyProofLink /></Suspense>} />
+        <Route path="/company-proof/:token" element={<Suspense fallback={<PageSkeleton />}><CompanyProof /></Suspense>} />
         <Route path="/reports/view/:shareToken" element={<Suspense fallback={<PageSkeleton />}><ReportViewer /></Suspense>} />
         {/* HoodOps demo sample record — static, noindex; before /portal/:token so "sample" is never a token */}
         <Route path="/portal/sample" element={<Suspense fallback={<PageSkeleton />}><PortalSamplePage /></Suspense>} />

@@ -10,6 +10,9 @@
 //                              'updated_certificate_file',
 //                              'submit_requirements', 'current_enough'
 //                              — all refused until the estimate is approved
+//   /company-proof/<token>     action 'company.*' (./company.ts): the company's
+//                              own area, by a 7-day company_area_links token
+//   /company-proof             action 'company.email_link'
 //
 // Every page load and every certificate opened is logged in
 // estimate_proof_views (link, page, item, IP, user agent, time).
@@ -24,8 +27,11 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { buildEmailHtml, sendEmail } from "../_shared/email.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
+import { COMPANY_HANDLERS, emailCompanyLink } from "./company.ts";
 import { checkFile, normalizeRequirements, todayUtcMs, WHO_IS_ASKING } from "../_shared/estimateProof.ts";
 import {
+  companyFromAreaToken,
   companyProfile,
   currentItemPath,
   type Db,
@@ -284,11 +290,29 @@ Deno.serve(async (req: Request) => {
 
   const action = str(body.action, 40);
   const handler = HANDLERS[action];
-  if (!handler) return respond({ error: "Unknown action" }, 400);
+  const companyHandler = COMPANY_HANDLERS[action];
+  if (!handler && !companyHandler && action !== "company.email_link") {
+    return respond({ error: "Unknown action" }, 400);
+  }
 
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
   try {
+    // ── The company's own area: a company_area_links token ──
+    if (action === "company.email_link") {
+      const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+      const { allowed } = await checkRateLimit({ key: `proof_company_link:${ip}`, maxRequests: 5, windowSeconds: 3600, supabase: db });
+      if (allowed) await emailCompanyLink(db, str(body.email, 320));
+      return respond({ status: "sent" }, 200);
+    }
+    if (companyHandler) {
+      const companyId = await companyFromAreaToken(db, str(body.token, 100));
+      if (!companyId) return respond({ status: "invalid" }, 200);
+      const [payload, status] = await companyHandler({ db, body, companyId, todayMs: todayUtcMs() });
+      return respond(payload, status);
+    }
+
+    // ── A client's proof link ──
     const link = await linkByToken(db, str(body.token, 100));
     // An unknown, revoked or malformed token: the same answer every time.
     if (!link) return respond({ status: "invalid" }, 200);
