@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { requiredFields } from "../_shared/vendorDocumentRules.ts";
 
 /**
  * partner-token — validates a partner's upload link.
@@ -83,7 +84,7 @@ Deno.serve(async (req) => {
 
     const { data: docs, error: docsErr } = await supabase
       .from("partner_documents")
-      .select("doc_type, file_path, expiration_date")
+      .select("doc_type, file_path, expiration_date, doc_number, review_status")
       .eq("application_id", applicationId);
 
     if (docsErr) {
@@ -93,7 +94,7 @@ Deno.serve(async (req) => {
 
     // Built from DOC_TYPES, not from the rows, so the page always renders the
     // same six slots in the same order even if a row is somehow missing.
-    type DocRow = { doc_type: string; file_path: string | null; expiration_date: string | null };
+    type DocRow = { doc_type: string; file_path: string | null; expiration_date: string | null; doc_number: string | null; review_status: string | null };
     const byType = new Map<string, DocRow>(
       ((docs ?? []) as DocRow[]).map((d) => [d.doc_type, d]),
     );
@@ -109,6 +110,10 @@ Deno.serve(async (req) => {
           doc_type,
           uploaded: Boolean(row?.file_path),
           expiration_date: row?.expiration_date ?? null,
+          doc_number: row?.doc_number ?? null,
+          review_status: row?.review_status ?? null,
+          needs_number: requiredFields("partner", doc_type).number,
+          number_label: requiredFields("partner", doc_type).numberLabel,
         };
       }),
     });

@@ -124,10 +124,17 @@ export async function validateSecureToken(token: string) {
   return res.json();
 }
 
-export async function uploadViaSecureToken(token: string, file: File, notes?: string) {
+export async function uploadViaSecureToken(
+  token: string,
+  file: File,
+  notes?: string,
+  details?: { expirationDate?: string; docNumber?: string },
+) {
   const formData = new FormData();
   formData.append('file', file);
   if (notes) formData.append('notes', notes);
+  if (details?.expirationDate) formData.append('expiration_date', details.expirationDate);
+  if (details?.docNumber) formData.append('doc_number', details.docNumber);
 
   const res = await fetch(
     `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`,

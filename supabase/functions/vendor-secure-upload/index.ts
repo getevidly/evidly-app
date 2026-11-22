@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createOrgNotification } from "../_shared/notify.ts";
 import { enqueueUploadNotification, triggerDelayedFlush } from "../_shared/uploadEmailQueue.ts";
+import { requiredFields, validateTyped } from "../_shared/vendorDocumentRules.ts";
 
 let corsHeaders = getCorsHeaders(null);
 
@@ -92,6 +93,14 @@ Deno.serve(async (req: Request) => {
       .eq("id", request.organization_id)
       .single();
 
+    // Business documents (certificates, licenses, W-9s) carry the typed
+    // expiration date and policy or license number. Service reports keep
+    // their own path and are not affected.
+    const checked = doc?.category === "business";
+    const required = checked
+      ? requiredFields("kitchen", doc?.type || "")
+      : { number: false, expiry: false, numberLabel: "Number" };
+
     // ── GET → Return token info for the upload form ───────────
     if (req.method === "GET") {
       return jsonResponse({
@@ -101,6 +110,9 @@ Deno.serve(async (req: Request) => {
         vendor_name: vendorName,
         organization_name: org?.name || null,
         expires_at: request.secure_token_expires_at,
+        needs_number: required.number,
+        needs_expiry: required.expiry,
+        number_label: required.numberLabel,
       });
     }
 
@@ -112,6 +124,16 @@ Deno.serve(async (req: Request) => {
 
       if (!file) {
         return jsonResponse({ error: "No file provided" }, 400);
+      }
+
+      // Typed details: expiration date and policy or license number.
+      const typed = validateTyped(
+        required,
+        String(formData.get("expiration_date") ?? ""),
+        String(formData.get("doc_number") ?? ""),
+      );
+      if (typed.error) {
+        return jsonResponse({ error: typed.error }, 400);
       }
 
       // Validate file type
@@ -166,6 +188,13 @@ Deno.serve(async (req: Request) => {
           mime_type: file.type,
           import_source: "vendor_secure_link",
           submitted_at: new Date().toISOString(),
+          ...(checked
+            ? {
+              expiry_date: typed.expiration,
+              doc_number: typed.number,
+              review_status: "waiting_for_acceptance",
+            }
+            : {}),
         })
         .eq("id", request.document_id);
 

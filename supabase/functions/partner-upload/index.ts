@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { notifyHoodopsUpload } from "../_shared/notifyHoodopsUpload.ts";
+import { requiredFields, cleanNumber } from "../_shared/vendorDocumentRules.ts";
 
 /**
  * partner-upload — receives one document for one slot of a partner
@@ -156,6 +157,13 @@ Deno.serve(async (req) => {
       }, 400);
     }
 
+    // ── 3b. Policy or license number (W-9 exempt) ───────────────
+    const required = requiredFields("partner", docType);
+    const docNumber = cleanNumber(String(form.get("doc_number") ?? ""));
+    if (required.number && !docNumber) {
+      return json({ ok: false, error: `Enter the ${required.numberLabel.toLowerCase()}.` }, 400);
+    }
+
     // ── 4. File — declared type, real bytes, real size ──────────
     if (!(file instanceof File)) {
       return json({ ok: false, error: "file is required." }, 400);
@@ -236,8 +244,10 @@ Deno.serve(async (req) => {
       .update({
         file_path: storagePath,
         expiration_date: expirationDate,
+        doc_number: required.number ? docNumber : null,
         uploaded_at: new Date().toISOString(),
         status: "uploaded",
+        review_status: "waiting_for_acceptance",
       })
       .eq("application_id", applicationId)
       .eq("doc_type", docType);
@@ -259,11 +269,11 @@ Deno.serve(async (req) => {
     }
 
     // ── Full state back, same shape as partner-token ────────────
-    type DocRow = { doc_type: string; file_path: string | null; expiration_date: string | null };
+    type DocRow = { doc_type: string; file_path: string | null; expiration_date: string | null; doc_number: string | null; review_status: string | null };
 
     const { data: docs, error: docsErr } = await supabase
       .from("partner_documents")
-      .select("doc_type, file_path, expiration_date")
+      .select("doc_type, file_path, expiration_date, doc_number, review_status")
       .eq("application_id", applicationId);
 
     if (docsErr) {
@@ -281,6 +291,10 @@ Deno.serve(async (req) => {
         doc_type,
         uploaded: Boolean(row?.file_path),
         expiration_date: row?.expiration_date ?? null,
+        doc_number: row?.doc_number ?? null,
+        review_status: row?.review_status ?? null,
+        needs_number: requiredFields("partner", doc_type).number,
+        number_label: requiredFields("partner", doc_type).numberLabel,
       };
     });
 

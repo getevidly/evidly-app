@@ -12,6 +12,8 @@ export function VendorSecureUpload() {
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState('');
+  const [expirationDate, setExpirationDate] = useState('');
+  const [docNumber, setDocNumber] = useState('');
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -38,7 +40,7 @@ export function VendorSecureUpload() {
     if (!file || !token) return;
     setUploading(true);
     try {
-      const result = await uploadViaSecureToken(token, file, notes);
+      const result = await uploadViaSecureToken(token, file, notes, { expirationDate, docNumber });
       if (result.success) {
         setSuccess(true);
       } else {
@@ -162,6 +164,36 @@ export function VendorSecureUpload() {
             )}
           </div>
 
+          {/* Required details: expiration date and policy or license number */}
+          {(tokenData?.needs_expiry || tokenData?.needs_number) && (
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {tokenData?.needs_expiry && (
+                <label className="block">
+                  <span className="text-sm font-medium text-[#1E2D4D]/80">Expiration Date</span>
+                  <input
+                    type="date"
+                    required
+                    value={expirationDate}
+                    onChange={(e) => setExpirationDate(e.target.value)}
+                    className="mt-1 w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm"
+                  />
+                </label>
+              )}
+              {tokenData?.needs_number && (
+                <label className="block">
+                  <span className="text-sm font-medium text-[#1E2D4D]/80">{tokenData?.number_label || 'Policy or License Number'}</span>
+                  <input
+                    type="text"
+                    required
+                    value={docNumber}
+                    onChange={(e) => setDocNumber(e.target.value)}
+                    className="mt-1 w-full p-3 border border-[#1E2D4D]/15 rounded-xl text-sm"
+                  />
+                </label>
+              )}
+            </div>
+          )}
+
           {/* Notes */}
           <div className="mt-4">
             <div className="flex items-center justify-between mb-1">
@@ -186,7 +218,11 @@ export function VendorSecureUpload() {
           {/* Upload button */}
           <button
             onClick={handleUpload}
-            disabled={!file || uploading}
+            disabled={
+              !file || uploading ||
+              (tokenData?.needs_expiry && !expirationDate) ||
+              (tokenData?.needs_number && !docNumber.trim())
+            }
             className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-3 bg-[#1E2D4D] text-white rounded-lg font-semibold hover:bg-[#162340] transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploading ? (
