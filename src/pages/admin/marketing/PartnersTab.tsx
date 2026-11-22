@@ -474,6 +474,75 @@ function ApplicationRow({ app, onTogglePublish, onChanged }: {
   );
 }
 
+// ── Reminder timing (inbound vendor documents, Part 5) ──────────
+
+/**
+ * When partner-expiry-scan reminds vendors: days before expiry, plus one
+ * notice on expiry. Applies to both inbound flows (partners and the
+ * documents kitchens request).
+ */
+function ReminderTiming() {
+  const [value, setValue] = useState('');
+  const [saved, setSaved] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.functions.invoke('partner-admin', { body: { action: 'get_reminder_settings' } })
+      .then(({ data }) => {
+        if (data?.ok && Array.isArray(data.reminder_days)) {
+          const v = (data.reminder_days as number[]).join(', ');
+          setValue(v);
+          setSaved(v);
+        }
+      });
+  }, []);
+
+  const save = async () => {
+    setBusy(true);
+    setMsg(null);
+    const days = value.split(/[^0-9]+/).filter(Boolean).map(Number);
+    const { data, error } = await supabase.functions.invoke('partner-admin', {
+      body: { action: 'set_reminder_settings', reminder_days: days },
+    });
+    setBusy(false);
+    if (error || !data?.ok) {
+      setMsg(data?.error ?? 'Could not save the reminder timing.');
+      return;
+    }
+    const v = (data.reminder_days as number[]).join(', ');
+    setValue(v);
+    setSaved(v);
+    setMsg('Saved.');
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+      <FieldLabel>Expiration Reminders (days before)</FieldLabel>
+      <input
+        aria-label="Expiration reminder days"
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        placeholder="30, 7"
+        style={{ fontFamily: BODY, fontSize: 12, border: `1px solid ${EV_LINE}`, borderRadius: 4, padding: '4px 8px', width: 110 }}
+      />
+      <button
+        type="button"
+        onClick={save}
+        disabled={busy || value === saved}
+        style={{
+          fontFamily: BODY, fontSize: 11, fontWeight: 700, borderRadius: 4, padding: '4px 10px',
+          border: `1px solid ${EV_NAVY}`, background: EV_NAVY, color: EV_PAPER,
+          opacity: busy || value === saved ? 0.5 : 1,
+        }}
+      >
+        {busy ? 'Saving…' : 'Save Reminder Timing'}
+      </button>
+      {msg && <span style={{ fontSize: 11, color: EV_SLATE }}>{msg}</span>}
+    </div>
+  );
+}
+
 // ── Tab ──────────────────────────────────────────────────────────
 
 export default function PartnersTab() {
@@ -533,6 +602,7 @@ export default function PartnersTab() {
 
   return (
     <div style={{ fontFamily: BODY }}>
+      <ReminderTiming />
       {error && (
         <div style={{
           fontFamily: BODY, fontSize: 12.5, color: EV_EMBER,

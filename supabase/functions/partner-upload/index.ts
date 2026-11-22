@@ -225,6 +225,7 @@ Deno.serve(async (req) => {
           accepted_by: null,
           // A new document starts its own reminder cycle.
           last_expiry_notified_at: null,
+          last_reminder_stage: null,
         })
         .eq("id", target.documentId);
 

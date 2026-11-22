@@ -33,6 +33,8 @@ import { emailVendorQuestion, fileIntact } from "../_shared/vendorDocumentAccept
  *                 tamper detection.
  *   question    — "Ask Vendor a Question": emails the partner.
  *   verify      — tamper detection: is the stored file unchanged?
+ *   get_reminder_settings / set_reminder_settings — when expiration
+ *                 reminders go (days before expiry; default 30 then 7).
  * Drafts (vendor_document_checks) are never read here.
  */
 
@@ -208,6 +210,29 @@ Deno.serve(async (req: Request) => {
       }
 
       return json({ ok: true, application: updated });
+    }
+
+    // ── reminder timing (Part 5): days before expiry, e.g. [30, 7] ──
+    if (action === "get_reminder_settings" || action === "set_reminder_settings") {
+      if (action === "set_reminder_settings") {
+        const raw = Array.isArray(body.reminder_days) ? body.reminder_days : [];
+        const days = [...new Set(raw.map((n) => Math.round(Number(n))))]
+          .filter((n) => Number.isFinite(n) && n > 0 && n < 366)
+          .sort((a, b) => b - a);
+        if (days.length < 1 || days.length > 6) {
+          return json({ ok: false, error: "Enter one to six reminder days between 1 and 365." }, 400);
+        }
+        const { error: sErr } = await supabase
+          .from("vendor_document_reminder_settings")
+          .upsert({ id: 1, reminder_days: days, updated_at: new Date().toISOString(), updated_by: caller.email });
+        if (sErr) {
+          console.error("[partner-admin] reminder settings save failed:", sErr.message);
+          return json({ ok: false, error: "Could not save the reminder timing." }, 500);
+        }
+      }
+      const { data: setting } = await supabase
+        .from("vendor_document_reminder_settings").select("reminder_days, updated_at").eq("id", 1).maybeSingle();
+      return json({ ok: true, reminder_days: setting?.reminder_days ?? [30, 7], updated_at: setting?.updated_at ?? null });
     }
 
     // ── inbound vendor documents: preview / accept / question / verify ──
