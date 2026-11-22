@@ -143,6 +143,37 @@ export async function uploadViaSecureToken(
   return res.json();
 }
 
+/** Check My Document: stores the draft privately, reads it, compares. */
+export async function checkViaSecureToken(
+  token: string,
+  details: { file?: File | null; expirationDate?: string; docNumber?: string },
+) {
+  const formData = new FormData();
+  formData.append('action', 'check');
+  if (details.file) formData.append('file', details.file);
+  if (details.expirationDate) formData.append('expiration_date', details.expirationDate);
+  if (details.docNumber) formData.append('doc_number', details.docNumber);
+
+  const res = await fetch(
+    `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`,
+    { method: 'POST', body: formData }
+  );
+  return res.json();
+}
+
+/** Send to {Recipient}: files the checked draft; refused unless it matches. */
+export async function sendViaSecureToken(token: string, notes?: string) {
+  const formData = new FormData();
+  formData.append('action', 'send');
+  if (notes) formData.append('notes', notes);
+
+  const res = await fetch(
+    `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`,
+    { method: 'POST', body: formData }
+  );
+  return res.json();
+}
+
 // =============================================
 // AI Document Analysis
 // =============================================

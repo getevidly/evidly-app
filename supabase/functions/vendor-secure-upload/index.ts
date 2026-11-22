@@ -4,6 +4,16 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createOrgNotification } from "../_shared/notify.ts";
 import { enqueueUploadNotification, triggerDelayedFlush } from "../_shared/uploadEmailQueue.ts";
 import { requiredFields, validateTyped } from "../_shared/vendorDocumentRules.ts";
+import {
+  type IncomingFile,
+  loadOpenCheck,
+  markSent,
+  publicCheckState,
+  runCheck,
+  sniffType,
+  type Target,
+  verifyForSend,
+} from "../_shared/vendorDocumentCheckFlow.ts";
 
 let corsHeaders = getCorsHeaders(null);
 
@@ -93,16 +103,31 @@ Deno.serve(async (req: Request) => {
       .eq("id", request.organization_id)
       .single();
 
-    // Business documents (certificates, licenses, W-9s) carry the typed
-    // expiration date and policy or license number. Service reports keep
-    // their own path and are not affected.
+    // ── Arthur's inbound-document rule applies to business documents ──
+    // (certificates of insurance, licenses, certifications, W-9s,
+    // agreements). Service reports keep their own path: AI extraction of
+    // the service date and certificate number, then confirm-to-seal.
     const checked = doc?.category === "business";
     const required = checked
       ? requiredFields("kitchen", doc?.type || "")
       : { number: false, expiry: false, numberLabel: "Number" };
+    const documentLabel = doc?.type || "Document";
+    const checkTarget: Target = {
+      flow: "kitchen",
+      documentId: request.document_id,
+      bucket: "documents",
+      draftPath: (ext: string) =>
+        `vendor-uploads/${request.organization_id}/${doc?.vendor_id || "unknown"}/draft-${request.document_id}-${Date.now()}.${ext}`,
+      required,
+      nameOnFile: vendorName === "Vendor" ? null : vendorName,
+      documentLabel,
+    };
 
     // ── GET → Return token info for the upload form ───────────
     if (req.method === "GET") {
+      const openCheck = checked
+        ? await loadOpenCheck(supabase, "kitchen", request.document_id)
+        : null;
       return jsonResponse({
         valid: true,
         document_type: doc?.type || null,
@@ -110,30 +135,87 @@ Deno.serve(async (req: Request) => {
         vendor_name: vendorName,
         organization_name: org?.name || null,
         expires_at: request.secure_token_expires_at,
+        checked,
         needs_number: required.number,
         needs_expiry: required.expiry,
         number_label: required.numberLabel,
+        check: publicCheckState(openCheck),
       });
     }
 
-    // ── POST → Handle file upload ─────────────────────────────
+    // ── POST ──────────────────────────────────────────────────
     if (req.method === "POST") {
       const formData = await req.formData();
-      const file = formData.get("file") as File;
       const notes = (formData.get("notes") as string) || "";
+
+      // Values that the shared steps below write, whichever path set them.
+      let storagePath = "";
+      let fileSize = 0;
+      let mimeType = "";
+      let originalFilename = "";
+      let typedExpiration: string | null = null;
+      let typedNumber: string | null = null;
+      let sendingCheckId: string | null = null;
+
+      if (checked) {
+        const action = String(formData.get("action") ?? "");
+
+        // Typed details: expiration date and policy or license number.
+        const typed = validateTyped(
+          required,
+          String(formData.get("expiration_date") ?? ""),
+          String(formData.get("doc_number") ?? ""),
+        );
+
+        // ── Check My Document: store the draft, read it, compare ──
+        if (action === "check") {
+          if (typed.error) return jsonResponse({ error: typed.error }, 400);
+
+          let incoming: IncomingFile | null = null;
+          const f = formData.get("file");
+          if (f instanceof File && f.size > 0) {
+            if (f.size > 25 * 1024 * 1024) {
+              return jsonResponse({ error: "File too large. Maximum 25MB." }, 400);
+            }
+            const bytes = new Uint8Array(await f.arrayBuffer());
+            const sniffed = sniffType(bytes.subarray(0, 8));
+            if (!sniffed) {
+              return jsonResponse({ error: "Upload a PDF, JPG or PNG so the document can be read." }, 400);
+            }
+            incoming = { bytes, mimeType: sniffed.mime, ext: sniffed.ext, name: f.name };
+          }
+
+          const result = await runCheck(
+            supabase,
+            checkTarget,
+            { expiration: typed.expiration, number: typed.number },
+            incoming,
+          );
+          if (!result.ok) return jsonResponse({ error: result.error }, result.status);
+          return jsonResponse({ success: true, check: publicCheckState(result.check) });
+        }
+
+        // ── Send to {Recipient}: only a check that still matches ──
+        if (action === "send") {
+          const open = await loadOpenCheck(supabase, "kitchen", request.document_id);
+          const refusal = verifyForSend(checkTarget, open);
+          if (refusal || !open) return jsonResponse({ error: refusal }, 409);
+
+          storagePath = open.file_path!;
+          fileSize = Number(open.file_size_bytes ?? 0);
+          mimeType = open.file_mime_type ?? "application/pdf";
+          originalFilename = open.original_filename ?? "";
+          typedExpiration = open.typed_expiration_date;
+          typedNumber = open.typed_doc_number;
+          sendingCheckId = open.id;
+        } else {
+          return jsonResponse({ error: "Check My Document first." }, 400);
+        }
+      } else {
+      const file = formData.get("file") as File;
 
       if (!file) {
         return jsonResponse({ error: "No file provided" }, 400);
-      }
-
-      // Typed details: expiration date and policy or license number.
-      const typed = validateTyped(
-        required,
-        String(formData.get("expiration_date") ?? ""),
-        String(formData.get("doc_number") ?? ""),
-      );
-      if (typed.error) {
-        return jsonResponse({ error: typed.error }, 400);
       }
 
       // Validate file type
@@ -163,7 +245,10 @@ Deno.serve(async (req: Request) => {
 
       // Upload to Supabase Storage
       const fileExt = file.name.split(".").pop() || "pdf";
-      const storagePath = `vendor-uploads/${request.organization_id}/${doc?.vendor_id || "unknown"}/${Date.now()}.${fileExt}`;
+      storagePath = `vendor-uploads/${request.organization_id}/${doc?.vendor_id || "unknown"}/${Date.now()}.${fileExt}`;
+      fileSize = file.size;
+      mimeType = file.type;
+      originalFilename = file.name;
 
       const fileBuffer = await file.arrayBuffer();
       const { error: uploadError } = await supabase.storage
@@ -177,21 +262,24 @@ Deno.serve(async (req: Request) => {
         console.error("[UPLOAD] Storage error:", uploadError);
         return jsonResponse({ error: "Failed to upload file" }, 500);
       }
+      }
 
       // ── 1. UPDATE compliance_documents ──────────────────────
+      // For a checked document this is the first time the recipient's row
+      // changes: the draft and its check never touched it.
       const { error: docUpdateError } = await supabase
         .from("compliance_documents")
         .update({
           status: "pending_review",
           storage_path: storagePath,
-          file_size_bytes: file.size,
-          mime_type: file.type,
+          file_size_bytes: fileSize,
+          mime_type: mimeType,
           import_source: "vendor_secure_link",
           submitted_at: new Date().toISOString(),
           ...(checked
             ? {
-              expiry_date: typed.expiration,
-              doc_number: typed.number,
+              expiry_date: typedExpiration,
+              doc_number: typedNumber,
               review_status: "waiting_for_acceptance",
             }
             : {}),
@@ -203,13 +291,16 @@ Deno.serve(async (req: Request) => {
           "[UPLOAD] compliance_documents update failed:",
           docUpdateError
         );
-        // Cleanup: delete the uploaded file
-        await supabase.storage.from("documents").remove([storagePath]);
+        // Cleanup: delete the uploaded file. A checked draft stays where it
+        // is so the sender can press Send again.
+        if (!checked) await supabase.storage.from("documents").remove([storagePath]);
         return jsonResponse(
           { error: "Failed to update document record" },
           500
         );
       }
+
+      if (sendingCheckId) await markSent(supabase, sendingCheckId);
 
       // ── 2. UPDATE compliance_document_requests ──────────────
       const { error: reqUpdateError } = await supabase
@@ -234,11 +325,11 @@ Deno.serve(async (req: Request) => {
           actor_user_id: null,
           actor_label: vendorName,
           metadata: {
-            file_size_bytes: file.size,
-            mime_type: file.type,
+            file_size_bytes: fileSize,
+            mime_type: mimeType,
             notes: notes || null,
-            upload_method: "vendor_secure_link",
-            original_filename: file.name,
+            upload_method: checked ? "vendor_secure_link_checked" : "vendor_secure_link",
+            original_filename: originalFilename,
           },
         });
       } catch {

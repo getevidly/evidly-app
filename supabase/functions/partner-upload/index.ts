@@ -3,84 +3,49 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 import { notifyHoodopsUpload } from "../_shared/notifyHoodopsUpload.ts";
-import { requiredFields, cleanNumber } from "../_shared/vendorDocumentRules.ts";
+import { requiredFields, validateTyped } from "../_shared/vendorDocumentRules.ts";
+import {
+  type IncomingFile,
+  loadOpenCheck,
+  markSent,
+  runCheck,
+  sniffType,
+  type Target,
+  verifyForSend,
+} from "../_shared/vendorDocumentCheckFlow.ts";
+import { PARTNER_DOC_LABELS, PARTNER_DOC_TYPES, partnerDocsState } from "../_shared/partnerDocState.ts";
 
 /**
- * partner-upload — receives one document for one slot of a partner
- * application.
+ * partner-upload — one document for one slot of a partner application,
+ * checked on the partner's screen before it is sent.
  *
  * Public: no JWT. The token in the multipart body is the credential, same
  * posture as partner-token and sealed-evidence-share. getevidly.com/partners/upload
- * POSTs here once per document.
+ * POSTs here.
  *
- * POST multipart/form-data: token, doc_type, file, expiration_date
+ * POST multipart/form-data: token, doc_type, action, plus
+ *   action=check  expiration_date, doc_number (not for W-9), file (optional
+ *                 once a draft file is stored). Stores the draft privately,
+ *                 reads the document, compares, returns the rows.
+ *   action=send   nothing else. Files the checked draft on the partner's
+ *                 record as Waiting for Acceptance, only if every detail
+ *                 still matches.
  *
- * Returns the same docs[] shape partner-token returns, so the page can render
- * N-of-6 from this response alone and survive a reload without a second call.
+ * Arthur's rule: nothing is saved as sent, and nothing reaches the
+ * recipient, until every detail matches. A request with no action (the
+ * old one-step upload) is refused for that reason.
  *
- * The declared mimetype is checked against the allow-list AND the first bytes
- * of the file are sniffed to confirm the declaration is honest. The extension
- * comes from the sniff, not from the filename or the header, so a .pdf that is
- * actually a PNG lands as .png and nothing downstream is misled.
+ * Returns the same docs[] shape partner-token returns (partnerDocState), so
+ * the page renders every slot from this response alone.
  */
-
-const DOC_TYPES = [
-  "business_license",
-  "professional_license",
-  "w9",
-  "liability_insurance",
-  "workers_comp",
-  "auto_insurance",
-] as const;
 
 const BUCKET = "partner-documents";
 const MAX_BYTES = 10 * 1024 * 1024; // 10MB
 const ADMIN_EMAIL = "arthur@getevidly.com";
 
-/** Declared type → extension. Only these three are accepted. */
-const ALLOWED_TYPES: Record<string, string> = {
-  "application/pdf": "pdf",
-  "image/jpeg": "jpg",
-  "image/png": "png",
-};
-
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-
-/**
- * Sniff the real type from the leading bytes. Returns null if the file is not
- * one of the three we accept, whatever the header claimed.
- */
-function sniffType(bytes: Uint8Array): "application/pdf" | "image/jpeg" | "image/png" | null {
-  if (bytes.length >= 4 &&
-      bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
-    return "application/pdf"; // %PDF
-  }
-  if (bytes.length >= 3 &&
-      bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
-    return "image/jpeg";
-  }
-  if (bytes.length >= 8 &&
-      bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 &&
-      bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a) {
-    return "image/png";
-  }
-  return null;
-}
-
-/** Strict YYYY-MM-DD that is also a real calendar date — 2026-02-30 is not. */
-function parseDateOnly(raw: string): string | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
-  if (!m) return null;
-  const [, y, mo, d] = m;
-  const dt = new Date(`${y}-${mo}-${d}T00:00:00Z`);
-  if (Number.isNaN(dt.getTime())) return null;
-  if (dt.getUTCFullYear() !== Number(y) ||
-      dt.getUTCMonth() + 1 !== Number(mo) ||
-      dt.getUTCDate() !== Number(d)) return null;
-  return `${y}-${mo}-${d}`;
-}
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req.headers.get("origin"));
@@ -114,8 +79,7 @@ Deno.serve(async (req) => {
 
     const token = String(form.get("token") ?? "").trim();
     const docType = String(form.get("doc_type") ?? "").trim();
-    const expirationRaw = String(form.get("expiration_date") ?? "").trim();
-    const file = form.get("file");
+    const action = String(form.get("action") ?? "").trim();
 
     // ── 1. Token ────────────────────────────────────────────────
     if (!token) return unusable();
@@ -138,219 +102,168 @@ Deno.serve(async (req) => {
     const applicationId = app.id as string;
 
     // ── 2. doc_type ─────────────────────────────────────────────
-    if (!(DOC_TYPES as readonly string[]).includes(docType)) {
+    if (!(PARTNER_DOC_TYPES as readonly string[]).includes(docType)) {
       return json({
         ok: false,
-        error: `doc_type must be one of: ${DOC_TYPES.join(", ")}. Received "${docType}".`,
+        error: `doc_type must be one of: ${PARTNER_DOC_TYPES.join(", ")}. Received "${docType}".`,
       }, 400);
     }
 
-    // ── 3. expiration_date ──────────────────────────────────────
-    if (!expirationRaw) {
-      return json({ ok: false, error: "expiration_date is required (YYYY-MM-DD)." }, 400);
-    }
-    const expirationDate = parseDateOnly(expirationRaw);
-    if (!expirationDate) {
-      return json({
-        ok: false,
-        error: `expiration_date must be a real date in YYYY-MM-DD form. Received "${expirationRaw}".`,
-      }, 400);
-    }
-
-    // ── 3b. Policy or license number (W-9 exempt) ───────────────
-    const required = requiredFields("partner", docType);
-    const docNumber = cleanNumber(String(form.get("doc_number") ?? ""));
-    if (required.number && !docNumber) {
-      return json({ ok: false, error: `Enter the ${required.numberLabel.toLowerCase()}.` }, 400);
-    }
-
-    // ── 4. File — declared type, real bytes, real size ──────────
-    if (!(file instanceof File)) {
-      return json({ ok: false, error: "file is required." }, 400);
-    }
-
-    const declared = file.type || "";
-    if (!ALLOWED_TYPES[declared]) {
-      return json({
-        ok: false,
-        error: "File must be a PDF, JPG, or PNG.",
-      }, 400);
-    }
-
-    // Measured from the bytes actually received, not from file.size.
-    const buffer = await file.arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-
-    if (bytes.byteLength === 0) {
-      return json({ ok: false, error: "That file is empty." }, 400);
-    }
-    if (bytes.byteLength > MAX_BYTES) {
-      return json({
-        ok: false,
-        error: `File is too large. Maximum 10MB; received ${(bytes.byteLength / 1048576).toFixed(1)}MB.`,
-      }, 400);
-    }
-
-    const sniffed = sniffType(bytes.subarray(0, 8));
-    if (!sniffed) {
-      return json({
-        ok: false,
-        error: "That file is not a readable PDF, JPG, or PNG.",
-      }, 400);
-    }
-    if (sniffed !== declared) {
-      return json({
-        ok: false,
-        error: `File contents are ${sniffed}, but it was sent as ${declared}.`,
-      }, 400);
-    }
-
-    // ── Store ───────────────────────────────────────────────────
-    const ext = ALLOWED_TYPES[sniffed];
-    const storagePath = `${applicationId}/${docType}.${ext}`;
-
-    const { error: uploadErr } = await supabase.storage
-      .from(BUCKET)
-      .upload(storagePath, buffer, {
-        contentType: sniffed,
-        upsert: true, // re-uploading a slot replaces it cleanly
-      });
-
-    if (uploadErr) {
-      console.error("[partner-upload] storage upload failed:", uploadErr.message);
-      return json({ ok: false, error: "Could not store that file." }, 500);
-    }
-
-    // ── Mark the slot ───────────────────────────────────────────
-    // The whole set is read first, for two reasons. The prior path: if the
-    // partner replaces a PDF with a PNG the extension changes, and the old
-    // object would otherwise linger in the bucket unreferenced. And prior
-    // completeness: the "all six are in" email fires on the transition into
-    // complete, not on every save once already complete.
-    const { data: priorRows } = await supabase
+    const { data: slotRow, error: slotErr } = await supabase
       .from("partner_documents")
-      .select("doc_type, file_path, status")
-      .eq("application_id", applicationId);
-
-    const prior = (priorRows ?? []) as { doc_type: string; file_path: string | null; status: string | null }[];
-    const priorPath = prior.find((r) => r.doc_type === docType)?.file_path ?? null;
-
-    const wasAlreadyComplete = DOC_TYPES.every((t) =>
-      prior.find((r) => r.doc_type === t)?.status === "uploaded"
-    );
-
-    const { error: updErr } = await supabase
-      .from("partner_documents")
-      .update({
-        file_path: storagePath,
-        expiration_date: expirationDate,
-        doc_number: required.number ? docNumber : null,
-        uploaded_at: new Date().toISOString(),
-        status: "uploaded",
-        review_status: "waiting_for_acceptance",
-      })
+      .select("id, file_path, status")
       .eq("application_id", applicationId)
-      .eq("doc_type", docType);
-
-    if (updErr) {
-      // The object is deliberately left in place. If this was a first upload
-      // the orphan is invisible — the slot still reads as empty and the next
-      // attempt overwrites it. If it was a replacement, deleting would destroy
-      // a file the row may still point at.
-      console.error("[partner-upload] slot update failed:", updErr.message);
-      return json({ ok: false, error: "Stored the file but could not record it." }, 500);
+      .eq("doc_type", docType)
+      .maybeSingle();
+    if (slotErr || !slotRow) {
+      console.error("[partner-upload] slot lookup failed:", slotErr?.message ?? "no row");
+      return json({ ok: false, error: "Could not find that document slot." }, 500);
     }
 
-    if (priorPath && priorPath !== storagePath) {
-      const { error: rmErr } = await supabase.storage.from(BUCKET).remove([priorPath]);
-      if (rmErr) {
-        console.warn(`[partner-upload] could not remove superseded ${priorPath}:`, rmErr.message);
+    const required = requiredFields("partner", docType);
+    const target: Target = {
+      flow: "partner",
+      documentId: slotRow.id as string,
+      bucket: BUCKET,
+      draftPath: (ext: string) => `${applicationId}/drafts/${docType}-${Date.now()}.${ext}`,
+      required,
+      nameOnFile: (app.business_name as string | null) ?? null,
+      documentLabel: PARTNER_DOC_LABELS[docType] ?? docType,
+    };
+
+    const respondWithState = async () => {
+      const state = await partnerDocsState(supabase, applicationId);
+      if (!state.ok) return json({ ok: false, error: "Saved, but could not read the checklist back." }, 500);
+      return json({ ok: true, docs: state.docs });
+    };
+
+    // ── 3a. Check My Document ───────────────────────────────────
+    if (action === "check") {
+      const typed = validateTyped(
+        required,
+        String(form.get("expiration_date") ?? ""),
+        String(form.get("doc_number") ?? ""),
+      );
+      if (typed.error) return json({ ok: false, error: typed.error }, 400);
+
+      let incoming: IncomingFile | null = null;
+      const file = form.get("file");
+      if (file instanceof File && file.size > 0) {
+        // Measured from the bytes actually received, not from file.size.
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        if (bytes.byteLength > MAX_BYTES) {
+          return json({
+            ok: false,
+            error: `File is too large. Maximum 10MB; received ${(bytes.byteLength / 1048576).toFixed(1)}MB.`,
+          }, 400);
+        }
+        // The extension comes from the sniff, not from the filename or header.
+        const sniffed = sniffType(bytes.subarray(0, 8));
+        if (!sniffed) {
+          return json({ ok: false, error: "That file is not a readable PDF, JPG, or PNG." }, 400);
+        }
+        incoming = { bytes, mimeType: sniffed.mime, ext: sniffed.ext, name: file.name };
       }
+
+      const result = await runCheck(
+        supabase,
+        target,
+        { expiration: typed.expiration, number: typed.number },
+        incoming,
+      );
+      if (!result.ok) return json({ ok: false, error: result.error }, result.status);
+      return await respondWithState();
     }
 
-    // ── Full state back, same shape as partner-token ────────────
-    type DocRow = { doc_type: string; file_path: string | null; expiration_date: string | null; doc_number: string | null; review_status: string | null };
+    // ── 3b. Send to EvidLY ──────────────────────────────────────
+    if (action === "send") {
+      const open = await loadOpenCheck(supabase, "partner", target.documentId);
+      const refusal = verifyForSend(target, open);
+      if (refusal || !open) return json({ ok: false, error: refusal }, 409);
 
-    const { data: docs, error: docsErr } = await supabase
-      .from("partner_documents")
-      .select("doc_type, file_path, expiration_date, doc_number, review_status")
-      .eq("application_id", applicationId);
+      // Completeness before this send, so the "all six" email fires only on
+      // the transition into complete.
+      const { data: priorRows } = await supabase
+        .from("partner_documents")
+        .select("doc_type, status")
+        .eq("application_id", applicationId);
+      const prior = (priorRows ?? []) as { doc_type: string; status: string | null }[];
+      const wasAlreadyComplete = PARTNER_DOC_TYPES.every((t) =>
+        prior.find((r) => r.doc_type === t)?.status === "uploaded"
+      );
 
-    if (docsErr) {
-      console.error("[partner-upload] document re-read failed:", docsErr.message);
-      return json({ ok: false, error: "Saved, but could not read the checklist back." }, 500);
-    }
+      const { error: updErr } = await supabase
+        .from("partner_documents")
+        .update({
+          file_path: open.file_path,
+          expiration_date: open.typed_expiration_date,
+          doc_number: required.number ? open.typed_doc_number : null,
+          uploaded_at: new Date().toISOString(),
+          status: "uploaded",
+          review_status: "waiting_for_acceptance",
+          // A new document starts its own reminder cycle.
+          last_expiry_notified_at: null,
+        })
+        .eq("id", target.documentId);
 
-    const byType = new Map<string, DocRow>(
-      ((docs ?? []) as DocRow[]).map((d) => [d.doc_type, d]),
-    );
-
-    const state = DOC_TYPES.map((doc_type) => {
-      const row = byType.get(doc_type);
-      return {
-        doc_type,
-        uploaded: Boolean(row?.file_path),
-        expiration_date: row?.expiration_date ?? null,
-        doc_number: row?.doc_number ?? null,
-        review_status: row?.review_status ?? null,
-        needs_number: requiredFields("partner", doc_type).number,
-        number_label: requiredFields("partner", doc_type).numberLabel,
-      };
-    });
-
-    // ── All six in? Tell Arthur. Never fails the upload. ────────
-    const uploadedCount = state.filter((d) => d.uploaded).length;
-
-    // Only on the transition into complete. Replacing a document on an
-    // already-complete set is not news.
-    if (uploadedCount === DOC_TYPES.length && !wasAlreadyComplete) {
-      const businessName = String(app.business_name ?? "A partner");
-      const rows = state.map((d) =>
-        `<tr><td style="padding: 4px 16px 4px 0; color: #64748b;">${esc(d.doc_type.replace(/_/g, " "))}</td>` +
-        `<td style="padding: 4px 0;">expires ${esc(d.expiration_date ?? "—")}</td></tr>`
-      ).join("");
-
-      const sent = await sendEmail({
-        to: ADMIN_EMAIL,
-        subject: `Partner documents complete — ${businessName}`,
-        html: buildEmailHtml({
-          recipientName: "Arthur",
-          bodyHtml: `
-            <p><strong>${esc(businessName)}</strong> has uploaded all six documents.</p>
-            <table style="border-collapse: collapse; font-size: 14px; margin: 16px 0;">${rows}</table>
-            <p style="font-size: 13px; color: #64748b;">Ready for review.</p>`,
-        }),
-      });
-
-      if (!sent) {
-        console.error(
-          `[partner-upload] application ${applicationId} complete, completion email failed`,
-        );
+      if (updErr) {
+        console.error("[partner-upload] send failed:", updErr.message);
+        return json({ ok: false, error: "Could not send that document. Try again." }, 500);
       }
+      await markSent(supabase, open.id);
+
+      // The superseded file is no longer referenced by anything.
+      const priorPath = slotRow.file_path as string | null;
+      if (priorPath && priorPath !== open.file_path) {
+        const { error: rmErr } = await supabase.storage.from(BUCKET).remove([priorPath]);
+        if (rmErr) console.warn(`[partner-upload] could not remove superseded ${priorPath}:`, rmErr.message);
+      }
+
+      const state = await partnerDocsState(supabase, applicationId);
+      if (!state.ok) return json({ ok: false, error: "Sent, but could not read the checklist back." }, 500);
+      const docs = state.docs as { doc_type: string; uploaded: boolean; expiration_date: string | null }[];
+
+      // ── All six sent? Tell Arthur. Never fails the send. ──────
+      if (docs.every((d) => d.uploaded) && !wasAlreadyComplete) {
+        const businessName = String(app.business_name ?? "A partner");
+        const rows = docs.map((d) =>
+          `<tr><td style="padding: 4px 16px 4px 0; color: #64748b;">${esc(PARTNER_DOC_LABELS[d.doc_type] ?? d.doc_type)}</td>` +
+          `<td style="padding: 4px 0;">expires ${esc(d.expiration_date ?? "—")}</td></tr>`
+        ).join("");
+
+        const sent = await sendEmail({
+          to: ADMIN_EMAIL,
+          subject: `Partner Documents Complete: ${businessName}`,
+          html: buildEmailHtml({
+            recipientName: "Arthur",
+            bodyHtml: `
+              <p><strong>${esc(businessName)}</strong> has sent all six documents. Every
+              detail was checked against the document before it was sent.</p>
+              <table style="border-collapse: collapse; font-size: 14px; margin: 16px 0;">${rows}</table>
+              <p style="font-size: 13px; color: #64748b;">Waiting for your acceptance in the Partners tab.</p>`,
+          }),
+        });
+        if (!sent) console.error(`[partner-upload] application ${applicationId} complete, completion email failed`);
+      }
+
+      /* Tell HoodOps, if this application belongs to a tenant. Not awaited:
+       * the document is filed and the answer is ready; the helper swallows
+       * its own failures. */
+      const notice = notifyHoodopsUpload(
+        supabase,
+        { id: applicationId, hoodops_tenant_id: (app as { hoodops_tenant_id?: string | null }).hoodops_tenant_id },
+        [docType],
+      );
+      // deno-lint-ignore no-explicit-any
+      const runtime = (globalThis as any).EdgeRuntime;
+      if (runtime?.waitUntil) runtime.waitUntil(notice);
+
+      return json({ ok: true, docs });
     }
 
-    /* ── Tell HoodOps, if this application belongs to a tenant ────
-     *
-     * Deliberately NOT awaited: the document is already stored, the row is
-     * already written and `state` is already what the browser will get, so
-     * nothing here can change the answer — it can only delay it. The helper
-     * swallows its own failures, so the floating promise cannot reject.
-     *
-     * waitUntil keeps the runtime alive for it where the platform offers it,
-     * and where it does not the promise simply runs to whatever extent it
-     * gets. Either way the response goes out now. */
-    const notice = notifyHoodopsUpload(
-      supabase,
-      { id: applicationId, hoodops_tenant_id: (app as { hoodops_tenant_id?: string | null }).hoodops_tenant_id },
-      [docType],
-    );
-    // deno-lint-ignore no-explicit-any
-    const runtime = (globalThis as any).EdgeRuntime;
-    if (runtime?.waitUntil) runtime.waitUntil(notice);
-
-    return json({ ok: true, docs: state });
+    return json({ ok: false, error: "Check My Document first." }, 400);
   } catch (err) {
     console.error("[partner-upload] unhandled:", err instanceof Error ? err.message : err);
-    return json({ ok: false, error: "Something went wrong storing that document." }, 500);
+    return json({ ok: false, error: "Something went wrong with that document." }, 500);
   }
 });
