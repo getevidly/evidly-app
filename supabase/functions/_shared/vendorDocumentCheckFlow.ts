@@ -21,6 +21,7 @@ import {
   type ReadValues,
 } from "./documentCheck.ts";
 import type { Flow, RequiredFields } from "./vendorDocumentRules.ts";
+import { buildEmailHtml, sendEmail } from "./email.ts";
 
 // deno-lint-ignore no-explicit-any
 type Db = any;
@@ -29,7 +30,8 @@ export const CHECK_FIELDS =
   "id, flow, compliance_document_id, partner_document_id, status, file_bucket, file_path, " +
   "file_mime_type, file_size_bytes, file_sha256, original_filename, typed_expiration_date, " +
   "typed_doc_number, read_sha256, read_expiration_date, read_doc_number, read_insured_name, " +
-  "read_legible, read_error, read_at, check_rows, check_passed, checked_at, sent_at";
+  "read_legible, read_error, read_at, check_rows, check_passed, checked_at, sent_at, " +
+  "fix_email_queued_at, fix_email_sent_at";
 
 export interface CheckRecord {
   id: string;
@@ -56,6 +58,8 @@ export interface CheckRecord {
   check_passed: boolean;
   checked_at: string | null;
   sent_at: string | null;
+  fix_email_queued_at?: string | null;
+  fix_email_sent_at?: string | null;
 }
 
 export interface Target {
@@ -299,4 +303,70 @@ export function sniffType(bytes: Uint8Array): { mime: string; ext: string } | nu
     return { mime: "image/png", ext: "png" };
   }
   return null;
+}
+
+const escHtml = (v: string) =>
+  v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/**
+ * Part 3: the sender left while the check said needs_fix. Queues one
+ * "Fix One Detail on Your {Document Type} for {Recipient}" email with a
+ * "Fix My Document" link back to the same screen. One email per needs_fix
+ * result; a later failing check may queue one more. The recipient is
+ * never told: the document was never sent.
+ */
+export async function queueFixEmail(
+  db: Db,
+  check: CheckRecord | null,
+  msg: { to: string | null; documentLabel: string; recipientName: string; senderName: string | null; fixUrl: string },
+): Promise<{ queued: boolean; sent: boolean; reason?: string }> {
+  if (!check || check.status !== "needs_fix") return { queued: false, sent: false, reason: "not_needs_fix" };
+  if (!msg.to) return { queued: false, sent: false, reason: "no_email" };
+  if (
+    check.fix_email_queued_at && check.checked_at &&
+    new Date(check.fix_email_queued_at).getTime() >= new Date(check.checked_at).getTime()
+  ) {
+    return { queued: false, sent: false, reason: "already_queued" };
+  }
+
+  const queuedAt = new Date().toISOString();
+  const { error: qErr } = await db
+    .from("vendor_document_checks")
+    .update({ fix_email_queued_at: queuedAt, fix_email_sent_at: null, updated_at: queuedAt })
+    .eq("id", check.id)
+    .eq("status", "needs_fix");
+  if (qErr) {
+    console.error("[documentCheck] fix email queue failed:", qErr.message);
+    return { queued: false, sent: false, reason: "queue_failed" };
+  }
+
+  const bad = (check.check_rows ?? []).filter((r) => r.result !== "match");
+  const rows = bad.map((r) =>
+    `<tr><td style="padding: 6px 16px 6px 0; font-weight: 600;">${escHtml(r.detail)}</td>` +
+    `<td style="padding: 6px 16px 6px 0;">You typed: ${escHtml(r.you_typed ?? "nothing")}</td>` +
+    `<td style="padding: 6px 0;">On the document: ${escHtml(r.on_document ?? "not found")}</td></tr>`
+  ).join("");
+  const subject = `Fix One Detail on Your ${msg.documentLabel} for ${msg.recipientName}`;
+
+  const sent = await sendEmail({
+    to: msg.to,
+    subject,
+    html: buildEmailHtml({
+      recipientName: msg.senderName ?? "there",
+      bodyHtml: `
+        <p>Your ${escHtml(msg.documentLabel)} for ${escHtml(msg.recipientName)} has not been sent yet:
+        ${bad.length === 1 ? "one detail does" : "some details do"} not match the document.</p>
+        <table style="border-collapse: collapse; font-size: 14px; margin: 16px 0;">${rows}</table>
+        <p>Open the same page, fix it, and press Send. ${escHtml(msg.recipientName)} sees nothing until you do.</p>`,
+      ctaText: "Fix My Document",
+      ctaUrl: msg.fixUrl,
+    }),
+  });
+
+  if (sent) {
+    await db.from("vendor_document_checks").update({ fix_email_sent_at: new Date().toISOString() }).eq("id", check.id);
+  } else {
+    console.warn(`[documentCheck] fix email queued for check ${check.id} but not delivered`);
+  }
+  return { queued: true, sent: Boolean(sent) };
 }

@@ -7,6 +7,7 @@ import {
   uploadViaSecureToken,
   checkViaSecureToken,
   sendViaSecureToken,
+  leaveSecureUpload,
 } from '../lib/api';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
@@ -124,6 +125,15 @@ export function VendorSecureUpload() {
     const t = setTimeout(() => { runCheck(); }, 900);
     return () => clearTimeout(t);
   }, [checked, dirty, check, checking, fieldsReady, hasFile, runCheck]);
+
+  // Leaving while the check says Needs a Fix queues one "Fix One Detail"
+  // email with a link back to this page. Nothing reaches the recipient.
+  useEffect(() => {
+    if (!checked || !token || check?.status !== 'needs_fix') return;
+    const onLeave = () => { leaveSecureUpload(token); };
+    window.addEventListener('pagehide', onLeave);
+    return () => window.removeEventListener('pagehide', onLeave);
+  }, [checked, token, check?.status]);
 
   const markChanged = () => { setDirty(true); setOpenedForFix(false); };
 

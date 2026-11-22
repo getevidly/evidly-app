@@ -9,6 +9,7 @@ import {
   loadOpenCheck,
   markSent,
   publicCheckState,
+  queueFixEmail,
   runCheck,
   sniffType,
   type Target,
@@ -193,6 +194,21 @@ Deno.serve(async (req: Request) => {
           );
           if (!result.ok) return jsonResponse({ error: result.error }, result.status);
           return jsonResponse({ success: true, check: publicCheckState(result.check) });
+        }
+
+        // ── The sender left the page (sendBeacon on pagehide) ──────
+        // Only a check that says needs_fix queues the fix email.
+        if (action === "leave") {
+          const open = await loadOpenCheck(supabase, "kitchen", request.document_id);
+          const appUrl = (Deno.env.get("APP_URL") || "https://app.getevidly.com").replace(/\/+$/, "");
+          const outcome = await queueFixEmail(supabase, open, {
+            to: request.recipient_email,
+            documentLabel,
+            recipientName: org?.name || "your client",
+            senderName: vendorName === "Vendor" ? null : vendorName,
+            fixUrl: `${appUrl}/vendor/upload/${token}`,
+          });
+          return jsonResponse({ success: true, ...outcome });
         }
 
         // ── Send to {Recipient}: only a check that still matches ──

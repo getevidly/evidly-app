@@ -161,6 +161,15 @@ export async function checkViaSecureToken(
   return res.json();
 }
 
+/** The sender is leaving the page; queues the fix email only in Needs a Fix. */
+export function leaveSecureUpload(token: string) {
+  const formData = new FormData();
+  formData.append('action', 'leave');
+  const url = `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`;
+  if (navigator.sendBeacon?.(url, formData)) return;
+  fetch(url, { method: 'POST', body: formData, keepalive: true }).catch(() => {});
+}
+
 /** Send to {Recipient}: files the checked draft; refused unless it matches. */
 export async function sendViaSecureToken(token: string, notes?: string) {
   const formData = new FormData();

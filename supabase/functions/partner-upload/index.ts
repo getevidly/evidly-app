@@ -8,6 +8,7 @@ import {
   type IncomingFile,
   loadOpenCheck,
   markSent,
+  queueFixEmail,
   runCheck,
   sniffType,
   type Target,
@@ -27,6 +28,8 @@ import { PARTNER_DOC_LABELS, PARTNER_DOC_TYPES, partnerDocsState } from "../_sha
  *   action=check  expiration_date, doc_number (not for W-9), file (optional
  *                 once a draft file is stored). Stores the draft privately,
  *                 reads the document, compares, returns the rows.
+ *   action=leave  sent by the page on pagehide. If this slot's check says
+ *                 needs_fix, queues the "Fix One Detail" email (Part 3).
  *   action=send   nothing else. Files the checked draft on the partner's
  *                 record as Waiting for Acceptance, only if every detail
  *                 still matches.
@@ -86,7 +89,7 @@ Deno.serve(async (req) => {
 
     const { data: app, error: appErr } = await supabase
       .from("partner_applications")
-      .select("id, business_name, token_expires_at, hoodops_tenant_id")
+      .select("id, business_name, email, token_expires_at, hoodops_tenant_id")
       .eq("upload_token", token)
       .maybeSingle();
 
@@ -173,6 +176,20 @@ Deno.serve(async (req) => {
       );
       if (!result.ok) return json({ ok: false, error: result.error }, result.status);
       return await respondWithState();
+    }
+
+    // ── 3c. The partner left with this slot in Needs a Fix ─────
+    if (action === "leave") {
+      const open = await loadOpenCheck(supabase, "partner", target.documentId);
+      const base = (Deno.env.get("PARTNER_UPLOAD_BASE") || "https://getevidly.com/partners/upload").replace(/\/+$/, "");
+      const outcome = await queueFixEmail(supabase, open, {
+        to: (app.email as string | null) ?? null,
+        documentLabel: target.documentLabel,
+        recipientName: "EvidLY",
+        senderName: (app.business_name as string | null) ?? null,
+        fixUrl: `${base}?token=${encodeURIComponent(token)}&fix=${docType}`,
+      });
+      return json({ ok: true, ...outcome });
     }
 
     // ── 3b. Send to EvidLY ──────────────────────────────────────
