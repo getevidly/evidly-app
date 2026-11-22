@@ -47,7 +47,35 @@ const EVENT_LABELS: Record<string, string> = {
   noted: 'Note added',
 };
 
+/** The sender's check as it travelled with the document (inbound vendor documents). */
+interface CheckedRow {
+  key: string;
+  detail: string;
+  you_typed: string | null;
+  on_document: string | null;
+  result: 'match' | 'mismatch' | 'not_found';
+}
+
+interface CheckedInfo {
+  review_status: string | null;
+  doc_number: string | null;
+  expiry_date: string | null;
+  check_rows: CheckedRow[] | null;
+  tamper_detection_at: string | null;
+}
+
+const REVIEW_STATUS_TEXT: Record<string, string> = {
+  waiting_for_acceptance: 'Waiting for Acceptance',
+  accepted: 'Accepted',
+  expired: 'Expired',
+};
+
 export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailModalProps) {
+  const [checkedInfo, setCheckedInfo] = useState<CheckedInfo | null>(null);
+  const [tamperIntact, setTamperIntact] = useState<boolean | null>(null);
+  const [questionMode, setQuestionMode] = useState(false);
+  const [questionText, setQuestionText] = useState('');
+  const [asking, setAsking] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [rejectMode, setRejectMode] = useState(false);
@@ -87,6 +115,52 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
       .catch(() => setPreviewError(true))
       .finally(() => setPreviewLoading(false));
   }, [doc.id, doc.storage_path]);
+
+  // Inbound vendor documents: the checked details that came with it.
+  useEffect(() => {
+    setCheckedInfo(null);
+    setTamperIntact(null);
+    supabase
+      .from('compliance_documents')
+      .select('review_status, doc_number, expiry_date, check_rows, tamper_detection_at')
+      .eq('id', doc.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        const info = (data as CheckedInfo | null) ?? null;
+        setCheckedInfo(info?.review_status ? info : null);
+        if (info?.tamper_detection_at) {
+          supabase.functions
+            .invoke('document-review-action', { body: { documentId: doc.id, action: 'verify' } })
+            .then(({ data: v }) => {
+              const r = typeof v === 'string' ? JSON.parse(v) : v;
+              setTamperIntact(typeof r?.intact === 'boolean' ? r.intact : null);
+            });
+        }
+      });
+  }, [doc.id]);
+
+  const handleAskVendor = async () => {
+    if (!questionText.trim()) return;
+    setAsking(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('document-review-action', {
+        body: { documentId: doc.id, action: 'question', question: questionText.trim() },
+      });
+      if (error) throw error;
+      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(result?.emailed ? 'Question sent to the vendor' : 'Question saved; the email did not go out');
+        setQuestionMode(false);
+        setQuestionText('');
+      }
+    } catch {
+      toast.error('Failed to send the question');
+    } finally {
+      setAsking(false);
+    }
+  };
 
   // Fetch activity timeline
   useEffect(() => {
@@ -504,6 +578,54 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
           </div>
         )}
 
+        {/* Checked details: the sender's check, as it came with the document */}
+        {checkedInfo && (
+          <div data-testid="checked-details" className="border border-[#E2DDD4] rounded-lg p-3">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-[12px] font-bold text-[#1E2D4D]">Checked Details</span>
+              <div className="flex items-center gap-2">
+                {checkedInfo.check_rows && checkedInfo.check_rows.length > 0 &&
+                  checkedInfo.check_rows.every((r) => r.result === 'match') && (
+                  <span data-testid="details-match-pill" className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-green-100 text-green-800">
+                    Details Match
+                  </span>
+                )}
+                <span data-testid="review-status" className="px-2 py-0.5 rounded-full text-[11px] font-semibold border border-[#E2DDD4] text-[#1E2D4D]">
+                  {REVIEW_STATUS_TEXT[checkedInfo.review_status ?? ''] ?? checkedInfo.review_status}
+                </span>
+              </div>
+            </div>
+            {checkedInfo.check_rows && checkedInfo.check_rows.length > 0 && (
+              <table className="w-full text-[12px]">
+                <thead>
+                  <tr className="text-left text-[#8A93A6]">
+                    <th className="py-1 pr-2 font-medium">Detail</th>
+                    <th className="py-1 pr-2 font-medium">Vendor Typed</th>
+                    <th className="py-1 font-medium">On the Document</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {checkedInfo.check_rows.map((r) => (
+                    <tr key={r.key} className="border-t border-[#E2DDD4]">
+                      <td className="py-1 pr-2 font-semibold text-[#1E2D4D]">{r.detail}</td>
+                      <td className="py-1 pr-2 text-[#1E2D4D]">{r.you_typed || '\u2014'}</td>
+                      <td className="py-1 text-[#1E2D4D]">{r.on_document || '\u2014'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {checkedInfo.tamper_detection_at && (
+              <p className="mt-2 text-[11px] text-[#1E2D4D]">
+                <ShieldCheck size={12} className="inline mr-1" />
+                Tamper Detection On
+                {tamperIntact === true && ' \u00b7 file unchanged since it was checked'}
+                {tamperIntact === false && <span className="text-red-700"> &middot; the file has changed since it was checked</span>}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Inline document preview */}
         {doc.storage_path && (
           previewLoading ? (
@@ -580,7 +702,63 @@ export function DocumentDetailModal({ doc, onClose, onRefresh }: DocumentDetailM
 
         {/* Actions row */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-[#E2DDD4]">
-          {doc.status === 'pending_review' && (
+          {doc.status === 'pending_review' && checkedInfo?.review_status === 'waiting_for_acceptance' && (
+            <>
+              {!questionMode && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleAccept}
+                    disabled={accepting || asking}
+                    data-testid="accept-document"
+                    className="px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                    style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+                  >
+                    {accepting ? 'Accepting\u2026' : 'Accept Document'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQuestionMode(true)}
+                    disabled={accepting || asking}
+                    className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Ask Vendor a Question
+                  </button>
+                </>
+              )}
+              {questionMode && (
+                <div className="w-full space-y-2">
+                  <textarea
+                    value={questionText}
+                    onChange={(e) => setQuestionText(e.target.value)}
+                    placeholder="What would you like to ask the vendor?"
+                    rows={3}
+                    className="w-full px-3 py-2 border border-[#E2DDD4] rounded-md text-[12px] text-[#1E2D4D] resize-y focus:outline-none focus:ring-1 focus:ring-[#1E2D4D]/30"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => { setQuestionMode(false); setQuestionText(''); }}
+                      disabled={asking}
+                      className="px-4 py-2 bg-transparent text-[#1E2D4D] text-[12px] font-semibold rounded-md border border-[#E2DDD4] hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAskVendor}
+                      disabled={asking || !questionText.trim()}
+                      className="px-4 py-2 text-[12px] font-bold rounded-md hover:opacity-90 disabled:opacity-50"
+                      style={{ backgroundColor: '#1E2D4D', color: '#FAF7F0' }}
+                    >
+                      {asking ? 'Sending\u2026' : 'Send Question'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          {doc.status === 'pending_review' && checkedInfo?.review_status !== 'waiting_for_acceptance' && (
             <>
               {!rejectMode && (
                 <>

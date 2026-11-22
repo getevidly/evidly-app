@@ -218,6 +218,11 @@ Deno.serve(async (req) => {
           uploaded_at: new Date().toISOString(),
           status: "uploaded",
           review_status: "waiting_for_acceptance",
+          check_rows: open.check_rows,
+          content_sha256: open.file_sha256,
+          tamper_detection_at: null,
+          accepted_at: null,
+          accepted_by: null,
           // A new document starts its own reminder cycle.
           last_expiry_notified_at: null,
         })

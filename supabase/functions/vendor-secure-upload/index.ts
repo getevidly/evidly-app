@@ -157,6 +157,8 @@ Deno.serve(async (req: Request) => {
       let typedExpiration: string | null = null;
       let typedNumber: string | null = null;
       let sendingCheckId: string | null = null;
+      let sentCheckRows: unknown = null;
+      let sentSha: string | null = null;
 
       if (checked) {
         const action = String(formData.get("action") ?? "");
@@ -224,6 +226,8 @@ Deno.serve(async (req: Request) => {
           typedExpiration = open.typed_expiration_date;
           typedNumber = open.typed_doc_number;
           sendingCheckId = open.id;
+          sentCheckRows = open.check_rows;
+          sentSha = open.file_sha256;
         } else {
           return jsonResponse({ error: "Check My Document first." }, 400);
         }
@@ -297,6 +301,9 @@ Deno.serve(async (req: Request) => {
               expiry_date: typedExpiration,
               doc_number: typedNumber,
               review_status: "waiting_for_acceptance",
+              check_rows: sentCheckRows,
+              content_sha256: sentSha,
+              tamper_detection_at: null,
             }
             : {}),
         })
