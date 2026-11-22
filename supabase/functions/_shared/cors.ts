@@ -16,6 +16,16 @@ if (Deno.env.get('ENVIRONMENT') !== 'production') {
   ALLOWED_ORIGINS.push('http://localhost:5173', 'http://localhost:3000');
 }
 
+// Exact extra origins, comma separated, for a non-production project only
+// (e.g. evidly-testing serving a Vercel preview branch). Unset in
+// production, so production's allowlist is exactly the list above.
+for (const o of (Deno.env.get('CORS_EXTRA_ORIGINS') ?? '').split(',')) {
+  const origin = o.trim().replace(/\/+$/, '');
+  if (/^https:\/\/[a-z0-9.-]+$/i.test(origin) && !ALLOWED_ORIGINS.includes(origin)) {
+    ALLOWED_ORIGINS.push(origin);
+  }
+}
+
 /**
  * Returns CORS headers restricted to getevidly.com domains.
  * Falls back to the primary domain if the request origin is not allowed.
