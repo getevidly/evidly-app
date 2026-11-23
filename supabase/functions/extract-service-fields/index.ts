@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { logger } from "../_shared/logger.ts";
+import { CHECK_MODEL } from "../_shared/documentCheck.ts";
 
 /**
  * extract-service-fields — VENDOR-SERVICE-SEAL-01 (Unit 1)
@@ -184,10 +185,15 @@ Respond in this EXACT JSON format and nothing else:
           "Content-Type": "application/json",
           "x-api-key": anthropicKey,
           "anthropic-version": "2023-06-01",
+          // Same model and server-side fallback as the document reader
+          // (_shared/documentCheck.ts), so one declined read does not leave
+          // the record without suggestions.
+          "anthropic-beta": "server-side-fallback-2026-07-01",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-5-20250929",
-          max_tokens: 1024,
+          model: CHECK_MODEL,
+          max_tokens: 2000,
+          fallbacks: "default",
           messages: [{ role: "user", content }],
         }),
       });
@@ -198,6 +204,9 @@ Respond in this EXACT JSON format and nothing else:
       }
 
       const aiData = await aiResponse.json();
+      if (aiData.stop_reason === "refusal") {
+        throw new Error("Reader declined the document");
+      }
       const textBlock = aiData.content?.find((b: any) => b.type === "text");
       const rawText = textBlock?.text || "";
 
