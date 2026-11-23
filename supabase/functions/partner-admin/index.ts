@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { emailVendorQuestion, fileIntact } from "../_shared/vendorDocumentAcceptance.ts";
 
 /**
  * partner-admin — the admin read/write behind the Marketing console's
@@ -22,8 +23,23 @@ import { getCorsHeaders } from "../_shared/cors.ts";
  * Actions:
  *   list          — every application, newest first, each with its six
  *                   documents and a docs_uploaded_count.
- *   set_published — flip is_published on one application. The only write.
+ *   set_published — flip is_published on one application.
+ *
+ * Inbound vendor documents (Arthur's rule, Part 4): Arthur is the
+ * recipient of partner documents. He previews and accepts; he never fixes.
+ *   preview     — five-minute signed URL for one sent document.
+ *   accept      — re-hash the stored file; only if it is still the file the
+ *                 partner's check passed on, mark it Accepted and turn on
+ *                 tamper detection.
+ *   question    — "Ask Vendor a Question": emails the partner.
+ *   verify      — tamper detection: is the stored file unchanged?
+ *   get_reminder_settings / set_reminder_settings — when expiration
+ *                 reminders go (days before expiry; default 30 then 7).
+ * Drafts (vendor_document_checks) are never read here.
  */
+
+const BUCKET = "partner-documents";
+const SIGNED_URL_TTL_SECONDS = 300;
 
 // Ordered so every application reports its documents in the same
 // sequence, regardless of row order coming back from the table.
@@ -46,6 +62,12 @@ interface DocRow {
   status: string;
   expiration_date: string | null;
   uploaded_at: string | null;
+  id: string;
+  doc_number: string | null;
+  review_status: string | null;
+  check_rows: unknown;
+  tamper_detection_at: string | null;
+  accepted_at: string | null;
 }
 
 Deno.serve(async (req: Request) => {
@@ -115,7 +137,7 @@ Deno.serve(async (req: Request) => {
 
       const { data: docs, error: docsErr } = await supabase
         .from("partner_documents")
-        .select("application_id, doc_type, status, expiration_date, uploaded_at")
+        .select("id, application_id, doc_type, status, expiration_date, uploaded_at, doc_number, review_status, check_rows, tamper_detection_at, accepted_at")
         .in("application_id", rows.map((r) => r.id as string));
 
       if (docsErr) {
@@ -141,6 +163,12 @@ Deno.serve(async (req: Request) => {
             uploaded: d?.status === "uploaded",
             expiration_date: d?.expiration_date ?? null,
             uploaded_at: d?.uploaded_at ?? null,
+            id: d?.id ?? null,
+            doc_number: d?.doc_number ?? null,
+            review_status: d?.review_status ?? null,
+            check_rows: d?.check_rows ?? null,
+            tamper_detection_on: Boolean(d?.tamper_detection_at),
+            accepted_at: d?.accepted_at ?? null,
           };
         });
         return {
@@ -182,6 +210,95 @@ Deno.serve(async (req: Request) => {
       }
 
       return json({ ok: true, application: updated });
+    }
+
+    // ── reminder timing (Part 5): days before expiry, e.g. [30, 7] ──
+    if (action === "get_reminder_settings" || action === "set_reminder_settings") {
+      if (action === "set_reminder_settings") {
+        const raw = Array.isArray(body.reminder_days) ? body.reminder_days : [];
+        const days = [...new Set(raw.map((n) => Math.round(Number(n))))]
+          .filter((n) => Number.isFinite(n) && n > 0 && n < 366)
+          .sort((a, b) => b - a);
+        if (days.length < 1 || days.length > 6) {
+          return json({ ok: false, error: "Enter one to six reminder days between 1 and 365." }, 400);
+        }
+        const { error: sErr } = await supabase
+          .from("vendor_document_reminder_settings")
+          .upsert({ id: 1, reminder_days: days, updated_at: new Date().toISOString(), updated_by: caller.email });
+        if (sErr) {
+          console.error("[partner-admin] reminder settings save failed:", sErr.message);
+          return json({ ok: false, error: "Could not save the reminder timing." }, 500);
+        }
+      }
+      const { data: setting } = await supabase
+        .from("vendor_document_reminder_settings").select("reminder_days, updated_at").eq("id", 1).maybeSingle();
+      return json({ ok: true, reminder_days: setting?.reminder_days ?? [30, 7], updated_at: setting?.updated_at ?? null });
+    }
+
+    // ── inbound vendor documents: preview / accept / question / verify ──
+    if (["preview", "accept", "question", "verify"].includes(action ?? "")) {
+      const documentId = body.document_id as string | undefined;
+      if (!documentId) return json({ ok: false, error: "document_id is required." }, 400);
+
+      const { data: pdoc, error: pErr } = await supabase
+        .from("partner_documents")
+        .select("id, application_id, doc_type, file_path, review_status, content_sha256, tamper_detection_at")
+        .eq("id", documentId)
+        .maybeSingle();
+      if (pErr || !pdoc) return json({ ok: false, error: "Document not found." }, 404);
+      if (!pdoc.file_path) return json({ ok: false, error: "Nothing has been sent for this document yet." }, 409);
+
+      if (action === "preview") {
+        const { data: signed, error: sErr } = await supabase.storage
+          .from(BUCKET).createSignedUrl(pdoc.file_path, SIGNED_URL_TTL_SECONDS);
+        if (sErr || !signed?.signedUrl) return json({ ok: false, error: "Could not open the document." }, 500);
+        return json({ ok: true, url: signed.signedUrl, expires_in: SIGNED_URL_TTL_SECONDS });
+      }
+
+      if (action === "verify") {
+        const intact = await fileIntact(supabase, BUCKET, pdoc.file_path, pdoc.content_sha256);
+        return json({ ok: true, intact, tamper_detection_on: Boolean(pdoc.tamper_detection_at) });
+      }
+
+      if (action === "accept") {
+        if (pdoc.review_status !== "waiting_for_acceptance") {
+          return json({ ok: false, error: "This document is not waiting for acceptance." }, 409);
+        }
+        const intact = await fileIntact(supabase, BUCKET, pdoc.file_path, pdoc.content_sha256);
+        if (intact !== true) {
+          return json({ ok: false, error: "This file is not the one that was checked. Ask the partner to send it again." }, 409);
+        }
+        const now = new Date().toISOString();
+        const { error: aErr } = await supabase
+          .from("partner_documents")
+          .update({ review_status: "accepted", accepted_at: now, accepted_by: caller.email, tamper_detection_at: now })
+          .eq("id", pdoc.id);
+        if (aErr) {
+          console.error("[partner-admin] accept failed:", aErr.message);
+          return json({ ok: false, error: "Could not accept the document." }, 500);
+        }
+        return json({ ok: true, review_status: "accepted", tamper_detection_on: true });
+      }
+
+      // question
+      const text = String(body.question ?? "").trim().slice(0, 2000);
+      if (!text) return json({ ok: false, error: "Type your question first." }, 400);
+      const { data: papp } = await supabase
+        .from("partner_applications").select("business_name, email").eq("id", pdoc.application_id).maybeSingle();
+      if (!papp?.email) return json({ ok: false, error: "This partner has no email on file." }, 400);
+      const LABELS: Record<string, string> = {
+        business_license: "Business License", professional_license: "Professional License", w9: "W-9",
+        liability_insurance: "Liability Insurance", workers_comp: "Workers' Comp", auto_insurance: "Auto Insurance",
+      };
+      const emailed = await emailVendorQuestion({
+        to: papp.email,
+        vendorName: papp.business_name || "there",
+        documentLabel: LABELS[pdoc.doc_type] ?? pdoc.doc_type,
+        askedBy: "EvidLY",
+        replyTo: caller.email ?? null,
+        question: text,
+      });
+      return json({ ok: true, emailed });
     }
 
     return json({ ok: false, error: "Unknown action." }, 400);

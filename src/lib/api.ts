@@ -124,9 +124,56 @@ export async function validateSecureToken(token: string) {
   return res.json();
 }
 
-export async function uploadViaSecureToken(token: string, file: File, notes?: string) {
+export async function uploadViaSecureToken(
+  token: string,
+  file: File,
+  notes?: string,
+  details?: { expirationDate?: string; docNumber?: string },
+) {
   const formData = new FormData();
   formData.append('file', file);
+  if (notes) formData.append('notes', notes);
+  if (details?.expirationDate) formData.append('expiration_date', details.expirationDate);
+  if (details?.docNumber) formData.append('doc_number', details.docNumber);
+
+  const res = await fetch(
+    `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`,
+    { method: 'POST', body: formData }
+  );
+  return res.json();
+}
+
+/** Check My Document: stores the draft privately, reads it, compares. */
+export async function checkViaSecureToken(
+  token: string,
+  details: { file?: File | null; expirationDate?: string; docNumber?: string },
+) {
+  const formData = new FormData();
+  formData.append('action', 'check');
+  if (details.file) formData.append('file', details.file);
+  if (details.expirationDate) formData.append('expiration_date', details.expirationDate);
+  if (details.docNumber) formData.append('doc_number', details.docNumber);
+
+  const res = await fetch(
+    `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`,
+    { method: 'POST', body: formData }
+  );
+  return res.json();
+}
+
+/** The sender is leaving the page; queues the fix email only in Needs a Fix. */
+export function leaveSecureUpload(token: string) {
+  const formData = new FormData();
+  formData.append('action', 'leave');
+  const url = `${SUPABASE_URL}/functions/v1/vendor-secure-upload?token=${token}`;
+  if (navigator.sendBeacon?.(url, formData)) return;
+  fetch(url, { method: 'POST', body: formData, keepalive: true }).catch(() => {});
+}
+
+/** Send to {Recipient}: files the checked draft; refused unless it matches. */
+export async function sendViaSecureToken(token: string, notes?: string) {
+  const formData = new FormData();
+  formData.append('action', 'send');
   if (notes) formData.append('notes', notes);
 
   const res = await fetch(

@@ -24,6 +24,29 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { verifyHoodopsRequest } from "../_shared/verifyHoodopsRequest.ts";
+import { fileIntact } from "../_shared/vendorDocumentAcceptance.ts";
+
+/* ── Verification feed (inbound vendor documents, Part 6; ruling 2:
+ * insurance and license verification for HoodOps companies is maintained
+ * in EvidLY). Added fields only; every existing field is unchanged.
+ *
+ * Per document:
+ *   verified        true only when the document was checked on the
+ *                   sender's screen (every detail matched), accepted by
+ *                   EvidLY, is not expired, and its file still hashes to
+ *                   what was checked (tamper detection)
+ *   number          the policy or license number (null for a W-9)
+ *   review_status   waiting_for_acceptance | accepted | expired | null
+ *   view_url        same five-minute link as url (only while not expired)
+ *
+ * Top level, verification.insurance (liability_insurance) and
+ * verification.license (business_license):
+ *   { doc_type, verified, expiration_date, number, view_url }
+ */
+const VERIFICATION_TYPES = {
+  insurance: "liability_insurance",
+  license: "business_license",
+} as const;
 
 /** Private bucket, created public=false at migration 20261218000000:244-246. */
 const BUCKET = "partner-documents";
@@ -89,6 +112,10 @@ interface DocRow {
   file_path: string | null;
   expiration_date: string | null;
   uploaded_at: string | null;
+  doc_number: string | null;
+  review_status: string | null;
+  content_sha256: string | null;
+  tamper_detection_at: string | null;
 }
 
 Deno.serve(async (req: Request) => {
@@ -135,7 +162,7 @@ Deno.serve(async (req: Request) => {
     // ── Its documents ────────────────────────────────────────────
     const { data: docs, error: docsErr } = await supabase
       .from("partner_documents")
-      .select("doc_type, file_path, expiration_date, uploaded_at")
+      .select("doc_type, file_path, expiration_date, uploaded_at, doc_number, review_status, content_sha256, tamper_detection_at")
       .eq("application_id", app.id) as {
         data: DocRow[] | null;
         error: { message?: string } | null;
@@ -157,7 +184,7 @@ Deno.serve(async (req: Request) => {
       return (ia < 0 ? DOC_TYPE_ORDER.length : ia) - (ib < 0 ? DOC_TYPE_ORDER.length : ib);
     });
 
-    const documents = [];
+    const documents: Record<string, unknown>[] = [];
     for (const d of ordered) {
       const status = statusFor(d.expiration_date, todayMs);
       const hasFile = !!d.file_path;
@@ -169,7 +196,17 @@ Deno.serve(async (req: Request) => {
         uploaded_at: d.uploaded_at,
         status,
         has_file: hasFile,
+        number: d.doc_number ?? null,
+        review_status: d.review_status ?? null,
+        verified: false,
       };
+
+      if (
+        hasFile && status !== "expired" && d.review_status === "accepted" &&
+        d.tamper_detection_at && d.content_sha256
+      ) {
+        entry.verified = (await fileIntact(supabase, BUCKET, d.file_path, d.content_sha256)) === true;
+      }
 
       /* A link only for a document that both exists and is still good.
        * Handing out an expired certificate under a live link is how a
@@ -192,6 +229,7 @@ Deno.serve(async (req: Request) => {
           );
         } else {
           entry.url = signed.signedUrl;
+          entry.view_url = signed.signedUrl;
           entry.url_expires_in_seconds = SIGNED_URL_TTL_SECONDS;
         }
       }
@@ -199,10 +237,25 @@ Deno.serve(async (req: Request) => {
       documents.push(entry);
     }
 
+    const summary = (docType: string) => {
+      const e = documents.find((x) => x.doc_type === docType);
+      return {
+        doc_type: docType,
+        verified: e?.verified === true,
+        expiration_date: (e?.expiration_date as string | null | undefined) ?? null,
+        number: (e?.number as string | null | undefined) ?? null,
+        view_url: (e?.view_url as string | undefined) ?? null,
+      };
+    };
+
     return jsonResp({
       connected: true,
       business_name: app.business_name,
       documents,
+      verification: {
+        insurance: summary(VERIFICATION_TYPES.insurance),
+        license: summary(VERIFICATION_TYPES.license),
+      },
     }, 200);
   } catch (err) {
     console.error(

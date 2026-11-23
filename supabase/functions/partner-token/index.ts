@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { partnerDocsState } from "../_shared/partnerDocState.ts";
 
 /**
  * partner-token — validates a partner's upload link.
@@ -20,14 +21,6 @@ import { getCorsHeaders } from "../_shared/cors.ts";
  * cannot tell "never existed" from "ran out of time".
  */
 
-const DOC_TYPES = [
-  "business_license",
-  "professional_license",
-  "w9",
-  "liability_insurance",
-  "workers_comp",
-  "auto_insurance",
-] as const;
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req.headers.get("origin"));
@@ -81,36 +74,18 @@ Deno.serve(async (req) => {
 
     const applicationId = app.id as string;
 
-    const { data: docs, error: docsErr } = await supabase
-      .from("partner_documents")
-      .select("doc_type, file_path, expiration_date")
-      .eq("application_id", applicationId);
-
-    if (docsErr) {
-      console.error("[partner-token] document lookup failed:", docsErr.message);
-      return json({ ok: false, reason: "lookup_failed" }, 500);
-    }
-
-    // Built from DOC_TYPES, not from the rows, so the page always renders the
-    // same six slots in the same order even if a row is somehow missing.
-    type DocRow = { doc_type: string; file_path: string | null; expiration_date: string | null };
-    const byType = new Map<string, DocRow>(
-      ((docs ?? []) as DocRow[]).map((d) => [d.doc_type, d]),
-    );
+    // Same builder partner-upload answers with, including each slot's open
+    // check (the partner's own draft), so a "Fix My Document" link reopens
+    // the screen with the mismatch highlighted.
+    const state = await partnerDocsState(supabase, applicationId);
+    if (!state.ok) return json({ ok: false, reason: "lookup_failed" }, 500);
 
     return json({
       ok: true,
       application_id: applicationId,
       business_name: app.business_name,
       email: app.email,
-      docs: DOC_TYPES.map((doc_type) => {
-        const row = byType.get(doc_type);
-        return {
-          doc_type,
-          uploaded: Boolean(row?.file_path),
-          expiration_date: row?.expiration_date ?? null,
-        };
-      }),
+      docs: state.docs,
     });
   } catch (err) {
     console.error("[partner-token] unhandled:", err instanceof Error ? err.message : err);

@@ -40,6 +40,34 @@ interface PartnerDoc {
   uploaded: boolean;
   expiration_date: string | null;
   uploaded_at: string | null;
+  /* Inbound vendor documents (Part 4): Arthur previews and accepts. */
+  id: string | null;
+  doc_number: string | null;
+  review_status: string | null;
+  check_rows: CheckedRow[] | null;
+  tamper_detection_on: boolean;
+  accepted_at: string | null;
+}
+
+interface CheckedRow {
+  key: string;
+  detail: string;
+  you_typed: string | null;
+  on_document: string | null;
+  result: 'match' | 'mismatch' | 'not_found';
+}
+
+const REVIEW_STATUS_TEXT: Record<string, string> = {
+  waiting_for_acceptance: 'Waiting for Acceptance',
+  accepted: 'Accepted',
+  expired: 'Expired',
+};
+
+async function partnerDocAction(body: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const { data, error } = await supabase.functions.invoke('partner-admin', { body });
+  if (error) throw error;
+  if (!data?.ok) throw new Error(data?.error ?? 'That did not work.');
+  return data as Record<string, unknown>;
 }
 
 interface PartnerApplication {
@@ -142,8 +170,13 @@ function OutLink({ url }: { url: string }) {
 }
 
 /** One document line: on file or outstanding, with its expiration state. */
-function DocLine({ doc }: { doc: PartnerDoc }) {
+function DocLine({ doc, onChanged }: { doc: PartnerDoc; onChanged: () => void }) {
   const label = DOC_LABEL[doc.doc_type] ?? doc.doc_type;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [asking, setAsking] = useState(false);
+  const [question, setQuestion] = useState('');
 
   if (!doc.uploaded) {
     return (
@@ -166,16 +199,113 @@ function DocLine({ doc }: { doc: PartnerDoc }) {
     expiry = <span style={{ color }}> — exp {stampDay(doc.expiration_date)}{suffix}</span>;
   }
 
+  const run = async (name: string, body: Record<string, unknown>) => {
+    setBusy(name);
+    setMsg(null);
+    try {
+      const out = await partnerDocAction({ ...body, document_id: doc.id });
+      if (name === 'preview') setPreviewUrl(String(out.url));
+      if (name === 'accept') { setMsg('Accepted. Tamper detection is on.'); onChanged(); }
+      if (name === 'question') {
+        setMsg(out.emailed ? 'Question sent to the partner.' : 'The question email did not go out.');
+        setAsking(false);
+        setQuestion('');
+      }
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : 'That did not work.');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const checked = Boolean(doc.review_status);
+  const allMatch = Boolean(doc.check_rows?.length) && doc.check_rows!.every(r => r.result === 'match');
+  const btn = (primary: boolean): React.CSSProperties => ({
+    fontFamily: BODY, fontSize: 11, fontWeight: 700, borderRadius: 4, padding: '4px 10px',
+    border: `1px solid ${EV_NAVY}`, background: primary ? EV_NAVY : 'transparent',
+    color: primary ? EV_PAPER : EV_NAVY, cursor: busy ? 'wait' : 'pointer',
+  });
+
   return (
-    <div style={{ fontFamily: BODY, fontSize: 11.5, color: EV_NAVY, padding: '2px 0' }}>
+    <div data-doc={doc.doc_type} style={{ fontFamily: BODY, fontSize: 11.5, color: EV_NAVY, padding: '2px 0' }}>
       <span style={{ color: EV_SUCCESS }}>{'●'}</span> {label}{expiry}
+      {doc.doc_number && <span style={{ color: EV_MUTED }}> · no. {doc.doc_number}</span>}
+      {checked && (
+        <span style={{ marginLeft: 8 }}>
+          <Chip text={REVIEW_STATUS_TEXT[doc.review_status ?? ''] ?? String(doc.review_status)}
+            color={doc.review_status === 'accepted' ? EV_SUCCESS : doc.review_status === 'expired' ? EV_DANGER : EV_WARN} />
+        </span>
+      )}
+      {checked && (
+        <div style={{ margin: '6px 0 10px 14px', padding: 8, border: `1px solid ${EV_LINE}`, borderRadius: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+            {allMatch && <span data-testid="details-match-pill" style={{
+              fontSize: 10.5, fontWeight: 700, color: EV_SUCCESS, border: `1px solid ${EV_SUCCESS}`,
+              borderRadius: 10, padding: '1px 8px',
+            }}>Details Match</span>}
+            {doc.tamper_detection_on && <span style={{ fontSize: 10.5, color: EV_MUTED }}>Tamper Detection On</span>}
+          </div>
+          {doc.check_rows && doc.check_rows.length > 0 && (
+            <table style={{ fontSize: 11, borderCollapse: 'collapse', marginBottom: 6 }}>
+              <thead>
+                <tr style={{ color: EV_FAINT, textAlign: 'left' }}>
+                  <th style={{ padding: '2px 12px 2px 0', fontWeight: 500 }}>Detail</th>
+                  <th style={{ padding: '2px 12px 2px 0', fontWeight: 500 }}>Partner Typed</th>
+                  <th style={{ padding: '2px 0', fontWeight: 500 }}>On the Document</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doc.check_rows.map(r => (
+                  <tr key={r.key}>
+                    <td style={{ padding: '2px 12px 2px 0', fontWeight: 600 }}>{r.detail}</td>
+                    <td style={{ padding: '2px 12px 2px 0' }}>{r.you_typed ?? '—'}</td>
+                    <td style={{ padding: '2px 0' }}>{r.on_document ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <button type="button" style={btn(false)} disabled={Boolean(busy)} onClick={() => run('preview', { action: 'preview' })}>
+              {busy === 'preview' ? 'Opening…' : 'Preview Document'}
+            </button>
+            {doc.review_status === 'waiting_for_acceptance' && (
+              <>
+                <button type="button" data-testid="accept-document" style={btn(true)} disabled={Boolean(busy)} onClick={() => run('accept', { action: 'accept' })}>
+                  {busy === 'accept' ? 'Accepting…' : 'Accept Document'}
+                </button>
+                <button type="button" style={btn(false)} disabled={Boolean(busy)} onClick={() => setAsking(a => !a)}>
+                  Ask Vendor a Question
+                </button>
+              </>
+            )}
+          </div>
+          {asking && (
+            <div style={{ marginTop: 6 }}>
+              <textarea value={question} onChange={e => setQuestion(e.target.value)} rows={3}
+                placeholder="What would you like to ask the partner?"
+                style={{ width: '100%', fontFamily: BODY, fontSize: 11.5, border: `1px solid ${EV_LINE}`, borderRadius: 4, padding: 6 }} />
+              <button type="button" style={btn(true)} disabled={Boolean(busy) || !question.trim()}
+                onClick={() => run('question', { action: 'question', question })}>
+                {busy === 'question' ? 'Sending…' : 'Send Question'}
+              </button>
+            </div>
+          )}
+          {msg && <div style={{ marginTop: 6, fontSize: 11, color: EV_SLATE }}>{msg}</div>}
+          {previewUrl && (
+            <iframe title={`${label} preview`} src={previewUrl}
+              style={{ marginTop: 8, width: '100%', height: 420, border: `1px solid ${EV_LINE}`, borderRadius: 4 }} />
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 // ── Row ──────────────────────────────────────────────────────────
 
-function ApplicationRow({ app, onTogglePublish }: {
+function ApplicationRow({ app, onTogglePublish, onChanged }: {
+  onChanged: () => void;
   app: PartnerApplication;
   onTogglePublish: (app: PartnerApplication, next: boolean) => Promise<void>;
 }) {
@@ -336,10 +466,79 @@ function ApplicationRow({ app, onTogglePublish }: {
         {open && (
           <div>
             <FieldLabel>Documents on file</FieldLabel>
-            {app.documents.map(d => <DocLine key={d.doc_type} doc={d} />)}
+            {app.documents.map(d => <DocLine key={d.doc_type} doc={d} onChanged={onChanged} />)}
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ── Reminder timing (inbound vendor documents, Part 5) ──────────
+
+/**
+ * When partner-expiry-scan reminds vendors: days before expiry, plus one
+ * notice on expiry. Applies to both inbound flows (partners and the
+ * documents kitchens request).
+ */
+function ReminderTiming() {
+  const [value, setValue] = useState('');
+  const [saved, setSaved] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.functions.invoke('partner-admin', { body: { action: 'get_reminder_settings' } })
+      .then(({ data }) => {
+        if (data?.ok && Array.isArray(data.reminder_days)) {
+          const v = (data.reminder_days as number[]).join(', ');
+          setValue(v);
+          setSaved(v);
+        }
+      });
+  }, []);
+
+  const save = async () => {
+    setBusy(true);
+    setMsg(null);
+    const days = value.split(/[^0-9]+/).filter(Boolean).map(Number);
+    const { data, error } = await supabase.functions.invoke('partner-admin', {
+      body: { action: 'set_reminder_settings', reminder_days: days },
+    });
+    setBusy(false);
+    if (error || !data?.ok) {
+      setMsg(data?.error ?? 'Could not save the reminder timing.');
+      return;
+    }
+    const v = (data.reminder_days as number[]).join(', ');
+    setValue(v);
+    setSaved(v);
+    setMsg('Saved.');
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+      <FieldLabel>Expiration Reminders (days before)</FieldLabel>
+      <input
+        aria-label="Expiration reminder days"
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        placeholder="30, 7"
+        style={{ fontFamily: BODY, fontSize: 12, border: `1px solid ${EV_LINE}`, borderRadius: 4, padding: '4px 8px', width: 110 }}
+      />
+      <button
+        type="button"
+        onClick={save}
+        disabled={busy || value === saved}
+        style={{
+          fontFamily: BODY, fontSize: 11, fontWeight: 700, borderRadius: 4, padding: '4px 10px',
+          border: `1px solid ${EV_NAVY}`, background: EV_NAVY, color: EV_PAPER,
+          opacity: busy || value === saved ? 0.5 : 1,
+        }}
+      >
+        {busy ? 'Saving…' : 'Save Reminder Timing'}
+      </button>
+      {msg && <span style={{ fontSize: 11, color: EV_SLATE }}>{msg}</span>}
     </div>
   );
 }
@@ -403,6 +602,7 @@ export default function PartnersTab() {
 
   return (
     <div style={{ fontFamily: BODY }}>
+      <ReminderTiming />
       {error && (
         <div style={{
           fontFamily: BODY, fontSize: 12.5, color: EV_EMBER,
@@ -437,7 +637,7 @@ export default function PartnersTab() {
           </div>
         ) : (
           applications.map(a => (
-            <ApplicationRow key={a.id} app={a} onTogglePublish={togglePublish} />
+            <ApplicationRow key={a.id} app={a} onTogglePublish={togglePublish} onChanged={() => { void load(); }} />
           ))
         )}
       </div>

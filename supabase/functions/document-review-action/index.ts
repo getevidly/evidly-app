@@ -1,13 +1,16 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { emailVendorQuestion, fileIntact } from "../_shared/vendorDocumentAcceptance.ts";
 
 let corsHeaders = getCorsHeaders(null);
 
 interface ReviewActionPayload {
   documentId: string;
-  action: "accept" | "reject";
+  action: "accept" | "reject" | "question" | "verify";
   rejectionReason?: string;
+  /** action=question: what the recipient wants to ask the vendor. */
+  question?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -38,15 +41,15 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── Parse body ───────────────────────────────────────────
-    const { documentId, action, rejectionReason }: ReviewActionPayload =
+    const { documentId, action, rejectionReason, question }: ReviewActionPayload =
       await req.json();
 
     if (!documentId) {
       return jsonResponse({ error: "documentId is required" }, 400);
     }
-    if (action !== "accept" && action !== "reject") {
+    if (!["accept", "reject", "question", "verify"].includes(action)) {
       return jsonResponse(
-        { error: 'action must be "accept" or "reject"' },
+        { error: 'action must be "accept", "reject", "question" or "verify"' },
         400
       );
     }
@@ -55,7 +58,7 @@ Deno.serve(async (req: Request) => {
     const { data: doc, error: docError } = await supabase
       .from("compliance_documents")
       .select(
-        "id, organization_id, status, storage_path, vendor_id, type, name, service_type_code, location_id, category, metadata"
+        "id, organization_id, status, storage_path, vendor_id, type, name, service_type_code, location_id, category, metadata, review_status, content_sha256, tamper_detection_at"
       )
       .eq("id", documentId)
       .single();
@@ -64,7 +67,7 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Document not found" }, 404);
     }
 
-    if (doc.status !== "pending_review") {
+    if (doc.status !== "pending_review" && action !== "question" && action !== "verify") {
       return jsonResponse(
         { error: "Document is not in review. Current status: " + doc.status },
         400
@@ -88,13 +91,101 @@ Deno.serve(async (req: Request) => {
     const actorLabel = profile.full_name || user.email || "Operator";
 
     // ══════════════════════════════════════════════════════════
+    // VERIFY — tamper detection: is the stored file the one that was
+    // checked and sent? (Inbound vendor documents, Part 4.)
+    // ══════════════════════════════════════════════════════════
+    if (action === "verify") {
+      const intact = await fileIntact(supabase, "documents", doc.storage_path, doc.content_sha256);
+      return jsonResponse({
+        success: true,
+        intact,
+        tamper_detection_on: Boolean(doc.tamper_detection_at),
+        tamper_detection_at: doc.tamper_detection_at,
+      });
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // QUESTION — "Ask Vendor a Question". Emails the vendor the request
+    // went to; changes nothing on the document.
+    // ══════════════════════════════════════════════════════════
+    if (action === "question") {
+      const text = (question || "").trim().slice(0, 2000);
+      if (!text) return jsonResponse({ error: "Type your question first." }, 400);
+
+      const { data: lastRequest } = await supabase
+        .from("compliance_document_requests")
+        .select("recipient_email, recipient_name")
+        .eq("document_id", doc.id)
+        .order("requested_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!lastRequest?.recipient_email) {
+        return jsonResponse({ error: "There is no vendor email on this request." }, 400);
+      }
+
+      let orgName = "Your client";
+      const { data: org } = await supabase
+        .from("organizations").select("name").eq("id", doc.organization_id).maybeSingle();
+      if (org?.name) orgName = org.name;
+
+      const emailed = await emailVendorQuestion({
+        to: lastRequest.recipient_email,
+        vendorName: lastRequest.recipient_name || "there",
+        documentLabel: doc.type || "document",
+        askedBy: `${actorLabel} at ${orgName}`,
+        replyTo: user.email ?? null,
+        question: text,
+      });
+
+      try {
+        await supabase.from("compliance_document_activity_log").insert({
+          organization_id: doc.organization_id,
+          document_id: doc.id,
+          event_type: "noted",
+          actor_user_id: user.id,
+          actor_label: actorLabel,
+          metadata: { question_to_vendor: text, emailed },
+        });
+      } catch {
+        console.error("[QUESTION] Activity log insert failed — non-critical");
+      }
+
+      return jsonResponse({ success: true, emailed });
+    }
+
+    // ══════════════════════════════════════════════════════════
     // ACCEPT BRANCH
     // ══════════════════════════════════════════════════════════
     if (action === "accept") {
+      // A checked inbound document is accepted only if the stored file is
+      // still the one the sender's check passed on; then tamper detection
+      // turns on.
+      const checkedDoc = doc.review_status === "waiting_for_acceptance";
+      if (checkedDoc) {
+        const intact = await fileIntact(supabase, "documents", doc.storage_path, doc.content_sha256);
+        if (intact !== true) {
+          return jsonResponse(
+            { error: "This file is not the one that was checked. Ask the vendor to send it again." },
+            409,
+          );
+        }
+      }
+
       // 1. UPDATE compliance_documents → status='current'
+      const now = new Date().toISOString();
       const { error: updateError } = await supabase
         .from("compliance_documents")
-        .update({ status: "current" })
+        .update(
+          checkedDoc
+            ? {
+              status: "current",
+              review_status: "accepted",
+              accepted_at: now,
+              accepted_by: user.id,
+              tamper_detection_at: now,
+            }
+            : { status: "current" },
+        )
         .eq("id", doc.id);
 
       if (updateError) {
@@ -347,7 +438,7 @@ async function runServiceBridge(
   supabaseKey: string,
   doc: any,
 ): Promise<Record<string, unknown>> {
-  if (doc.category !== "vendor_service") return { bridge: "skipped_not_service" };
+  if (doc.category !== "service") return { bridge: "skipped_not_service" };
 
   const ext = (doc.metadata && doc.metadata.service_extraction) || null;
   const isPse = !!doc.service_type_code && doc.service_type_code in PSE_SAFEGUARD;

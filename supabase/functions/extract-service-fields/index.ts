@@ -1,13 +1,14 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { logger } from "../_shared/logger.ts";
+import { CHECK_MODEL } from "../_shared/documentCheck.ts";
 
 /**
  * extract-service-fields — VENDOR-SERVICE-SEAL-01 (Unit 1)
  *
  * Fire-and-forget AI extraction of the fields a SEALED service record needs,
  * read off a vendor-uploaded service document. Called by vendor-secure-upload
- * right after it sets a vendor_service document to pending_review.
+ * right after it sets a service document to pending_review.
  *
  * ADVISORY ONLY. Commits nothing authoritative: no status change, no
  * vendor_service_records row, no seal. It records SUGGESTED values + per-field
@@ -54,9 +55,9 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── 2. Guard: service documents only (defensive; caller already filters) ───
-    if (doc.category !== "vendor_service") {
+    if (doc.category !== "service") {
       return new Response(
-        JSON.stringify({ skipped: true, reason: "not a vendor_service document" }),
+        JSON.stringify({ skipped: true, reason: "not a service document" }),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
     }
@@ -184,10 +185,15 @@ Respond in this EXACT JSON format and nothing else:
           "Content-Type": "application/json",
           "x-api-key": anthropicKey,
           "anthropic-version": "2023-06-01",
+          // Same model and server-side fallback as the document reader
+          // (_shared/documentCheck.ts), so one declined read does not leave
+          // the record without suggestions.
+          "anthropic-beta": "server-side-fallback-2026-07-01",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-5-20250929",
-          max_tokens: 1024,
+          model: CHECK_MODEL,
+          max_tokens: 2000,
+          fallbacks: "default",
           messages: [{ role: "user", content }],
         }),
       });
@@ -198,6 +204,9 @@ Respond in this EXACT JSON format and nothing else:
       }
 
       const aiData = await aiResponse.json();
+      if (aiData.stop_reason === "refusal") {
+        throw new Error("Reader declined the document");
+      }
       const textBlock = aiData.content?.find((b: any) => b.type === "text");
       const rawText = textBlock?.text || "";
 
