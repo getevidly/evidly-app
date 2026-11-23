@@ -81,7 +81,7 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "You do not have access to this document" }, 403);
     }
 
-    if (doc.category !== "vendor_service") {
+    if (doc.category !== "service") {
       return jsonResponse({ error: "Not a service record" }, 400);
     }
     const safeguard = doc.service_type_code ? PSE_SAFEGUARD[doc.service_type_code] : undefined;

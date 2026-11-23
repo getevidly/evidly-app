@@ -7,7 +7,7 @@ import { logger } from "../_shared/logger.ts";
  *
  * Fire-and-forget AI extraction of the fields a SEALED service record needs,
  * read off a vendor-uploaded service document. Called by vendor-secure-upload
- * right after it sets a vendor_service document to pending_review.
+ * right after it sets a service document to pending_review.
  *
  * ADVISORY ONLY. Commits nothing authoritative: no status change, no
  * vendor_service_records row, no seal. It records SUGGESTED values + per-field
@@ -54,9 +54,9 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── 2. Guard: service documents only (defensive; caller already filters) ───
-    if (doc.category !== "vendor_service") {
+    if (doc.category !== "service") {
       return new Response(
-        JSON.stringify({ skipped: true, reason: "not a vendor_service document" }),
+        JSON.stringify({ skipped: true, reason: "not a service document" }),
         { status: 200, headers: { "Content-Type": "application/json" } },
       );
     }

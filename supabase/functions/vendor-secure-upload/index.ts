@@ -395,11 +395,11 @@ Deno.serve(async (req: Request) => {
         console.error("[UPLOAD] Email enqueue failed — non-critical");
       }
 
-      // ── 6. Extract service fields (background, vendor_service only) ──
+      // ── 6. Extract service fields (background, service documents only) ──
       // Advisory AI read of the fields a sealed service record needs.
       // Runs AFTER the response so the vendor is not blocked on a slow AI call.
       // Commits nothing: writes suggestions to compliance_documents.metadata.
-      if (doc?.category === "vendor_service") {
+      if (doc?.category === "service") {
         const extractUrl = `${supabaseUrl}/functions/v1/extract-service-fields`;
         const extractTask = fetch(extractUrl, {
           method: "POST",

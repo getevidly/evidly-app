@@ -438,7 +438,7 @@ async function runServiceBridge(
   supabaseKey: string,
   doc: any,
 ): Promise<Record<string, unknown>> {
-  if (doc.category !== "vendor_service") return { bridge: "skipped_not_service" };
+  if (doc.category !== "service") return { bridge: "skipped_not_service" };
 
   const ext = (doc.metadata && doc.metadata.service_extraction) || null;
   const isPse = !!doc.service_type_code && doc.service_type_code in PSE_SAFEGUARD;
